@@ -1,0 +1,70 @@
+/* App.css */
+/* My 회원 정보, My Photo 크기 키우기 */
+.menu-title p {
+  font-size: 1.5em; /* 원하는 크기로 조정 */
+}
+/* Mypage.css */
+/* 사이드 바 위치 */
+.sidebar {
+  margin-left: 50px;
+  margin-top: 150px;
+}
+
+/* Mypage.css */
+.sidebar-item {
+  display: block;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.menu-divider {
+  border-bottom: 2px solid #f2bed1;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+  width: 15%; /* Changed from 15% to 100% */
+}
+
+.menu-first {
+  border-top: 2px solid #f2bed1;
+  padding-left: 10px;
+  padding-right: 10px;
+  width: 15%;
+  box-sizing: border-box;
+  padding-top: 15px;
+}
+
+.menu-subitem {
+  padding-left: 50px;
+  position: relative;
+  background-color: transparent;
+}
+
+.menu-subitem.active {
+  background-color: black; /* Active background color */
+}
+
+.menu-subitem::before {
+  content: "ㄴ";
+  position: absolute;
+  left: 50px;
+  top: 20%;
+  transform: translate(-100%, -50%);
+  color: white;
+}
+
+.menu-subitem.active::before {
+  color: white; /* Active color */
+}
+
+/* Mypage.css */
+.link-item {
+  display: inline-block;
+  /* 기타 필요한 스타일 */
+}
+
+.link-item.active {
+  background-color: black;
+  color: white;
+}

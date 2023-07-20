@@ -11,7 +11,7 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
-import { BsLock, BsHammer  } from "react-icons/bs";
+import { BsLock, BsHammer } from "react-icons/bs";
 import { FaUserPlus } from "react-icons/fa";
 
 function Home() {
@@ -68,7 +68,8 @@ function Home() {
         backgroundPosition: "center",
         width: "100vw",
         height: "100vh",
-      }}>
+      }}
+    >
       {/* 위쪽 컨테이너 */}
       <Row className="m-3">
         <Col>
@@ -144,12 +145,14 @@ function Home() {
                 <Card>
                   <Card.Body
                     className="d-flex flex-column align-items-center"
-                    style={{ height: "500px" }}>
+                    style={{ height: "500px" }}
+                  >
                     <Card.Title>유민국</Card.Title>
                     <Button
                       variant="primary"
                       onClick={handleShowAddFriendModal}
-                      className="mb-3">
+                      className="mb-3"
+                    >
                       친구추가
                     </Button>
 
@@ -291,7 +294,8 @@ function ListContainer() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-          }}>
+          }}
+        >
           <img
             src="/images/잔나비.jfif"
             alt="사랑하긴했었나요"
