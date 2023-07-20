@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom"; //Link,
 
 import Home from "./pages/HomePage/Home";
 import Join from "./pages/HomePage/Join";
@@ -18,6 +18,7 @@ import MyPhoto from "./pages/MyPage/MyPhoto";
 function App() {
   return (
     <div>
+      {/* <nav> */}
       {/* <nav>
         <ul>
           <li>
@@ -58,6 +59,7 @@ function App() {
             <Link to="/MyPhoto">MyPhoto</Link>
           </li>
         </ul>
+      </nav>
       </nav> */}
 
       <Routes>
