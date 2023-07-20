@@ -3,12 +3,12 @@ import "animate.css";
 import React from "react";
 import { Nav, Container } from "react-bootstrap";
 import Header from "../../components/Header/Header";
-
 import "./Home.css";
 
 const Home = () => {
   return (
     <div>
+
       <div className="Home">
         <div className="Home1">
           <Header />

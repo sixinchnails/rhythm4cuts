@@ -18,6 +18,7 @@ import MyPhoto from "./pages/MyPage/MyPhoto";
 function App() {
   return (
     <div>
+      {/* <nav> */}
       {/* <nav>
         <ul>
           <li>
@@ -58,6 +59,7 @@ function App() {
             <Link to="/MyPhoto">MyPhoto</Link>
           </li>
         </ul>
+      </nav>
       </nav> */}
 
       <Routes>
@@ -74,6 +76,9 @@ function App() {
         <Route path="/MyFriend" element={<MyFriend />} />
         <Route path="/MyPoint" element={<MyPoint />} />
         <Route path="/MyPhoto" element={<MyPhoto />} />
+
+
+
       </Routes>
     </div>
   );
