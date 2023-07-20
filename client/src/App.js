@@ -76,9 +76,6 @@ function App() {
         <Route path="/MyFriend" element={<MyFriend />} />
         <Route path="/MyPoint" element={<MyPoint />} />
         <Route path="/MyPhoto" element={<MyPhoto />} />
-
-
-
       </Routes>
     </div>
   );
