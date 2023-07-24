@@ -2,6 +2,7 @@ package com.b109.rhythm4cuts.model.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,39 +16,37 @@ public class PointLog {
     @Column(name="log_seq")
     private Long logSeq;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_seq")
-    private User user;
-
+    //카테고리 코드
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "code")
     private Category category;
 
+    //포인트 사용한 유저 일련번호
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_seq")
+    private User user;
+
+    //게임 정보
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_seq")
     private GameInfo gameInfo;
 
+    //포인트 증감 내역
     @Column(name="point_history")
     private Integer pointHistory;
 
+    //증감 이후 포인트
     @Column(name="remain_point")
     private Integer remainPoint;
 
+    //로그 생성된 시간
+    @CreationTimestamp
     @Column(name = "create_date")
     private LocalDateTime createDate;
-
-    @PrePersist // 데이터 생성이 이루어질때 사전 작업
-    public void prePersist() {
-        this.createDate = LocalDateTime.now();
-    }
 
     public void setUser(User user) {
         this.user = user;
         user.getPointLogs().add(this);
     }
 
-    public void setGameInfo(GameInfo gameInfo) {
-        this.gameInfo = gameInfo;
-        gameInfo.getPointLogs().add(this);
-    }
 }

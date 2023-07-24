@@ -2,6 +2,7 @@ package com.b109.rhythm4cuts.model.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -15,12 +16,6 @@ import java.util.List;
 @Table(name = "USER")
 public class User {
 
-    public User() {
-        this.point = 0;
-        this.playCount = 0;
-        this.scoreSum = 0;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_seq")
@@ -29,18 +24,6 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_image_seq")
     private ProfileImage profileImage;
-
-    @OneToMany(mappedBy = "fromUser", cascade = CascadeType.ALL)
-    private List<RequestFriend> requestFromFriends = new ArrayList<>();
-
-    @OneToMany(mappedBy = "toUser", cascade = CascadeType.ALL)
-    private List<RequestFriend> requestToFriends = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<PointLog> pointLogs = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<GameImage> gameImages = new ArrayList<>();
 
     private String email;
 
@@ -66,22 +49,31 @@ public class User {
     @Column(name="score_sum")
     private Integer scoreSum;
 
-    //유저가 생성된 시간
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
-
     //유저가 탈퇴한 시간 null이면 탈퇴하지 않고 null이 아니면 탈퇴한 상태이다
     @Column(name = "resign_date")
     private LocalDateTime resignDate;
 
-    @PrePersist // 데이터 생성이 이루어질때 사전 작업
-    public void prePersist() {
-        this.createDate = LocalDateTime.now();
-    }
+    //유저가 생성된 시간
+    @CreationTimestamp
+    @Column(name = "create_date")
+    private LocalDateTime createDate;
 
-    public void setProfileImage(ProfileImage profileImage) {
-        this.profileImage = profileImage;
-        profileImage.getUsers().add(this);
+    @OneToMany(mappedBy = "fromUser", cascade = CascadeType.ALL)
+    private List<RequestFriend> requestFromFriends = new ArrayList<>();
+
+    @OneToMany(mappedBy = "toUser", cascade = CascadeType.ALL)
+    private List<RequestFriend> requestToFriends = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<PointLog> pointLogs = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<GameImage> gameImages = new ArrayList<>();
+
+    public User() {
+        this.point = 0;
+        this.playCount = 0;
+        this.scoreSum = 0;
     }
 
 }
