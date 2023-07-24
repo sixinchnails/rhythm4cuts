@@ -26,13 +26,13 @@ public class MemberController {
     @GetMapping("login")
     public ResponseEntity<CreateAccessTokenResponse> createNewAccessToken(@RequestBody CreateAccessTokenRequest request) {
         //String newAccessToken = tokenService.createNewAccessToken(request.getRefreshToken());
-
         //User user = userService.findByNickname(request.getNickname());
+
         User user = new User();
         Duration expiration = Duration.ofDays(14);
-        String accessToken = tokenProvider.generateToken(user,expiration);
+        String newAccessToken = tokenProvider.generateToken(user,expiration);
 
-        if (!tokenProvider.validToken(accessToken)) {
+        if (!tokenProvider.validToken(newAccessToken)) {
             return null;
         }
 
@@ -43,7 +43,7 @@ public class MemberController {
                         .points(user.getPoint())
                         .profile_img_seq(user.getProfileImage().getProfileImageSeq())
                         //14일 후 토큰 만료하도록
-                        .accessToken(tokenProvider.generateToken(user,expiration))
+                        .accessToken(newAccessToken)
                         .build()
                 );
     }
