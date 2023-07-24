@@ -26,7 +26,8 @@ public class GameImage {
     User user;
 
     //등수(순서) 사진을 하나의 화면에 모을 때 순서(등수에 따라 순서 정해진다)
-    private Integer rank;
+    @Column(name = "game_rank")
+    private Integer gameRank;
 
     //서버에 저장될 사진의 파일명(년월일시분초_난수 8자리)
     @Column(name = "file_name")

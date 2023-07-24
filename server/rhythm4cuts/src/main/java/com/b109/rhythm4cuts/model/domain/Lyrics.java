@@ -19,7 +19,8 @@ public class Lyrics {
     @Column(name = "end_time")
     private Integer endTime;
 
-    private Integer order;
+    @Column(name = "song_order")
+    private Integer songOrder;
 
     private String lyric;
 

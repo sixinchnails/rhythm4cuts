@@ -10,7 +10,8 @@ import javax.persistence.*;
 @Table(name = "RANK_POINT")
 public class RankPoint {
     @Id
-    private Integer rank;
+    @Column(name = "player_rank")
+    private Integer player_rank;
 
     @Column(name = "rank_point")
     private Integer rankPoint;

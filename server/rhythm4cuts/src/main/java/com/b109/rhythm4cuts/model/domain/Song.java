@@ -26,7 +26,8 @@ public class Song {
     private String singer;
 
     //크롤링해서 가져올 음원 랭킹 순위
-    private Integer rank;
+    @Column(name = "song_rank")
+    private Integer songRank;
 
     //노래 플레이 횟수
     @Column(name = "play_count")
@@ -37,7 +38,7 @@ public class Song {
 
     //노래의 주파수 정보
     @OneToMany(mappedBy = "song", cascade = CascadeType.ALL)
-    private List<Pitch> Pitches = new ArrayList<>();
+    private List<Pitch> pitches = new ArrayList<>();
 
     //노래 가사 정보
     @OneToMany(mappedBy = "song", cascade = CascadeType.ALL)
