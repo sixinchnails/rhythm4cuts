@@ -5,8 +5,8 @@ import Home from "./pages/HomePage/Home";
 import Join from "./pages/HomePage/Join";
 
 import GameList from "./pages/GamePage/GameList";
-import GameWaiting from "./pages/GamePage/GameWaiting";
-import GamePlaying from "./pages/GamePage/GamePlaying";
+import GameWait from "./pages/GamePage/GameWait";
+import GamePlay from "./pages/GamePage/GamePlay";
 import GameScore from "./pages/GamePage/GameScore";
 import GameShot from "./pages/GamePage/GameShot";
 
@@ -33,10 +33,10 @@ function App() {
             <Link to="/GameList">GameList</Link>
           </li>
           <li>
-            <Link to="/GameWaiting">GameWaiting</Link>
+            <Link to="/GameWait">GameWait</Link>
           </li>
           <li>
-            <Link to="/GamePlaying">GamePlaying</Link>
+            <Link to="/GamePlay">GamePlay</Link>
           </li>
           <li>
             <Link to="/GameScore">GameScore</Link>
@@ -67,8 +67,8 @@ function App() {
         <Route path="/Join" element={<Join />} />
 
         <Route path="/GameList" element={<GameList />} />
-        <Route path="/GameWaiting" element={<GameWaiting />} />
-        <Route path="/GamePlaying" element={<GamePlaying />} />
+        <Route path="/GameWait" element={<GameWait />} />
+        <Route path="/GamePlaying" element={<GamePlay />} />
         <Route path="/GameScore" element={<GameScore />} />
         <Route path="/GameShot" element={<GameShot />} />
 

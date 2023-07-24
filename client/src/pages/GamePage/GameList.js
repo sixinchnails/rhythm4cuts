@@ -14,7 +14,7 @@ import {
 import { BsLock, BsHammer } from "react-icons/bs";
 import { FaUserPlus } from "react-icons/fa";
 
-function Home() {
+function GameList() {
   // 친구 추가 모달 상태를 관리하기 위한 useState
   let [showAddFriendModal, setShowAddFriendModal] = useState(false);
 
@@ -82,6 +82,10 @@ function Home() {
             />
           </Link>
         </Col>
+          {/* 다른 경로로 이동할 이미지를 클릭 가능하게 하기 위해 Link 컴포넌트로 감싸기 */}
+          <Link to="/GameWaiting">
+          GameWaiting로 이동
+          </Link>
       </Row>
       {/* 아래 컨테이너 */}
       <Container>
@@ -348,4 +352,4 @@ function ListContainer() {
   );
 }
 
-export default Home;
+export default GameList;
