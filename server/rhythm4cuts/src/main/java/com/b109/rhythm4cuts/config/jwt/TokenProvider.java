@@ -27,6 +27,7 @@ public class TokenProvider {
         return makeToken(new Date(now.getTime() + expiredAt.toMillis()), user);
     }
 
+    //메서드 1. JWT 토큰 생성 메서드
     private String makeToken(Date expiry, User user) {
         Date now = new Date();
 
@@ -41,6 +42,7 @@ public class TokenProvider {
                 .compact();
     }
 
+    //메서드 2. JWT 토큰 유효성 검증 메서드
     public boolean validToken(String token) {
         try{
             Jwts.parser()
@@ -53,6 +55,7 @@ public class TokenProvider {
         }
     }
 
+    //메서드 3. 토큰 기반으로 인증 정보를 가져오는 메서드
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token);
         Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
@@ -60,11 +63,13 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities), token, authorities);
     }
 
+    //메서드 4. 토큰 기반으로 유저 ID를 가져오는 메서드
     public Integer getUserId(String token) {
         Claims claims = getClaims(token);
         return claims.get("id", Integer.class);
     }
 
+    //메서드 5. 클레임 조회 메서드
     private Claims getClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(jwtProperties.getSecretKey())

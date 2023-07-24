@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+// member/login 응답 DTO
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
