@@ -2,19 +2,24 @@
   overflow: hidden;
 } */
 
-html,
-.Home {
-  width: 100%;
-  height: 100%;
+body {
+  margin: 0;
+  overflow-y: hidden;
 }
 
-.Home {
-  background-image: url(../../../public/images/HP.png);
-  background-size: cover;
-  background-position: center;
-  width: 1920px 100%;
-  height: 1080px;
-  position: relative;
+.outer {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.outer::-webkit-scrollbar {
+  display: none;
+}
+
+.divider {
+  width: 100%;
+  height: 5px;
+  background-color: gray;
 }
 
 .Logo {
@@ -37,18 +42,94 @@ html,
   margin-left: 50px;
 }
 
+.Home1 {
+  background-image: url(../../../public/images/HP.png);
+  background-size: cover;
+  background-position: center;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
 .Home2 {
   background-image: url(../../../public/images/Home_Page2.png);
   background-size: cover;
   background-position: center;
-  width: 1920px;
-  height: 1080px;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.Home2 > h1 {
+  color: aqua;
+  text-align: center;
+  padding-top: 50px;
+}
+
+.Home2 > .content {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100vw;
+  margin-top: 50px;
+}
+
+.Home2 > .content > .intro {
+  width: 700px;
+  height: 700px;
+  background-color: black;
+}
+
+.Home2 > .content > .rules {
+  width: 700px;
+  height: 700px;
+  background-color: black;
 }
 
 .Home3 {
   background-image: url(../../../public/images/Home_Page3.png);
   background-size: cover;
   background-position: center;
-  width: 1920px;
-  height: 1080px;
+  width: 100vw;
+  height: 108vh;
+  position: relative;
+}
+
+.Home3 > .titles {
+  width: 100vw;
+  display: flex;
+  justify-content: space-evenly;
+  padding-top: 50px;
+}
+
+.Home3 > .content > h1 {
+  color: aqua;
+}
+
+.Home3 > .content {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100vw;
+}
+
+.Home3 > .content > .rt_sing_rank {
+  height: 700px;
+  width: 35vw;
+  background-color: black;
+}
+
+.Home3 > .content > .total_rank {
+  height: 700px;
+  width: 35vw;
+  background-color: black;
+}
+
+.Home4 {
+  background-image: url(../../../public/images/Home_Page4.png);
+  background-size: cover;
+  background-position: center;
+  width: 100vw;
+  height: 108vh;
+  position: relative;
 }
