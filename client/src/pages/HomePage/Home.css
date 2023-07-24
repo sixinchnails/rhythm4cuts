@@ -102,7 +102,15 @@ body {
   padding-top: 50px;
 }
 
-.Home3 > .content > h1 {
+.Home3 > .content > .rank1 > h1 {
+  text-align: center;
+  padding-top: 50px;
+  color: aqua;
+}
+
+.Home3 > .content > .rank2 > h1 {
+  text-align: center;
+  padding-top: 50px;
   color: aqua;
 }
 
@@ -113,16 +121,61 @@ body {
   width: 100vw;
 }
 
-.Home3 > .content > .rt_sing_rank {
-  height: 700px;
+.Home3 > .content > .rank1 > .rt_sing_rank {
+  margin-top: 50px;
+  height: 750px;
   width: 35vw;
-  background-color: black;
+  background-color: #eeccd9;
+  opacity: 0.8;
+  display: flex;
+  justify-content: center;
 }
 
-.Home3 > .content > .total_rank {
-  height: 700px;
+.Home3 > .content > .rank1 > .rt_sing_rank > .category {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 90%;
+  height: 40px;
+  background-color: #f593b6;
+  font-weight: bold;
+}
+
+.Home3 > .content > .rank2 > .total_rank {
+  margin-top: 50px;
+  height: 300px;
   width: 35vw;
-  background-color: black;
+  background-color: #eeccd9;
+  opacity: 0.8;
+}
+
+.Home3 > .content > .rank2 > .nickname {
+  height: 50px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.Home3 > .content > .rank2 > .top100 {
+  margin-top: 50px;
+  height: 350px;
+  width: 35vw;
+  background-color: #eeccd9;
+  opacity: 0.8;
+  display: flex;
+  justify-content: center;
+}
+
+.Home3 > .content > .rank2 > .top100 > .category {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 90%;
+  height: 40px;
+  background-color: #f593b6;
+  font-weight: bold;
 }
 
 .Home4 {
@@ -132,4 +185,36 @@ body {
   width: 100vw;
   height: 108vh;
   position: relative;
+  padding-top: 75px;
+  display: flex;
+}
+
+.Home4 > .sideBar {
+  width: 20%;
+  margin-left: 5%;
+  font-size: xx-large;
+  font-weight: bolder;
+}
+
+.Home4 > .sideBar > .title {
+  height: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.Home4 > .sideBar > .calender {
+  height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #eeccd9;
+}
+
+.Home4 > .content {
+  width: 70%;
+  margin-right: 5%;
+  background-color: #f593b6;
+  margin-top: 10%;
 }

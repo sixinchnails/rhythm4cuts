@@ -2,7 +2,7 @@
 import "animate.css";
 import { React, useRef, useEffect } from "react";
 import { Nav, Container } from "react-bootstrap";
-import Header from "../../components/Header/Header";
+import Header from "../../components/Home/Header";
 import "./Home.css";
 
 const DIVIDER_HEIGHT = 5;
@@ -118,19 +118,45 @@ const Home = () => {
       {/** Home 3 시작하는 곳 */}
       <div className="Home3">
         <div className="content">
-          <div>
+          <div className="rank1">
             <h1>Music Rank</h1>
-            <div className="rt_sing_rank">a</div>
+            <div className="rt_sing_rank">
+              <div className="category">
+                <span>순위</span>
+                <span>제목</span>
+                <span>가수</span>
+              </div>
+            </div>
           </div>
-          <div>
+          <div className="rank2">
             <h1>Total Rank</h1>
-            <div className="total_rank">a</div>
+            <div className="total_rank"></div>
+            <div className="nickname">
+              <span>1등</span>
+              <span>2등</span>
+              <span>3등</span>
+            </div>
+            <div className="top100">
+              <div className="category">
+                <span>순위</span>
+                <span>닉네임</span>
+                <span>점수</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div className="divider"></div>
       {/** Home 4 시작하는 곳 */}
-      <div className="Home4"></div>
+      <div className="Home4">
+        <div className="sideBar">
+          <div className="title">
+            <p>Today 방명록</p>
+          </div>
+          <div className="calender">d</div>
+        </div>
+        <div className="content">2</div>
+      </div>
     </div>
   );
 };
