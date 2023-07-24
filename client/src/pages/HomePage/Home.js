@@ -2,7 +2,7 @@
 import "animate.css";
 import React from "react";
 import { Nav, Container } from "react-bootstrap";
-import Header from "../../components/Header/Header";
+import Header from "../../components/Home/Header";
 import "./Home.css";
 
 const Home = () => {

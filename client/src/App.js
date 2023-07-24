@@ -17,7 +17,7 @@ import MyPhoto from "./pages/MyPage/MyPhoto";
 
 function App() {
   return (
-    <div>
+    <div className="fixed-size">
       {/* <nav> */}
       {/* <nav>
         <ul>

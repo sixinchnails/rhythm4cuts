@@ -61,15 +61,25 @@ function GameList() {
 
   return (
     <div
+    // style={{
+    //   // width: "1920px",
+    //   // height: "1080px",
+    //   backgroundPosition: "center",
+    //   backgroundSize: "cover",
+    //   backgroundRepeat: "no-repeat",
+    //   backgroundImage: `url("/images/Game_List.jpg")`,
+    // }}>
+
       style={{
         backgroundImage: `url("/images/Game_List.jpg")`,
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
-        width: "100vw",
-        height: "100vh",
-      }}
-    >
+        // height: "100vh",
+        // width: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}>
       {/* 위쪽 컨테이너 */}
       <Row className="m-3">
         <Col>
@@ -82,10 +92,8 @@ function GameList() {
             />
           </Link>
         </Col>
-          {/* 다른 경로로 이동할 이미지를 클릭 가능하게 하기 위해 Link 컴포넌트로 감싸기 */}
-          <Link to="/GameWaiting">
-          GameWaiting로 이동
-          </Link>
+        {/* 다른 경로로 이동할 이미지를 클릭 가능하게 하기 위해 Link 컴포넌트로 감싸기 */}
+        <Link to="/GameWait">GameWait 페이지로 이동</Link>
       </Row>
       {/* 아래 컨테이너 */}
       <Container>
@@ -149,14 +157,12 @@ function GameList() {
                 <Card>
                   <Card.Body
                     className="d-flex flex-column align-items-center"
-                    style={{ height: "500px" }}
-                  >
+                    style={{ height: "500px" }}>
                     <Card.Title>유민국</Card.Title>
                     <Button
                       variant="primary"
                       onClick={handleShowAddFriendModal}
-                      className="mb-3"
-                    >
+                      className="mb-3">
                       친구추가
                     </Button>
 
@@ -298,8 +304,7 @@ function ListContainer() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-          }}
-        >
+          }}>
           <img
             src="/images/잔나비.jfif"
             alt="사랑하긴했었나요"
