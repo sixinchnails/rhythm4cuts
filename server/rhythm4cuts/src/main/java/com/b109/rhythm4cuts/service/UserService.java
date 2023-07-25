@@ -41,10 +41,12 @@ public class UserService {
         return member;
     }
 
+    //회원가입
     public String save(AddUserRequest dto) {
-        return userRepository.save(User.builder()
-                .email(dto.getEmail())
-                .password(bCryptPasswordEncoder.encode(dto.getPassword()))
-                .build()).getEmail();
+        User member = new User();
+        member.setEmail(dto.getEmail());
+        member.setPassword(dto.getPassword());
+
+        return userRepository.save(member).getEmail();
     }
 }
