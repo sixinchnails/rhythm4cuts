@@ -1,6 +1,7 @@
 package com.b109.rhythm4cuts.model.repository;
 
 import com.b109.rhythm4cuts.model.domain.User;
+import com.b109.rhythm4cuts.model.service.FriendService;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
