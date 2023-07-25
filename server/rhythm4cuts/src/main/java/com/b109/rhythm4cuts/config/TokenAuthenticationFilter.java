@@ -24,6 +24,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
         //가져온 값에서 접두사 제거
         String token = getAccessToken(authorizationHeader);
+
         //가져온 토큰이 유요한지 확인하고, 유효한 때는 인증 정보 설정
         if (tokenProvider.validToken(token)) {
             Authentication authentication = tokenProvider.getAuthentication(token);
@@ -36,6 +37,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
             return authorizationHeader.substring(TOKEN_PREFIX.length());
         }
+
         return null;
     }
 }

@@ -2,6 +2,7 @@ package com.b109.rhythm4cuts.controller;
 
 import com.b109.rhythm4cuts.config.jwt.TokenProvider;
 import com.b109.rhythm4cuts.model.domain.User;
+import com.b109.rhythm4cuts.model.dto.AddUserRequest;
 import com.b109.rhythm4cuts.model.dto.CreateAccessTokenRequest;
 import com.b109.rhythm4cuts.model.dto.CreateAccessTokenResponse;
 import com.b109.rhythm4cuts.repository.UserRepository;
@@ -29,11 +30,11 @@ public class MemberController {
 
     //API 1. 로그인
     @PostMapping("/login")
-    public CreateAccessTokenResponse login(@RequestBody Map<String, String> user) {
-        User member = userService.findByEmail(user.get("email"))
-                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
+    public ResponseEntity<CreateAccessTokenResponse> login(@RequestBody Map<String, String> user) {
+        //로그인을 시도한 이메일로 사용자 조회
+        User member = userService.findByEmail(user.get("email"));
 
-        //password 넘어오는 형식에 맞춰 수정 필요
+        //클라이언트에서 password 넘어오는 형식에 맞춰 수정 필요
         if (!member.getPassword().equals(user.get("password"))) {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
@@ -41,25 +42,23 @@ public class MemberController {
         //토큰 유효 기간 2주
         String newAccessToken = tokenProvider.generateToken(member, Duration.ofDays(14));
 
-        return new CreateAccessTokenResponse().builder()
-                .nickname(member.getNickname())
-                .points(member.getPoint())
-                .profile_img_seq(member.getProfileImage().getProfileImageSeq())
-                .accessToken(newAccessToken)
-                .build();
+        return ResponseEntity.ok()
+                .body(new CreateAccessTokenResponse().builder()
+                        .nickname(member.getNickname())
+                        .points(member.getPoint())
+                        .profile_img_seq(member.getProfileImage().getProfileImageSeq())
+                        .accessToken(newAccessToken)
+                        .build());
     }
 
     @PostMapping("/register")
-    public Long join(@RequestBody Map<String, String> user) {
-        //쉐도우복싱 수정
-        String nickname = user.get("nickname");
+    public ResponseEntity join(AddUserRequest request) {
+        //중복 여부 확인 필요
+        //이미 가입된 회원 확인 필요
+        //리포지터리에서 처리 되나?
+        userService.save(request);
 
-        try {
-            User member = userService.findByNickname(nickname);
-            
-            //해당 닉네임을 가진 유저가 없다면 서비스가 익셉션을 던져 아래서 catch
-        } catch(IllegalArgumentException e) {
-            return new ResponseEntity.status(HttpStatus.)
-        }
+        return ResponseEntity.status(HttpStatus.OK).build();
+        //return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 }

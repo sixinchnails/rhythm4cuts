@@ -17,26 +17,34 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public Integer save(AddUserRequest dto) {
-        return userRepository.save(User.builder()
-                .email(dto.getEmail())
-                .password(bCryptPasswordEncoder.encode(dto.getPassword()))
-                .build()).getUserSeq();
-    }
-
     //id로 사용자 객체를 찾는 메서드
     public User findById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Unexpected user"));
+                .orElseThrow(() -> new IllegalArgumentException("id: " + userId + " 사용자를 찾을 수 없습니다."));
     }
 
     public User findByNickname(String nickname) {
         Optional<User> user = userRepository.findByNickname(nickname);
 
+        //중복 처리 API로 변경 필요
         if (user.isPresent()) {
-            throw new IllegalArgumentException("The nickname is already used by another user.");
+            throw new IllegalArgumentException(nickname + "은 중복된 닉네임입니다.");
         }
 
         return user.get();
+    }
+
+    public User findByEmail(String email) {
+        User member = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException());
+
+        return member;
+    }
+
+    public String save(AddUserRequest dto) {
+        return userRepository.save(User.builder()
+                .email(dto.getEmail())
+                .password(bCryptPasswordEncoder.encode(dto.getPassword()))
+                .build()).getEmail();
     }
 }
