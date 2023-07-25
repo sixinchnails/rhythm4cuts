@@ -36,7 +36,11 @@ class Webcam extends React.Component {
       <video
         ref={this.videoRef}
         autoPlay
-        style={{ width: "640px", height: "480px", objectFit: "contain" }}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
       />
     );
   }

@@ -71,12 +71,12 @@ function GameList() {
     // }}>
 
       style={{
+        width: "100vw",
+        height: "100vh",
         backgroundImage: `url("/images/Game_List.jpg")`,
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
-        // height: "100vh",
-        // width: "100%",
         display: "flex",
         flexDirection: "column",
       }}>

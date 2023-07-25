@@ -1,19 +1,59 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Container, Row, Col, Button, Card } from "react-bootstrap";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Box, Button, Card, Grid, Typography, Container } from "@mui/material";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import Header from "../../components/Game/Header";
+import Header from "../../components/Game/Header_dark";
 import Webcam from "../../components/Game/Webcam";
 
-function GameShot() {
+const GameShot = () => {
+  // 5초 타이머를 설정하기 위한 상태 변수
   const [seconds, setSeconds] = useState(5);
+
+  // 캡처가 완료되었는지 여부를 확인하는 상태 변수
   const [captured, setCaptured] = useState(false);
+
+  // Frame 이미지 배열에서 현재 선택된 이미지의 인덱스를 저장하는 상태 변수
   const [imageIndex, setImageIndex] = useState(0);
+
+  // 웹캠 캡처를 위한 참조 변수
   const captureRef = useRef(null);
 
-  // 나중에 서버에서 받아올거야.
-  let frameImage = useSelector(state => state.frameImage);
+  // 유저 이미지를 표시할 Card 요소를 위한 참조 변수
+  const user1Ref = useRef(null);
 
+  // 웹캠 컴포넌트를 표시하는 Webcam 컴포넌트를 위한 참조 변수
+  const webcamRef = useRef(null);
+
+  // Frame 이미지 배열을 리덕스 상태로부터 가져옵니다.
+  let frameImage = useSelector(state => state.GameShot_frameImage);
+
+  // 웹캠으로부터 스크린샷을 찍어 이미지를 캡처하는 함수
+  const handleCapture = useCallback(() => {
+    if (webcamRef.current && !captured) {
+      const screenshot = webcamRef.current.getScreenshot();
+
+      if (screenshot) {
+        const img = document.createElement("img");
+        img.src = screenshot;
+        img.style.objectFit = "cover";
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.borderRadius = "5%";
+
+        if (user1Ref.current) {
+          // 캡처된 이미지를 user1Ref에 추가하여 표시합니다.
+          while (user1Ref.current.firstChild) {
+            user1Ref.current.firstChild.remove();
+          }
+          user1Ref.current.appendChild(img);
+        }
+
+        setCaptured(true);
+      }
+    }
+  }, [webcamRef, captured]);
+
+  // 5초 타이머를 설정하고 타이머가 끝나면 캡처 함수를 호출합니다.
   useEffect(() => {
     const timerId = setInterval(() => {
       setSeconds(prevSeconds => {
@@ -29,190 +69,176 @@ function GameShot() {
     return () => {
       clearInterval(timerId);
     };
-  });
+  }, [handleCapture, seconds]);
 
-  const user1Ref = useRef(null);
-  const webcamRef = React.createRef();
-
-  function handleCapture() {
-    if (webcamRef.current && !captured) {
-      const screenshot = webcamRef.current.getScreenshot(); // 웹캠 스크린샷을 얻습니다.
-
-      if (screenshot) {
-        const img = document.createElement("img");
-        img.src = screenshot;
-        img.style.objectFit = "cover"; // contain vs cover 골라보자
-        img.style.width = "100%";
-        img.style.height = "100%";
-        img.style.borderRadius = "5px";
-
-        if (user1Ref.current) {
-          while (user1Ref.current.firstChild) {
-            user1Ref.current.firstChild.remove();
-          }
-          user1Ref.current.appendChild(img);
-        }
-
-        setCaptured(true);
-      }
-    }
-  }
-
-  function handlePrev() {
+  // Frame 이미지 이전 버튼 핸들러
+  const handlePrev = () => {
     setImageIndex(prevIndex =>
       prevIndex === 0 ? frameImage.length - 1 : prevIndex - 1
     );
-  }
+  };
 
-  function handleNext() {
+  // Frame 이미지 다음 버튼 핸들러
+  const handleNext = () => {
     setImageIndex(prevIndex =>
       prevIndex === frameImage.length - 1 ? 0 : prevIndex + 1
     );
-  }
+  };
 
   return (
-    <div
-      style={{
-        // width: "1920px",
-        // height: "1080px",
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
         backgroundPosition: "center",
         backgroundSize: "cover",
+        position: "relative",
         backgroundRepeat: "no-repeat",
-        // backgroundImage: "url('/images/Game_Shot.png')", // 배경 이미지 URL
+        backgroundImage: "url('/images/Game_Shot.png')",
       }}>
+      {/* 상단 헤더 */}
       <Header />
-      <Container style={{ maxWidth: "80%" }}>
-        <Row>
-          <Col>
-            <div ref={captureRef}>
-              <Container
-                className="d-flex justify-content-center align-items-center"
-                style={{
-                  width: "800px",
-                  height: "500px",
-                  // backgroundColor: "#cfcfcf",
-                  margin: "40px",
-                }}>
-                {/* 캠 컴포넌트 */}
-                <Webcam ref={webcamRef} />
-              </Container>
-              <Row className="align-items-center mt-4">
-                <Col>
-                  <h4 className={captured ? "text-success" : "text-danger"}>
-                    {captured
-                      ? "촬영이 완료되었습니다."
-                      : `${seconds}초 남았습니다~`}
-                  </h4>
-                </Col>
-                <Col className="d-flex justify-content-end">
-                  <Button
-                    onClick={handleCapture}
-                    className={
-                      captured ? "bg-info text-white" : "bg-primary text-white"
-                    }>
-                    {captured ? "촬영 완료" : "촬영"}
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-          </Col>
 
-          {/* 인생네컷 */}
-          <Col>
-            <Container
-              style={{
-                width: "250px",
-                height: "600px",
-                backgroundColor: "#cfcfcf",
-                backgroundImage: `url(${frameImage[imageIndex]})`,
+      <Container
+        maxWidth="lg"
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}>
+        <Grid container spacing={10}>
+          {/* Webcam 영역 */}
+          <Grid item xs={12} md={8}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                height: "70%",
+                width: "100%",
               }}
-              className="d-flex flex-column justify-content-center">
-              <Row>
-                <Col>
-                  <Card
-                    // ref={user1Ref}
-                    style={{
-                      backgroundColor: "#f9f9f9",
-                      height: "100px",
-                      margin: "10px",
-                    }}
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <div
-                    style={{
-                      backgroundColor: "#f9f9f9",
-                      height: "100px",
-                      margin: "10px",
-                    }}>
-                    User 2
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  {/* <div
-                    style={{
-                      backgroundColor: "#f9f9f9",
-                      height: "100px",
-                      margin: "10px",
-                    }}>
-                    User 3
-                  </div>
-                   */}
-                  <Card
-                    ref={user1Ref}
-                    style={{
-                      backgroundColor: "#f9f9f9",
-                      height: "100px",
-                      margin: "10px",
-                    }}
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <div
-                    style={{
-                      backgroundColor: "#f9f9f9",
-                      height: "100px",
-                      margin: "10px",
-                    }}>
-                    User 4
-                  </div>
-                </Col>
-              </Row>
-            </Container>
+              ref={captureRef}>
+              <Box
+                sx={{
+                  flex: "1 1 auto",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                  position: "relative",
+                  borderRadius: "borderRadius",
+                }}>
+                {/* Webcam 컴포넌트를 표시합니다. */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                  }}>
+                  <Webcam ref={webcamRef} />
+                </Box>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                p={2}>
+                {/* 촬영 버튼 */}
+                <Typography variant="h6">
+                  {captured
+                    ? "촬영이 완료되었습니다."
+                    : `${seconds}초 남았습니다~`}
+                </Typography>
+                <Button
+                  variant={captured ? "contained" : "outlined"}
+                  color={captured ? "secondary" : "primary"}
+                  onClick={handleCapture}>
+                  {captured ? "촬영 완료" : "촬영"}
+                </Button>
+              </Box>
+            </Box>
+          </Grid>
 
-            <Container
-              style={{
-                width: "250px",
-                padding: "20px",
-              }}>
-              {/* 인생네컷 배경 전환 */}
-              <Row>
-                <Col md={4} className="text-center">
-                  <button onClick={handlePrev}>
-                    <FaArrowLeft />
-                  </button>
-                </Col>
-                <Col md={4} className="text-center">
-                  <button>확인</button>
-                </Col>
-                <Col md={4} className="text-center">
-                  <button onClick={handleNext}>
-                    <FaArrowRight />
-                  </button>
-                </Col>
-              </Row>
-            </Container>
-          </Col>
-        </Row>
+          {/* Frame 이미지 영역 */}
+          <Grid item xs={12} md={4}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="space-between"
+              alignItems="center">
+              <Box
+                sx={{
+                  height: "80%",
+                  width: "70%",
+                  display: "flex",
+                  flexDirection: "column",
+                  borderRadius: "borderRadius",
+                  backgroundImage: `url(${frameImage[imageIndex]})`,
+                  backgroundSize: "cover",
+                }}>
+                {/* 유저 이미지를 표시하는 Card */}
+                <Card
+                  ref={user1Ref}
+                  sx={{
+                    backgroundColor: "#f9f9f9",
+                    backgroundImage: captured
+                      ? `url(${frameImage[imageIndex]})`
+                      : `url("/images/ShotEmpty.jfif")`,
+                    height: "15vh",
+                    margin: "5%",
+                  }}></Card>
+                <Card
+                  sx={{
+                    backgroundImage: `url("/images/ShotEmpty.jfif")`,
+                    height: "15vh",
+                    margin: "5%",
+                  }}>
+                  User 2
+                </Card>
+                <Card
+                  sx={{
+                    backgroundImage: `url("/images/ShotEmpty.jfif")`,
+                    height: "15vh",
+                    margin: "5%",
+                  }}>
+                  User 3
+                </Card>
+                <Card
+                  sx={{
+                    backgroundImage: `url("/images/ShotEmpty.jfif")`,
+                    height: "15vh",
+                    margin: "5%",
+                  }}>
+                  User 4
+                </Card>
+              </Box>
+              {/* 이미지 전환 버튼 */}
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                p={2}>
+                <Button variant="outlined" color="primary" onClick={handlePrev}>
+                  <FaArrowLeft />
+                </Button>
+                <Button variant="contained" color="primary">
+                  확인
+                </Button>
+                <Button variant="outlined" color="primary" onClick={handleNext}>
+                  <FaArrowRight />
+                </Button>
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
       </Container>
-    </div>
+    </Box>
   );
-}
+};
 
 export default GameShot;

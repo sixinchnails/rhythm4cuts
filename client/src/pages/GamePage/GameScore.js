@@ -1,144 +1,109 @@
 import React from "react";
-import { Container, Row, Col, Table } from "react-bootstrap";
-import Header from "../../components/Game/Header";
-import Footer from "../../components/Game/Footer";
+import {
+  Container,
+  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Typography,
+} from "@mui/material";
+import { styled } from '@mui/system';
+import Header from "../../components/Game/Header_dark";
+import Next from "../../components/Game/NextToShot";
 import { useSelector } from "react-redux";
+import Podium from "../../components/Game/Podium";
 
+const Root = styled('div')({
+  width: "100%",
+  height: "100vh",
+  backgroundPosition: "center",
+  backgroundSize: "cover",
+  backgroundRepeat: "no-repeat",
+  backgroundImage: "url('/images/Game_Shot.png')", // 배경 이미지 URL
+});
+
+const Title = styled(Typography)({
+  textAlign: "center", 
+  marginBottom: 2,
+});
+
+const PodiumContainer = styled(Box)({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "flex-end",
+});
 
 function GameScore() {
-  // 어떤 state를 쓸건지 확실하게 하자! return + 중괄호 생략가능
-  let gameResults = useSelector(state => state.gameResults);
+  let Result = useSelector(state => state.GameScore_Result);
 
   return (
-    <div
-      style={{
-        // width: "1920px",
-        // height: "1080px",
-        backgroundPosition: "center",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundImage: "url('/images/Game_Shot.png')", // 배경 이미지 URL
-      }}>
-      <Header />
-      <h2 style={{ textAlign: "center", marginBottom: "80px" }}>Score Board</h2>
-      <Container style={{ maxWidth: "80%" }}>
-        <Row>
-          <Col>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-end",
-              }}>
-              {/* 2등 */}
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  background: "#C0C0C0",
-                  height: "300px",
-                  width: "30%",
-                  textAlign: "center",
-                  transform: "perspective(500px) rotateY(20deg)",
-                  boxShadow: "-20px 10px 5px grey",
-                }}>
-                <div style={{ width: "100%", height: "50%" }}>
-                  <img
-                    src={gameResults[1].imgSrc}
-                    alt={gameResults[1].nickname}
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                </div>
-                <img
-                  src="/images/Silver.png"
-                  alt="2nd place crown"
-                  style={{ width: "150px", height: "150px" }}
-                />
-              </div>
-              {/* 1등 */}
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  background: "#FFD700",
-                  height: "400px",
-                  width: "30%",
-                  textAlign: "center",
-                  transform: "perspective(500px) rotateY(20deg)",
-                  boxShadow: "-20px 10px 5px grey",
-                }}>
-                <div style={{ width: "100%", height: "50%" }}>
-                  <img
-                    src={gameResults[0].imgSrc}
-                    alt={gameResults[0].nickname}
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                </div>
-                <img
-                  src="/images/Gold.png"
-                  alt="1nd place crown"
-                  style={{ width: "200px", height: "200px" }}
-                />
-              </div>
-              {/* 3등 */}
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  background: "#CD7F32",
-                  height: "200px",
-                  width: "30%",
-                  textAlign: "center",
-                  transform: "perspective(500px) rotateY(20deg)",
-                  boxShadow: "-20px 10px 5px grey",
-                }}>
-                <div style={{ width: "100%", height: "50%" }}>
-                  <img
-                    src={gameResults[2].imgSrc}
-                    alt={gameResults[2].nickname}
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                </div>
-                <img
-                  src="/images/Bronze.png"
-                  alt="3nd place crown"
-                  style={{ width: "100px", height: "100px" }}
-                />
-              </div>
-            </div>
-          </Col>
-          <Col>
-            <Table style={{ height: "400px" }}>
-              <thead>
-                <tr>
-                  <th>순위</th>
-                  <th>NickName</th>
-                  <th>Score</th>
-                  <th>Reward</th>
-                </tr>
-              </thead>
-              <tbody>
-                {gameResults.map(result => (
-                  <tr key={result.rank}>
-                    <td>{result.rank}</td>
-                    <td>{result.nickname}</td>
-                    <td>{result.score}</td>
-                    <td>{result.reward}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </Col>
-        </Row>
+    <Root>
+      <Container>
+        <Header />
+        <Title variant="h3" style={{marginBottom: "3%"}}>Score Board</Title>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <PodiumContainer>
+              <Podium
+                rank="Silver"
+                src={Result[1].imgSrc}
+                color="#C0C0C0"
+                height="40vh"
+                crownWidth="80%"
+              />
+              <Podium
+                rank="Gold"
+                src={Result[0].imgSrc}
+                color="#FFD700"
+                height="50vh"
+                crownWidth="100%"
+              />
+              <Podium
+                rank="Bronze"
+                src={Result[2].imgSrc}
+                color="#CD7F32"
+                height="25vh"
+                crownWidth="50%"
+              />
+            </PodiumContainer>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TableContainer component={Paper}>
+              <Table aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>순위</TableCell>
+                    <TableCell align="right">NickName</TableCell>
+                    <TableCell align="right">Score</TableCell>
+                    <TableCell align="right">Reward</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Result.map(result => (
+                    <TableRow key={result.rank}>
+                      <TableCell component="th" scope="row">
+                        {result.rank}
+                      </TableCell>
+                      <TableCell align="right">{result.nickname}</TableCell>
+                      <TableCell align="right">{result.score}</TableCell>
+                      <TableCell align="right">{result.reward}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+        </Grid>
+        <Grid item xs={12}>
+          <Next />
+        </Grid>
       </Container>
-
-      <div>
-        <Footer />
-      </div>
-    </div>
+    </Root>
   );
 }
 

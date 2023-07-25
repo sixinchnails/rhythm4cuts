@@ -17,7 +17,7 @@ import MyPhoto from "./pages/MyPage/MyPhoto";
 
 function App() {
   return (
-    <div className="fixed-size">
+    <div>
       {/* <nav> */}
       {/* <nav>
         <ul>
@@ -68,7 +68,7 @@ function App() {
 
         <Route path="/GameList" element={<GameList />} />
         <Route path="/GameWait" element={<GameWait />} />
-        <Route path="/GamePlaying" element={<GamePlay />} />
+        <Route path="/GamePlay" element={<GamePlay />} />
         <Route path="/GameScore" element={<GameScore />} />
         <Route path="/GameShot" element={<GameShot />} />
 
