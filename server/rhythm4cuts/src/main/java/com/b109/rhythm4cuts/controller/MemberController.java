@@ -4,55 +4,62 @@ import com.b109.rhythm4cuts.config.jwt.TokenProvider;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.CreateAccessTokenRequest;
 import com.b109.rhythm4cuts.model.dto.CreateAccessTokenResponse;
+import com.b109.rhythm4cuts.repository.UserRepository;
+import com.b109.rhythm4cuts.service.TokenService;
+import com.b109.rhythm4cuts.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.util.Date;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
+    private final TokenService tokenService;
     @Autowired
     TokenProvider tokenProvider;
+    @Autowired
+    UserService userService;
 
-    //API 1. 로그인 시 JWT 액세스 토큰 발급
-    @GetMapping("/login")
-    public ResponseEntity<CreateAccessTokenResponse> createNewAccessToken(@RequestBody CreateAccessTokenRequest request) {
-        //프론트에서 들어올 매개변수가 미정이므로 우선은 닉네임과 refreshToken이 들어오는 것으로 가정
-        //첫 로그인 시에는 refreshToken이 없으므로 이에 대한 기능 추가 구현 예정
-        
-        //String newAccessToken = tokenService.createNewAccessToken(request.getRefreshToken());
-        //User user = userService.findByNickname(request.getNickname());
+    //API 1. 로그인
+    @PostMapping("/login")
+    public CreateAccessTokenResponse login(@RequestBody Map<String, String> user) {
+        User member = userService.findByEmail(user.get("email"))
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
 
-        User user = new User();
-        //액세스 토큰 유효 기간
-        Duration expiration = Duration.ofDays(14);
-        //새로 생성된 액세스 토큰
-        String newAccessToken = tokenProvider.generateToken(user,expiration);
-    
-        //토큰 유효성 점검
-        if (!tokenProvider.validToken(newAccessToken)) {
-            return null;
+        //password 넘어오는 형식에 맞춰 수정 필요
+        if (!member.getPassword().equals(user.get("password"))) {
+            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
-    
-        //닉네임, 포인트, 프로필 이미지 시퀀스, 인코딩된 액세스 토큰을 json 형식으로 반환
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new CreateAccessTokenResponse()
-                        .builder()
-                        .nickname(user.getNickname())
-                        .points(user.getPoint())
-                        .profile_img_seq(user.getProfileImage().getProfileImageSeq())
-                        //14일 후 토큰 만료하도록
-                        .accessToken(newAccessToken)
-                        .build()
-                );
+
+        //토큰 유효 기간 2주
+        String newAccessToken = tokenProvider.generateToken(member, Duration.ofDays(14));
+
+        return new CreateAccessTokenResponse().builder()
+                .nickname(member.getNickname())
+                .points(member.getPoint())
+                .profile_img_seq(member.getProfileImage().getProfileImageSeq())
+                .accessToken(newAccessToken)
+                .build();
+    }
+
+    @PostMapping("/register")
+    public Long join(@RequestBody Map<String, String> user) {
+        //쉐도우복싱 수정
+        String nickname = user.get("nickname");
+
+        try {
+            User member = userService.findByNickname(nickname);
+            
+            //해당 닉네임을 가진 유저가 없다면 서비스가 익셉션을 던져 아래서 catch
+        } catch(IllegalArgumentException e) {
+            return new ResponseEntity.status(HttpStatus.)
+        }
     }
 }

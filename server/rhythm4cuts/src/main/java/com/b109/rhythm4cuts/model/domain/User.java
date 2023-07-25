@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.model.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "USER")
+@Builder
 public class User {
 
     public User() {
@@ -83,5 +85,4 @@ public class User {
         this.profileImage = profileImage;
         profileImage.getUsers().add(this);
     }
-
 }
