@@ -43,6 +43,10 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
+    public boolean duplicateNickname(String nickname) {
+        return (userRepository.findByNickname(nickname).isPresent())? true:false;
+    }
+
     public UserDto findByNickname(String nickname) {
         User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new IllegalArgumentException(nickname));

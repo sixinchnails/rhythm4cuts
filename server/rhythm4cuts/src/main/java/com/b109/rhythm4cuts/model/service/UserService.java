@@ -11,6 +11,8 @@ public interface UserService {
     // Find a user by their nickname
     UserDto findByNickname(String nickname);
 
+    boolean duplicateNickname(String nickname);
+
     // Find a user DTO (Data Transfer Object) by their email
     UserDto findByEmail(String email);
 

@@ -24,7 +24,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
-    private final TokenService tokenService;
     private final TokenProvider tokenProvider;
     private final UserService userService;
 
@@ -68,5 +67,10 @@ public class MemberController {
     public ResponseEntity test(@RequestBody Map<String, String> params) {
         System.out.println(params);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/nickname")
+    public ResponseEntity nickname(@RequestParam String nickname) {
+
     }
 }
