@@ -20,7 +20,6 @@ import MyModify from "./pages/MyPage/MyModify";
 function App() {
   return (
     <div>
-      {/* <nav> */}
       {/* <nav>
         <ul>
           <li>
@@ -61,7 +60,6 @@ function App() {
             <Link to="/MyPhoto">MyPhoto</Link>
           </li>
         </ul>
-      </nav>
       </nav> */}
 
       <Routes>

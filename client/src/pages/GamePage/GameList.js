@@ -1,14 +1,47 @@
 import React, { useState } from "react";
-import { Grid, Pagination, Box, Button, Paper, TextField } from "@mui/material";
+import {
+  Grid,
+  Pagination,
+  Box,
+  Button,
+  Paper,
+  TextField,
+  IconButton,
+} from "@mui/material";
 import RoomList from "../../components/Game/RoomList";
 import FriendList from "../../components/Game/FriendList";
 import Header from "../../components/Game/Header_light";
 import { useSelector } from "react-redux";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import CreateRoom from "../../components/Common/CreateRoom";
+import AddFriend from "../../components/Common/AddFriend";
 
 function GameList() {
   let rooms = useSelector(state => state.GameList_Room); // 방 리스트
   let friends = useSelector(state => state.GameList_Friend); // 친구 리스트
 
+  // 방 만들기
+  const [isCreateRoomModalOpen, setCreateRoomModalOpen] = useState(false); //  '방 만들기' 모달의 상태를 관리
+  // 방만들기 상태를 업데이트하는 함수
+  const handleOpenCreateRoomModal = () => {
+    setCreateRoomModalOpen(true);
+  };
+
+  const handleCloseCreateRoomModal = () => {
+    setCreateRoomModalOpen(false);
+  };
+  // 친구 추가
+  const [isAddFriendModalOpen, setAddFriendModalOpen] = useState(false); // '친구 추가' 모달의 상태를 관리
+  // '친구 추가' 모달 상태를 업데이트하는 함수
+  const handleOpenAddFriendModal = () => {
+    setAddFriendModalOpen(true);
+  };
+
+  const handleCloseAddFriendModal = () => {
+    setAddFriendModalOpen(false);
+  };
+
+  // 방 개수 컨트롤러
   const itemsPerPage = 6; // 한 페이지당 표시할 방 수
   const [page, setPage] = useState(1); // 페이지 상태
   const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
@@ -39,24 +72,10 @@ function GameList() {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/Game_List.png')",
-      }}
-    >
+      }}>
       <Header />
       <Grid container spacing="2%">
-        <Grid item xs={8} margin={"1%"}>
-          <Box display="flex" justifyContent="flex-end" marginBottom="1%">
-            <TextField
-              label="검색"
-              variant="outlined"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              style={{ width: "20%" }} // 검색창 스타일링
-              placeholder="방 번호 or 노래 제목"
-              InputProps={{
-                style: { color: "#ffffff" },
-              }}
-            />
-          </Box>
+        <Grid item xs={8} margin={"3%"}>
           <Grid container spacing={2}>
             {filteredRooms
               .slice((page - 1) * itemsPerPage, page * itemsPerPage)
@@ -76,8 +95,7 @@ function GameList() {
               backgroundColor: "#f5f5f5", // 배경색을 연한 회색으로 설정
               marginTop: "1%",
               width: "100%", // 너비를 100%로 설정
-            }}
-          >
+            }}>
             <Pagination
               count={noOfPages}
               page={page}
@@ -102,18 +120,47 @@ function GameList() {
           </Paper>
         </Grid>
         <Grid item xs={3}>
+          <Box display="flex" justifyContent="flex-end" marginBottom="1%">
+            <IconButton
+              onClick={() => {
+                // State상태 Update되도록 추후 추가예정
+              }}
+              sx={{ marginRight: 1 }}>
+              <RefreshIcon style={{ color: "#ffffff" }} />
+            </IconButton>
+            <TextField
+              label="검색"
+              variant="outlined"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              style={{ width: "100%" }} // 검색창 스타일링
+              placeholder="방 번호 or 노래 제목"
+              InputProps={{
+                style: { color: "#ffffff" },
+              }}
+            />
+          </Box>
           <Paper elevation={10}>
             <Box p={5}>
               <Grid container direction="column">
                 <Grid item xs={12}>
                   <Box display="flex" justifyContent="space-between" mb={2}>
-                    <Button variant="contained">방 만들기</Button>
+                    {/* <Button variant="contained">방 만들기</Button> */}
+                    <Button
+                      variant="contained"
+                      onClick={handleOpenCreateRoomModal}>
+                      방 만들기
+                    </Button>
                     <Button variant="contained">빠른 입장</Button>
                   </Box>
                 </Grid>
                 <Grid item xs={12}>
                   <Box display="flex" justifyContent="center" mb={2}>
-                    <Button variant="contained">친구 추가</Button>
+                    <Button
+                      variant="contained"
+                      onClick={handleOpenAddFriendModal}>
+                      친구 추가
+                    </Button>
                   </Box>
                   <Box
                     style={{
@@ -123,8 +170,7 @@ function GameList() {
                       justifyContent: "center",
                       height: "50vh",
                       overflow: "auto",
-                    }}
-                  >
+                    }}>
                     <FriendList friends={friends} />
                   </Box>
                 </Grid>
@@ -133,6 +179,18 @@ function GameList() {
           </Paper>
         </Grid>
       </Grid>
+
+      {/* '방 만들기' 모달 */}
+      <CreateRoom
+        isOpen={isCreateRoomModalOpen}
+        handleClose={handleCloseCreateRoomModal}
+      />
+
+      {/* '친구 추가' 모달 */}
+      <AddFriend
+        isOpen={isAddFriendModalOpen}
+        handleClose={handleCloseAddFriendModal}
+      />
     </div>
   );
 }
