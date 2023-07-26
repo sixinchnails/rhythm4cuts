@@ -16,4 +16,6 @@ public interface FriendRepository {
     void updateRequestFriendToConfirm(int userSeq1, int userSeq2) throws SQLException;
     void updateRequestFriendToReject(int userSeq1, int userSeq2) throws SQLException;
     void deleteFriend(int userSeq1, int userSeq2) throws SQLException;
+
+    User selectUser(Integer userSeq) throws SQLException;
 }

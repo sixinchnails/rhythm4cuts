@@ -18,4 +18,6 @@ public interface FriendService {
     public void requestFriend(FriendDto friendDto) throws Exception;
     public void rejectFriend(FriendDto friendDto) throws Exception;
     public void deleteFriend(int userSeq1, int userSeq2) throws Exception;
+
+    UserDto getUserInfo(Integer userSeq) throws Exception;
 }

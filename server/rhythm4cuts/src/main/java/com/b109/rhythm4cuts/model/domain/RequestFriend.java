@@ -45,7 +45,7 @@ public class RequestFriend {
         toUser.getRequestToFriends().add(this);
     }
 
-    public void setFromFriend(User FromUser) {
+    public void setFromFriend(User fromUser) {
         this.fromUser = fromUser;
         fromUser.getRequestFromFriends().add(this);
     }

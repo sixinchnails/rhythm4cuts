@@ -18,7 +18,19 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FriendController {
 
-    public FriendService friendService;
+    private final FriendService friendService;
+
+    @GetMapping("/info/{userSeq}")
+    public ResponseEntity<?> getUserInfo(@PathVariable("userSeq") Integer userSeq) throws Exception {
+        UserDto userInfo = friendService.getUserInfo(userSeq);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("message", "Success");
+        res.put("statusCode", 200);
+        res.put("data", userInfo);
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
 
     //친구 정보 조회
     @GetMapping("/list/{userSeq}")
@@ -57,9 +69,9 @@ public class FriendController {
     }
 
     //친구 요청한 유저 정보
-    @GetMapping("/request")
+    @GetMapping("/request/{userSeq}")
     public ResponseEntity<?> getRequestFriendList(@PathVariable("userSeq") Integer userSeq) throws Exception {
-        List<UserDto> friendList = friendService.getFriendList(userSeq);
+        List<UserDto> friendList = friendService.getRequestFriendList(userSeq);
 
         Map<String, Object> res = new HashMap<>();
         res.put("message", "Success");
@@ -71,8 +83,9 @@ public class FriendController {
     //친구 요청
     @PostMapping("/request")
     public ResponseEntity<?> requestFriend(@RequestBody FriendDto requestFriend) throws Exception {
+        System.out.println(requestFriend.getFromUser());
+        System.out.println(friendService);
         friendService.requestFriend(requestFriend);
-
         Map<String, Object> res = new HashMap<>();
         res.put("message", "Success");
         res.put("statusCode", 200);

@@ -16,18 +16,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FriendServiceImpl implements FriendService{
 
-    FriendRepository friendRepository;
+    private final FriendRepository friendRepository;
     @Override
     public List<UserDto> getFriendList(int userSeq) throws Exception {
         List<User> users = friendRepository.selectFriendList(userSeq);
 
         List<UserDto> res = new ArrayList<>();
         users.forEach(user->{
-            UserDto userDto = new UserDto();
-            userDto.setName(user.getName());
-            userDto.setNickname(user.getNickname());
-            userDto.setUserSeq(user.getUserSeq());
-            res.add(userDto);
+            res.add(user.getUserDto());
         });
 
         return res;
@@ -38,11 +34,8 @@ public class FriendServiceImpl implements FriendService{
         List<User> users = friendRepository.selectSearchFriend(searchStr);
         List<UserDto> res = new ArrayList<>();
         users.forEach(user->{
-            UserDto userDto = new UserDto();
-            userDto.setName(user.getName());
-            userDto.setNickname(user.getNickname());
-            userDto.setUserSeq(user.getUserSeq());
-            res.add(userDto);
+
+            res.add(user.getUserDto());
         });
 
         return res;
@@ -51,13 +44,11 @@ public class FriendServiceImpl implements FriendService{
     @Override
     public List<UserDto> getRequestFriendList(int userSeq) throws Exception {
         List<User> users = friendRepository.selectRequestFriendList(userSeq);
+        System.out.println(users);
         List<UserDto> res = new ArrayList<>();
         users.forEach(user->{
-            UserDto userDto = new UserDto();
-            userDto.setName(user.getName());
-            userDto.setNickname(user.getNickname());
-            userDto.setUserSeq(user.getUserSeq());
-            res.add(userDto);
+
+            res.add(user.getUserDto());
         });
 
         return res;
@@ -84,5 +75,13 @@ public class FriendServiceImpl implements FriendService{
     public void deleteFriend(int userSeq1, int userSeq2) throws Exception {
         friendRepository.deleteFriend(userSeq1, userSeq2);
         friendRepository.deleteFriend(userSeq2, userSeq1);
+    }
+
+    @Override
+    public UserDto getUserInfo(Integer userSeq) throws Exception{
+        User user = friendRepository.selectUser(userSeq);
+        UserDto userDto = user.getUserDto();
+
+        return userDto;
     }
 }
