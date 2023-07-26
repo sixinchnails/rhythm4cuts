@@ -1,12 +1,14 @@
 // Home.js
 import "animate.css";
-import { React, useRef, useEffect } from "react";
-import { Nav, Container } from "react-bootstrap";
+import { React, useRef, useEffect, useState } from "react";
 import Header from "../../components/Home/Header";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import "./Home.css";
 
 const DIVIDER_HEIGHT = 5;
 const Home = () => {
+  const [startDate, setStartDate] = useState(new Date());
   const outerDivRef = useRef();
   useEffect(() => {
     const wheelHandler = (e) => {
@@ -82,8 +84,8 @@ const Home = () => {
       {/** Home 1 시작하는 곳 */}
       <div className="Home1">
         <Header />
-        <Container className="main1">
-          <Nav>
+        <div className="main1">
+          <div className="beatbox">
             <div className="Logo">
               <img
                 className="img"
@@ -91,8 +93,8 @@ const Home = () => {
                 src="images/Home_Effect2.png"
               ></img>
             </div>
-          </Nav>
-          <Nav>
+          </div>
+          <div>
             <div className="playBtn">
               <a href="/GameList">
                 <img
@@ -102,8 +104,8 @@ const Home = () => {
                 ></img>
               </a>
             </div>
-          </Nav>
-        </Container>
+          </div>
+        </div>
       </div>
       <div className="divider"></div>
       {/** Home 2 시작하는 곳 */}
@@ -151,14 +153,43 @@ const Home = () => {
       <div className="Home4">
         <div className="sideBar">
           <div className="title">
-            <p>Today 방명록</p>
+            <span>Today 방명록</span>
           </div>
-          <div className="calender">d</div>
+          <div className="calender">
+            <DatePicker
+              className="datePicker"
+              dateFormat="yyyy.MM.dd" // 날짜 형태
+              shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+            />
+          </div>
         </div>
-        <div className="content">2</div>
+        <div className="content">
+          <div className="line1">
+            <div className="picture"></div>
+            <div className="picture"></div>
+            <div className="picture"></div>
+            <div className="picture"></div>
+          </div>
+          <div className="line2">
+            <div className="picture"></div>
+            <div className="picture"></div>
+            <div className="picture"></div>
+            <div className="picture"></div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
+
+// const picture = () => {
+//   return(
+//     <div>
+
+//     </div>
+//   )
+// };
 
 export default Home;

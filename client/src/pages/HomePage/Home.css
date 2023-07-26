@@ -22,15 +22,25 @@ body {
   background-color: gray;
 }
 
+.Home1 > .main1 {
+}
+
+.Home1 > .main1 > .beatbox {
+  width: 60%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .Logo {
   background-image: url(../../../public/images/Home_Effect1.png);
   background-size: cover;
   background-position: center;
-  width: 500px;
-  height: 500px;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 50%;
+  height: 45vh;
 }
 
 .img {
@@ -39,7 +49,8 @@ body {
 }
 
 .playBtn {
-  margin-left: 50px;
+  margin-left: 19%;
+  margin-top: 3%;
 }
 
 .Home1 {
@@ -137,7 +148,7 @@ body {
   justify-content: space-around;
   align-items: center;
   width: 90%;
-  height: 40px;
+  height: 5%;
   background-color: #f593b6;
   font-weight: bold;
 }
@@ -158,7 +169,7 @@ body {
 }
 
 .Home3 > .content > .rank2 > .top100 {
-  margin-top: 50px;
+  margin-top: 10%;
   height: 350px;
   width: 35vw;
   background-color: #eeccd9;
@@ -173,7 +184,7 @@ body {
   justify-content: space-around;
   align-items: center;
   width: 90%;
-  height: 40px;
+  height: 10.715%;
   background-color: #f593b6;
   font-weight: bold;
 }
@@ -183,9 +194,8 @@ body {
   background-size: cover;
   background-position: center;
   width: 100vw;
-  height: 108vh;
+  height: 100vh;
   position: relative;
-  padding-top: 75px;
   display: flex;
 }
 
@@ -208,13 +218,95 @@ body {
   height: 80%;
   display: flex;
   justify-content: center;
-  align-items: center;
   background-color: #eeccd9;
 }
 
+.Home4 > .sideBar > .calender > .react-datepicker-wrapper {
+  padding-top: 5%;
+}
+
+.Home4
+  > .sideBar
+  > .calender
+  > .react-datepicker-wrapper
+  > .react-datepicker__input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Home4
+  > .sideBar
+  > .calender
+  > .react-datepicker-wrapper
+  > .react-datepicker__input-container
+  > .datePicker {
+  display: flex;
+  justify-content: center;
+  background-color: black;
+  box-sizing: border-box;
+  width: 80%;
+  height: 10%;
+  color: WHITE;
+  text-align: center;
+}
+
+.Home4
+  > div.sideBar
+  > div.calender
+  > div.react-datepicker__tab-loop
+  > div.react-datepicker-popper {
+  display: flex !important;
+  justify-content: center !important;
+  margin-left: 1.2%;
+}
+
+.Home4
+  > div.sideBar
+  > div.calender
+  > div.react-datepicker__tab-loop
+  > div.react-datepicker-popper
+  > div
+  > div
+  > div.react-datepicker__triangle {
+  transform: translate(125px, 0px) !important;
+}
+
 .Home4 > .content {
-  width: 70%;
-  margin-right: 5%;
+  width: 65%;
+  height: 80%;
   background-color: #f593b6;
-  margin-top: 10%;
+  margin-top: 10vh;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.Home4 > .content > .line1 {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Home4 > .content > .line1 > .picture {
+  width: 20%;
+  height: 90%;
+  background-color: black;
+  margin: 5%;
+}
+
+.Home4 > .content > .line2 {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Home4 > .content > .line2 > .picture {
+  width: 20%;
+  height: 90%;
+  background-color: black;
+  margin: 5%;
 }
