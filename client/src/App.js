@@ -15,6 +15,7 @@ import MyPage from "./pages/MyPage/Mypage";
 import MyFriend from "./pages/MyPage/MyFriend";
 import MyPoint from "./pages/MyPage/MyPoint";
 import MyPhoto from "./pages/MyPage/MyPhoto";
+import MyModify from "./pages/MyPage/MyModify";
 
 function App() {
   return (
@@ -78,6 +79,7 @@ function App() {
         <Route path="/MyFriend" element={<MyFriend />} />
         <Route path="/MyPoint" element={<MyPoint />} />
         <Route path="/MyPhoto" element={<MyPhoto />} />
+        <Route path="/MyModify" element={<MyModify />} />
       </Routes>
     </div>
   );

@@ -10,9 +10,9 @@ import { toggleReady } from "../../store";
 
 function GameWait() {
   const dispatch = useDispatch();
-  let isReady = useSelector((state) => state.GameWait_Ready); // 준비 상태 전체를 조회
+  let isReady = useSelector(state => state.GameWait_Ready); // 준비 상태 전체를 조회
 
-  const handleToggleReady = (playerId) => {
+  const handleToggleReady = playerId => {
     dispatch(toggleReady(playerId));
   };
 

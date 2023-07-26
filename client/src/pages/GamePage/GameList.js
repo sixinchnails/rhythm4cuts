@@ -6,8 +6,8 @@ import Header from "../../components/Game/Header_light";
 import { useSelector } from "react-redux";
 
 function GameList() {
-  let rooms = useSelector((state) => state.GameList_Room); // 방 리스트
-  let friends = useSelector((state) => state.GameList_Friend); // 친구 리스트
+  let rooms = useSelector(state => state.GameList_Room); // 방 리스트
+  let friends = useSelector(state => state.GameList_Friend); // 친구 리스트
 
   const itemsPerPage = 6; // 한 페이지당 표시할 방 수
   const [page, setPage] = useState(1); // 페이지 상태
@@ -15,7 +15,7 @@ function GameList() {
 
   // 검색어에 따라 방 리스트 필터링
   let filteredRooms = rooms.filter(
-    (room) =>
+    room =>
       room.number.toString().toLowerCase().includes(searchTerm.toLowerCase()) || // 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
       room.song.toLowerCase().includes(searchTerm.toLowerCase()) // 노래 제목이 검색어를 포함하는지 확인
   );
@@ -26,7 +26,7 @@ function GameList() {
     setPage(value); // 페이지 변경 이벤트 핸들러
   };
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = event => {
     setSearchTerm(event.target.value); // 검색어 변경 이벤트 핸들러
   };
 
