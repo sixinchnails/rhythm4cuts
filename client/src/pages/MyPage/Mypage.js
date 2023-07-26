@@ -1,9 +1,10 @@
 import Header from "../../components/Home/Header";
 import { useNavigate } from "react-router-dom";
+// Home.js
+import React, { useEffect } from "react";
 import "./Mypage.css";
 import Sidebar from "../../components/My/My_SideBar";
 // 마이 페이지들 import
-import React, { useEffect } from "react";
 import MainContent from "../../components/My/My_MainContent"; // MainContent 컴포넌트를 import
 import UserInfo from "../../components/My/My_UserInfo"; // UserInfo 컴포넌트를 import
 import Button from "@mui/material/Button";

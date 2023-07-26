@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom"; //Link,
 
 import Home from "./pages/HomePage/Home";
 import Join from "./pages/HomePage/Join";
+import Login from "./pages/HomePage/Login";
 
 import GameList from "./pages/GamePage/GameList";
 import GameWait from "./pages/GamePage/GameWait";
@@ -65,11 +66,12 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/Login" element={<Login />} />
         <Route path="/Join" element={<Join />} />
 
         <Route path="/GameList" element={<GameList />} />
         <Route path="/GameWait" element={<GameWait />} />
-        <Route path="/GamePlaying" element={<GamePlay />} />
+        <Route path="/GamePlay" element={<GamePlay />} />
         <Route path="/GameScore" element={<GameScore />} />
         <Route path="/GameShot" element={<GameShot />} />
 
