@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public interface FilmService {
 
-    public List<FilmDto> getPhotoList(String date);
+    public List<FilmDto> getPhotoList(String createDate);
     public List<BackgroundDto> getBackgroundList();
     public void addPhoto(FilmDto filmDto);
 }
