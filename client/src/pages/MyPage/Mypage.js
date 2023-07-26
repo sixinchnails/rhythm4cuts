@@ -1,107 +1,77 @@
-// Home.js
-import React, { useEffect } from "react";
-import Header from "../../components/Header/Header";
-import { Link, Route, Routes, useLocation } from "react-router-dom";
+import Header from "../../components/Home/Header";
+import { useNavigate } from "react-router-dom";
 import "./Mypage.css";
-// 마이페이지들 import
-import Mypage from "./Mypage";
-import MyFriend from "./MyFriend";
-import MyPhoto from "./MyPhoto";
-import MyPoint from "./MyPoint";
+import Sidebar from "../../components/My/My_SideBar";
+// 마이 페이지들 import
+import React, { useEffect } from "react";
+import MainContent from "../../components/My/My_MainContent"; // MainContent 컴포넌트를 import
+import UserInfo from "../../components/My/My_UserInfo"; // UserInfo 컴포넌트를 import
+import Button from "@mui/material/Button";
 
 const Home = () => {
-  // 배경색 설정
+  let navigate = useNavigate();
+  const userInfo = [
+    { name: "이름", value: "응애강현" },
+    { name: "닉네임", value: "코딩응애" },
+    { name: "아이디", value: "hyun123" },
+    { name: "생일", value: "1998-08-21 ^^" },
+    { name: "성별", value: "남자" },
+  ];
+  // 배경색 변경
   useEffect(() => {
-    document.body.style.backgroundColor = "#f8e8ee";
+    document.body.style.backgroundColor = "#F8E8EE";
+
+    // 컴포넌트 unmount 시점에 원래의 배경색으로 되돌리기 위한 cleanup 함수
     return () => {
       document.body.style.backgroundColor = null;
     };
   }, []);
-
   return (
-    <div>
-      {/* navbar */}
-      <Header />
-      {/* 사이드바 */}
-      <Sidebar></Sidebar>
-      {/* 클릭 시 페이지로 넘어가게 하기 */}
-      <Routes>
-        <Route path="Mypage" element={<Mypage />} />
-        <Route path="MyFriend" element={<MyFriend />} />
-        <Route path="MyPoint" element={<MyPoint />} />
-        <Route path="MyPhoto" element={<MyPhoto />} />
-      </Routes>
-    </div>
+    <>
+      <Header></Header>
+      {/* 사이드바와 메인 제목을 수평으로 배치하기 위해서는 Flexbox 또는 CSS Grid를 사용해야한다.
+      그럴려면 사이드 바와 메인 제목을 감싸고 있는 부모 요소가 필요하다.
+      그 부모 요소는 사이드 바와 메인 제목을 자식 요소로 갖고, 이 자식 요소들을 수평으로 배치한다. */}
+      <div className="page-container">
+        <Sidebar></Sidebar>
+        <div className="main-container">
+          <MainContent></MainContent>
+          <UserInfo info={userInfo} />
+          {/* UserInfo 컴포넌트를 사용하여 사용자 정보를 표시합니다. */}
+        </div>
+        <div className="buttons">
+          {/* 정보 수정 버튼을 누르면 MyModify페이지로 넘어가게 해준다 */}
+          <Button
+            variant="contained"
+            color="primary"
+            className="edit-button"
+            onClick={() => {
+              navigate("/MyModify");
+            }}
+            style={{
+              backgroundColor: "#F2BED1",
+              color: "#000000",
+              fontWeight: "bold",
+            }}
+          >
+            정보 수정
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            className="delete-button"
+            style={{
+              backgroundColor: "#F2BED1",
+              color: "#000000",
+              fontWeight: "bold",
+            }}
+          >
+            회원 탈퇴
+          </Button>
+        </div>
+      </div>
+    </>
   );
 };
-
-function Sidebar() {
-  const location = useLocation();
-  const menus = [
-    { name: "My 회원 정보", isTitle: true, isFirst: true },
-    { name: "가입 정보", path: "/Mypage", isSubitem: true },
-    { name: "친구 정보", path: "/MyFriend", isSubitem: true },
-    { name: "point 정보", path: "/MyPoint", isSubitem: true, hasDivider: true },
-    { name: "My Photo", path: "/MyPhoto", isTitle: true, hasTopPadding: true },
-  ];
-
-  return (
-    <div className="sidebar">
-      {menus.map((menu, index) => {
-        const isActive = location.pathname === menu.path;
-        return (
-          <SidebarItem
-            key={index}
-            menu={menu}
-            isActive={isActive}
-            isTitle={menu.isTitle}
-            isFirst={menu.isFirst}
-            hasTopPadding={menu.hasTopPadding}
-            isSubitem={menu.isSubitem}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
-// 사이드 바 글자 나타내게 하는 곳
-function SidebarItem({
-  menu,
-  isActive,
-  isTitle,
-  isFirst,
-  hasTopPadding,
-  isSubitem,
-}) {
-  return (
-    <div
-      className={`sidebar-item 
-        ${isTitle ? "menu-title" : ""} 
-        ${menu.hasDivider ? "menu-divider" : ""} 
-        ${isFirst ? "menu-first" : ""}
-        ${hasTopPadding ? "menu-padding-top" : ""}
-        ${isSubitem ? "menu-subitem" : ""}
-        ${isActive ? "active" : ""}  /* New class for active state */
-      `}
-    >
-      {menu.path ? (
-        <Link
-          to={menu.path}
-          className={`link-item ${isActive ? "active" : ""}`}
-          style={{
-            textDecoration: "none",
-            color: isActive ? "white" : "black",
-            backgroundColor: isActive ? "black" : "transparent",
-          }}
-        >
-          <p>{menu.name}</p>
-        </Link>
-      ) : (
-        <p>{menu.name}</p>
-      )}
-    </div>
-  );
-}
 
 export default Home;
