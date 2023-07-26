@@ -1,13 +1,18 @@
 package com.b109.rhythm4cuts.controller;
 
+import com.b109.rhythm4cuts.model.service.FilmService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/film")
+@RequiredArgsConstructor
 public class FilmController {
     
     // 인생네컷의 테두리 개수 (추후 DB에서 count 함수로 값을 끌어올 예정)
-    static final int PHOTO_SIZE = 4;
+    private static final int PHOTO_SIZE = 4;
+
+    private final FilmService filmService;
 
     // API 1. 인생네컷 사진 촬영
     @PostMapping("/photo")
