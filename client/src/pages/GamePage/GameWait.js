@@ -25,7 +25,8 @@ function GameWait() {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/Game_Waiting.jpg')", // 배경 이미지 URL
-      }}>
+      }}
+    >
       <Grid container>
         <Grid item xs={12}>
           <Container>
@@ -45,7 +46,8 @@ function GameWait() {
                   width: "70vw",
                   height: "50vh",
                   margin: "1%",
-                }}>
+                }}
+              >
                 대기중 음악 비디오
               </Card>
 
@@ -78,7 +80,8 @@ function GameWait() {
               position: "fixed",
               bottom: "2%",
               right: "2%",
-            }}>
+            }}
+          >
             <Button variant="contained" color="primary" className="mb-2">
               채팅
             </Button>
@@ -86,7 +89,8 @@ function GameWait() {
               variant={isReady.player1 ? "warning" : "success"}
               // 현재 player 1이라고 가정
               onClick={() => handleToggleReady("player1")}
-              className="mb-2">
+              className="mb-2"
+            >
               {isReady.player1 ? "Ready" : "준비하자!"}
             </Button>
             <MuiLink to="/GameList" component={Link}>

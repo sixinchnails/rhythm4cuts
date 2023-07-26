@@ -1,20 +1,13 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  Pagination,
-  Box,
-  Button,
-  Paper,
-  TextField,
-} from "@mui/material";
+import { Grid, Pagination, Box, Button, Paper, TextField } from "@mui/material";
 import RoomList from "../../components/Game/RoomList";
 import FriendList from "../../components/Game/FriendList";
 import Header from "../../components/Game/Header_light";
 import { useSelector } from "react-redux";
 
 function GameList() {
-  let rooms = useSelector(state => state.GameList_Room); // 방 리스트
-  let friends = useSelector(state => state.GameList_Friend); // 친구 리스트
+  let rooms = useSelector((state) => state.GameList_Room); // 방 리스트
+  let friends = useSelector((state) => state.GameList_Friend); // 친구 리스트
 
   const itemsPerPage = 6; // 한 페이지당 표시할 방 수
   const [page, setPage] = useState(1); // 페이지 상태
@@ -22,7 +15,7 @@ function GameList() {
 
   // 검색어에 따라 방 리스트 필터링
   let filteredRooms = rooms.filter(
-    room =>
+    (room) =>
       room.number.toString().toLowerCase().includes(searchTerm.toLowerCase()) || // 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
       room.song.toLowerCase().includes(searchTerm.toLowerCase()) // 노래 제목이 검색어를 포함하는지 확인
   );
@@ -33,7 +26,7 @@ function GameList() {
     setPage(value); // 페이지 변경 이벤트 핸들러
   };
 
-  const handleSearchChange = event => {
+  const handleSearchChange = (event) => {
     setSearchTerm(event.target.value); // 검색어 변경 이벤트 핸들러
   };
 
@@ -46,7 +39,8 @@ function GameList() {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/Game_List.png')",
-      }}>
+      }}
+    >
       <Header />
       <Grid container spacing="2%">
         <Grid item xs={8} margin={"1%"}>
@@ -82,7 +76,8 @@ function GameList() {
               backgroundColor: "#f5f5f5", // 배경색을 연한 회색으로 설정
               marginTop: "1%",
               width: "100%", // 너비를 100%로 설정
-            }}>
+            }}
+          >
             <Pagination
               count={noOfPages}
               page={page}
@@ -128,7 +123,8 @@ function GameList() {
                       justifyContent: "center",
                       height: "50vh",
                       overflow: "auto",
-                    }}>
+                    }}
+                  >
                     <FriendList friends={friends} />
                   </Box>
                 </Grid>
