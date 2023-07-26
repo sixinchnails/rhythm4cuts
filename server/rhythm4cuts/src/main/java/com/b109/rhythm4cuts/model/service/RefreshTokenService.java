@@ -1,9 +1,9 @@
-package com.b109.rhythm4cuts.service;
+package com.b109.rhythm4cuts.model.service;
 
 import com.b109.rhythm4cuts.model.domain.RefreshToken;
-import com.b109.rhythm4cuts.repository.RefreshTokenRepository;
+
+import com.b109.rhythm4cuts.model.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor

@@ -1,10 +1,10 @@
-package com.b109.rhythm4cuts.service;
+package com.b109.rhythm4cuts.model.service;
 
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.AddUserRequest;
-import com.b109.rhythm4cuts.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 
+import com.b109.rhythm4cuts.model.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +46,10 @@ public class UserService {
         User member = new User();
         member.setEmail(dto.getEmail());
         member.setPassword(dto.getPassword());
+
+        System.out.println("Print member");
+        System.out.println(member.getEmail());
+        System.out.println(member.getPassword());
 
         return userRepository.save(member).getEmail();
     }

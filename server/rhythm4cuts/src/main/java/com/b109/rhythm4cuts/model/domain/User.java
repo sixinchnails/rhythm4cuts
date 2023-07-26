@@ -19,7 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "USER")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_seq")

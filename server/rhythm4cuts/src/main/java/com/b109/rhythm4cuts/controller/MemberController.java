@@ -5,12 +5,13 @@ import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.AddUserRequest;
 import com.b109.rhythm4cuts.model.dto.CreateAccessTokenRequest;
 import com.b109.rhythm4cuts.model.dto.CreateAccessTokenResponse;
-import com.b109.rhythm4cuts.repository.UserRepository;
-import com.b109.rhythm4cuts.service.TokenService;
-import com.b109.rhythm4cuts.service.UserService;
+
+import com.b109.rhythm4cuts.model.service.TokenService;
+import com.b109.rhythm4cuts.model.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
+    @Autowired
     private final TokenService tokenService;
     @Autowired
     TokenProvider tokenProvider;
@@ -46,13 +48,13 @@ public class MemberController {
                 .body(new CreateAccessTokenResponse().builder()
                         .nickname(member.getNickname())
                         .points(member.getPoint())
-                        .profile_img_seq(member.getProfileImage().getProfileImageSeq())
+//                        .profile_img_seq(member.getProfileImage().getProfileImageSeq())
                         .accessToken(newAccessToken)
                         .build());
     }
 
     @PostMapping("/register")
-    public ResponseEntity join(AddUserRequest request) {
+    public ResponseEntity register(@RequestBody AddUserRequest request) {
         //중복 여부 확인 필요
         //이미 가입된 회원 확인 필요
         //리포지터리에서 처리 되나?
@@ -62,8 +64,9 @@ public class MemberController {
         //return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
-    @GetMapping("/test")
-    public ResponseEntity test() {
+    @PostMapping("/test")
+    public ResponseEntity test(@RequestBody Map<String, String> params) {
+        System.out.println(params);
         return ResponseEntity.ok().build();
     }
 }
