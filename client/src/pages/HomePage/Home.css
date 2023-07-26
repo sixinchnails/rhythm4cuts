@@ -80,20 +80,20 @@ body {
 .Home2 > .content {
   display: flex;
   justify-content: space-evenly;
-  align-items: center;
   width: 100vw;
+  height: 100vh;
   margin-top: 50px;
 }
 
 .Home2 > .content > .intro {
-  width: 700px;
-  height: 700px;
+  width: 40vw;
+  height: 75vh;
   background-color: black;
 }
 
 .Home2 > .content > .rules {
-  width: 700px;
-  height: 700px;
+  width: 40vw;
+  height: 75vh;
   background-color: black;
 }
 
@@ -106,35 +106,29 @@ body {
   position: relative;
 }
 
-.Home3 > .titles {
-  width: 100vw;
-  display: flex;
-  justify-content: space-evenly;
-  padding-top: 50px;
+.Home3 > .content > .rank1 {
+  margin-top: 5%;
 }
 
 .Home3 > .content > .rank1 > h1 {
   text-align: center;
-  padding-top: 50px;
   color: aqua;
 }
 
 .Home3 > .content > .rank2 > h1 {
   text-align: center;
-  padding-top: 50px;
   color: aqua;
 }
 
 .Home3 > .content {
   display: flex;
   justify-content: space-evenly;
-  align-items: center;
   width: 100vw;
 }
 
 .Home3 > .content > .rank1 > .rt_sing_rank {
   margin-top: 50px;
-  height: 750px;
+  height: 70vh;
   width: 35vw;
   background-color: #eeccd9;
   opacity: 0.8;
@@ -153,16 +147,19 @@ body {
   font-weight: bold;
 }
 
+.Home3 > .content > .rank2 {
+  margin-top: 5%;
+}
 .Home3 > .content > .rank2 > .total_rank {
   margin-top: 50px;
-  height: 300px;
+  height: 30%;
   width: 35vw;
   background-color: #eeccd9;
   opacity: 0.8;
 }
 
 .Home3 > .content > .rank2 > .nickname {
-  height: 50px;
+  height: 5%;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -170,7 +167,7 @@ body {
 
 .Home3 > .content > .rank2 > .top100 {
   margin-top: 10%;
-  height: 350px;
+  height: 40%;
   width: 35vw;
   background-color: #eeccd9;
   opacity: 0.8;
