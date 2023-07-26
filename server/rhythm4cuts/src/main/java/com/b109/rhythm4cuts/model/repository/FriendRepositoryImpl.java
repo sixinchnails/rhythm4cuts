@@ -1,6 +1,8 @@
 package com.b109.rhythm4cuts.model.repository;
 
 import com.b109.rhythm4cuts.model.domain.FriendList;
+import com.b109.rhythm4cuts.model.domain.RequestFriend;
+import com.b109.rhythm4cuts.model.domain.RequestStatus;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.FriendDto;
 import com.b109.rhythm4cuts.model.dto.UserDto;
@@ -18,57 +20,99 @@ public class FriendRepositoryImpl implements FriendRepository{
 
     private final EntityManager em;
     @Override
-    public List<UserDto> selectFriendList(int userSeq) throws SQLException {
+    public List<User> selectFriendList(int userSeq) throws SQLException {
         //select u from friendList as f join user as u on f.to_user = u.user_seq where f.from_user = userSeq
         String jpql = "SELECT u FROM FriendList f JOIN f.toUser u WHERE f.fromUser.userSeq = :userSeq";
-        List<User> users = em.createQuery(jpql, User.class)
+        return em.createQuery(jpql, User.class)
                 .setParameter("userSeq", userSeq)
                 .getResultList();
-        List<UserDto> res = new ArrayList<>();
-        users.forEach(user->{
-            UserDto userDto = new UserDto();
-            userDto.setName(user.getName());
-            userDto.setNickname(user.getNickname());
-            userDto.setUserSeq(user.getUserSeq());
-            res.add(userDto);
-        });
 
-        return res;
     }
 
     @Override
-    public List<UserDto> selectSearchFriend(String searchStr) throws SQLException {
+    public List<User> selectSearchFriend(String searchStr) throws SQLException {
         //select u from user as u where u.nickname like 'searchStr%'
-        String jpql = "SELECT u FROM User u WHERE u.nickname LIKE :searchStr";
-        List<User> users = em.createQuery(jpql, User.class)
+        String jpql = "SELECT u FROM User u WHERE u.nickname LIKE concat:searchStr '%'";
+        return em.createQuery(jpql, User.class)
                 .setParameter("searchStr", searchStr)
                 .getResultList();
-        List<UserDto> res = new ArrayList<>();
-        users.forEach(user->{
-            UserDto userDto = new UserDto();
-            userDto.setName(user.getName());
-            userDto.setNickname(user.getNickname());
-            userDto.setUserSeq(user.getUserSeq());
-            res.add(userDto);
-        });
-
-        return res;
     }
 
     @Override
-    public void insertFriend(FriendDto friend) throws SQLException {
-        User fromUser = em.find(User.class, friend.getFromUser());
-        User toUser = em.find(User.class, friend.getToUser());
+    public void insertFriend(int userSeq1, int userSeq2) throws SQLException {
+        User fromUser = em.find(User.class, userSeq1);
+        User toUser = em.find(User.class, userSeq2);
 
         FriendList friendList = new FriendList();
-
         friendList.setFromUser(fromUser);
         friendList.setToUser(toUser);
         em.persist(friendList);
     }
 
     @Override
-    public void deleteFriend(FriendDto friend) throws SQLException {
+    public List<User> selectRequestFriendList(int userSeq) throws SQLException {
+        //select u from request_friend as rf join User as u on rf.fromUser = u.userSeq where rf.fromUser = userSeq;
+        String jpql = "SELECT u FROM RequestFriend rf " +
+                "JOIN User u ON rf.fromUser = u.userSeq " +
+                "WHERE rf.fromUser = :userSeq";
+        return em.createQuery(jpql, User.class)
+                .setParameter("userSeq", userSeq)
+                .getResultList();
+    }
 
+    @Override
+    public void insertRequestFriend(int userSeq1, int userSeq2) throws SQLException {
+        User fromUser = em.find(User.class, userSeq1);
+        User toUser = em.find(User.class, userSeq2);
+
+        RequestFriend requestFriend = new RequestFriend();
+        requestFriend.setFromFriend(fromUser);
+        requestFriend.setToFriend(toUser);
+        em.persist(requestFriend);
+    }
+
+    @Override
+    public void updateRequestFriendToConfirm(int userSeq1, int userSeq2) throws SQLException {
+        User fromUser = em.find(User.class, userSeq1);
+        User toUser = em.find(User.class, userSeq2);
+        String jpql = "SELECT f FROM RequestFriend rf " +
+                "WHERE rf.fromUser = :fromUser AND rf.toUser = :toUser ";
+        RequestFriend rf = em.createQuery(jpql, RequestFriend.class)
+                .setParameter("fromUser", fromUser)
+                .setParameter("toUser", toUser)
+                .getSingleResult();
+
+        rf.setRequestStatus(RequestStatus.CONNECTED);
+    }
+
+    @Override
+    public void updateRequestFriendToReject(int userSeq1, int userSeq2) throws SQLException {
+        User fromUser = em.find(User.class, userSeq1);
+        User toUser = em.find(User.class, userSeq2);
+        String jpql = "SELECT f FROM RequestFriend rf " +
+                "WHERE rf.fromUser = :fromUser AND rf.toUser = :toUser ";
+        RequestFriend rf = em.createQuery(jpql, RequestFriend.class)
+                .setParameter("fromUser", fromUser)
+                .setParameter("toUser", toUser)
+                .getSingleResult();
+
+        rf.setRequestStatus(RequestStatus.REJECTED);
+    }
+
+    @Override
+    public void deleteFriend(int userSeq1, int userSeq2) throws SQLException {
+        User user1 = em.find(User.class, userSeq1);
+        User user2 = em.find(User.class, userSeq2);
+        //select * from friend_list where (friend_list.fromUser = user1 and friend_list.toUser = user2) or(friend_list.fromUser = user2 and frined_list.toUser = user1)
+        String jpql = "SELECT f FROM FriendList f " +
+                "WHERE f.fromUser = :user1 AND f.toUser = :user2 ";
+        List<FriendList> friendLists = em.createQuery(jpql, FriendList.class)
+                .setParameter("user1", user1)
+                .setParameter("user2", user2)
+                .getResultList();
+
+        friendLists.forEach(friendList -> {
+            em.remove(friendList);
+        });
     }
 }

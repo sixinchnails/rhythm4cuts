@@ -45,9 +45,45 @@ public class FriendController {
     }
 
     //친구 추가
-    @PostMapping
+    @PostMapping("/confirm")
     public ResponseEntity<?> addFriend(@RequestBody FriendDto requestFriend) throws Exception {
         friendService.addFriend(requestFriend);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("message", "Success");
+        res.put("statusCode", 200);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    //친구 요청한 유저 정보
+    @GetMapping("/request")
+    public ResponseEntity<?> getRequestFriendList(@PathVariable("userSeq") Integer userSeq) throws Exception {
+        List<UserDto> friendList = friendService.getFriendList(userSeq);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("message", "Success");
+        res.put("statusCode", 200);
+        res.put("data", friendList);
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    //친구 요청
+    @PostMapping("/request")
+    public ResponseEntity<?> requestFriend(@RequestBody FriendDto requestFriend) throws Exception {
+        friendService.requestFriend(requestFriend);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("message", "Success");
+        res.put("statusCode", 200);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    //친구 거절
+    @PostMapping("/reject")
+    public ResponseEntity<?> rejectFriend(@RequestBody FriendDto requestFriend) throws Exception {
+        friendService.rejectFriend(requestFriend);
 
         Map<String, Object> res = new HashMap<>();
         res.put("message", "Success");
@@ -59,10 +95,8 @@ public class FriendController {
     //친구삭제
     @DeleteMapping("/del/{from}/{to}")
     public ResponseEntity<?> deleteFriend(@PathVariable("from")int fromUserSeq, @PathVariable("to") int toUserSeq) throws Exception {
-        FriendDto friend = new FriendDto();
-        friend.setFromUser(fromUserSeq);
-        friend.setToUser(toUserSeq);
-        friendService.deleteFriend(friend);
+
+        friendService.deleteFriend(fromUserSeq, toUserSeq);
 
         Map<String, Object> res = new HashMap<>();
         res.put("message", "Success");

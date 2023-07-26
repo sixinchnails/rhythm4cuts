@@ -13,6 +13,9 @@ public interface FriendService {
 
     public List<UserDto> getFriendList(int userSeq) throws Exception;
     public List<UserDto> userSearch(String searchStr) throws Exception;
+    public List<UserDto> getRequestFriendList(int userSeq) throws Exception;
     public void addFriend(FriendDto friend) throws Exception;
-    public void deleteFriend(FriendDto friend) throws Exception;
+    public void requestFriend(FriendDto friendDto) throws Exception;
+    public void rejectFriend(FriendDto friendDto) throws Exception;
+    public void deleteFriend(int userSeq1, int userSeq2) throws Exception;
 }
