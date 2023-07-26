@@ -216,7 +216,6 @@ body {
 
 .Home4 > .sideBar > .calender {
   height: 80%;
-  display: flex;
   justify-content: center;
   background-color: #eeccd9;
 }
@@ -258,7 +257,7 @@ body {
   > div.react-datepicker-popper {
   display: flex !important;
   justify-content: center !important;
-  margin-left: 1.2%;
+  margin-left: 3%;
 }
 
 .Home4

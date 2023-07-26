@@ -55,6 +55,10 @@
   border-radius: 10px;
 }
 
+.bg > .outer > .login > button:hover {
+  background-color: #f2bed1;
+}
+
 .bg > .outer > .searchAndJoin {
   width: 100%;
   height: 5%;
@@ -63,6 +67,11 @@
   align-items: center;
 }
 
+Modal > .md_outer {
+  background-color: black;
+  width: 100vw;
+  height: 100vh;
+}
 .bg > .outer > .searchAndJoin > div {
   margin: 10px;
 }

@@ -1,9 +1,19 @@
 // Login.js
-import React from "react";
+/* eslint-disable */
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
 import "./Login.css";
 
 const Home = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <div className="bg">
       <div className="outer">
@@ -20,7 +30,26 @@ const Home = () => {
           <button>로그인</button>
         </div>
         <div className="searchAndJoin">
-          <button>PW찾기</button>
+          <button onClick={openModal}>PW찾기</button>
+          <Modal
+            open={isModalOpen}
+            onClose={closeModal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <div className="md_outer">
+              <Container vertical-align="middle" align="center">
+                <div>비밀번호 찾기</div>
+                <br />
+                <div>
+                  <input type="text" placeholder="아이디"></input>
+                </div>
+                <div>
+                  <input type="text" placeholder="이메일"></input>
+                </div>
+              </Container>
+            </div>
+          </Modal>
           <div>|</div>
           <Link to="/Join">회원가입</Link>
         </div>

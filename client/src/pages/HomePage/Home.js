@@ -1,4 +1,5 @@
 // Home.js
+/* eslint-disable */
 import "animate.css";
 import { React, useRef, useEffect, useState } from "react";
 import Header from "../../components/Home/Header";
