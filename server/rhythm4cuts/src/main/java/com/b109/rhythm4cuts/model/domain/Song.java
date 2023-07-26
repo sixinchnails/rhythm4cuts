@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.model.domain;
 
+import com.b109.rhythm4cuts.model.dto.SongDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,5 +47,16 @@ public class Song {
 
     public Song() {
         this.playCount = 0;
+    }
+
+    public SongDto getSongDto() {
+        SongDto songDto = new SongDto();
+        songDto.setSongSeq(this.getSongSeq());
+        songDto.setSongRank(this.getSongRank());
+        songDto.setTitle(this.getTitle());
+        songDto.setUrl(this.getUrl());
+        songDto.setSinger(this.getSinger());
+        songDto.setPlayCount(this.getPlayCount());
+        return songDto;
     }
 }
