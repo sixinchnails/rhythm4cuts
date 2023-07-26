@@ -1,6 +1,6 @@
 // Home.js
 import React, { useEffect } from "react";
-import Header from "../../components/Header/Header";
+import Header from "../../components/Home/Header";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
 import "./Mypage.css";
 // 마이페이지들 import
