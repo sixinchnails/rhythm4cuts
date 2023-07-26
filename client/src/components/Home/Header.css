@@ -1,0 +1,21 @@
+.navbar {
+  /* Navbar styling */
+}
+
+.navbar-container {
+  /* Container styling */
+}
+
+.navbar-brand {
+  color: pink;
+  /* additional styles for the brand name */
+}
+
+.navbar-collapse {
+  /* additional styles for the collapsed navbar */
+}
+
+.navbar-text {
+  color: pink;
+  /* additional styles for the navbar text */
+}

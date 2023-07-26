@@ -12,7 +12,7 @@ const Home = () => {
   const [startDate, setStartDate] = useState(new Date());
   const outerDivRef = useRef();
   useEffect(() => {
-    const wheelHandler = (e) => {
+    const wheelHandler = e => {
       e.preventDefault();
       const { deltaY } = e;
       const { scrollTop } = outerDivRef.current; // 스크롤 위쪽 끝부분 위치
@@ -162,7 +162,7 @@ const Home = () => {
               dateFormat="yyyy.MM.dd" // 날짜 형태
               shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
               selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              onChange={date => setStartDate(date)}
             />
           </div>
         </div>

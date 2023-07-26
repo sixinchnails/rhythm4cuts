@@ -3,19 +3,13 @@ import React, { useEffect } from "react";
 import Header from "../../components/Home/Header";
 import Sidebar from "../../components/My/My_SideBar";
 import MainContent from "../../components/My/My_MainContent";
-import "./MyFriend.css";
-import FriendInfo from "../../components/My/My_Friend"; // UserInfo 컴포넌트를 import
+import ModifyInfo from "../../components/My/My_ModifyInfo";
 
 const Home = () => {
-  const friendInfo = [
-    { name: "유밍국", point: "10000", playing: "게임중" },
-    { name: "실버캐슬", point: "8000", playing: "온라인" },
-    { name: "최고다한윤", point: "6000", playing: "게임중" },
-    { name: "홍유콩", point: "4000", playing: "게임중" },
-    { name: "최재드래곤", point: "2000", playing: "오프라인" },
-  ];
   useEffect(() => {
     document.body.style.backgroundColor = "#F8E8EE";
+
+    // 컴포넌트 unmount 시점에 원래의 배경색으로 되돌리기 위한 cleanup 함수
     return () => {
       document.body.style.backgroundColor = null;
     };
@@ -23,11 +17,14 @@ const Home = () => {
   return (
     <>
       <Header></Header>
+      {/* 사이드바와 메인 제목을 수평으로 배치하기 위해서는 Flexbox 또는 CSS Grid를 사용해야한다.
+      그럴려면 사이드 바와 메인 제목을 감싸고 있는 부모 요소가 필요하다.
+      그 부모 요소는 사이드 바와 메인 제목을 자식 요소로 갖고, 이 자식 요소들을 수평으로 배치한다. */}
       <div className="page-container">
         <Sidebar></Sidebar>
-        <div className="friend-container">
+        <div className="main-container">
           <MainContent></MainContent>
-          <FriendInfo Info={friendInfo}></FriendInfo>
+          <ModifyInfo></ModifyInfo>
         </div>
       </div>
     </>
