@@ -3,9 +3,11 @@ package com.b109.rhythm4cuts.model.service;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.AddUserRequest;
 
+import com.b109.rhythm4cuts.model.dto.UpdateProfileImgDto;
 import com.b109.rhythm4cuts.model.dto.UserDto;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Update;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    //User -> UserDto로 변환시켜주는 메서드
     public UserDto dtoSetter(User user) {
         UserDto userDto = new UserDto();
 
@@ -49,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     public UserDto findByNickname(String nickname) {
         User user = userRepository.findByNickname(nickname)
-                .orElseThrow(() -> new IllegalArgumentException(nickname));
+                .orElseThrow(() -> new IllegalArgumentException("해당 닉네임을 가진 사용자가 존재하지 않습니다."));
 
         UserDto userDto = dtoSetter(user);
 
@@ -58,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
     public UserDto findByEmail(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
 
         UserDto userDto = dtoSetter(user);
 
@@ -72,5 +75,18 @@ public class UserServiceImpl implements UserService {
         member.setPassword(dto.getPassword());
 
         return userRepository.save(member).getEmail();
+    }
+
+    //포인트 반환
+    public int getPoint(String email) {
+        return userRepository.findByEmail(email).get().getPoint();
+    }
+
+    public String getProfileImg(String email) {
+        return userRepository.findByEmail(email).get().getProfileImage().getFileName();
+    }
+
+    public String patchProfileImg(UpdateProfileImgDto dto) {
+        return "";
     }
 }

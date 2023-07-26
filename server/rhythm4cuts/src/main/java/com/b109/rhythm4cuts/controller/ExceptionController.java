@@ -15,13 +15,16 @@ public class ExceptionController {
             IllegalArgumentException.class
     })
     public ResponseEntity<Object> BadRequestException(final IllegalArgumentException ex) {
-        log.warn("error", ex);
+        //log.warn("error", ex);
+
+        System.out.println("zxczxc");
+        System.out.println(ex.getMessage());
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity handleAccessDeniedException(final AccessDeniedException ex) {
-        log.warn("error", ex);
+        //log.warn("error", ex);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
 }
