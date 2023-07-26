@@ -1,6 +1,7 @@
 package com.b109.rhythm4cuts.config.jwt;
 
 import com.b109.rhythm4cuts.model.domain.User;
+import com.b109.rhythm4cuts.model.dto.UserDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
@@ -21,14 +22,14 @@ import java.util.Set;
 public class TokenProvider {
     private final JwtProperties jwtProperties;
 
-    public String generateToken(User user, Duration expiredAt) {
+    public String generateToken(UserDto userDto, Duration expiredAt) {
         Date now = new Date();
 
-        return makeToken(new Date(now.getTime() + expiredAt.toMillis()), user);
+        return makeToken(new Date(now.getTime() + expiredAt.toMillis()), userDto);
     }
 
     //메서드 1. JWT 토큰 생성 메서드
-    private String makeToken(Date expiry, User user) {
+    private String makeToken(Date expiry, UserDto userDto) {
         Date now = new Date();
 
         System.out.println(jwtProperties);
@@ -40,8 +41,8 @@ public class TokenProvider {
                 .setIssuer(jwtProperties.getIssuer())
                 .setIssuedAt(now)
                 .setExpiration(expiry)
-                .setSubject(user.getEmail())
-                .claim("id", user.getUserSeq())
+                .setSubject(userDto.getEmail())
+                .claim("id", userDto.getUserSeq())
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                 .compact();
     }

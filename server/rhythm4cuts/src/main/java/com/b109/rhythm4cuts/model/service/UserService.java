@@ -2,55 +2,18 @@ package com.b109.rhythm4cuts.model.service;
 
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.AddUserRequest;
+import com.b109.rhythm4cuts.model.dto.UserDto;
 
-import com.b109.rhythm4cuts.model.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
+public interface UserService {
+    // Find a user by their ID
+    UserDto findById(Long userId);
 
-import java.util.Optional;
+    // Find a user by their nickname
+    UserDto findByNickname(String nickname);
 
-@RequiredArgsConstructor
-@Service
-public class UserService {
+    // Find a user DTO (Data Transfer Object) by their email
+    UserDto findByEmail(String email);
 
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    //id로 사용자 객체를 찾는 메서드
-    public User findById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("id: " + userId + " 사용자를 찾을 수 없습니다."));
-    }
-
-    public User findByNickname(String nickname) {
-        Optional<User> user = userRepository.findByNickname(nickname);
-
-        //중복 처리 API로 변경 필요
-        if (user.isPresent()) {
-            throw new IllegalArgumentException(nickname + "은 중복된 닉네임입니다.");
-        }
-
-        return user.get();
-    }
-
-    public User findByEmail(String email) {
-        User member = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException());
-
-        return member;
-    }
-
-    //회원가입
-    public String save(AddUserRequest dto) {
-        User member = new User();
-        member.setEmail(dto.getEmail());
-        member.setPassword(dto.getPassword());
-
-        System.out.println("Print member");
-        System.out.println(member.getEmail());
-        System.out.println(member.getPassword());
-
-        return userRepository.save(member).getEmail();
-    }
+    // Save a new user with the provided information
+    String save(AddUserRequest dto);
 }

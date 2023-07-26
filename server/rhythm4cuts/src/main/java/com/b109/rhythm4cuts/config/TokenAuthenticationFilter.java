@@ -25,6 +25,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         //가져온 값에서 접두사 제거
         String token = getAccessToken(authorizationHeader);
 
+        System.out.println("[출력] doFilterInternal입니다.");
+
         //가져온 토큰이 유요한지 확인하고, 유효한 때는 인증 정보 설정
         if (tokenProvider.validToken(token)) {
             Authentication authentication = tokenProvider.getAuthentication(token);
@@ -34,6 +36,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     //액세스 토큰(Bearer ~~)에서 "Bearer " 부분 제거하고 토큰 값만 남겨주는 메서드
     private String getAccessToken(String authorizationHeader) {
+        System.out.println("[출력] getAccessToken입니다.");
+
         if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
             return authorizationHeader.substring(TOKEN_PREFIX.length());
         }
