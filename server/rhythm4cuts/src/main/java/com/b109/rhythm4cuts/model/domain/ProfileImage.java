@@ -18,11 +18,8 @@ public class ProfileImage {
     @Column(name = "profile_image_seq")
     private Integer profileImageSeq;
 
-    @OneToMany(mappedBy = "profileImage", cascade = CascadeType.ALL)
-    private List<User> users = new ArrayList<>();
-
     //프로필 사진 이름
-    @Column(name="img_name")
+    @Column(name="image_name")
     private String imageName;
 
     //서버에 저장될 사진의 파일명 (연월일시분초_난수8자리)
@@ -31,5 +28,4 @@ public class ProfileImage {
 
     //이미지 사진에 대한 설명
     private String description;
-
 }
