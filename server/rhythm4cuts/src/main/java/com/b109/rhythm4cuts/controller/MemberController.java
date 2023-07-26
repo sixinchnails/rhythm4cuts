@@ -61,4 +61,9 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).build();
         //return new ResponseEntity<>("ok", HttpStatus.OK);
     }
+
+    @GetMapping("/test")
+    public ResponseEntity test() {
+        return ResponseEntity.ok().build();
+    }
 }

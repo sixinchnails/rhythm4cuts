@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.model.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,8 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @Table(name = "USER")
 public class User {
 
