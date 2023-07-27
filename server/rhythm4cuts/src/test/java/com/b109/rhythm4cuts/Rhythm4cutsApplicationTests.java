@@ -3,10 +3,10 @@ package com.b109.rhythm4cuts;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-//@SpringBootTest
+@SpringBootTest
 class Rhythm4cutsApplicationTests {
 
-//	@Test
+	@Test
 	void contextLoads() {
 	}
 
