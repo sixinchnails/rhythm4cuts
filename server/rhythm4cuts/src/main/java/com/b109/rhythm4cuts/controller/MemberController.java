@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -31,6 +32,7 @@ public class MemberController {
     public ResponseEntity<CreateAccessTokenResponse> login(@RequestBody LoginDto loginDto) {
         //로그인을 시도한 이메일로 사용자 조회
         UserDto userDto = userService.findByEmail(loginDto.getEmail());
+        //액세스 토큰의 유효 시간 30분으로 설정
         String newAccessToken = tokenService.generateToken(userDto, Duration.ofMinutes(30));
 
         return ResponseEntity.ok()
@@ -45,13 +47,9 @@ public class MemberController {
     //API 2. POST 회원가입
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody AddUserRequest request) {
-        //중복 여부 확인 필요
-        //이미 가입된 회원 확인 필요
-        //리포지터리에서 처리 되나?
         userService.save(request);
 
         return ResponseEntity.status(HttpStatus.OK).build();
-        //return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
     //닉네임 중복
@@ -80,7 +78,7 @@ public class MemberController {
 
     //프로필 이미지 변경
     @PatchMapping("/profile")
-    public ResponseEntity patchProfile(@RequestBody UpdateProfileImgDto dto) {
+    public ResponseEntity updateProfileImg(@RequestBody UpdateProfileImgDto dto) {
         userService.patchProfileImg(dto);
 
         return ResponseEntity.status(200).build();
@@ -88,7 +86,7 @@ public class MemberController {
 
     //닉네임 변경
     @PatchMapping("/nickname")
-    public ResponseEntity patchNickname(@RequestBody UpdateUserNicknameDto dto){
+    public ResponseEntity updateNickname(@RequestBody UpdateUserNicknameDto dto){
         userService.updateNickname(dto);
 
         return ResponseEntity.status(200).build();
@@ -96,16 +94,8 @@ public class MemberController {
 
     //비밀번호 변경
     @PatchMapping("/pw")
-    public ResponseEntity patchPassword(@RequestHeader("Authorization") String accessToken, @RequestBody UpdateUserPasswordDto dto) {
+    public ResponseEntity updatePassword(@RequestHeader("Authorization") String accessToken, @RequestBody UpdateUserPasswordDto dto) {
         userService.updatePassword(accessToken, dto);
-
-        return ResponseEntity.status(200).build();
-    }
-
-    //비밀번호 찾기
-    @PostMapping("/pw")
-    public ResponseEntity findPassword(@RequestParam String email) {
-        userService.findPassword(email);
 
         return ResponseEntity.status(200).build();
     }
@@ -115,6 +105,7 @@ public class MemberController {
     public ResponseEntity payPoints(@RequestBody PayDto payDto) {
         long leftPoints = userService.payPoints(payDto);
 
+        //잔여 포인트 반환
         return ResponseEntity.status(200).body(Map.of("point", leftPoints));
     }
 
@@ -122,6 +113,18 @@ public class MemberController {
     @PostMapping("logout")
     public ResponseEntity logout() {
         //상태 변경할 예정
+        return ResponseEntity.status(200).build();
+    }
+
+    //비밀번호 찾기
+    @Transactional
+    @PostMapping("/pw")
+    public ResponseEntity findPassword(@RequestParam String email) {
+        UserDto userDto = userService.findByEmail(email);
+
+        MailDto mailDto = userService.createMailAndChangePassword(email);
+        userService.sendEmail(mailDto);
+
         return ResponseEntity.status(200).build();
     }
 }

@@ -7,6 +7,8 @@ import com.b109.rhythm4cuts.model.dto.*;
 import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
@@ -19,6 +21,7 @@ public class UserServiceImpl implements UserService {
     private final ProfileImageRepository profileImageRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TokenService tokenService;
+    private final JavaMailSender javaMailSender;
 
     public String getRandomPassword(int size) {
         char[] charSet = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
@@ -199,7 +202,33 @@ public class UserServiceImpl implements UserService {
         user.setPassword(tempPassword);
 
         userRepository.save(user);
+    }
 
-        return;
+    public MailDto createMailAndChangePassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException());
+
+        String tempPassword = getRandomPassword(15);
+
+        MailDto mailDto = new MailDto();
+        mailDto.setAddress(email);
+        mailDto.setTitle("Rhythm4Cuts 임시 비밀번호 발급 안내 메일입니다.");
+        mailDto.setMessage("안녕하세요. Rhythm4Cuts 로그인을 위한 임시 비밀번호 발급드립니다. 회원님의 임시 비밀번호는 " + tempPassword + "입니다.");
+
+        user.setPassword(tempPassword);
+        userRepository.save(user);
+
+        return mailDto;
+    }
+
+    public void sendEmail(MailDto mailDto) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(mailDto.getAddress());
+        message.setSubject(mailDto.getTitle());
+        message.setText(mailDto.getMessage());
+        message.setFrom("dropice@naver.com");
+        message.setReplyTo("dropice@naver.com");
+
+        javaMailSender.send(message);
     }
 }

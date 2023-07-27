@@ -37,4 +37,8 @@ public interface UserService {
     long payPoints(PayDto payDto);
 
     void findPassword(String email);
+
+    MailDto createMailAndChangePassword(String email);
+
+    void sendEmail(MailDto mailDto);
 }
