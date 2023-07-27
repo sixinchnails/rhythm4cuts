@@ -47,6 +47,7 @@ public class Song {
 
     public Song() {
         this.playCount = 0;
+        this.songRank = 0;
     }
 
     public SongDto getSongDto() {
