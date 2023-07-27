@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.security.auth.login.LoginException;
 import java.nio.file.AccessDeniedException;
 
 @ControllerAdvice
@@ -17,13 +18,17 @@ public class ExceptionController {
     public ResponseEntity<Object> BadRequestException(final IllegalArgumentException ex) {
         //log.warn("error", ex);
 
-        System.out.println("zxczxc");
-        System.out.println(ex.getMessage());
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
     @ExceptionHandler({AccessDeniedException.class})
-    public ResponseEntity handleAccessDeniedException(final AccessDeniedException ex) {
+    public ResponseEntity handleAccessDeniedException(final Exception ex) {
+        //log.warn("error", ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
+
+    @ExceptionHandler({LoginException.class})
+    public ResponseEntity handleLoginException(final LoginException ex) {
         //log.warn("error", ex);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }

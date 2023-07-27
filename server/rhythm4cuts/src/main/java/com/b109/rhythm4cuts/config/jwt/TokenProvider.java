@@ -1,6 +1,7 @@
 package com.b109.rhythm4cuts.config.jwt;
 
 import com.b109.rhythm4cuts.model.domain.User;
+import com.b109.rhythm4cuts.model.dto.LoginDto;
 import com.b109.rhythm4cuts.model.dto.UserDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
@@ -42,7 +43,7 @@ public class TokenProvider {
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .setSubject(userDto.getEmail())
-                .claim("id", userDto.getUserSeq())
+                .claim("id", userDto.getEmail())
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                 .compact();
     }
@@ -68,10 +69,10 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities), token, authorities);
     }
 
-    //메서드 4. 토큰 기반으로 유저 ID를 가져오는 메서드
-    public Integer getUserId(String token) {
+    //메서드 4. 토큰 기반으로 유저 ID(이메일)를 가져오는 메서드
+    public String getUserId(String token) {
         Claims claims = getClaims(token);
-        return claims.get("id", Integer.class);
+        return claims.get("id", String.class);
     }
 
     //메서드 5. 클레임 조회 메서드

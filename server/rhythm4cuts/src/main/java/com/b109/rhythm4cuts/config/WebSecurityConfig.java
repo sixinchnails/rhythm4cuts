@@ -24,7 +24,7 @@ public class WebSecurityConfig {
         //시큐리티 핵심
         return http
                 .authorizeRequests()
-                .antMatchers("/member/login", "/member/register").permitAll()
+                .antMatchers("/member/login", "/member/register", "/member/profile").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()

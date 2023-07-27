@@ -8,8 +8,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateProfileImgDto {
+    String email;
     Integer profileImageSeq;
     String imageName;
     String fileName;
     String description;
+
+    @Override
+    public String toString() {
+        return "UpdateProfileImgDto{" +
+                "email="+ email +
+                "profileImageSeq=" + profileImageSeq +
+                ", imageName='" + imageName + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

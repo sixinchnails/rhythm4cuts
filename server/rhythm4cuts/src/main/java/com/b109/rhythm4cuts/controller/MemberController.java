@@ -23,28 +23,21 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
-    private final TokenProvider tokenProvider;
+    private final TokenService tokenService;
     private final UserService userService;
 
     //API 1. POST 로그인
     @PostMapping("/login")
-    public ResponseEntity<CreateAccessTokenResponse> login(@RequestBody Map<String, String> params) {
+    public ResponseEntity<CreateAccessTokenResponse> login(@RequestBody LoginDto loginDto) {
         //로그인을 시도한 이메일로 사용자 조회
-        UserDto userDto = userService.findByEmail(params.get("email"));
-
-        //클라이언트에서 password 넘어오는 형식에 맞춰 수정 필요
-        if (!userDto.getPassword().equals(params.get("password"))) {
-            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
-        }
-
-        //토큰 유효 기간 2주
-        String newAccessToken = tokenProvider.generateToken(userDto, Duration.ofDays(14));
+        UserDto userDto = userService.findByEmail(loginDto.getEmail());
+        String newAccessToken = tokenService.generateToken(userDto, Duration.ofMinutes(30));
 
         return ResponseEntity.ok()
                 .body(new CreateAccessTokenResponse().builder()
                         .nickname(userDto.getNickname())
                         .points(userDto.getPoint())
-//                        .profile_img_seq(member.getProfileImage().getProfileImageSeq())
+                        .profile_img_seq(userDto.getProfileImageSeq())
                         .accessToken(newAccessToken)
                         .build());
     }
@@ -61,13 +54,7 @@ public class MemberController {
         //return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
-    //테스트용
-    @PostMapping("/test")
-    public ResponseEntity test(@RequestBody Map<String, String> params) {
-        return ResponseEntity.ok().build();
-    }
-
-    //GET 닉네임 중복
+    //닉네임 중복
     @GetMapping("/nickname")
     public ResponseEntity nickname(@RequestParam String nickname) {
         return ResponseEntity.status(409).body(Map.of("duplicate", userService.duplicateNickname(nickname)));
@@ -94,6 +81,47 @@ public class MemberController {
     //프로필 이미지 변경
     @PatchMapping("/profile")
     public ResponseEntity patchProfile(@RequestBody UpdateProfileImgDto dto) {
-        return ResponseEntity.status(200).body(userService.patchProfileImg(dto));
+        userService.patchProfileImg(dto);
+
+        return ResponseEntity.status(200).build();
+    }
+
+    //닉네임 변경
+    @PatchMapping("/nickname")
+    public ResponseEntity patchNickname(@RequestBody UpdateUserNicknameDto dto){
+        userService.updateNickname(dto);
+
+        return ResponseEntity.status(200).build();
+    }
+
+    //비밀번호 변경
+    @PatchMapping("/pw")
+    public ResponseEntity patchPassword(@RequestHeader("Authorization") String accessToken, @RequestBody UpdateUserPasswordDto dto) {
+        userService.updatePassword(accessToken, dto);
+
+        return ResponseEntity.status(200).build();
+    }
+
+    //비밀번호 찾기
+    @PostMapping("/pw")
+    public ResponseEntity findPassword(@RequestParam String email) {
+        userService.findPassword(email);
+
+        return ResponseEntity.status(200).build();
+    }
+
+    //포인트 결제
+    @PostMapping("/pay")
+    public ResponseEntity payPoints(@RequestBody PayDto payDto) {
+        long leftPoints = userService.payPoints(payDto);
+
+        return ResponseEntity.status(200).body(Map.of("point", leftPoints));
+    }
+
+    //로그아웃
+    @PostMapping("logout")
+    public ResponseEntity logout() {
+        //상태 변경할 예정
+        return ResponseEntity.status(200).build();
     }
 }
