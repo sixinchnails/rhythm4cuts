@@ -18,7 +18,7 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-src/main/resources/application-smtp.properties
+src/main/resources/application.properties
 .idea
 *.iws
 *.iml

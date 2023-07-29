@@ -62,6 +62,9 @@ public class MemberController {
     @GetMapping("/profile")
     public ResponseEntity getProfile(@RequestParam String email) {
         Map<String, Object> res = new HashMap<>();
+
+        System.out.println("컨트 이메일:" + email);
+
         res.put("file_name", userService.getProfileImg(email));
 
         return ResponseEntity.status(200).body(res);
@@ -71,8 +74,10 @@ public class MemberController {
     @GetMapping("/point")
     public ResponseEntity getPoint(@RequestParam String email) {
         Map<String, Object> res = new HashMap<>();
+        System.out.println("포인트");
+                
         res.put("point", userService.getPoint(email));
-
+        
         return ResponseEntity.status(200).body(res);
     }
 

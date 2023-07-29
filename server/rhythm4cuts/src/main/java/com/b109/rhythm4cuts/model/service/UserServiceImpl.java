@@ -3,7 +3,6 @@ package com.b109.rhythm4cuts.model.service;
 import com.b109.rhythm4cuts.model.domain.ProfileImage;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.*;
-
 import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.util.Date;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
         int idx = 0;
         int len = charSet.length;
 
-        for(int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             idx = sr.nextInt(len);
 
             sb.append(charSet[idx]);
@@ -41,30 +41,12 @@ public class UserServiceImpl implements UserService {
         return sb.toString();
     }
 
-
-    //User -> UserDto로 변환시켜주는 메서드
-    public UserDto dtoSetter(User user) {
-        UserDto userDto = new UserDto();
-
-        userDto.setUserSeq(user.getUserSeq());
-        userDto.setName(user.getName());
-        userDto.setNickname(user.getNickname());
-        userDto.setEmail(user.getEmail());
-        userDto.setPassword(user.getPassword());
-        userDto.setPoint(user.getPoint());
-        userDto.setBirthDate(user.getBirthDate());
-        userDto.setPlayCount(user.getPlayCount());
-        userDto.setScoreSum(user.getScoreSum());
-
-        return userDto;
-    }
-
     //id로 사용자 객체를 찾는 메서드
     public UserDto findById(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("id: " + userId + " 사용자를 찾을 수 없습니다."));
 
-        UserDto userDto = dtoSetter(user);
+        UserDto userDto = Utils.dtoSetter(user);
 
         return userDto;
     }
@@ -77,7 +59,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new IllegalArgumentException("해당 닉네임을 가진 사용자가 존재하지 않습니다."));
 
-        UserDto userDto = dtoSetter(user);
+        UserDto userDto = Utils.dtoSetter(user);
 
         return userDto;
     }
@@ -86,7 +68,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
 
-        UserDto userDto = dtoSetter(user);
+        UserDto userDto = Utils.dtoSetter(user);
 
         return userDto;
     }
@@ -106,7 +88,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public String getProfileImg(String email) {
-        return userRepository.findByEmail(email).get().getProfileImage().getFileName();
+        System.out.println("이메일:" + email);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow();
+
+        return user.getEmail();
     }
 
     //프로필 사진 변경
@@ -167,7 +154,7 @@ public class UserServiceImpl implements UserService {
 
         if (!bCryptPasswordEncoder.matches(loginDto.getPassword(), user.getPassword())) throw new IllegalArgumentException();
 
-        UserDto userDto = dtoSetter(user);
+        UserDto userDto = Utils.dtoSetter(user);
 
         return userDto;
     }
@@ -211,9 +198,9 @@ public class UserServiceImpl implements UserService {
         String tempPassword = getRandomPassword(15);
 
         MailDto mailDto = new MailDto();
-        mailDto.setAddress(email);
+        mailDto.setAddress(new String[] {email});
         mailDto.setTitle("Rhythm4Cuts 임시 비밀번호 발급 안내 메일입니다.");
-        mailDto.setMessage("안녕하세요. Rhythm4Cuts 로그인을 위한 임시 비밀번호 발급드립니다. 회원님의 임시 비밀번호는 " + tempPassword + "입니다.");
+        mailDto.setContent("안녕하세요. Rhythm4Cuts 로그인을 위한 임시 비밀번호 발급드립니다. 회원님의 임시 비밀번호는 " + tempPassword + "입니다.");
 
         user.setPassword(tempPassword);
         userRepository.save(user);
@@ -225,9 +212,14 @@ public class UserServiceImpl implements UserService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(mailDto.getAddress());
         message.setSubject(mailDto.getTitle());
-        message.setText(mailDto.getMessage());
+        message.setText(mailDto.getContent());
         message.setFrom("dropice@naver.com");
         message.setReplyTo("dropice@naver.com");
+
+        System.out.println("이메일");
+                
+        System.out.println(mailDto);
+        System.out.println(message);
 
         javaMailSender.send(message);
     }

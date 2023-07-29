@@ -13,10 +13,6 @@ public class UserDetailService implements UserDetailsService {
 
     @Override
     public User loadUserByUsername(String email) {
-        System.out.println("Email:::" + email);
-        System.out.println("Email:::" + email instanceof String);
-        System.out.println("UserRepository:::");
-
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException(email));
     }
