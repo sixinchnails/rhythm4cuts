@@ -5,14 +5,54 @@ import { React, useRef, useEffect, useState } from "react";
 import Header from "../../components/Home/Header";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useSelector } from "react-redux";
+import MusicRank from "../../components/Home/MusicRank";
+import UserRank from "../../components/Home/UserRank";
+import { Grid, Pagination } from "@mui/material";
 import "./Home.css";
 
 const DIVIDER_HEIGHT = 5;
+
 const Home = () => {
   const [startDate, setStartDate] = useState(new Date());
   const outerDivRef = useRef();
+
+  //음악 랭킹
+  let music_rank = useSelector((state) => {
+    return state.Music_Rank;
+  });
+
+  // 음악 개수 컨트롤러
+  const musicPerPage = 15; // 한 페이지당 표시할 방 수
+  const [musicPage, setMusicPage] = useState(1); // 페이지 상태
+
+  // 음악 페이지 변경 이벤트 핸들러
+  const handleMusicChange = (event, value) => {
+    setMusicPage(value);
+  };
+
+  // 음악 페이지 수 계산
+  const noOfMusicPages = Math.ceil(music_rank.length / musicPerPage);
+
+  //유저 랭킹
+  let user_rank = useSelector((state) => {
+    return state.User_Rank;
+  });
+
+  // 유저 개수 컨트롤러
+  const userPerPage = 8; // 한 페이지당 표시할 방 수
+  const [userPage, setUserPage] = useState(1); // 페이지 상태
+
+  // 유저페이지 변경 이벤트 핸들러
+  const handleUserChange = (event, value) => {
+    setUserPage(value);
+  };
+
+  // 음악 페이지 수 계산
+  const noOfUserPages = Math.ceil(user_rank.length / userPerPage);
+
   useEffect(() => {
-    const wheelHandler = e => {
+    const wheelHandler = (e) => {
       e.preventDefault();
       const { deltaY } = e;
       const { scrollTop } = outerDivRef.current; // 스크롤 위쪽 끝부분 위치
@@ -124,28 +164,117 @@ const Home = () => {
           <div className="rank1">
             <h1>Music Rank</h1>
             <div className="rt_sing_rank">
-              <div className="category">
-                <span>순위</span>
-                <span>제목</span>
-                <span>가수</span>
+              <div>
+                <div className="category">
+                  <Grid container textAlign="center">
+                    <Grid item xs={2}>
+                      순위
+                    </Grid>
+                    <Grid item xs={6}>
+                      제목
+                    </Grid>
+                    <Grid item xs={4}>
+                      가수
+                    </Grid>
+                  </Grid>
+                </div>
               </div>
+              <div className="music_rank">
+                <div className="rank">
+                  {music_rank
+                    .slice(
+                      (musicPage - 1) * musicPerPage,
+                      musicPage * musicPerPage
+                    )
+                    .map((music, index) => (
+                      <MusicRank key={index} music={music} />
+                    ))}
+                </div>
+              </div>
+              <Pagination
+                count={noOfMusicPages}
+                page={musicPage}
+                onChange={handleMusicChange}
+                color="primary"
+                size="large"
+                shape="rounded"
+                sx={{
+                  padding: "3%",
+                  display: "flex",
+                  justifyContent: "center",
+                  "& .MuiPaginationItem-root": {
+                    color: "white", // 기본 아이템 색상을 흰색으로 설정
+                    backgroundColor: "rgba(0, 0, 0, 0.1)", // 기본 아이템의 배경색을 약간 투명한 검정색으로 설정
+                  },
+                  "& .MuiPaginationItem-page.Mui-selected": {
+                    backgroundColor: "#3f51b5", // 선택된 아이템의 배경색을 파란색으로 설정
+                    color: "white", // 선택된 아이템의 텍스트 색상을 흰색으로 설정
+                  },
+                  "& .MuiPaginationItem-page:hover": {
+                    backgroundColor: "#283593", // 마우스 호버 시 아이템의 배경색을 진한 파란색으로 설정
+                  },
+                }}
+              />
             </div>
           </div>
           <div className="rank2">
             <h1>Total Rank</h1>
             <div className="total_rank"></div>
             <div className="nickname">
-              <span>1등</span>
-              <span>2등</span>
-              <span>3등</span>
+              <span>{user_rank[0].nickName}</span>
+              <span>{user_rank[1].nickName}</span>
+              <span>{user_rank[2].nickName}</span>
             </div>
             <div className="top100">
-              <div className="category">
-                <span>순위</span>
-                <span>닉네임</span>
-                <span>점수</span>
+              <div style={{ height: "20%" }}>
+                <div className="category">
+                  <Grid container textAlign="center">
+                    <Grid item xs={3.25}>
+                      순위
+                    </Grid>
+                    <Grid item xs={5.5}>
+                      닉네임
+                    </Grid>
+                    <Grid item xs={3.25}>
+                      점수
+                    </Grid>
+                  </Grid>
+                </div>
+              </div>
+              <div className="user_rank">
+                <div className="rank">
+                  {user_rank
+                    .slice((userPage - 1) * userPerPage, userPage * userPerPage)
+                    .map((user, index) => (
+                      <UserRank key={index} user={user} />
+                    ))}
+                </div>
               </div>
             </div>
+            <Pagination
+              count={noOfUserPages}
+              page={userPage}
+              onChange={handleUserChange}
+              color="primary"
+              size="large"
+              shape="rounded"
+              sx={{
+                padding: "3%",
+                display: "flex",
+                justifyContent: "center",
+                "& .MuiPaginationItem-root": {
+                  color: "white", // 기본 아이템 색상을 흰색으로 설정
+                  backgroundColor: "rgba(0, 0, 0, 0.1)", // 기본 아이템의 배경색을 약간 투명한 검정색으로 설정
+                },
+                "& .MuiPaginationItem-page.Mui-selected": {
+                  backgroundColor: "#3f51b5", // 선택된 아이템의 배경색을 파란색으로 설정
+                  color: "white", // 선택된 아이템의 텍스트 색상을 흰색으로 설정
+                },
+                "& .MuiPaginationItem-page:hover": {
+                  backgroundColor: "#283593", // 마우스 호버 시 아이템의 배경색을 진한 파란색으로 설정
+                },
+              }}
+            />
           </div>
         </div>
       </div>
@@ -162,7 +291,7 @@ const Home = () => {
               dateFormat="yyyy.MM.dd" // 날짜 형태
               shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
               selected={startDate}
-              onChange={date => setStartDate(date)}
+              onChange={(date) => setStartDate(date)}
             />
           </div>
         </div>

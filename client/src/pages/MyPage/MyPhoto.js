@@ -1,7 +1,7 @@
 // Home.js
 import React, { useEffect } from "react";
 import Sidebar from "../../components/My/My_SideBar";
-import Header from "../../components/Home/Header";
+import Header from "../../components/Home/Mypage_Header";
 import "./MyPhoto.css";
 import ImageByMonth from "../../components/My/My_Image";
 

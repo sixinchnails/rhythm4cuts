@@ -1,21 +1,20 @@
-.navbar {
-  /* Navbar styling */
+.Header_outer1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.navbar-container {
-  /* Container styling */
+.Header_outer1 > .Header_logo1 {
+  height: 10vh;
 }
 
-.navbar-brand {
-  color: pink;
-  /* additional styles for the brand name */
+.Header_outer1 > .Header_logo1 > img {
+  height: 100%;
 }
 
-.navbar-collapse {
-  /* additional styles for the collapsed navbar */
-}
-
-.navbar-text {
-  color: pink;
-  /* additional styles for the navbar text */
+.Header_outer1 > div > .Header_Login1 {
+  margin-right: 5vw;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
 }

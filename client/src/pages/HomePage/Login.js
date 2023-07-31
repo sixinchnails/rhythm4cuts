@@ -2,17 +2,38 @@
 /* eslint-disable */
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
+import SearchPassword from "../../components/Common/SearchPassword";
 import "./Login.css";
+import { Box } from "@mui/material";
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const handleOpenSearchPasswordModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseSearchPasswordModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // id 파트
+  const [id, setId] = useState("");
+  const onChangeId = (e) => {
+    setId(e.target.value);
+  };
+
+  // pw 파트
+  const [pw, setPW] = useState("");
+  const onChangePW = (e) => {
+    setId(e.target.value);
+  };
+
+  // 로그인
+  const onClick = () => {
+    //로그인 api
+    const login = async (id, pw) => {};
+  };
 
   return (
     <div className="bg">
@@ -21,35 +42,36 @@ const Home = () => {
           <img src="images/Mypage_Logo.png"></img>
         </div>
         <div className="input">
-          <input type="text" placeholder="ID(이메일)"></input>
+          <input
+            type="text"
+            placeholder="ID(이메일)"
+            value={id}
+            onChange={onChangeId}
+          ></input>
         </div>
         <div className="input">
-          <input type="text" placeholder="비밀번호"></input>
+          <input
+            placeholder="비밀번호"
+            type="password"
+            value={pw}
+            onChange={onChangePW}
+          ></input>
         </div>
         <div className="login">
           <button>로그인</button>
         </div>
         <div className="searchAndJoin">
-          <button onClick={openModal}>PW찾기</button>
-          <Modal
-            open={isModalOpen}
-            onClose={closeModal}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <div className="md_outer">
-              <Container vertical-align="middle" align="center">
-                <div>비밀번호 찾기</div>
-                <br />
-                <div>
-                  <input type="text" placeholder="아이디"></input>
-                </div>
-                <div>
-                  <input type="text" placeholder="이메일"></input>
-                </div>
-              </Container>
-            </div>
-          </Modal>
+          <button onClick={handleOpenSearchPasswordModal}>PW찾기</button>
+          <Box
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "50vh",
+              overflow: "auto",
+            }}
+          ></Box>
           <div>|</div>
           <Link to="/Join">회원가입</Link>
         </div>
@@ -58,6 +80,11 @@ const Home = () => {
           <div class="kakao-logo"></div>
         </div>
       </div>
+
+      <SearchPassword
+        isOpen={isModalOpen}
+        handleClose={handleCloseSearchPasswordModal}
+      />
     </div>
   );
 };

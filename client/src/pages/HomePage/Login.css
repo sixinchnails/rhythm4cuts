@@ -67,15 +67,6 @@
   align-items: center;
 }
 
-Modal > .md_outer {
-  background-color: black;
-  width: 100vw;
-  height: 100vh;
-}
-.bg > .outer > .searchAndJoin > div {
-  margin: 10px;
-}
-
 .bg > .outer > .searchAndJoin > button {
   background-color: #f8e8ee;
   border: none;
