@@ -16,4 +16,5 @@ public class UserDto {
     private int point;
     private int playCount;
     private int scoreSum;
+    private int profileImageSeq;
 }
