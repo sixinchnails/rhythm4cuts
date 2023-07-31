@@ -16,6 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
+import static com.b109.rhythm4cuts.model.service.Utils.fn_getDateOfBirth;
+
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -79,35 +81,14 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
-    public static LocalDate fn_getDateOfBirth(String str1, String str2){
-        int divisionCode = Integer.parseInt(str2.substring(0, 1));
-        String dateOfBirth = null;
-        if(divisionCode == 1 || divisionCode == 2 || divisionCode == 5 || divisionCode == 6){
-            // 한국인 1900~, 외국인 1900~
-            dateOfBirth = "19"+str1;
-        }else if(divisionCode == 3 || divisionCode == 4 || divisionCode == 7 || divisionCode == 8){
-            // 한국인 2000~, 외국인 2000~
-            dateOfBirth = "20"+str1;
-        }else if(divisionCode == 9 || divisionCode == 0){
-            // 한국인 1800~
-            dateOfBirth = "18"+str1;
-        }
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate birthDate = LocalDate.parse(dateOfBirth, formatter);
-
-        return birthDate;
-    }
-
     //회원가입 및 회원 객체 DB 저장 메서드
     public String save(AddUserRequest dto) {
         User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
-        //어떤 형식으로 들어올까?
         String prefix = dto.getSsn().split("-")[0], postfix = dto.getSsn().split("-")[1];
         user.setBirthDate(fn_getDateOfBirth(prefix, postfix));
-        user.setPassword(dto.getPassword());
+        user.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         user.setNickname(dto.getNickname());
 
         return userRepository.save(user).getEmail();
@@ -120,12 +101,12 @@ public class UserServiceImpl implements UserService {
     
     //프로필 이미지 반환 메서드
     public String getProfileImg(String email) {
-        System.out.println("이메일:" + email);
-
         User user = userRepository.findByEmail(email)
                 .orElseThrow();
 
-        return user.getEmail();
+        String profileImg = String.valueOf(user.getProfileImage().getProfileImageSeq());
+
+        return (profileImg == null)? "No img" : profileImg;
     }
 
     //프로필 사진 변경 메서드
@@ -185,7 +166,7 @@ public class UserServiceImpl implements UserService {
     public UserDto login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException());
-
+        
         if (!bCryptPasswordEncoder.matches(loginDto.getPassword(), user.getPassword())) throw new IllegalArgumentException();
 
         UserDto userDto = Utils.dtoSetter(user);
