@@ -19,14 +19,14 @@ const Home = () => {
 
   // id 파트
   const [id, setId] = useState("");
-  const onChangeId = (e) => {
+  const onChangeId = e => {
     setId(e.target.value);
   };
 
   // pw 파트
   const [pw, setPW] = useState("");
-  const onChangePW = (e) => {
-    setId(e.target.value);
+  const onChangePW = e => {
+    setPW(e.target.value);
   };
 
   // 로그인
