@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.model.domain;
 
+import com.b109.rhythm4cuts.model.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -109,5 +110,17 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public UserDto getUserDto() {
+        UserDto userDto = new UserDto();
+        userDto.setName(this.getName());
+        userDto.setNickname(this.getNickname());
+        userDto.setUserSeq(this.getUserSeq());
+        userDto.setEmail(this.getEmail());
+        userDto.setPoint(this.getPoint());
+        userDto.setScoreSum(this.getScoreSum());
+
+        return userDto;
     }
 }

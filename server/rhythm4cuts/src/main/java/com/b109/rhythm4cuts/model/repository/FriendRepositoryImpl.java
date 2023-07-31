@@ -32,7 +32,7 @@ public class FriendRepositoryImpl implements FriendRepository{
     @Override
     public List<User> selectSearchFriend(String searchStr) throws SQLException {
         //select u from user as u where u.nickname like 'searchStr%'
-        String jpql = "SELECT u FROM User u WHERE u.nickname LIKE concat:searchStr '%'";
+        String jpql = "SELECT u FROM User u WHERE u.nickname LIKE :searchStr";
         return em.createQuery(jpql, User.class)
                 .setParameter("searchStr", searchStr)
                 .getResultList();
@@ -51,13 +51,15 @@ public class FriendRepositoryImpl implements FriendRepository{
 
     @Override
     public List<User> selectRequestFriendList(int userSeq) throws SQLException {
-        //select u from request_friend as rf join User as u on rf.fromUser = u.userSeq where rf.fromUser = userSeq;
-        String jpql = "SELECT u FROM RequestFriend rf " +
-                "JOIN User u ON rf.fromUser = u.userSeq " +
-                "WHERE rf.fromUser = :userSeq";
-        return em.createQuery(jpql, User.class)
-                .setParameter("userSeq", userSeq)
+        User fromUser = em.find(User.class, userSeq);
+
+        String jpql = "SELECT rf.toUser FROM RequestFriend rf JOIN User u ON rf.fromUser.userSeq = u.userSeq WHERE rf.fromUser = :user";
+        List<User> users = em.createQuery(jpql, User.class)
+                .setParameter("user", fromUser)
                 .getResultList();
+
+
+        return users;
     }
 
     @Override
@@ -75,7 +77,7 @@ public class FriendRepositoryImpl implements FriendRepository{
     public void updateRequestFriendToConfirm(int userSeq1, int userSeq2) throws SQLException {
         User fromUser = em.find(User.class, userSeq1);
         User toUser = em.find(User.class, userSeq2);
-        String jpql = "SELECT f FROM RequestFriend rf " +
+        String jpql = "SELECT rf FROM RequestFriend rf " +
                 "WHERE rf.fromUser = :fromUser AND rf.toUser = :toUser ";
         RequestFriend rf = em.createQuery(jpql, RequestFriend.class)
                 .setParameter("fromUser", fromUser)
@@ -89,7 +91,7 @@ public class FriendRepositoryImpl implements FriendRepository{
     public void updateRequestFriendToReject(int userSeq1, int userSeq2) throws SQLException {
         User fromUser = em.find(User.class, userSeq1);
         User toUser = em.find(User.class, userSeq2);
-        String jpql = "SELECT f FROM RequestFriend rf " +
+        String jpql = "SELECT rf FROM RequestFriend rf " +
                 "WHERE rf.fromUser = :fromUser AND rf.toUser = :toUser ";
         RequestFriend rf = em.createQuery(jpql, RequestFriend.class)
                 .setParameter("fromUser", fromUser)
@@ -114,5 +116,10 @@ public class FriendRepositoryImpl implements FriendRepository{
         friendLists.forEach(friendList -> {
             em.remove(friendList);
         });
+    }
+
+    @Override
+    public User selectUser(Integer userSeq) throws SQLException {
+        return em.find(User.class, userSeq);
     }
 }
