@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface FilmRepository {
 
-    public List<FilmDto> selectPhotoList(String createDate);
-    public List<BackgroundDto> selectBackgroundList();
-    public void insertPhoto();
+    List<FilmDto> selectPhotoList(String createDate);
+    List<BackgroundDto> selectBackgroundList();
+    void insertPhoto();
 }
