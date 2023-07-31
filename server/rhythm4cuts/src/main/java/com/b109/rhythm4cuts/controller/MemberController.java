@@ -32,7 +32,7 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<CreateAccessTokenResponse> login(@RequestBody LoginDto loginDto) {
         //로그인을 시도한 이메일로 사용자 조회
-        UserDto userDto = userService.login(loginDto);
+        UserDto userDto = userService.findByEmail(loginDto.getEmail());
         //액세스 토큰의 유효 시간 30분으로 설정
         String newAccessToken = tokenService.generateToken(userDto, Duration.ofMinutes(30));
 
@@ -44,15 +44,31 @@ public class MemberController {
                         .accessToken(newAccessToken)
                         .build());
     }
-    
+
     //API 2. POST 회원가입
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody AddUserRequest request) {
         userService.save(request);
 
-        //중복 메커니즘 추가 필요
-        
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/mail")
+    public ResponseEntity mail(@RequestParam String email) {
+        MailDto mailDto = userService.createMailAndCertificate(email);
+
+        userService.sendEmail(mailDto);
+
+        return ResponseEntity.status(200).build();
+    }
+
+    //DTO 추가 필요
+    @PostMapping("/mailcheck")
+    public ResponseEntity mailCheck() {
+        //DB 조회
+        String certificate = "111";
+        //두 개 일치 시 권한 부여나 boolean 반환 기능 구현 필요
+        return ResponseEntity.status(200).build();
     }
 
     //닉네임 중복
@@ -66,6 +82,8 @@ public class MemberController {
     public ResponseEntity getProfile(@RequestParam String email) {
         Map<String, Object> res = new HashMap<>();
 
+        System.out.println("컨트 이메일:" + email);
+
         res.put("file_name", userService.getProfileImg(email));
 
         return ResponseEntity.status(200).body(res);
@@ -76,9 +94,9 @@ public class MemberController {
     public ResponseEntity getPoint(@RequestParam String email) {
         Map<String, Object> res = new HashMap<>();
         System.out.println("포인트");
-                
+
         res.put("point", userService.getPoint(email));
-        
+
         return ResponseEntity.status(200).body(res);
     }
 

@@ -40,5 +40,7 @@ public interface UserService {
 
     MailDto createMailAndChangePassword(String email);
 
+    MailDto createMailAndCertificate(String email);
+
     void sendEmail(MailDto mailDto);
 }
