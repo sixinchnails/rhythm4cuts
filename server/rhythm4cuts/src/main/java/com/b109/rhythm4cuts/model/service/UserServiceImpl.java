@@ -166,11 +166,6 @@ public class UserServiceImpl implements UserService {
     public UserDto login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException());
-
-        System.out.println("비밀번호 체크");
-                
-        System.out.println(loginDto.getPassword());
-        System.out.println(user.getPassword());
         
         if (!bCryptPasswordEncoder.matches(loginDto.getPassword(), user.getPassword())) throw new IllegalArgumentException();
 
