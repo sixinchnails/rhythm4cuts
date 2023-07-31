@@ -22,6 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/member")
 public class MemberController {
     private final TokenService tokenService;

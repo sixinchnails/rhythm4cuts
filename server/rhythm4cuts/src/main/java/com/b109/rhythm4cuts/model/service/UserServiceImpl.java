@@ -11,6 +11,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private final TokenService tokenService;
     private final JavaMailSender javaMailSender;
 
+    //임시 비밀번호 size 크기로 생성
     public String getRandomPassword(int size) {
         char[] charSet = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
         StringBuffer sb = new StringBuffer();
@@ -51,10 +54,12 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
+    //중복 닉네임 존재 여부 메서드
     public boolean duplicateNickname(String nickname) {
         return (userRepository.findByNickname(nickname).isPresent())? true:false;
     }
 
+    //닉네임으로 사용자 객체를 찾는 메서드
     public UserDto findByNickname(String nickname) {
         User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new IllegalArgumentException("해당 닉네임을 가진 사용자가 존재하지 않습니다."));
@@ -64,6 +69,7 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
+    //이메일로 사용자 객체를 찾는 메서드
     public UserDto findByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
@@ -73,20 +79,46 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
-    //회원가입
-    public String save(AddUserRequest dto) {
-        User member = new User();
-        member.setEmail(dto.getEmail());
-        member.setPassword(dto.getPassword());
+    public static LocalDate fn_getDateOfBirth(String str1, String str2){
+        int divisionCode = Integer.parseInt(str2.substring(0, 1));
+        String dateOfBirth = null;
+        if(divisionCode == 1 || divisionCode == 2 || divisionCode == 5 || divisionCode == 6){
+            // 한국인 1900~, 외국인 1900~
+            dateOfBirth = "19"+str1;
+        }else if(divisionCode == 3 || divisionCode == 4 || divisionCode == 7 || divisionCode == 8){
+            // 한국인 2000~, 외국인 2000~
+            dateOfBirth = "20"+str1;
+        }else if(divisionCode == 9 || divisionCode == 0){
+            // 한국인 1800~
+            dateOfBirth = "18"+str1;
+        }
 
-        return userRepository.save(member).getEmail();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate birthDate = LocalDate.parse(dateOfBirth, formatter);
+
+        return birthDate;
     }
 
-    //포인트 반환
+    //회원가입 및 회원 객체 DB 저장 메서드
+    public String save(AddUserRequest dto) {
+        User user = new User();
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        //어떤 형식으로 들어올까?
+        String prefix = dto.getSsn().split("-")[0], postfix = dto.getSsn().split("-")[1];
+        user.setBirthDate(fn_getDateOfBirth(prefix, postfix));
+        user.setPassword(dto.getPassword());
+        user.setNickname(dto.getNickname());
+
+        return userRepository.save(user).getEmail();
+    }
+
+    //포인트 반환 메서드
     public int getPoint(String email) {
         return userRepository.findByEmail(email).get().getPoint();
     }
-
+    
+    //프로필 이미지 반환 메서드
     public String getProfileImg(String email) {
         System.out.println("이메일:" + email);
 
@@ -96,7 +128,7 @@ public class UserServiceImpl implements UserService {
         return user.getEmail();
     }
 
-    //프로필 사진 변경
+    //프로필 사진 변경 메서드
     public void patchProfileImg(UpdateProfileImgDto dto) {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException());
@@ -112,7 +144,7 @@ public class UserServiceImpl implements UserService {
         profileImageRepository.save(profileImage);
     }
 
-    //닉네임 변경
+    //닉네임 변경 메서드
     public void updateNickname(UpdateUserNicknameDto dto) {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow();
@@ -122,6 +154,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    //비밀번호 변경 메서드
     public void updatePassword(String accessToken, UpdateUserPasswordDto dto) {
         if (!tokenService.validToken(accessToken)) throw new IllegalArgumentException();
 
@@ -148,6 +181,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    //로그인 메서드
     public UserDto login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException());
@@ -159,9 +193,10 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
-    //상태 변환
+    //로그아웃 메서드(상태 변환)
     public void logout() {}
 
+    //포인트 결제 메서드
     public long payPoints(PayDto payDto) {
         User user = userRepository.findByEmail(payDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException());
@@ -179,6 +214,7 @@ public class UserServiceImpl implements UserService {
         return user.getPoint();
     }
 
+    //비밀번호 찾기 메서드 (SMTP 사용)
     public void findPassword(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException());
@@ -215,12 +251,6 @@ public class UserServiceImpl implements UserService {
         message.setText(mailDto.getContent());
         message.setFrom("dropice@naver.com");
         message.setReplyTo("dropice@naver.com");
-
-        System.out.println("이메일");
-                
-        System.out.println(mailDto);
-        System.out.println(message);
-
         javaMailSender.send(message);
     }
 }
