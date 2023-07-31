@@ -15,6 +15,7 @@ public class FilmServiceImpl implements FilmService {
 
     private final FilmRepository filmRepository;
 
+    @Override
     public List<FilmDto> getPhotoList(String createDate) {
         List<FilmDto> film = filmRepository.selectPhotoList(createDate);
 
@@ -22,6 +23,8 @@ public class FilmServiceImpl implements FilmService {
 
         return res;
     }
+
+    @Override
     public List<BackgroundDto> getBackgroundList() {
         List<BackgroundDto> background = filmRepository.selectBackgroundList();
 
@@ -29,6 +32,8 @@ public class FilmServiceImpl implements FilmService {
 
         return res;
     }
+
+    @Override
     public void addPhoto(FilmDto filmDto) {
         filmRepository.insertPhoto();
     }
