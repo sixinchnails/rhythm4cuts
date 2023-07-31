@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, Typography, Box, CircularProgress } from "@mui/material";
+import { Card, CardContent, Typography } from "@mui/material";
 
 function PlayerEmpty() {
   return (
@@ -12,21 +12,12 @@ function PlayerEmpty() {
         }}>
         <CardContent>
           <img
-            src="/images/꼬북이.jfif"
-            alt="아직 대상자가 안들어온 상태"
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            src="/images/Empty.png"
+            alt="비어있는 상태"
+            style={{ width: "10vw", objectFit: "cover" }}
           />
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)", // 로딩 스피너를 가운데 정렬
-            }}>
-            <CircularProgress color="primary" />
-          </Box>
         </CardContent>
-        <Typography variant="body1">들어오는 중 ..</Typography>
+        <Typography variant="body1"> 초대하기 </Typography>
       </Card>
     </div>
   );

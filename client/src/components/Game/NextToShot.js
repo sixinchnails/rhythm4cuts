@@ -4,7 +4,7 @@ import { Button, Typography, Container, Grid } from "@mui/material";
 
 function NextToShot() {
   const navigate = useNavigate();
-  const [seconds, setSeconds] = useState(1000);
+  const [seconds, setSeconds] = useState(10);
 
   useEffect(() => {
     const countdown = setInterval(() => {

@@ -24,8 +24,8 @@ function Header() {
         <IconButton edge="start" color="inherit" aria-label="home" href="/">
           <img
             src="/images/Home_Logo.png"
-            width="200"
-            height="60"
+            width="240"
+            height="80"
             alt="Game Header Logo"
             className="d-inline-block align-top"
             sx={style}
