@@ -1,8 +1,9 @@
 import React from "react";
 import "./My_Friend.css"; // 이 CSS 파일은 FriendInfo 컴포넌트에 적용할 스타일을 정의하는 파일입니다.
-
-function FriendInfo({ Info }) {
-  // 페이지를 이동시켜주는 함수
+// Store.js 파일 불러와서 쓰기 위해
+import { useSelector } from "react-redux";
+function FriendInfo() {
+  const Info = useSelector(state => state.MyPage_Friend);
 
   function getProfilePic(point) {
     if (point <= 2000) {

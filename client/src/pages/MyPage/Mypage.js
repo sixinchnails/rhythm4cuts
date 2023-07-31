@@ -11,13 +11,6 @@ import Button from "@mui/material/Button";
 
 const Home = () => {
   let navigate = useNavigate();
-  const userInfo = [
-    { name: "이름", value: "응애강현" },
-    { name: "닉네임", value: "코딩응애" },
-    { name: "아이디", value: "hyun123" },
-    { name: "생일", value: "1998-08-21 ^^" },
-    { name: "성별", value: "남자" },
-  ];
   // 배경색 변경
   useEffect(() => {
     document.body.style.backgroundColor = "#F8E8EE";
@@ -37,7 +30,7 @@ const Home = () => {
         <Sidebar></Sidebar>
         <div className="main-container">
           <MainContent></MainContent>
-          <UserInfo info={userInfo} />
+          <UserInfo />
           {/* UserInfo 컴포넌트를 사용하여 사용자 정보를 표시합니다. */}
         </div>
         <div className="buttons">
