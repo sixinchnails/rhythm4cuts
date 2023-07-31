@@ -1,0 +1,332 @@
+/* /* html {
+  overflow: hidden;
+} */
+
+body {
+  margin: 0;
+  overflow-y: hidden;
+}
+
+.outer {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.outer::-webkit-scrollbar {
+  display: none;
+}
+
+.divider {
+  width: 100%;
+  height: 5px;
+  background-color: gray;
+}
+
+.Home1 > .main1 > .beatbox {
+  width: 60%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.Logo {
+  background-image: url(../../../public/images/Home_Effect1.png);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 45vh;
+}
+
+.img {
+  animation: heartBeat infinite; /* referring directly to the animation's @keyframe declaration */
+  animation-duration: 2s;
+}
+
+.playBtn {
+  margin-left: 19%;
+  margin-top: 3%;
+}
+
+.Home1 {
+  background-image: url(../../../public/images/HP.png);
+  background-size: cover;
+  background-position: center;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.Home2 {
+  background-image: url(../../../public/images/Home_Page2.png);
+  background-size: cover;
+  background-position: center;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.Home2 > h1 {
+  color: aqua;
+  text-align: center;
+  padding-top: 50px;
+}
+
+.Home2 > .content {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100vw;
+  height: 100vh;
+  margin-top: 50px;
+}
+
+.Home2 > .content > .intro {
+  width: 40vw;
+  height: 75vh;
+  background-color: #fed9e7;
+}
+
+.Home2 > .content > .rules {
+  width: 40vw;
+  height: 75vh;
+  background-color: #fed9e7;
+}
+
+.Home3 {
+  background-image: url(../../../public/images/Home_Page3.png);
+  background-size: cover;
+  background-position: center;
+  width: 100vw;
+  height: 108vh;
+  position: relative;
+}
+
+.Home3 > .content > .rank1 {
+  margin-top: 5%;
+}
+
+.Home3 > .content > .rank1 > h1 {
+  text-align: center;
+  color: aqua;
+}
+
+.Home3 > .content > .rank2 > h1 {
+  text-align: center;
+  color: aqua;
+}
+
+.Home3 > .content {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100vw;
+}
+
+.Home3 > .content > .rank1 > .rt_sing_rank {
+  margin-top: 50px;
+  height: 70vh;
+  width: 35vw;
+  background-color: #eeccd9;
+  opacity: 0.8;
+}
+
+.Home3 > .content > .rank1 > .rt_sing_rank > div {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 10%;
+}
+
+.Home3 > .content > .rank1 > .rt_sing_rank > div > .category {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 90%;
+  height: 50%;
+  background-color: #f593b6;
+  font-weight: bold;
+}
+
+.Home3 > .content > .rank1 > .rt_sing_rank > .music_rank {
+  width: 90%;
+  height: 75%;
+  background-color: #f593b6;
+  margin-left: 5%;
+}
+
+.Home3 > .content > .rank1 > .rt_sing_rank > .music_rank > .rank {
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.Home3 > .content > .rank2 {
+  margin-top: 5%;
+}
+.Home3 > .content > .rank2 > .total_rank {
+  margin-top: 50px;
+  height: 28%;
+  width: 35vw;
+  background-color: #eeccd9;
+  opacity: 0.8;
+}
+
+.Home3 > .content > .rank2 > .nickname {
+  height: 5%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 1%;
+}
+
+.Home3 > .content > .rank2 > .top100 {
+  height: 43%;
+  width: 35vw;
+  background-color: #eeccd9;
+  opacity: 0.8;
+}
+
+.Home3 > .content > .rank2 > .top100 > div {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 10%;
+}
+
+.Home3 > .content > .rank2 > .top100 > div > .category {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 90%;
+  height: 50%;
+  background-color: #f593b6;
+  font-weight: bold;
+}
+
+.Home3 > .content > .rank2 > .top100 > .user_rank > .rank {
+  width: 100%;
+}
+
+.Home4 {
+  background-image: url(../../../public/images/Home_Page4.png);
+  background-size: cover;
+  background-position: center;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  display: flex;
+}
+
+.Home4 > .sideBar {
+  width: 20%;
+  margin-left: 5%;
+  font-size: xx-large;
+  font-weight: bolder;
+}
+
+.Home4 > .sideBar > .title {
+  height: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.Home4 > .sideBar > .calender {
+  height: 80%;
+  justify-content: center;
+  background-color: #eeccd9;
+}
+
+.Home4 > .sideBar > .calender > .react-datepicker-wrapper {
+  padding-top: 5%;
+}
+
+.Home4
+  > .sideBar
+  > .calender
+  > .react-datepicker-wrapper
+  > .react-datepicker__input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Home4
+  > .sideBar
+  > .calender
+  > .react-datepicker-wrapper
+  > .react-datepicker__input-container
+  > .datePicker {
+  display: flex;
+  justify-content: center;
+  background-color: black;
+  box-sizing: border-box;
+  width: 80%;
+  height: 10%;
+  color: WHITE;
+  text-align: center;
+}
+
+.Home4
+  > div.sideBar
+  > div.calender
+  > div.react-datepicker__tab-loop
+  > div.react-datepicker-popper {
+  display: flex !important;
+  justify-content: center !important;
+  margin-left: 2%;
+}
+
+.Home4
+  > div.sideBar
+  > div.calender
+  > div.react-datepicker__tab-loop
+  > div.react-datepicker-popper
+  > div
+  > div
+  > div.react-datepicker__triangle {
+  transform: translate(125px, 0px) !important;
+}
+
+.Home4 > .content {
+  width: 65%;
+  height: 80%;
+  background-color: #f593b6;
+  margin-top: 10vh;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.Home4 > .content > .line1 {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Home4 > .content > .line1 > .picture {
+  width: 20%;
+  height: 90%;
+  background-color: #fed9e7;
+  margin: 5%;
+}
+
+.Home4 > .content > .line2 {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Home4 > .content > .line2 > .picture {
+  width: 20%;
+  height: 90%;
+  background-color: #fed9e7;
+  margin: 5%;
+}
