@@ -174,6 +174,188 @@ let GameScore_Result = createSlice({
   ],
 });
 
+let Music_Rank = createSlice({
+  name: "music_rank",
+  initialState: [
+    {
+      rank: 1,
+      title: "주저하는 연인들을 위해",
+      singer: "잔나비",
+    },
+    {
+      rank: 2,
+      title: "퀸카",
+      singer: "(여자)아이들",
+    },
+    {
+      rank: 3,
+      title: "Super Shy",
+      singer: "New Jeans",
+    },
+    {
+      rank: 4,
+      title: "UNFORGIVEN",
+      singer: "르세라핌",
+    },
+    {
+      rank: 5,
+      title: "일어나",
+      singer: "김광석",
+    },
+    {
+      rank: 6,
+      title: "주저하는 연인들을 위해",
+      singer: "잔나비",
+    },
+    {
+      rank: 7,
+      title: "퀸카",
+      singer: "(여자)아이들",
+    },
+    {
+      rank: 8,
+      title: "Super Shy",
+      singer: "New Jeans",
+    },
+    {
+      rank: 9,
+      title: "UNFORGIVEN",
+      singer: "르세라핌",
+    },
+    {
+      rank: 10,
+      title: "일어나",
+      singer: "김광석",
+    },
+    {
+      rank: 11,
+      title: "주저하는 연인들을 위해",
+      singer: "잔나비",
+    },
+    {
+      rank: 12,
+      title: "퀸카",
+      singer: "(여자)아이들",
+    },
+    {
+      rank: 13,
+      title: "Super Shy",
+      singer: "New Jeans",
+    },
+    {
+      rank: 14,
+      title: "UNFORGIVEN",
+      singer: "르세라핌",
+    },
+    {
+      rank: 15,
+      title: "일어나",
+      singer: "김광석",
+    },
+    {
+      rank: 16,
+      title: "주저하는 연인들을 위해",
+      singer: "잔나비",
+    },
+    {
+      rank: 17,
+      title: "퀸카",
+      singer: "(여자)아이들",
+    },
+    {
+      rank: 18,
+      title: "Super Shy",
+      singer: "New Jeans",
+    },
+    {
+      rank: 19,
+      title: "UNFORGIVEN",
+      singer: "르세라핌",
+    },
+    {
+      rank: 20,
+      title: "일어나",
+      singer: "김광석",
+    },
+  ],
+});
+
+let User_Rank = createSlice({
+  name: "user_rank",
+  initialState: [
+    {
+      rank: 1,
+      nickName: "최재드래곤",
+      score: 1000,
+    },
+    {
+      rank: 2,
+      nickName: "한윤팀장",
+      score: 900,
+    },
+    {
+      rank: 3,
+      nickName: "실버캐슬",
+      score: 800,
+    },
+    {
+      rank: 4,
+      nickName: "홍유콩",
+      score: 700,
+    },
+    {
+      rank: 5,
+      nickName: "최강현",
+      score: 600,
+    },
+    {
+      rank: 6,
+      nickName: "밍국이",
+      score: 500,
+    },
+    {
+      rank: 7,
+      nickName: "누군가",
+      score: 300,
+    },
+    {
+      rank: 8,
+      nickName: "최재드래곤2",
+      score: 1000,
+    },
+    {
+      rank: 9,
+      nickName: "한윤팀장2",
+      score: 900,
+    },
+    {
+      rank: 10,
+      nickName: "실버캐슬2",
+      score: 800,
+    },
+    {
+      rank: 11,
+      nickName: "홍유콩2",
+      score: 700,
+    },
+    {
+      rank: 12,
+      nickName: "최강현2",
+      score: 600,
+    },
+    {
+      rank: 13,
+      nickName: "밍국이2",
+      score: 500,
+    },
+    {
+      rank: 14,
+      nickName: "누군가2",
+      score: 300,
+    },
+  ],
+});
+
 export default configureStore({
   reducer: {
     GameShot_frameImage: GameShot_frameImage.reducer,
@@ -181,5 +363,7 @@ export default configureStore({
     GameWait_Ready: GameWait_Ready.reducer,
     GameList_Room: GameList_Room.reducer,
     GameList_Friend: GameList_Friend.reducer,
+    Music_Rank: Music_Rank.reducer,
+    User_Rank: User_Rank.reducer,
   },
 });

@@ -1,6 +1,6 @@
 // Home.js
 import React, { useEffect } from "react";
-import Header from "../../components/Home/Header";
+import Header from "../../components/Home/Mypage_Header";
 import Sidebar from "../../components/My/My_SideBar";
 import MainContent from "../../components/My/My_MainContent";
 import "./MyFriend.css";

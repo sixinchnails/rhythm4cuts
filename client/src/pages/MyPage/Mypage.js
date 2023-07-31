@@ -1,4 +1,4 @@
-import Header from "../../components/Home/Header";
+import Header from "../../components/Home/Mypage_Header";
 import { useNavigate } from "react-router-dom";
 // Home.js
 import React, { useEffect } from "react";

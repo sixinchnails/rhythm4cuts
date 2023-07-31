@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import "./MyPoint.css";
 import Sidebar from "../../components/My/My_SideBar";
-import Header from "../../components/Home/Header";
+import Header from "../../components/Home/Mypage_Header";
 
 const Home = () => {
   useEffect(() => {

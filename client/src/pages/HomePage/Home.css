@@ -22,9 +22,6 @@ body {
   background-color: gray;
 }
 
-.Home1 > .main1 {
-}
-
 .Home1 > .main1 > .beatbox {
   width: 60%;
   height: 100%;
@@ -88,13 +85,13 @@ body {
 .Home2 > .content > .intro {
   width: 40vw;
   height: 75vh;
-  background-color: black;
+  background-color: #fed9e7;
 }
 
 .Home2 > .content > .rules {
   width: 40vw;
   height: 75vh;
-  background-color: black;
+  background-color: #fed9e7;
 }
 
 .Home3 {
@@ -132,19 +129,37 @@ body {
   width: 35vw;
   background-color: #eeccd9;
   opacity: 0.8;
-  display: flex;
-  justify-content: center;
 }
 
-.Home3 > .content > .rank1 > .rt_sing_rank > .category {
+.Home3 > .content > .rank1 > .rt_sing_rank > div {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 10%;
+}
+
+.Home3 > .content > .rank1 > .rt_sing_rank > div > .category {
   margin-top: 15px;
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 90%;
-  height: 5%;
+  height: 50%;
   background-color: #f593b6;
   font-weight: bold;
+}
+
+.Home3 > .content > .rank1 > .rt_sing_rank > .music_rank {
+  width: 90%;
+  height: 75%;
+  background-color: #f593b6;
+  margin-left: 5%;
+}
+
+.Home3 > .content > .rank1 > .rt_sing_rank > .music_rank > .rank {
+  width: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
 .Home3 > .content > .rank2 {
@@ -152,7 +167,7 @@ body {
 }
 .Home3 > .content > .rank2 > .total_rank {
   margin-top: 50px;
-  height: 30%;
+  height: 28%;
   width: 35vw;
   background-color: #eeccd9;
   opacity: 0.8;
@@ -163,27 +178,36 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  margin: 1%;
 }
 
 .Home3 > .content > .rank2 > .top100 {
-  margin-top: 10%;
-  height: 40%;
+  height: 43%;
   width: 35vw;
   background-color: #eeccd9;
   opacity: 0.8;
-  display: flex;
-  justify-content: center;
 }
 
-.Home3 > .content > .rank2 > .top100 > .category {
+.Home3 > .content > .rank2 > .top100 > div {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 10%;
+}
+
+.Home3 > .content > .rank2 > .top100 > div > .category {
   margin-top: 15px;
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 90%;
-  height: 10.715%;
+  height: 50%;
   background-color: #f593b6;
   font-weight: bold;
+}
+
+.Home3 > .content > .rank2 > .top100 > .user_rank > .rank {
+  width: 100%;
 }
 
 .Home4 {
@@ -254,7 +278,7 @@ body {
   > div.react-datepicker-popper {
   display: flex !important;
   justify-content: center !important;
-  margin-left: 3%;
+  margin-left: 2%;
 }
 
 .Home4
@@ -288,7 +312,7 @@ body {
 .Home4 > .content > .line1 > .picture {
   width: 20%;
   height: 90%;
-  background-color: black;
+  background-color: #fed9e7;
   margin: 5%;
 }
 
@@ -303,6 +327,6 @@ body {
 .Home4 > .content > .line2 > .picture {
   width: 20%;
   height: 90%;
-  background-color: black;
+  background-color: #fed9e7;
   margin: 5%;
 }
