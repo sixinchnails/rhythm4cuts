@@ -4,26 +4,26 @@ import lombok.AccessLevel;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
+//레디스에서 14일 유지
+@RedisHash(value = "jwtToken", timeToLive = 60 * 60 * 24 * 14)
 public class RefreshToken {
+    //email? seq?
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
-    private Long id;
-
-    @Column(name = "user_id", nullable = false, unique = true)
-    private Long userId;
-
-    @Column(name = "refresh_token", nullable = false)
+    private String id;
     private String refreshToken;
+    private String accessToken;
 
-    public RefreshToken(Long userId, String refreshToken) {
-        this.userId = userId;
+    public RefreshToken(String id, String accessToken, String refreshToken) {
+        this.id = id;
+        this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
 

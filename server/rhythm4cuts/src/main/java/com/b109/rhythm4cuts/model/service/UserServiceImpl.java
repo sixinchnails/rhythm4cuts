@@ -237,7 +237,7 @@ public class UserServiceImpl implements UserService {
 
         MailDto mailDto = new MailDto();
         mailDto.setAddress(new String[] {email});
-        mailDto.setTitle("Rhythm4Cuts 임시 비밀번호 발급 안내 메일입니다.");
+        mailDto.setTitle("Rhythm4Cuts 인증번호 발급 안내 메일입니다.");
         mailDto.setContent("안녕하세요. Rhythm4Cuts 인증번호를 발급드립니다. 회원님의 임시 인증번호는 " + tempCertification + "입니다.");
 
         return mailDto;
@@ -251,5 +251,13 @@ public class UserServiceImpl implements UserService {
         message.setFrom("dropice@naver.com");
         message.setReplyTo("dropice@naver.com");
         javaMailSender.send(message);
+    }
+
+    public boolean checkCertificate(CertificateDto certificateDto) {
+        User user = userRepository.findByEmail(certificateDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+
+        return false;
+        //return (certificateDto.getCertificate().equals(user.getCertificate()))? true:false;
     }
 }

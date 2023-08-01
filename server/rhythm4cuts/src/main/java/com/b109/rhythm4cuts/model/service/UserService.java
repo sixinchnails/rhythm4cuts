@@ -43,4 +43,6 @@ public interface UserService {
     MailDto createMailAndCertificate(String email);
 
     void sendEmail(MailDto mailDto);
+
+    boolean checkCertificate(CertificateDto certificateDto);
 }

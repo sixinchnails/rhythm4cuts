@@ -2,11 +2,9 @@ package com.b109.rhythm4cuts.config.jwt;
 
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.LoginDto;
+import com.b109.rhythm4cuts.model.dto.TokenResponse;
 import com.b109.rhythm4cuts.model.dto.UserDto;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,28 +21,48 @@ import java.util.Set;
 public class TokenProvider {
     private final JwtProperties jwtProperties;
 
-    public String generateToken(UserDto userDto, Duration expiredAt) {
+    public TokenResponse generateToken(UserDto userDto, Duration accessExpiredAt, Duration refreshExpiredAt) {
         Date now = new Date();
 
-        return makeToken(new Date(now.getTime() + expiredAt.toMillis()), userDto);
+        return makeToken(new Date(now.getTime() + accessExpiredAt.toMillis()), new Date(now.getTime() + refreshExpiredAt.toMillis()), userDto);
     }
 
     //메서드 1. JWT 토큰 생성 메서드
-    private String makeToken(Date expiry, UserDto userDto) {
+    private TokenResponse makeToken(Date accessExpiry, Date refreshExpiry, UserDto userDto) {
         Date now = new Date();
-
-        return Jwts.builder()
+        
+        String accessToken = Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setIssuer(jwtProperties.getIssuer())
                 .setIssuedAt(now)
-                .setExpiration(expiry)
+                .setExpiration(accessExpiry)
+                .setSubject(userDto.getEmail())
+                //여기부터 공개 클레임
+                .claim("id", userDto.getEmail())
+                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
+                .compact();
+
+        String refreshToken = Jwts.builder()
+                .setIssuer(jwtProperties.getIssuer())
+                .setIssuedAt(now)
+                .setExpiration(refreshExpiry)
                 .setSubject(userDto.getEmail())
                 .claim("id", userDto.getEmail())
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                 .compact();
+
+        return TokenResponse
+                .builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .points(userDto.getPoint())
+                .nickname(userDto.getNickname())
+                .profile_img_seq(userDto.getProfileImageSeq())
+                .user_seq(userDto.getUserSeq())
+                .build();
     }
 
-    //메서드 2. JWT 토큰 유효성 검증 메서드
+    //메서드 2. JWT 토큰(액세스/리프레쉬 둘 다) 유효성 검증 메서드
     public boolean validToken(String token) {
         try{
             Jwts.parser()
@@ -52,6 +70,8 @@ public class TokenProvider {
                     .parseClaimsJws(token);
 
             return true;
+        } catch (ExpiredJwtException e) {
+            return false;
         } catch(Exception e) {
             return false;
         }

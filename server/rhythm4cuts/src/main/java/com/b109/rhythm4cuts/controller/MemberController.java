@@ -6,6 +6,7 @@ import com.b109.rhythm4cuts.model.dto.*;
 
 import com.b109.rhythm4cuts.model.service.TokenService;
 import com.b109.rhythm4cuts.model.service.UserService;
+import com.b109.rhythm4cuts.model.dto.TokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +31,14 @@ public class MemberController {
 
     //API 1. POST 로그인
     @PostMapping("/login")
-    public ResponseEntity<CreateAccessTokenResponse> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<TokenResponse> login(@RequestBody LoginDto loginDto) {
         //로그인을 시도한 이메일로 사용자 조회
         UserDto userDto = userService.findByEmail(loginDto.getEmail());
         //액세스 토큰의 유효 시간 30분으로 설정
-        String newAccessToken = tokenService.generateToken(userDto, Duration.ofMinutes(30));
+        TokenResponse tokenResponse = tokenService.generateToken(userDto, Duration.ofMinutes(30), Duration.ofDays(14));
 
         return ResponseEntity.ok()
-                .body(new CreateAccessTokenResponse().builder()
-                        .nickname(userDto.getNickname())
-                        .points(userDto.getPoint())
-                        .profile_img_seq(userDto.getProfileImageSeq())
-                        .accessToken(newAccessToken)
-                        .build());
+                .body(tokenResponse);
     }
 
     //API 2. POST 회원가입
@@ -64,17 +60,24 @@ public class MemberController {
 
     //DTO 추가 필요
     @PostMapping("/mailcheck")
-    public ResponseEntity mailCheck() {
-        //DB 조회
-        String certificate = "111";
-        //두 개 일치 시 권한 부여나 boolean 반환 기능 구현 필요
-        return ResponseEntity.status(200).build();
+    public ResponseEntity mailCheck(@RequestBody CertificateDto certificateDto) {
+        boolean checked = userService.checkCertificate(certificateDto);
+
+        return ResponseEntity.status(200).body(
+                Map.of("checked", checked)
+        );
     }
 
     //닉네임 중복
     @GetMapping("/nickname")
     public ResponseEntity nickname(@RequestParam String nickname) {
         return ResponseEntity.status(409).body(Map.of("duplicate", userService.duplicateNickname(nickname)));
+    }
+
+    //이메일 중복
+    @GetMapping("email")
+    public ResponseEntity email(@RequestParam String email) {
+        return ResponseEntity.status(200).build();
     }
 
     //나의 사진 조회
