@@ -8,7 +8,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/film")
@@ -20,10 +21,10 @@ public class FilmController {
     // API 1. 데일리 방명록 사진 리스트
     // createDate: 방명록 조회 날짜 (ex. 2023-07-24)
     @GetMapping("/photo/{createDate}")
-    public ResponseEntity<FilmDto> dailyPhotoList(@PageableDefault(size = 10) Pageable pageable, @PathVariable("createDate") LocalDateTime createDate) {
+    public ResponseEntity<FilmDto> dailyPhotoList(@PageableDefault(size = 10) Pageable pageable, @PathVariable("createDate") String createDate) {
 
         // DB에서 'WHERE create_date LIKE 'date%''와 같은 형태로 검색할 예정
-        filmService.getPhotoList(createDate);
+        filmService.getPhotoList(createDate, pageable);
 
 //        return ResponseEntity.ok().body();
         return null;
