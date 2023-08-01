@@ -1,12 +1,15 @@
 package com.b109.rhythm4cuts.model.service;
 
+import com.b109.rhythm4cuts.model.domain.GameImage;
 import com.b109.rhythm4cuts.model.dto.BackgroundDto;
 import com.b109.rhythm4cuts.model.dto.FilmDto;
 import com.b109.rhythm4cuts.model.repository.FilmCustomRepository;
+import com.b109.rhythm4cuts.model.repository.FilmRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,11 +17,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilmServiceImpl implements FilmService {
 
+    private final FilmRepository filmRepository;
     private final FilmCustomRepository filmCustomRepository;
 
     @Override
-    public Page<FilmDto> getPhotoList(String createDate) {
-        Page<FilmDto> film = filmCustomRepository.selectPhotoList(createDate);
+    public Page<FilmDto> getPhotoList(LocalDateTime createDate) {
+        Page<GameImage> film = filmRepository.findByCreateDate(createDate);
 
         Page<FilmDto> res = null;
 

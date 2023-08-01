@@ -8,6 +8,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/film")
 @RequiredArgsConstructor
@@ -18,12 +20,13 @@ public class FilmController {
     // API 1. 데일리 방명록 사진 리스트
     // createDate: 방명록 조회 날짜 (ex. 2023-07-24)
     @GetMapping("/photo/{createDate}")
-    public ResponseEntity<FilmDto> dailyPhotoList(@PageableDefault(size = 10) Pageable pageable, @PathVariable("createDate") String createDate) {
+    public ResponseEntity<FilmDto> dailyPhotoList(@PageableDefault(size = 10) Pageable pageable, @PathVariable("createDate") LocalDateTime createDate) {
 
         // DB에서 'WHERE create_date LIKE 'date%''와 같은 형태로 검색할 예정
         filmService.getPhotoList(createDate);
 
-        return ResponseEntity.ok().body();
+//        return ResponseEntity.ok().body();
+        return null;
     }
 
     // API 2. 인생네컷 테두리 전체 조회

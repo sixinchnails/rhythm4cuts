@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface FilmCustomRepository {
 
-    Page<FilmDto> selectPhotoList(String createDate);
     List<BackgroundDto> selectBackgroundList();
     void insertPhoto();
 }

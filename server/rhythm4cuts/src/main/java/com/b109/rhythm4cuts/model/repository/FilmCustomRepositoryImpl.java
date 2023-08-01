@@ -15,11 +15,6 @@ import java.util.List;
 public class FilmCustomRepositoryImpl implements FilmCustomRepository {
 
     @Override
-    public Page<FilmDto> selectPhotoList(String createDate) {
-        return null;
-    }
-
-    @Override
     public List<BackgroundDto> selectBackgroundList() {
         return null;
     }
