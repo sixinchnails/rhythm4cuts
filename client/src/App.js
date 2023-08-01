@@ -78,6 +78,7 @@ function App() {
         <Route path="/MyPoint" element={<MyPoint />} />
         <Route path="/MyPhoto" element={<MyPhoto />} />
         <Route path="/MyModify" element={<MyModify />} />
+
       </Routes>
     </div>
   );
