@@ -11,25 +11,25 @@ import {
   FormControlLabel,
   Radio,
 } from "@mui/material";
-import { createSessionAndToken } from "../../openvidu/RoomEnter";
+import { createSession } from "../../openvidu/sessionInitialization";
+import { createConnection } from "../../openvidu/connectionInitialization";
 // UUID는 "Universally Unique Identifier"의 약자로, 고유한 값을 생성하기 위한 표준
 import { v4 as uuidv4 } from "uuid";
 
 function CreateRoom({ isOpen, handleClose }) {
-  // 방을 만들 때마다 새로운 세션 ID를 생성하도록 설계
-  // 고유한 세션 ID를 생성하여 초기화합니다.
   const [sessionId, setSessionId] = useState(uuidv4());
 
-  // 토큰 받기
   const handleCreateRoom = async () => {
-    const token = await createSessionAndToken(sessionId);
-    if (token) {
-      console.log("Token: ", token);
+    const sessionResponse = await createSession(sessionId); // 수정된 함수 호출
+    const connectionResponse = await createConnection(sessionResponse.id); // 수정된 함수 호출
+
+    if (connectionResponse.token) {
+      console.log("Token: ", connectionResponse.token);
       // 세션과 연결하거나 다른 로직을 실행합니다.
     } else {
       console.log("Failed to create a session or token.");
     }
-    // 다음 세션을 위해 새로운 세션 ID를 생성합니다.
+
     setSessionId(uuidv4());
   };
 

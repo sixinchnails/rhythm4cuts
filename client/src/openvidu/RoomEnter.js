@@ -1,44 +1,19 @@
-import axios from "axios";
+// RoomEnter.js
+import { createSession } from "./sessionInitialization";
+import { createConnection } from "./connectionInitialization";
 
-// OpenVidu 서버 정보
-const OPENVIDU_SERVER_URL = "https://i9b109.p.ssafy.io";
-const OPENVIDU_SERVER_SECRET = "zlwhsalsrnrWid1234";
-
-// OpenVidu 세션 생성 및 토큰 발급
-export const createSessionAndToken = async sessionId => {
+export const createRoom = async (roomId) => {
   try {
-    // 세션 생성
-    const responseSession = await axios.post(
-      `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
-      { customSessionId: sessionId },
-      {
-        //
-        headers: {
-          "Authorization": `Basic ${btoa(
-            `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
-          )}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    // 세션 초기화
+    const sessionResponse = await createSession(roomId);
 
-    // 토큰 발급
-    const responseToken = await axios.post(
-      `${OPENVIDU_SERVER_URL}/api/tokens`,
-      { session: responseSession.data.id },
-      {
-        headers: {
-          Authorization: `Basic ${btoa(
-            `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
-          )}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    // 방에 입장하는 사용자의 연결 초기화
+    const connectionResponse = await createConnection(sessionResponse.id);
 
-    return responseToken.data.token;
+    // sessionResponse.id : 세션의 ID
+    // connectionResponse.token : 사용자의 토큰
+    return connectionResponse.token;
   } catch (error) {
     console.error(error);
-    return null;
   }
 };
