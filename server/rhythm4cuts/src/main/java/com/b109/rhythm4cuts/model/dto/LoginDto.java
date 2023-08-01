@@ -1,16 +1,13 @@
 package com.b109.rhythm4cuts.model.dto;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
-@Setter
+@Data
 @Getter
-public class AddUserRequest {
+@Setter
+public class LoginDto {
     private String email;
     private String password;
-    private String nickname;
-    private String ssn;
-    private String name;
 }
