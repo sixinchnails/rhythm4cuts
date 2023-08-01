@@ -1,7 +1,6 @@
 // Home.js
 import React, { useEffect } from "react";
 import "./Join.css";
-import { Link } from "react-router-dom";
 import JoinImage from "../../components/My/My_JoinImage";
 import JoinInfo from "../../components/My/My_JoinInfo";
 import Button from "@mui/material/Button";
