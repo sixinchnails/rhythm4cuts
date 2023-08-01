@@ -3,7 +3,38 @@ import { Box, Button, Card, Grid, Typography, Container } from "@mui/material";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import Header from "../../components/Game/Header_dark";
+import { createSession } from "../../openvidu/sessionInitialization";
+import { createConnection } from "../../openvidu/connectionInitialization";
 import Webcam from "../../components/Game/Webcam";
+
+//close test
+import { closeSessionAndConnection } from '../../../src/openvidu/closeSessionAndConnection';
+
+const handleTestClose = async () => {
+  try {
+    const sessionData = await createSession();
+    const sessionId = sessionData.id; // 방을 만들 때 생성되는 것
+    const connectionData = await createConnection(sessionId);
+    const connectionId = connectionData.connectionId;
+
+    // 버튼 클릭 전의 세션과 연결 상태를 확인합니다.
+    console.log("버튼 클릭 전 세션 데이터:", sessionData);
+    console.log("버튼 클릭 전 연결 데이터:", connectionData);
+
+    const response = await closeSessionAndConnection(sessionId, connectionId);
+    console.log(response);
+
+    // 세션과 연결이 정상적으로 닫혔는지 확인하기 위해 다시 상태를 가져옵니다.
+    setTimeout(async () => {
+      console.log("버튼 클릭 후 세션 데이터:", sessionData);
+      console.log("버튼 클릭 후 연결 데이터:", connectionData);
+    }, 10000);
+
+  } catch (error) {
+    console.error("에러 발생:", error);
+  }
+
+};
 
 const GameShot = () => {
   // 5초 타이머를 설정하기 위한 상태 변수
@@ -236,6 +267,9 @@ const GameShot = () => {
             </Box>
           </Grid>
         </Grid>
+        <Button variant="contained" color="secondary" onClick={handleTestClose}>
+          Test Close
+        </Button>
       </Container>
     </Box>
   );
