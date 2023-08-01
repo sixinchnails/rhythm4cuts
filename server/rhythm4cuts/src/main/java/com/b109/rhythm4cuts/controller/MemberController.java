@@ -29,6 +29,30 @@ public class MemberController {
     private final TokenService tokenService;
     private final UserService userService;
 
+    public Map<String, Object> commonEmail(String email) {
+        UserDto userDto = userService.findByEmail(email);
+        Map<String, Object> res = new HashMap<>();
+
+        res.put("point", userDto.getPoint());
+        res.put("nickname", userDto.getNickname());
+        res.put("name", userDto.getName());
+        res.put("user_seq", userDto.getUserSeq());
+
+        return res;
+    }
+
+    public Map<String, Object> commonNickname(String nickname) {
+        UserDto userDto = userService.findByNickname(nickname);
+        Map<String, Object> res = new HashMap<>();
+
+        res.put("point", userDto.getPoint());
+        res.put("nickname", userDto.getNickname());
+        res.put("name", userDto.getName());
+        res.put("user_seq", userDto.getUserSeq());
+
+        return res;
+    }
+
     //API 1. POST 로그인
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginDto loginDto) {
@@ -36,19 +60,27 @@ public class MemberController {
         UserDto userDto = userService.findByEmail(loginDto.getEmail());
         //액세스 토큰의 유효 시간 30분으로 설정
         TokenResponse tokenResponse = tokenService.generateToken(userDto, Duration.ofMinutes(30), Duration.ofDays(14));
+        //Map<String, Object> res = commonEmail(loginDto.getEmail());
 
         return ResponseEntity.ok()
                 .body(tokenResponse);
+    }
+
+    @GetMapping("/info")
+    public Map<String, Object> info(@RequestParam String email) {
+        return commonEmail(email);
     }
 
     //API 2. POST 회원가입
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody AddUserRequest request) {
         userService.save(request);
+        Map<String, Object> res = commonEmail(request.getEmail());
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    //이메일 인증 번호 발송 API
     @PostMapping("/mail")
     public ResponseEntity mail(@RequestParam String email) {
         MailDto mailDto = userService.createMailAndCertificate(email);
@@ -58,7 +90,7 @@ public class MemberController {
         return ResponseEntity.status(200).build();
     }
 
-    //DTO 추가 필요
+    //이메일 인증 번호 확인
     @PostMapping("/mailcheck")
     public ResponseEntity mailCheck(@RequestBody CertificateDto certificateDto) {
         boolean checked = userService.checkCertificate(certificateDto);
@@ -76,14 +108,10 @@ public class MemberController {
     }
 
     //이메일 중복
-    @GetMapping("email")
+    @GetMapping("/email")
     public ResponseEntity email(@RequestParam String email) {
         UserDto userDto = userService.findByEmail(email);
-        Map<String, Object> res = new HashMap<>();
-
-        res.put("point", userDto.getPoint());
-        res.put("nickname", userDto.getNickname());
-        res.put("name", userDto.getName());
+        Map<String, Object> res = commonEmail(email);
 
         return ResponseEntity.status(200).build();
     }
@@ -91,9 +119,8 @@ public class MemberController {
     //나의 사진 조회
     @GetMapping("/profile")
     public ResponseEntity getProfile(@RequestParam String email) {
-        Map<String, Object> res = new HashMap<>();
-
-        System.out.println("컨트 이메일:" + email);
+        UserDto userDto = userService.findByEmail(email);
+        Map<String, Object> res = commonEmail(email);
 
         res.put("file_name", userService.getProfileImg(email));
 
@@ -104,11 +131,7 @@ public class MemberController {
     @GetMapping("/point")
     public ResponseEntity getPoint(@RequestParam String email) {
         UserDto userDto = userService.findByEmail(email);
-        Map<String, Object> res = new HashMap<>();
-
-        res.put("point", userDto.getPoint());
-        res.put("nickname", userDto.getNickname());
-        res.put("name", userDto.getName());
+        Map<String, Object> res = commonEmail(email);
 
         return ResponseEntity.status(200).body(res);
     }
