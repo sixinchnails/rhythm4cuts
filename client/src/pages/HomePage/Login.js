@@ -6,9 +6,13 @@ import SearchPassword from "../../components/Common/SearchPassword";
 import "./Login.css";
 import { Box } from "@mui/material";
 import axios from "axios";
+import { setCookie } from "../../utils/cookie";
+import { doLogin } from "../../store";
+import { useDispatch, useSelector } from "react-redux";
 
-const Home = () => {
-  let navigate = useNavigate();
+  const Home = () => {
+    let dispatch = useDispatch();
+    let navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -24,6 +28,7 @@ const Home = () => {
   const [id, setId] = useState("");
   const onChangeId = e => {
     setId(e.target.value);
+    console.log(id);
   };
 
   // pw 파트
@@ -57,8 +62,15 @@ const Home = () => {
       } else {
         window.alert("서버와의 통신 중 에러가 발생했습니다!");
       }
-    }
+  const onChangePW = (e) => {
+    setPW(e.target.value);
+    console.log(pw);
   };
+  
+
+  let loginUser = useSelector((state) => {
+    return state.loginUser;
+  });
 
   return (
     <div className="bg">
@@ -86,7 +98,7 @@ const Home = () => {
           ></input>
         </div>
         <div className="login">
-          <button type="submit" onClick={login}>로그인</button>
+          <button onClick={login}>로그인</button>
         </div>
         <div className="searchAndJoin">
           <button onClick={handleOpenSearchPasswordModal}>PW찾기</button>
@@ -115,6 +127,8 @@ const Home = () => {
       />
     </div>
   );
+}
+  }
 };
 
 export default Home;

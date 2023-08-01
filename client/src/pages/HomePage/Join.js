@@ -1,5 +1,6 @@
 // Home.js
 import React, { useCallback, useEffect, useState } from "react";
+/* eslint-disable */
 import "./Join.css";
 import JoinImage from "../../components/My/My_JoinImage";
 import JoinInfo from "../../components/My/My_JoinInfo";
