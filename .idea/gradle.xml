@@ -4,11 +4,10 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/rhythm4cuts" />
-        <option name="gradleJvm" value="corretto-17" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/server/rhythm4cuts" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/rhythm4cuts" />
+            <option value="$PROJECT_DIR$/server/rhythm4cuts" />
           </set>
         </option>
       </GradleProjectSettings>

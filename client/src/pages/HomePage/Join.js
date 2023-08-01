@@ -1,12 +1,13 @@
 // Home.js
+import React, { useCallback, useEffect, useState } from "react";
 /* eslint-disable */
-import React, { useEffect } from "react";
 import "./Join.css";
-import { Link } from "react-router-dom";
 import JoinImage from "../../components/My/My_JoinImage";
 import JoinInfo from "../../components/My/My_JoinInfo";
 import Button from "@mui/material/Button";
 import Header from "../../components/Home/Header";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   useEffect(() => {
@@ -16,6 +17,30 @@ const Home = () => {
       document.body.style.backgroundColor = null;
     };
   }, []);
+
+  const navigate = useNavigate();
+
+  // 회원가입 정보를 저장할 상태
+  const [joinInfo, setJoinInfo] = useState({});
+
+  const handleJoinInfo = useCallback(data => {
+    setJoinInfo(data); // JoinInfo 컴포넌트로부터 받은 데이터를 상태에 저장
+  }, []);
+
+  const handleJoinComplete = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/member/register",
+        joinInfo
+      );
+      const confirmed = window.confirm("회원가입이 완료! 로그인 해주세요");
+      if (confirmed) {
+        navigate("/Login");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <div>
       {/* 위쪽 컨테이너 */}
@@ -24,9 +49,7 @@ const Home = () => {
         {/* flex style을 줘서 각각 다른 박스로 만들어 좌우로 배치할 수 있게 해준다. 
         flex가 없으면 사진 선택 밑으로 JoinInfo 컴포넌트가 들어감.*/}
         <JoinImage initialImage="/images/회원.png" />
-        <JoinInfo />
-        {/* <div> */}
-        {/* </div> */}
+        <JoinInfo onJoinInfo={handleJoinInfo} />
       </div>
       <Button
         color="primary"
@@ -37,6 +60,7 @@ const Home = () => {
           marginRight: "300px",
           marginTop: "-50px",
         }}
+        onClick={handleJoinComplete}
       >
         가입 완료
       </Button>

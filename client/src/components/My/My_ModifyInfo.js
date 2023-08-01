@@ -36,7 +36,8 @@ function UserInfo() {
   const [selectedImage, setSelectedImage] = useState(profilePic);
 
   const handleComplete = () => {
-    if (!isValidPassword) {
+    if (!isValidPassword && password.length > 0) {
+      // 비밀번호가 비어있지 않으면서 형식이 잘못된 경우에만 메시지 표시
       window.alert("비밀번호 형식을 확인해주세요");
       return;
     }
@@ -91,6 +92,7 @@ function UserInfo() {
   };
 
   useEffect(() => {
+    // 비밀번호가 비어있지 않은 경우에만 유효성 검사 수행
     setIsValidPassword(checkPassword(password));
     setIsMatchPassword(password === confirmPassword);
   }, [password, confirmPassword]);
