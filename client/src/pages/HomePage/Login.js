@@ -30,10 +30,13 @@ const Home = () => {
   const [pw, setPW] = useState("");
   const onChangePW = e => {
     setPW(e.target.value);
-    if (e.key === "Enter") {
+  };
+
+  const onKeyPress=e=>{
+    if(e.key==="Enter"){
       login();
     }
-  };
+  }
 
   const login = async () => {
     try {
@@ -70,7 +73,7 @@ const Home = () => {
             placeholder="ID(이메일)"
             value={id}
             onChange={onChangeId}
-            onKeyPress={onChangePW}
+            onKeyPress={onKeyPress}
           ></input>
         </div>
         <div className="input">
@@ -79,11 +82,11 @@ const Home = () => {
             type="password"
             value={pw}
             onChange={onChangePW}
-            onKeyPress={onChangePW}
+            onKeyPress={onKeyPress}
           ></input>
         </div>
         <div className="login">
-          <button type="submit">로그인</button>
+          <button type="submit" onClick={login}>로그인</button>
         </div>
         <div className="searchAndJoin">
           <button onClick={handleOpenSearchPasswordModal}>PW찾기</button>
