@@ -13,4 +13,5 @@ public class AddUserRequest {
     private String nickname;
     private String ssn;
     private String name;
+    private String profile_img_seq;
 }
