@@ -22,7 +22,7 @@ import java.util.Set;
 @Service
 public class TokenService {
     private final TokenProvider tokenProvider;
-    private final RefreshTokenService refreshTokenService;
+    //private final RefreshTokenService refreshTokenService;
     private final UserRepository userRepository;
 
     //토큰 새로 발급 받는 메서드(유효성 지나서)

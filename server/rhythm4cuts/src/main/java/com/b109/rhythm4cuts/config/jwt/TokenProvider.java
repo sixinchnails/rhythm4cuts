@@ -55,10 +55,6 @@ public class TokenProvider {
                 .builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .points(userDto.getPoint())
-                .nickname(userDto.getNickname())
-                .profile_img_seq(userDto.getProfileImageSeq())
-                .user_seq(userDto.getUserSeq())
                 .build();
     }
 

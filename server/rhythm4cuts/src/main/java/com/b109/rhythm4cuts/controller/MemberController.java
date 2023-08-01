@@ -71,12 +71,20 @@ public class MemberController {
     //닉네임 중복
     @GetMapping("/nickname")
     public ResponseEntity nickname(@RequestParam String nickname) {
-        return ResponseEntity.status(409).body(Map.of("duplicate", userService.duplicateNickname(nickname)));
+        //409 if duplicate exists
+        return ResponseEntity.status(200).body(Map.of("duplicate", userService.duplicateNickname(nickname)));
     }
 
     //이메일 중복
     @GetMapping("email")
     public ResponseEntity email(@RequestParam String email) {
+        UserDto userDto = userService.findByEmail(email);
+        Map<String, Object> res = new HashMap<>();
+
+        res.put("point", userDto.getPoint());
+        res.put("nickname", userDto.getNickname());
+        res.put("name", userDto.getName());
+
         return ResponseEntity.status(200).build();
     }
 
@@ -95,10 +103,12 @@ public class MemberController {
     //포인트 로그 조회
     @GetMapping("/point")
     public ResponseEntity getPoint(@RequestParam String email) {
+        UserDto userDto = userService.findByEmail(email);
         Map<String, Object> res = new HashMap<>();
-        System.out.println("포인트");
 
-        res.put("point", userService.getPoint(email));
+        res.put("point", userDto.getPoint());
+        res.put("nickname", userDto.getNickname());
+        res.put("name", userDto.getName());
 
         return ResponseEntity.status(200).body(res);
     }

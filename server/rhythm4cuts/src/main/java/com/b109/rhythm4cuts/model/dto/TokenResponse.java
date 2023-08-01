@@ -11,8 +11,9 @@ import lombok.*;
 public class TokenResponse {
     private String accessToken;
     private String refreshToken;
-    private String nickname;
-    private int points;
-    private int profile_img_seq;
-    private int user_seq;
+    //요청 시 토큰만 반환하는 것으로 변경
+//    private String nickname;
+//    private int points;
+//    private int profile_img_seq;
+//    private int user_seq;
 }
