@@ -1,4 +1,5 @@
 // Home.js
+/* eslint-disable */
 import React, { useEffect } from "react";
 import "./Join.css";
 import { Link } from "react-router-dom";

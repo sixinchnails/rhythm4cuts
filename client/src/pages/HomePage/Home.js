@@ -151,7 +151,9 @@ const Home = () => {
       <div className="divider"></div>
       {/** Home 2 시작하는 곳 */}
       <div className="Home2">
-        <h1>Game Intro & Rules</h1>
+        <div className="title">
+          <span>Game Intro & Rules</span>
+        </div>
         <div className="content">
           <div className="intro"></div>
           <div className="rules"></div>
