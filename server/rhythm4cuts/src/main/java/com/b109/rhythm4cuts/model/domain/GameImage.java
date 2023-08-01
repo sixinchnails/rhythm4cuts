@@ -1,5 +1,7 @@
 package com.b109.rhythm4cuts.model.domain;
 
+import com.b109.rhythm4cuts.model.dto.FilmDto;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,7 +15,7 @@ import java.time.LocalDateTime;
 public class GameImage {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "image_seq")
-    private String imageSeq;
+    private int imageSeq;
 
     //게임 정보 일련번호
     @ManyToOne(fetch = FetchType.LAZY)
@@ -59,13 +61,26 @@ public class GameImage {
         this.downloadState = false;
     }
 
-    public void setGameInfos(GameInfo gameInfo) {
+    public void setGameInfo(GameInfo gameInfo) {
         this.gameInfo = gameInfo;
         gameInfo.getGameImages().add(this);
     }
 
-    public void setUserInfos(User user) {
+    public void setUserInfo(User user) {
         this.user = user;
         user.getGameImages().add(this);
+    }
+
+    public FilmDto getFilmDto() {
+        FilmDto filmDto = new FilmDto();
+//        filmDto.setGameSeq(this.gameInfo.getGameSeq());
+//        filmDto.setBackgroundSeq(this.backGround.getBackgroundSeq());
+//        filmDto.setUserSeq(this.user.getUserSeq());
+        filmDto.setFileName(this.fileName);
+        filmDto.setDownloadState(this.downloadState);
+        filmDto.setPlayerRank(this.gameRank);
+        filmDto.setTotalFileName(this.totalFileName);
+
+        return filmDto;
     }
 }
