@@ -7,4 +7,6 @@ import lombok.Setter;
 public class FriendDto {
     private Integer fromUser;
     private Integer toUser;
+    private String message;
+    private int gameSeq;
 }
