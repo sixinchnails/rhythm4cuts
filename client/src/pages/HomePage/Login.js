@@ -5,8 +5,14 @@ import { Link } from "react-router-dom";
 import SearchPassword from "../../components/Common/SearchPassword";
 import "./Login.css";
 import { Box } from "@mui/material";
+import axios from "axios";
+import { setCookie } from "../../utils/cookie";
+import { doLogin } from "../../store";
+import { useDispatch, useSelector } from "react-redux";
 
 const Home = () => {
+  let dispatch = useDispatch();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenSearchPasswordModal = () => {
@@ -21,18 +27,38 @@ const Home = () => {
   const [id, setId] = useState("");
   const onChangeId = (e) => {
     setId(e.target.value);
+    console.log(id);
   };
 
   // pw 파트
   const [pw, setPW] = useState("");
   const onChangePW = (e) => {
-    setId(e.target.value);
+    setPW(e.target.value);
+    console.log(pw);
   };
 
+  let loginUser = useSelector((state) => {
+    return state.loginUser;
+  });
+
   // 로그인
-  const onClick = () => {
-    //로그인 api
-    const login = async (id, pw) => {};
+  const login = async () => {
+    try {
+      const res = await axios.post("http://localhost:8080/member/login", {
+        email: id,
+        password: pw,
+      });
+      // setCookie("refreshToken", res.data.refreshToken);
+      await setCookie("accessToken", res.data.accessToken);
+      console.log(loginUser);
+      console.log(res.data.nickname);
+      dispatch(
+        doLogin(res.data.nickname, res.data.points, res.data.profile_img_seq)
+      );
+      console.log(loginUser);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -58,7 +84,7 @@ const Home = () => {
           ></input>
         </div>
         <div className="login">
-          <button>로그인</button>
+          <button onClick={login}>로그인</button>
         </div>
         <div className="searchAndJoin">
           <button onClick={handleOpenSearchPasswordModal}>PW찾기</button>
