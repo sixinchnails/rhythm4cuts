@@ -54,15 +54,15 @@ function CreateRoom({ isOpen, handleClose }) {
       });
 
       const roomId = response.data.roomId;
-      console.log("Room created successfully.", response.data);
+      console.log("방이 만들어 졌엉.", response.data);
       console.log("Room created Room ID:", roomId);
-      
+
       // 방 생성 후 해당 방으로 이동
       // return <Link to={`/GameWait/${roomId}`} />; // 클릭이벤트를 발생시키지 않아서 사용 x
       navigate(`/GameWait/${roomId}`);
 
     } catch (error) {
-      console.error("Failed to create a room.", error);
+      console.error("방 생성 실패 닥!.", error);
     }
 
   };
@@ -109,6 +109,7 @@ function CreateRoom({ isOpen, handleClose }) {
           variant="outlined"
           fullWidth
           style={{ marginBottom: "20px" }}
+          onChange={(event) => setRoom_title(event.target.value)}
         />
         <TextField
           label="노래 제목"
