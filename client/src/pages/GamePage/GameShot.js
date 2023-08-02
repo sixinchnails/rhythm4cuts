@@ -57,21 +57,21 @@ const GameShot = () => {
   //로그인 상태 확인
   const [isLogin, setIsLogin] = useState(false);
 
-  try {
-    userInfo()
-      .then(res => {
-        if (res.status === 200) {
-          console.log(res);
-          setIsLogin(true);
-        }
-      })
-      .catch(error => {
-        window.alert("로그인을 해주세요!");
-        navigate("/");
-      });
-  } catch (error) {
-    console.log(error);
-  }
+  // try {
+  //   userInfo()
+  //     .then(res => {
+  //       if (res.status === 200) {
+  //         console.log(res);
+  //         setIsLogin(true);
+  //       }
+  //     })
+  //     .catch(error => {
+  //       window.alert("로그인을 해주세요!");
+  //       navigate("/");
+  //     });
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
   // 5초 타이머를 설정하기 위한 상태 변수
   const [seconds, setSeconds] = useState(5);
@@ -263,10 +263,7 @@ const GameShot = () => {
                   display: "flex",
                   flexDirection: "column",
                   borderRadius: "borderRadius",
-                  backgroundImage: capturedImage // 캡처된 이미지 URL로 설정
-                    ? `url(${capturedImage})`
-                    : `url(${frameImage[imageIndex]})`, // 캡처가 되지 않은 경우 기본 Frame 이미지 URL 설정
-                  backgroundSize: "cover",
+                  backgroundImage: `url(${frameImage[imageIndex]})` 
                 }}
               >
                 {/* 유저 이미지를 표시하는 Card */}
