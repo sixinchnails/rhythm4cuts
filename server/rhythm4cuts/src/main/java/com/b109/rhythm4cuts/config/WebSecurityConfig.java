@@ -49,7 +49,9 @@ public class WebSecurityConfig {
             "/member/reissue",
             "/member/login",
             "/member/register",
-            "/member/reissue"
+            "/member/reissue",
+            "/member/mail",
+            "/member/mailcheck"
     );
 
     @Bean
