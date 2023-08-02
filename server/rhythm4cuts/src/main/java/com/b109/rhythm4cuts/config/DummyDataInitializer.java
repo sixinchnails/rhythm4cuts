@@ -4,9 +4,14 @@ import com.b109.rhythm4cuts.model.domain.ProfileImage;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import com.b109.rhythm4cuts.config.WebSecurityConfig.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 
 @Component
 public class DummyDataInitializer {
@@ -14,9 +19,12 @@ public class DummyDataInitializer {
     private final UserRepository userRepository;
     private final ProfileImageRepository profileImageRepository;
 
-    public DummyDataInitializer(UserRepository userRepository, ProfileImageRepository profileImageRepository) {
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public DummyDataInitializer(UserRepository userRepository, ProfileImageRepository profileImageRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @PostConstruct
@@ -29,7 +37,7 @@ public class DummyDataInitializer {
 
         ProfileImage profileImage2 = new ProfileImage();
         profileImage2.setImageName("2 profile image");
-        profileImage2.setDescription("2 image");
+        profileImage2.setDescription("2 images");
         profileImage2.setFileName("2 file name");
         profileImageRepository.save(profileImage2);
 
@@ -46,19 +54,20 @@ public class DummyDataInitializer {
         profileImageRepository.save(profileImage4);
 
         ProfileImage profileImage5 = new ProfileImage();
-        profileImage5.setProfileImageSeq(5);
         profileImage5.setImageName("5 profile image");
         profileImage5.setDescription("5 image");
         profileImage5.setFileName("5 file name");
-        profileImageRepository.save(profileImage4);
+        profileImageRepository.save(profileImage5);
 
+        LocalDate targetDate = LocalDate.of(2019,11,12);
         // 더미 데이터 추가
         User user = new User();
         user.setName("Han");
         user.setNickname("ssafy");
         user.setEmail("ssafy@naver.com");
         user.setProfileImage(profileImage1);
-        user.setPassword("1234");
+        user.setBirthDate(targetDate);
+        user.setPassword(bCryptPasswordEncoder.encode("1234"));
 
         userRepository.save(user);
     }
