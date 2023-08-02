@@ -3,6 +3,7 @@
 import "animate.css";
 import { React, useRef, useEffect, useState } from "react";
 import Header from "../../components/Home/Header";
+import LoginHeader from "../../components/Home/LoginHeader";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useSelector } from "react-redux";
@@ -12,12 +13,34 @@ import { Grid, Pagination } from "@mui/material";
 import "./Home.css";
 //이모지 들고오는 import
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import { getCookie } from "../../utils/cookie";
+import { userInfo } from "../../apis/userInfo";
 
 const DIVIDER_HEIGHT = 5;
 
 function Home() {
+  const accessToken = getCookie("access");
+
+  const [isLogin, setIsLogin] = useState(false);
+
+  try {
+    userInfo()
+      .then(res => {
+        if (res.status === 200) {
+          console.log(res);
+          setIsLogin(true);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+        setIsLogin(false);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+
   const [startDate, setStartDate] = useState(new Date());
   const outerDivRef = useRef();
 
@@ -128,7 +151,8 @@ function Home() {
     <div ref={outerDivRef} className="outer">
       {/** Home 1 시작하는 곳 */}
       <div className="Home1">
-        <Header />
+        {isLogin ? <LoginHeader /> : <Header />}
+        {/* <Header /> */}
         <div className="main1">
           <div className="beatbox">
             <div className="Logo">
