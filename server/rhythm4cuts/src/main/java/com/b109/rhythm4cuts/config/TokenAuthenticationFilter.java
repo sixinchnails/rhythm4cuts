@@ -32,7 +32,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final List<String> excludedUrlPatterns = Arrays.asList(
             "/member/reissue",
             "/member/login",
-            "/member/register"
+            "/member/register",
+            "/member/mail",
+            "/member/mailcheck"
     );
 
     @Override
@@ -41,7 +43,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             String path = request.getServletPath();
             boolean isExcludedUrl = excludedUrlPatterns.stream().anyMatch(path::startsWith);
             System.out.println("실행되고 있는 걸까?");
-
+            System.out.println(path);
+            System.out.println(isExcludedUrl);
 
             //가져온 토큰이 유요한지 확인하고, 유효한 때는 인증 정보 설정
             if (!isExcludedUrl) {

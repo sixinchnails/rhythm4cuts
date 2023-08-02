@@ -59,6 +59,7 @@ public class TokenProvider {
                 .builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .email(userDto.getEmail())
                 .build();
     }
 
