@@ -1,4 +1,5 @@
-import React from "react";
+/* eslint-disable */
+import React, { useState } from "react";
 import {
   Container,
   Grid,
@@ -12,13 +13,15 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import { styled } from '@mui/system';
+import { styled } from "@mui/system";
 import Header from "../../components/Game/Header_dark";
 import Next from "../../components/Game/NextToShot";
 import { useSelector } from "react-redux";
 import Podium from "../../components/Game/Podium";
+import { useNavigate } from "react-router-dom";
+import { userInfo } from "../../apis/userInfo";
 
-const Root = styled('div')({
+const Root = styled("div")({
   width: "100%",
   height: "100vh",
   backgroundPosition: "center",
@@ -28,7 +31,7 @@ const Root = styled('div')({
 });
 
 const Title = styled(Typography)({
-  textAlign: "center", 
+  textAlign: "center",
   marginBottom: 2,
 });
 
@@ -39,13 +42,36 @@ const PodiumContainer = styled(Box)({
 });
 
 function GameScore() {
-  let Result = useSelector(state => state.GameScore_Result);
+  const navigate = useNavigate();
+
+  //로그인 상태 확인
+  const [isLogin, setIsLogin] = useState(false);
+
+  try {
+    userInfo()
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res);
+          setIsLogin(true);
+        }
+      })
+      .catch((error) => {
+        window.alert("로그인을 해주세요!");
+        navigate("/");
+      });
+  } catch (error) {
+    console.log(error);
+  }
+
+  let Result = useSelector((state) => state.GameScore_Result);
 
   return (
     <Root>
       <Container>
         <Header />
-        <Title variant="h3" style={{marginBottom: "3%"}}>Score Board</Title>
+        <Title variant="h3" style={{ marginBottom: "3%" }}>
+          Score Board
+        </Title>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <PodiumContainer>
@@ -84,7 +110,7 @@ function GameScore() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Result.map(result => (
+                  {Result.map((result) => (
                     <TableRow key={result.rank}>
                       <TableCell component="th" scope="row">
                         {result.rank}
