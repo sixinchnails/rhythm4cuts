@@ -9,8 +9,8 @@ export const userInfo = async () => {
   const headers = {
     Authorization: "Bearer " + getCookie("access"),
   };
-  const result = await axios.get("http://i9b109.p.ssafy.io:8080/member/info", {
-    // const result = await axios.get("http://localhost:8080/member/info", {
+
+  const result = await axios.get("/member/info", {
     params,
     headers,
   });
