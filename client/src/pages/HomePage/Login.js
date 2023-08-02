@@ -26,7 +26,7 @@ const Home = () => {
   // pw 파트
   const [pw, setPW] = useState("");
   const onChangePW = (e) => {
-    setId(e.target.value);
+    setPW(e.target.value);
   };
 
   // 로그인
