@@ -55,8 +55,7 @@ const GameShot = () => {
   const navigate = useNavigate();
 
   //로그인 상태 확인
-  const [isLogin, setIsLogin] = useState(false);
-
+  // const [isLogin, setIsLogin] = useState(false);
 
   // try {
   //   userInfo()
@@ -123,10 +122,17 @@ const GameShot = () => {
         }
 
         setCaptured(true);
-        // copyCapture(copyRef.current);
+        // copyCapture(copyRef.current); // 이건 4개 묶음 사진
       }
     }
   }, [webcamRef, captured]);
+
+  // "captured" 상태가 변경될 때 메시지를 업데이트하는 useEffect 훅 추가
+  useEffect(() => {
+    if (captured) {
+      setSeconds(0); // "captured"가 true가 되면 "땡초 남았습니다~" 메시지를 강제로 "촬영이 완료되었습니다."로 변경합니다.
+    }
+  }, [captured]);
 
   // 5초 타이머를 설정하고 타이머가 끝나면 촬영 함수를 호출하거나 자동 촬영 함수를 호출합니다.
   useEffect(() => {
@@ -134,9 +140,11 @@ const GameShot = () => {
       setSeconds(prevSeconds => {
         if (prevSeconds === 1) {
           handleCapture();
+          
           return prevSeconds;
         } else {
           return prevSeconds - 1;
+          
         }
       });
     }, 1000);
@@ -230,7 +238,7 @@ const GameShot = () => {
               >
                 {/* 촬영 버튼 */}
                 <Typography variant="h6">
-                  {seconds === 0
+                  {seconds == 0
                     ? "촬영이 완료되었습니다."
                     : `${seconds}초 남았습니다~`}
                 </Typography>
@@ -336,6 +344,7 @@ const GameShot = () => {
   );
 };
 
+// 인생네컷 저장 컴포넌트
 function copyCapture(element) {
   if (element) {
     domtoimage

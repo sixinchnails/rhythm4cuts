@@ -44,7 +44,7 @@ function CreateRoom({ isOpen, handleClose }) {
 
     // 방 정보를 서버로 전송하는 Axios 요청
     try {
-      const response = await axios.post("/lobby/room", {
+      const response = await axios.post("http://i9b109.p.ssafy.io:8080/lobby/room", {
         room_title: room_title, // 방제목
         song_seq: song_seq, // 노래제목 (일련번호 : 검색 예정)
         mode: mode, // 방 모드 (일반 vs 비밀)
