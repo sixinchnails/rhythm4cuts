@@ -10,7 +10,7 @@ export const userInfo = async () => {
     Authorization: "Bearer " + getCookie("access"),
   };
 
-  const result = await axios.get("/member/info", {
+  const result = await axios.get("member/info", {
     params,
     headers,
   });

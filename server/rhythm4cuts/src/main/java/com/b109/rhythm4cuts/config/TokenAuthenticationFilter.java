@@ -32,7 +32,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final List<String> excludedUrlPatterns = Arrays.asList(
             "/member/reissue",
             "/member/login",
-            "/member/register"
+            "/member/register",
+            "/member/mail",
+            "/member/mailcheck",
+            "/member/nickname",
+            "/stomp/chat"
     );
 
     @Override
