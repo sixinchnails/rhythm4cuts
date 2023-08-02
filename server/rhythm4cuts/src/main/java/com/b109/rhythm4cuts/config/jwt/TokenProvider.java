@@ -23,7 +23,7 @@ import java.util.Set;
 public class TokenProvider {
     private final JwtProperties jwtProperties;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    public final static Duration accessExpiredAt = Duration.ofSeconds(30), refreshExpiredAt = Duration.ofMinutes(2);
+    public final static Duration accessExpiredAt = Duration.ofMinutes(30), refreshExpiredAt = Duration.ofDays(14);
 
     public TokenResponse generateToken(UserDto userDto) {
         Date now = new Date();

@@ -55,6 +55,8 @@ public class MemberController {
     //API 1. POST 로그인
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginDto loginDto) {
+        System.out.println("로그인 입니다.");
+
         //로그인을 시도한 이메일로 사용자 조회
         UserDto userDto = userService.login(loginDto);
         //액세스 토큰의 유효 시간 30분으로 설정
