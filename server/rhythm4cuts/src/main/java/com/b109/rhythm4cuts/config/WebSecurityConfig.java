@@ -23,7 +23,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
-    
+
     private final UserDetailService userService;
     private final TokenProvider tokenProvider;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
