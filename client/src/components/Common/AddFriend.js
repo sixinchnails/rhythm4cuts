@@ -1,8 +1,8 @@
-import React, {useState } from "react";
+import React, { useState } from "react";
 import { Modal, Box, TextField, Button, Stack } from "@mui/material";
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
-import { useEffect } from 'react';
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import { useEffect } from "react";
 
 function AddFriend({ isOpen, handleClose }) {
   const [friendNickname, setfriendNickname] = useState(""); // 친구 이름 상태
@@ -14,10 +14,9 @@ function AddFriend({ isOpen, handleClose }) {
 
   useEffect(() => {
     const stompClient = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/stomp/chat'),
+      webSocketFactory: () => new SockJS("http://localhost:8080/stomp/chat"),
     });
-    stompClient.onConnect = () => {
-    };
+    stompClient.onConnect = () => {};
 
     stompClient.activate();
 
@@ -33,21 +32,21 @@ function AddFriend({ isOpen, handleClose }) {
     setfriendNickname(event.target.value); // 친구 이름 변경 이벤트 핸들러
   };
 
-  function requestFriend(a,b) {
-    a=1
-    b=2
+  function requestFriend(a, b) {
+    a = 1;
+    b = 2;
     const requestPayload = {
       fromUser: a,
       toUser: b,
     };
-  
+
     if (client && client.connected) {
-      client.publish({ 
-        destination: '/public/request', 
-        body: JSON.stringify(requestPayload)
+      client.publish({
+        destination: "/public/request",
+        body: JSON.stringify(requestPayload),
       });
     } else {
-      console.error('The client is not connected.');
+      console.error("The client is not connected.");
     }
   }
 
@@ -64,7 +63,8 @@ function AddFriend({ isOpen, handleClose }) {
           border: "2px solid #000",
           boxShadow: 24,
           p: 4,
-        }}>
+        }}
+      >
         <h2 style={{ textAlign: "center" }}>친구 추가</h2>
         <TextField
           label="닉네임 입력"
@@ -76,10 +76,14 @@ function AddFriend({ isOpen, handleClose }) {
         />
         <Stack direction="row" spacing={2} justifyContent="center">
           {/* 나중에 친구 목록 DB에서 가져와야돼 (친구가 있는지도 Check) */}
-          <Button variant="contained" color="primary" onClick={() => {
-        handleClose();
-        requestFriend();
-    }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              handleClose();
+              requestFriend();
+            }}
+          >
             추가
           </Button>
           <Button variant="contained" onClick={handleClose}>

@@ -26,13 +26,13 @@ const Home = () => {
 
   // id 파트
   const [id, setId] = useState("");
-  const onChangeId = (e) => {
+  const onChangeId = e => {
     setId(e.target.value);
   };
 
   // pw 파트
   const [pw, setPW] = useState("");
-  const onChangePW = (e) => {
+  const onChangePW = e => {
     setPW(e.target.value);
   };
 
@@ -41,7 +41,7 @@ const Home = () => {
   //   return state.loginUser;
   // });
 
-  const onKeyPress = (e) => {
+  const onKeyPress = e => {
     if (e.key === "Enter") {
       Login();
     }
@@ -55,6 +55,7 @@ const Home = () => {
       if (result.status === 200) {
         window.alert("로그인을 성공하였습니다!");
         // dispatch(loginHandler(result.data));
+
         setCookie("access", result.data.accessToken);
         setCookie("refresh", result.data.refreshToken);
         // setCookie("email", result.data.email);

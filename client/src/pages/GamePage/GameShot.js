@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
 
 //close test
-import { closeSession } from '../../store';
+import { closeSession } from "../../store";
 
 const GameShot = () => {
   const dispatch = useDispatch();
@@ -31,21 +31,20 @@ const GameShot = () => {
       await dispatch(closeSession({ sessionId, connectionId }));
 
       // 세션/연결 종료 후 상태 확인
-      console.log('세션 종료 후 상태:', sessionData);
-      console.log('세션 종료 후 상태:', connectionData);
+      console.log("세션 종료 후 상태:", sessionData);
+      console.log("세션 종료 후 상태:", connectionData);
 
       // 세션 종료 후 5초 후에 상태를 다시 확인
       setTimeout(async () => {
         const newSessionData = await createSession();
         const newSessionId = newSessionData.id;
         const newConnectionData = await createConnection(newSessionId);
-        console.log('5초 후 세션 데이터:', newSessionData);
-        console.log('5초 후 연결 데이터:', newConnectionData);
+        console.log("5초 후 세션 데이터:", newSessionData);
+        console.log("5초 후 연결 데이터:", newConnectionData);
       }, 5000);
-
     } catch (error) {
       // closeSession 액션이 실패한 경우 에러 처리
-      console.error('세션 종료 실패:', error);
+      console.error("세션 종료 실패:", error);
     }
   };
 
@@ -57,21 +56,21 @@ const GameShot = () => {
   //로그인 상태 확인
   const [isLogin, setIsLogin] = useState(false);
 
-  try {
-    userInfo()
-      .then(res => {
-        if (res.status === 200) {
-          console.log(res);
-          setIsLogin(true);
-        }
-      })
-      .catch(error => {
-        window.alert("로그인을 해주세요!");
-        navigate("/");
-      });
-  } catch (error) {
-    console.log(error);
-  }
+  // try {
+  //   userInfo()
+  //     .then(res => {
+  //       if (res.status === 200) {
+  //         console.log(res);
+  //         setIsLogin(true);
+  //       }
+  //     })
+  //     .catch(error => {
+  //       window.alert("로그인을 해주세요!");
+  //       navigate("/");
+  //     });
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
   // 5초 타이머를 설정하기 위한 상태 변수
   const [seconds, setSeconds] = useState(5);
@@ -92,7 +91,7 @@ const GameShot = () => {
   const webcamRef = useRef(null);
 
   // Frame 이미지 배열을 리덕스 상태로부터 가져옵니다.
-  let frameImage = useSelector((state) => state.GameShot_frameImage);
+  let frameImage = useSelector(state => state.GameShot_frameImage);
 
   // Ref를 최상위 레벨로 이동하고, DOM 요소를 가리킬 수 있도록 설정합니다.
   const copyRef = useRef(null);
@@ -122,8 +121,8 @@ const GameShot = () => {
           user1Ref.current.appendChild(img);
         }
 
-        setCaptured(true);
-        copyCapture(copyRef.current);
+        // setCaptured(true);
+        // copyCapture(copyRef.current);
       }
     }
   }, [webcamRef, captured]);
@@ -131,7 +130,7 @@ const GameShot = () => {
   // 5초 타이머를 설정하고 타이머가 끝나면 촬영 함수를 호출하거나 자동 촬영 함수를 호출합니다.
   useEffect(() => {
     const timerId = setInterval(() => {
-      setSeconds((prevSeconds) => {
+      setSeconds(prevSeconds => {
         if (prevSeconds === 1) {
           handleCapture();
           return 0;
@@ -318,9 +317,14 @@ const GameShot = () => {
                 <Button variant="outlined" color="primary" onClick={handlePrev}>
                   <FaArrowLeft />
                 </Button>
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => copyCapture(copyRef.current)}
+                >
                   확인
                 </Button>
+
                 <Button variant="outlined" color="primary" onClick={handleNext}>
                   <FaArrowRight />
                 </Button>

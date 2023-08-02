@@ -45,14 +45,14 @@ public class WebSecurityConfig {
         return http
                 .authorizeRequests()
                 .antMatchers(excludedUrlPatterns.toArray(new String[0])).permitAll()
-                .antMatchers(HttpMethod.OPTIONS, "/member/**", "/", "/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(tokenExceptionFilter, TokenAuthenticationFilter.class)
+                //.addFilterBefore(tokenExceptionFilter, TokenAuthenticationFilter.class)
                 .build();
     }
 
