@@ -1,11 +1,35 @@
-// Home.js
-import React, { useEffect } from "react";
+// MyPhoto.js
+/* eslint-disable */
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/My/My_SideBar";
-import Header from "../../components/Home/Mypage_Header";
 import "./MyPhoto.css";
 import ImageByMonth from "../../components/My/My_Image";
+import { userInfo } from "../../apis/userInfo";
+import LoginMypageHeader from "../../components/Home/LoginMypageHeader";
+import { useNavigate } from "react-router-dom";
 
-const Home = () => {
+const MyPhoto = () => {
+  const navigate = useNavigate();
+
+  //로그인 상태 확인
+  const [isLogin, setIsLogin] = useState(false);
+
+  try {
+    userInfo()
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res);
+          setIsLogin(true);
+        }
+      })
+      .catch((error) => {
+        window.alert("로그인을 해주세요!");
+        navigate("/");
+      });
+  } catch (error) {
+    console.log(error);
+  }
+
   const imagesData = [
     {
       year: 2023,
@@ -33,7 +57,7 @@ const Home = () => {
   }, []);
   return (
     <>
-      <Header></Header>
+      <LoginMypageHeader />
       <div className="page-container">
         <Sidebar></Sidebar>
         <div className="photo-container">
@@ -51,4 +75,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default MyPhoto;
