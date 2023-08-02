@@ -49,7 +49,7 @@ public class DummyDataInitializer {
         profileImage5.setImageName("5 profile image");
         profileImage5.setDescription("5 image");
         profileImage5.setFileName("5 file name");
-        profileImageRepository.save(profileImage4);
+        profileImageRepository.save(profileImage5);
 
         // 더미 데이터 추가
         User user = new User();
