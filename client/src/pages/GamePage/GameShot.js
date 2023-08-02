@@ -140,11 +140,14 @@ const GameShot = () => {
       setSeconds(prevSeconds => {
         if (prevSeconds === 1) {
           handleCapture();
-          
+          clearInterval(timerId); // 타이머를 종료합니다.
+
           return prevSeconds;
         } else {
-          return prevSeconds - 1;
-          
+          if (prevSeconds > 0) {
+            return prevSeconds - 1;
+          }
+          return prevSeconds;
         }
       });
     }, 1000);

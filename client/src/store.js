@@ -276,8 +276,8 @@ export const { toggleReady } = GameWait_Ready.actions;
 let GameShot_frameImage = createSlice({
   name: "frameImage",
   initialState: [
-    // "/images/Black.jfif",
     "/images/크리스마스.png",
+    "/images/Black.jfif",
     "/images/Blue.png",
     "/images/Green.png",
     "/images/Red.png",
