@@ -1,11 +1,9 @@
 .add-friend {
   float: right;
   font-weight: bold;
-  margin-right: -30px;
 }
 
 .main-container {
-  margin-top: 90px; /* 제목을 아래로 40px만큼 내려옵니다. */
   justify-content: space-between;
 }
 

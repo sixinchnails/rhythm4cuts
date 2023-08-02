@@ -1,11 +1,35 @@
-import React from "react";
+/* eslint-disable */
+import React, { useState } from "react";
 import { Container, Grid, Card, CardContent } from "@mui/material";
 import Header from "../../components/Game/Header_light";
 import PlayPlayer from "../../components/Game/PlayPlayer";
 import Webcam from "../../components/Game/Webcam";
 import Next from "../../components/Game/NextToScore";
+import { useNavigate } from "react-router-dom";
+import { userInfo } from "../../apis/userInfo";
 
 function GamePlay() {
+  const navigate = useNavigate();
+
+  //로그인 상태 확인
+  const [isLogin, setIsLogin] = useState(false);
+
+  try {
+    userInfo()
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res);
+          setIsLogin(true);
+        }
+      })
+      .catch((error) => {
+        window.alert("로그인을 해주세요!");
+        navigate("/");
+      });
+  } catch (error) {
+    console.log(error);
+  }
+
   return (
     <div
       style={{
@@ -15,7 +39,8 @@ function GamePlay() {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/Game_Waiting.jpg')", // 배경 이미지 URL
-      }}>
+      }}
+    >
       <Container>
         {/* Header */}
         <Grid container spacing={3} justifyContent="space-between">
@@ -37,7 +62,8 @@ function GamePlay() {
                 width: "40vw",
                 height: "50vh",
                 margin: "1%",
-              }}>
+              }}
+            >
               노래방 화면
             </Card>
             {/* 해당 차례 캠 */}
@@ -47,7 +73,8 @@ function GamePlay() {
                 height: "50vh",
                 margin: "1%",
                 backgroundColor: "black",
-              }}>
+              }}
+            >
               <CardContent>
                 <Webcam />
               </CardContent>
