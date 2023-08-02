@@ -29,7 +29,7 @@ public class DummyDataInitializer {
 
         ProfileImage profileImage2 = new ProfileImage();
         profileImage2.setImageName("2 profile image");
-        profileImage2.setDescription("2 image");
+        profileImage2.setDescription("2 images");
         profileImage2.setFileName("2 file name");
         profileImageRepository.save(profileImage2);
 
