@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Card, Container, Grid, Link as MuiLink } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,11 +6,17 @@ import { toggleReady } from "../../store";
 import Header from "../../components/Game/Header_light";
 import Next from "../../components/Game/NextToPlay";
 import WaitPlayer from "../../components/Game/WaitPlayer";
-import PlayerComing from "../../components/Game/PlayerComing";
+// import PlayerComing from "../../components/Game/PlayerComing";
 import PlayerEmpty from "../../components/Game/PlayerEmpty";
 import InviteFriend from "../../components/Common/InviteFriend";
+import { fetchToken } from '../../store';
 
 function GameWait() {
+  const dispatch = useDispatch();
+  const roomId = useSelector(state => state.room.roomId); // 리덕스 스토어에서 방 번호를 가져옵니다.
+  const token = useSelector(state => state.session.token); // fetchToken 액션의 결과로부터 토큰을 가져옴
+
+
   // 친구 목록 모달의 상태를 관리
   const [isInviteFriendModalOpen, setInviteFriendModalOpen] =
     React.useState(false);
@@ -23,12 +29,25 @@ function GameWait() {
     setInviteFriendModalOpen(false);
   };
 
-  const dispatch = useDispatch();
   let isReady = useSelector(state => state.GameWait_Ready); // 준비 상태 전체를 조회
 
   const handleToggleReady = playerId => {
     dispatch(toggleReady(playerId));
   };
+
+  useEffect(() => {
+    // roomId가 실제 방 번호일 경우 fetchToken 액션을 호출하여 방 토큰을 가져옵니다.
+    if (roomId) {
+      dispatch(fetchToken(roomId));
+    }
+  }, [dispatch, roomId]);
+
+  // 토큰이 가져와지고 세션을 생성해야 할 때 처리하는 useEffect 블록
+  useEffect(() => {
+    if (token) {
+      // TODO: 토큰이 있을 때 세션 생성 로직 추가
+    }
+  }, [token]);
 
   return (
     <div
@@ -72,7 +91,7 @@ function GameWait() {
                     채팅
                   </Button>
                   <Button
-                    variant={isReady.player1 ? "warning" : "success" }
+                    variant={isReady.player1 ? "warning" : "success"}
                     // 현재 player 1이라고 가정
                     onClick={() => handleToggleReady("player1")}
                     className="mb-2">
@@ -88,15 +107,16 @@ function GameWait() {
               {/* Bottom */}
               <Grid container>
                 <Grid item xs>
-                  {/* 해당하는 Index 순서별로 가져와야할거야. 대기방은 들어온 순서대로?*/}
-                  <WaitPlayer isReady={isReady.player1} playerId="player1" />
+                  {/* 대기 플레이어 1 */}
+                  <WaitPlayer playerId="player1" />
                 </Grid>
                 <Grid item xs>
-                  <PlayerComing />
+                  {/* 대기 플레이어 2 */}
+                  <WaitPlayer playerId="player2" />
                 </Grid>
-                {/* 아직 안들어 온 경우 */}
                 <Grid item xs>
-                  <PlayerComing />
+                  {/* 대기 플레이어 3 */}
+                  <WaitPlayer playerId="player3" />
                 </Grid>
                 {/* 친구 초대 */}
                 <Grid item xs>
