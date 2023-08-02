@@ -313,6 +313,7 @@ public class UserServiceImpl implements UserService {
 
         // 새로운 Access Token 발급
         final TokenResponse tokenResponse = tokenProvider.generateToken(userDto);
+        tokenResponse.setRefreshToken(tokenRequestDto.getRefreshToken());
 
         return ResponseEntity.ok().body(tokenResponse);
     }
