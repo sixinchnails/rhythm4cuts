@@ -36,10 +36,10 @@ const Home = () => {
     setPW(e.target.value);
   };
 
-  // 로그인 유저 정보
-  let loginUser = useSelector((state) => {
-    return state.loginUser;
-  });
+  // // 로그인 유저 정보
+  // let loginUser = useSelector((state) => {
+  //   return state.loginUser;
+  // });
 
   const onKeyPress = (e) => {
     if (e.key === "Enter") {

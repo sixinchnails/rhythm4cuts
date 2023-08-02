@@ -1,3 +1,4 @@
+/* eslint-disable */
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import Badge from "@mui/material/Badge";
 import "./Header.css";
@@ -15,7 +16,6 @@ const Header = () => {
   const dispatch = useDispatch();
   const hasNotification = useSelector(state => state.notification.hasNotification);
   //모달 여부
-  const [open, setOpen] = useState(false);
   const [popoverMessage, setPopoverMessage] = useState('아무 정보가 없습니다.');
   const [anchorEl, setAnchorEl] = useState(null);
 
