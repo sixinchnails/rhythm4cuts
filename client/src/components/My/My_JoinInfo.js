@@ -30,6 +30,7 @@ const JoinInfo = ({ onJoinInfo }) => {
         nickname,
         email,
         password,
+        profile_img_seq: 1,
       });
     }
   }, [name, email, password, birth, gender, nickname, onJoinInfo]);

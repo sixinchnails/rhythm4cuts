@@ -1,16 +1,21 @@
 // Login.js
 /* eslint-disable */
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SearchPassword from "../../components/Common/SearchPassword";
 import "./Login.css";
 import { Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../apis/login";
-// import { loginHandler } from "../../store";
 import { setCookie } from "../../utils/cookie";
 
 const Home = () => {
+  const emailRef = useRef();
+
+  useEffect(() => {
+    emailRef.current.focus();
+  }, []);
+
   let navigate = useNavigate();
   let dispatch = useDispatch();
 
@@ -50,6 +55,8 @@ const Home = () => {
   // 로그인
   const Login = async () => {
     try {
+      console.log(id);
+      console.log(pw);
       const result = await login(id, pw);
       console.log(result);
       if (result.status === 200) {
@@ -82,6 +89,7 @@ const Home = () => {
         <div className="input">
           <input
             type="text"
+            ref={emailRef}
             placeholder="ID(이메일)"
             value={id}
             onChange={onChangeId}
