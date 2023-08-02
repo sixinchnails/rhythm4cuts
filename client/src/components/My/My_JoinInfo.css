@@ -59,7 +59,7 @@
   flex-basis: auto;
 }
 
-.Join-value::placeholder {
+::placeholder {
   font-size: 0.65em; /* 플레이스홀더의 글자 크기를 줄임 */
 }
 

@@ -3,6 +3,7 @@
 import "animate.css";
 import { React, useRef, useEffect, useState } from "react";
 import Header from "../../components/Home/Header";
+import LoginHeader from "../../components/Home/LoginHeader";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useSelector } from "react-redux";
@@ -10,15 +11,41 @@ import MusicRank from "../../components/Home/MusicRank";
 import UserRank from "../../components/Home/UserRank";
 import { Grid, Pagination } from "@mui/material";
 import "./Home.css";
+//이모지 들고오는 import
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import { getCookie } from "../../utils/cookie";
+import { userInfo } from "../../apis/userInfo";
 
 const DIVIDER_HEIGHT = 5;
 
-const Home = () => {
+function Home() {
+  const accessToken = getCookie("access");
+
+  const [isLogin, setIsLogin] = useState(false);
+
+  try {
+    userInfo()
+      .then(res => {
+        if (res.status === 200) {
+          console.log(res);
+          setIsLogin(true);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+        setIsLogin(false);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+
   const [startDate, setStartDate] = useState(new Date());
   const outerDivRef = useRef();
 
   //음악 랭킹
-  let music_rank = useSelector((state) => {
+  let music_rank = useSelector(state => {
     return state.Music_Rank;
   });
 
@@ -35,7 +62,7 @@ const Home = () => {
   const noOfMusicPages = Math.ceil(music_rank.length / musicPerPage);
 
   //유저 랭킹
-  let user_rank = useSelector((state) => {
+  let user_rank = useSelector(state => {
     return state.User_Rank;
   });
 
@@ -52,7 +79,7 @@ const Home = () => {
   const noOfUserPages = Math.ceil(user_rank.length / userPerPage);
 
   useEffect(() => {
-    const wheelHandler = (e) => {
+    const wheelHandler = e => {
       e.preventDefault();
       const { deltaY } = e;
       const { scrollTop } = outerDivRef.current; // 스크롤 위쪽 끝부분 위치
@@ -124,7 +151,8 @@ const Home = () => {
     <div ref={outerDivRef} className="outer">
       {/** Home 1 시작하는 곳 */}
       <div className="Home1">
-        <Header />
+        {isLogin ? <LoginHeader /> : <Header />}
+        {/* <Header /> */}
         <div className="main1">
           <div className="beatbox">
             <div className="Logo">
@@ -151,7 +179,9 @@ const Home = () => {
       <div className="divider"></div>
       {/** Home 2 시작하는 곳 */}
       <div className="Home2">
-        <h1>Game Intro & Rules</h1>
+        <div className="title">
+          <span>Game Intro & Rules</span>
+        </div>
         <div className="content">
           <div className="intro"></div>
           <div className="rules"></div>
@@ -291,7 +321,7 @@ const Home = () => {
               dateFormat="yyyy.MM.dd" // 날짜 형태
               shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
               selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              onChange={date => setStartDate(date)}
             />
           </div>
         </div>
@@ -312,7 +342,7 @@ const Home = () => {
       </div>
     </div>
   );
-};
+}
 
 // const picture = () => {
 //   return(
