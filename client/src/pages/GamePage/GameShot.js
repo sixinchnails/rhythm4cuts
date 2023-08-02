@@ -4,6 +4,8 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import Header from "../../components/Game/Header_dark";
 import Webcam from "../../components/Game/Webcam";
+import html2canvas from "html2canvas";
+import domtoimage from "dom-to-image";
 
 const GameShot = () => {
   // 5초 타이머를 설정하기 위한 상태 변수
@@ -27,6 +29,9 @@ const GameShot = () => {
   // Frame 이미지 배열을 리덕스 상태로부터 가져옵니다.
   let frameImage = useSelector(state => state.GameShot_frameImage);
 
+  // Ref를 최상위 레벨로 이동하고, DOM 요소를 가리킬 수 있도록 설정합니다.
+  const copyRef = useRef(null);
+
   // 웹캠으로부터 스크린샷을 찍어 이미지를 캡처하는 함수
   const handleCapture = useCallback(() => {
     if (webcamRef.current && !captured) {
@@ -49,6 +54,7 @@ const GameShot = () => {
         }
 
         setCaptured(true);
+        copyCapture(copyRef.current);
       }
     }
   }, [webcamRef, captured]);
@@ -95,7 +101,8 @@ const GameShot = () => {
         position: "relative",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/Game_Shot.png')",
-      }}>
+      }}
+    >
       {/* 상단 헤더 */}
       <Header />
 
@@ -106,7 +113,8 @@ const GameShot = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100%",
-        }}>
+        }}
+      >
         <Grid container spacing={10}>
           {/* Webcam 영역 */}
           <Grid item xs={12} md={8}>
@@ -117,7 +125,8 @@ const GameShot = () => {
                 height: "70%",
                 width: "100%",
               }}
-              ref={captureRef}>
+              ref={captureRef}
+            >
               <Box
                 sx={{
                   flex: "1 1 auto",
@@ -127,7 +136,8 @@ const GameShot = () => {
                   overflow: "hidden",
                   position: "relative",
                   borderRadius: "borderRadius",
-                }}>
+                }}
+              >
                 {/* Webcam 컴포넌트를 표시합니다. */}
                 <Box
                   sx={{
@@ -139,7 +149,8 @@ const GameShot = () => {
                     right: 0,
                     bottom: 0,
                     left: 0,
-                  }}>
+                  }}
+                >
                   <Webcam ref={webcamRef} />
                 </Box>
               </Box>
@@ -147,7 +158,8 @@ const GameShot = () => {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
-                p={2}>
+                p={2}
+              >
                 {/* 촬영 버튼 */}
                 <Typography variant="h6">
                   {captured
@@ -157,7 +169,8 @@ const GameShot = () => {
                 <Button
                   variant={captured ? "contained" : "outlined"}
                   color={captured ? "secondary" : "primary"}
-                  onClick={handleCapture}>
+                  onClick={handleCapture}
+                >
                   {captured ? "촬영 완료" : "촬영"}
                 </Button>
               </Box>
@@ -170,8 +183,11 @@ const GameShot = () => {
               display="flex"
               flexDirection="column"
               justifyContent="space-between"
-              alignItems="center">
+              alignItems="center"
+            >
               <Box
+                // copyRef를 캡처하려는 DOM 요소에 연결합니다.
+                ref={copyRef}
                 sx={{
                   height: "80%",
                   width: "70%",
@@ -180,7 +196,8 @@ const GameShot = () => {
                   borderRadius: "borderRadius",
                   backgroundImage: `url(${frameImage[imageIndex]})`,
                   backgroundSize: "cover",
-                }}>
+                }}
+              >
                 {/* 유저 이미지를 표시하는 Card */}
                 <Card
                   ref={user1Ref}
@@ -191,13 +208,15 @@ const GameShot = () => {
                       : `url("/images/ShotEmpty.jfif")`,
                     height: "15vh",
                     margin: "5%",
-                  }}></Card>
+                  }}
+                ></Card>
                 <Card
                   sx={{
                     backgroundImage: `url("/images/ShotEmpty.jfif")`,
                     height: "15vh",
                     margin: "5%",
-                  }}>
+                  }}
+                >
                   User 2
                 </Card>
                 <Card
@@ -205,7 +224,8 @@ const GameShot = () => {
                     backgroundImage: `url("/images/ShotEmpty.jfif")`,
                     height: "15vh",
                     margin: "5%",
-                  }}>
+                  }}
+                >
                   User 3
                 </Card>
                 <Card
@@ -213,7 +233,8 @@ const GameShot = () => {
                     backgroundImage: `url("/images/ShotEmpty.jfif")`,
                     height: "15vh",
                     margin: "5%",
-                  }}>
+                  }}
+                >
                   User 4
                 </Card>
               </Box>
@@ -222,7 +243,8 @@ const GameShot = () => {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
-                p={2}>
+                p={2}
+              >
                 <Button variant="outlined" color="primary" onClick={handlePrev}>
                   <FaArrowLeft />
                 </Button>
@@ -240,5 +262,21 @@ const GameShot = () => {
     </Box>
   );
 };
+
+function copyCapture(element) {
+  if (element) {
+    domtoimage
+      .toPng(element)
+      .then(function (dataUrl) {
+        const link = document.createElement("a");
+        link.download = "capture.png";
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch(function (error) {
+        console.error("oops, something went wrong!", error);
+      });
+  }
+}
 
 export default GameShot;

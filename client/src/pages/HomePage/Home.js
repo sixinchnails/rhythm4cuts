@@ -12,6 +12,8 @@ import { Grid, Pagination } from "@mui/material";
 import "./Home.css";
 //이모지 들고오는 import
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 
 const DIVIDER_HEIGHT = 5;
 

@@ -21,6 +21,21 @@ const loginUser = createSlice({
 
 export let { doLogin } = loginUser.actions;
 
+// 알림 상태를 저장하는 슬라이스
+const notificationSlice = createSlice({
+  name: 'notification',
+  initialState: {
+    hasNotification: false,
+  },
+  reducers: {
+    setHasNotification: (state, action) => {
+      state.hasNotification = action.payload;
+    },
+  },
+});
+
+export const { setHasNotification } = notificationSlice.actions;
+
 //친구 정보
 const MyPage_Friend = createSlice({
   name: "friend",
@@ -446,5 +461,6 @@ export default configureStore({
     MyPage_Friend: MyPage_Friend.reducer,
     MyPage_MyInfo: MyPage_MyInfo.reducer,
     loginUser: loginUser.reducer,
+    notification: notificationSlice.reducer,
   },
 });
