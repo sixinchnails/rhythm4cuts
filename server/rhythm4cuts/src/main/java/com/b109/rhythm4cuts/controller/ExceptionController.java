@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.controller;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +28,8 @@ public class ExceptionController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
 
-    @ExceptionHandler({LoginException.class})
-    public ResponseEntity handleLoginException(final LoginException ex) {
+    @ExceptionHandler({LoginException.class, ExpiredJwtException.class})
+    public ResponseEntity handleUnauthorizedException(final Exception ex) {
         //log.warn("error", ex);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }

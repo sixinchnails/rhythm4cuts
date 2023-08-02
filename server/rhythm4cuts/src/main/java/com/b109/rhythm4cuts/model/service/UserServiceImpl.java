@@ -1,21 +1,31 @@
 package com.b109.rhythm4cuts.model.service;
 
+import com.b109.rhythm4cuts.config.jwt.TokenProvider;
 import com.b109.rhythm4cuts.model.domain.ProfileImage;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.*;
 import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import java.util.Optional;
+
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import static com.b109.rhythm4cuts.model.service.Utils.dtoSetter;
 import static com.b109.rhythm4cuts.model.service.Utils.getRandomString;
 
 @RequiredArgsConstructor
@@ -24,8 +34,9 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ProfileImageRepository profileImageRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final TokenService tokenService;
     private final JavaMailSender javaMailSender;
+    private final TokenProvider tokenProvider;
+    private final RedisTemplate redisTemplate;
 
     //id로 사용자 객체를 찾는 메서드
     public UserDto findById(Long userId) {
@@ -90,8 +101,12 @@ public class UserServiceImpl implements UserService {
         //어떤 형식으로 들어올까?
         String prefix = dto.getSsn().split("-")[0], postfix = dto.getSsn().split("-")[1];
         user.setBirthDate(fn_getDateOfBirth(prefix, postfix));
-        user.setPassword(dto.getPassword());
+        user.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         user.setNickname(dto.getNickname());
+
+        ProfileImage profileImage = profileImageRepository.findByProfileImageSeq(Integer.valueOf(dto.getProfile_img_seq()))
+                .orElseThrow(() -> new IllegalArgumentException("No profile image."));
+        user.setProfileImage(profileImage);
 
         return userRepository.save(user).getEmail();
     }
@@ -102,13 +117,14 @@ public class UserServiceImpl implements UserService {
     }
 
     //프로필 이미지 반환 메서드
-    public String getProfileImg(String email) {
-        System.out.println("이메일:" + email);
-
+    public Integer getProfileImg(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException());
 
-        return user.getEmail();
+        Optional<Integer> profileImgSeq = Optional.of(user.getProfileImage().getProfileImageSeq());
+
+        //null인 상황이 있으면 안되지만 일단 0으로 리턴
+        return (profileImgSeq.isPresent())? profileImgSeq.get():0;
     }
 
     //프로필 사진 변경 메서드
@@ -139,9 +155,9 @@ public class UserServiceImpl implements UserService {
 
     //비밀번호 변경 메서드
     public void updatePassword(String accessToken, UpdateUserPasswordDto dto) {
-        if (!tokenService.validToken(accessToken)) throw new IllegalArgumentException();
+        if (!tokenProvider.validToken(accessToken)) throw new IllegalArgumentException();
 
-        String email = tokenService.getUserId(accessToken);
+        String email = tokenProvider.getUserId(accessToken);
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException());
@@ -259,5 +275,46 @@ public class UserServiceImpl implements UserService {
 
         return false;
         //return (certificateDto.getCertificate().equals(user.getCertificate()))? true:false;
+    }
+
+    public TokenResponse generateToken(UserDto userDto) {
+        User user = userRepository.findByEmail(userDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+        TokenResponse tokenResponse = tokenProvider.generateToken(userDto);
+        Authentication authentication = tokenProvider.getAuthentication(tokenResponse.getAccessToken());
+
+        // Redis 에 Refresh Token 저장
+        redisTemplate.opsForValue().set("RT:" + tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), TokenProvider.refreshExpiredAt.toMillis(), TimeUnit.MILLISECONDS);
+
+        return tokenResponse;
+    }
+
+    public ResponseEntity<?> reissueAuthenticationToken(TokenRequestDto tokenRequestDto) {
+        // 사용자로부터 받은 Refresh Token 유효성 검사
+        // Refresh Token 마저 만료되면 다시 로그인
+        if(tokenProvider.isTokenExpired(tokenRequestDto.getRefreshToken()) || !tokenProvider.validToken(tokenRequestDto.getRefreshToken())) {
+            throw new IllegalArgumentException("잘못된 요청입니다. 다시 로그인해주세요.");
+        }
+
+        // Access Token 에 기술된 사용자 이름 가져오기
+        //String email = tokenProvider.getUserId(tokenRequestDto.getAccessToken());
+        User user = userRepository.findByEmail(tokenRequestDto.getEmail()).orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+        UserDto userDto = dtoSetter(user);
+
+        // Redis 에 저장된 Refresh Token 과 비교
+        String refreshToken = (String) redisTemplate.opsForValue().get("RT:" + tokenRequestDto.getAccessToken());
+
+        if(ObjectUtils.isEmpty(refreshToken)) {
+            throw new IllegalArgumentException("잘못된 요청입니다. 다시 로그인해주세요.");
+        }
+        if(!refreshToken.equals(tokenRequestDto.getRefreshToken())) {
+            throw new IllegalArgumentException("Refresh Token 정보가 일치하지 않습니다.");
+        }
+
+        // 새로운 Access Token 발급
+        final TokenResponse tokenResponse = tokenProvider.generateToken(userDto);
+        tokenResponse.setRefreshToken(tokenRequestDto.getRefreshToken());
+
+        return ResponseEntity.ok().body(tokenResponse);
     }
 }

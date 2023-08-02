@@ -4,7 +4,6 @@ import com.b109.rhythm4cuts.config.jwt.TokenProvider;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.*;
 
-import com.b109.rhythm4cuts.model.service.TokenService;
 import com.b109.rhythm4cuts.model.service.UserService;
 import com.b109.rhythm4cuts.model.dto.TokenResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +19,13 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/member")
 public class MemberController {
-    private final TokenService tokenService;
     private final UserService userService;
 
     public Map<String, Object> commonEmail(String email) {
@@ -57,9 +56,9 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginDto loginDto) {
         //로그인을 시도한 이메일로 사용자 조회
-        UserDto userDto = userService.findByEmail(loginDto.getEmail());
+        UserDto userDto = userService.login(loginDto);
         //액세스 토큰의 유효 시간 30분으로 설정
-        TokenResponse tokenResponse = tokenService.generateToken(userDto, Duration.ofMinutes(30), Duration.ofDays(14));
+        TokenResponse tokenResponse = userService.generateToken(userDto);
         //Map<String, Object> res = commonEmail(loginDto.getEmail());
 
         return ResponseEntity.ok()
@@ -73,6 +72,7 @@ public class MemberController {
 
     //API 2. POST 회원가입
     @PostMapping("/register")
+    @Transactional
     public ResponseEntity register(@RequestBody AddUserRequest request) {
         userService.save(request);
         Map<String, Object> res = commonEmail(request.getEmail());
@@ -186,5 +186,10 @@ public class MemberController {
         userService.sendEmail(mailDto);
 
         return ResponseEntity.status(200).build();
+    }
+
+    @PostMapping(value = "/reissue")
+    public ResponseEntity<?> reissueAuthenticationToken(@RequestBody TokenRequestDto tokenRequestDto) {
+        return userService.reissueAuthenticationToken(tokenRequestDto);
     }
 }
