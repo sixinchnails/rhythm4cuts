@@ -16,15 +16,24 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Arrays;
+import java.util.List;
+
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
     private final UserDetailService userService;
-    @Autowired
     private final TokenProvider tokenProvider;
-    @Autowired
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
+    private final TokenExceptionFilter tokenExceptionFilter;
+
+    private final List<String> excludedUrlPatterns = Arrays.asList(
+            "/member/reissue",
+            "/member/login",
+            "/member/register",
+            "/member/reissue"
+    );
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -33,7 +42,7 @@ public class WebSecurityConfig {
         //시큐리티 핵심
         return http
                 .authorizeRequests()
-                .antMatchers("/member/login", "/member/register", "/member/profile").permitAll()
+                .antMatchers(excludedUrlPatterns.toArray(new String[0])).permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/member/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -41,6 +50,7 @@ public class WebSecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(tokenExceptionFilter, TokenAuthenticationFilter.class)
                 .build();
     }
 
