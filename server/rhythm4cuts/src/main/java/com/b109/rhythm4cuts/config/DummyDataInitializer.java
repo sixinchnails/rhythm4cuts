@@ -29,7 +29,7 @@ public class DummyDataInitializer {
 
         ProfileImage profileImage2 = new ProfileImage();
         profileImage2.setImageName("2 profile image");
-        profileImage2.setDescription("2 image");
+        profileImage2.setDescription("2 images");
         profileImage2.setFileName("2 file name");
         profileImageRepository.save(profileImage2);
 
@@ -46,11 +46,10 @@ public class DummyDataInitializer {
         profileImageRepository.save(profileImage4);
 
         ProfileImage profileImage5 = new ProfileImage();
-        profileImage5.setProfileImageSeq(5);
         profileImage5.setImageName("5 profile image");
         profileImage5.setDescription("5 image");
         profileImage5.setFileName("5 file name");
-        profileImageRepository.save(profileImage4);
+        profileImageRepository.save(profileImage5);
 
         // 더미 데이터 추가
         User user = new User();
