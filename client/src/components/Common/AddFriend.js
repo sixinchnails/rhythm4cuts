@@ -14,7 +14,7 @@ function AddFriend({ isOpen, handleClose }) {
 
   useEffect(() => {
     const stompClient = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/stomp/chat'),
+      webSocketFactory: () => new SockJS('http://i9b109.p.ssafy.io:8080/stomp/chat'),
     });
     stompClient.onConnect = () => {
     };

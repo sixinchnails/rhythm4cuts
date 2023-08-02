@@ -14,10 +14,10 @@ public class WebConfig implements WebMvcConfigurer {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000");
+                        .allowedOrigins("http://localhost:3000")
 //                        .allowedOriginPatterns("*") // 해당 주소를 넣어도 가능
-//                        .allowedHeaders("*")
-//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH")
+                        .allowedHeaders("*")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH");
 //                        .exposedHeaders("Authorization", "RefreshToken");
 //                        .allowCredentials(true); // allowedOriginPattern("*") // 해당 코드 작성 시, 에러 발생 (실행 X)
             }
