@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.model.domain;
 
+import com.b109.rhythm4cuts.model.dto.LobbyDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -54,11 +55,35 @@ public class GameInfo {
     @Column(name = "create_date")
     private LocalDateTime createDate;
 
+    // OpenVidu 세션 아이디
+    @Column(name = "session_id")
+    private String sessionId;
+
+    // OpenVidu 커넥션 아이디
+    @Column(name = "connection_id")
+    private String connectionId;
+
     public GameInfo() {
         this.headCount = 1;
         this.isSecret = false;
         this.hasImage = false;
         this.roomStatus = RoomStatus.WAIT;
+    }
+
+    public LobbyDto getLobbyDto() {
+        LobbyDto lobbyDto = new LobbyDto();
+
+        lobbyDto.setGameSeq(this.getGameSeq());
+        lobbyDto.setTitle(this.getTitle());
+        lobbyDto.setSongSeq(this.getSong().getSongSeq());
+        lobbyDto.setHeadcount(this.getHeadCount());
+        lobbyDto.setIsSecret(this.getIsSecret() ? 1 : 0);
+        lobbyDto.setPassword(this.getPassword());
+//        lobbyDto.setStatus(this.getRoomStatus());
+        lobbyDto.setSessionId(this.getSessionId());
+        lobbyDto.setConnectionId(this.getConnectionId());
+
+        return lobbyDto;
     }
 
 }
