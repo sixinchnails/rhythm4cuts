@@ -1,22 +1,32 @@
 package com.b109.rhythm4cuts.model.service;
 
+import com.b109.rhythm4cuts.config.jwt.TokenProvider;
 import com.b109.rhythm4cuts.model.domain.ProfileImage;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.*;
 import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import java.util.Optional;
+
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import static com.b109.rhythm4cuts.model.service.Utils.fn_getDateOfBirth;
+import static com.b109.rhythm4cuts.model.service.Utils.dtoSetter;
+import static com.b109.rhythm4cuts.model.service.Utils.getRandomString;
 
 @RequiredArgsConstructor
 @Service
@@ -24,27 +34,9 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ProfileImageRepository profileImageRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final TokenService tokenService;
     private final JavaMailSender javaMailSender;
-
-    //임시 비밀번호 size 크기로 생성
-    public String getRandomPassword(int size) {
-        char[] charSet = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-        StringBuffer sb = new StringBuffer();
-        SecureRandom sr = new SecureRandom();
-        sr.setSeed(new Date().getTime());
-
-        int idx = 0;
-        int len = charSet.length;
-
-        for (int i = 0; i < size; i++) {
-            idx = sr.nextInt(len);
-
-            sb.append(charSet[idx]);
-        }
-
-        return sb.toString();
-    }
+    private final TokenProvider tokenProvider;
+    private final RedisTemplate redisTemplate;
 
     //id로 사용자 객체를 찾는 메서드
     public UserDto findById(Long userId) {
@@ -81,15 +73,40 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
+    public static LocalDate fn_getDateOfBirth(String str1, String str2){
+        int divisionCode = Integer.parseInt(str2.substring(0, 1));
+        String dateOfBirth = null;
+        if(divisionCode == 1 || divisionCode == 2 || divisionCode == 5 || divisionCode == 6){
+            // 한국인 1900~, 외국인 1900~
+            dateOfBirth = "19"+str1;
+        }else if(divisionCode == 3 || divisionCode == 4 || divisionCode == 7 || divisionCode == 8){
+            // 한국인 2000~, 외국인 2000~
+            dateOfBirth = "20"+str1;
+        }else if(divisionCode == 9 || divisionCode == 0){
+            // 한국인 1800~
+            dateOfBirth = "18"+str1;
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate birthDate = LocalDate.parse(dateOfBirth, formatter);
+
+        return birthDate;
+    }
+
     //회원가입 및 회원 객체 DB 저장 메서드
     public String save(AddUserRequest dto) {
         User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
+        //어떤 형식으로 들어올까?
         String prefix = dto.getSsn().split("-")[0], postfix = dto.getSsn().split("-")[1];
         user.setBirthDate(fn_getDateOfBirth(prefix, postfix));
         user.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         user.setNickname(dto.getNickname());
+
+        ProfileImage profileImage = profileImageRepository.findByProfileImageSeq(Integer.valueOf(dto.getProfile_img_seq()))
+                .orElseThrow(() -> new IllegalArgumentException("No profile image."));
+        user.setProfileImage(profileImage);
 
         return userRepository.save(user).getEmail();
     }
@@ -98,15 +115,16 @@ public class UserServiceImpl implements UserService {
     public int getPoint(String email) {
         return userRepository.findByEmail(email).get().getPoint();
     }
-    
+
     //프로필 이미지 반환 메서드
-    public String getProfileImg(String email) {
+    public Integer getProfileImg(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException());
 
-        String profileImg = String.valueOf(user.getProfileImage().getProfileImageSeq());
+        Optional<Integer> profileImgSeq = Optional.of(user.getProfileImage().getProfileImageSeq());
 
-        return (profileImg == null)? "No img" : profileImg;
+        //null인 상황이 있으면 안되지만 일단 0으로 리턴
+        return (profileImgSeq.isPresent())? profileImgSeq.get():0;
     }
 
     //프로필 사진 변경 메서드
@@ -137,9 +155,9 @@ public class UserServiceImpl implements UserService {
 
     //비밀번호 변경 메서드
     public void updatePassword(String accessToken, UpdateUserPasswordDto dto) {
-        if (!tokenService.validToken(accessToken)) throw new IllegalArgumentException();
+        if (!tokenProvider.validToken(accessToken)) throw new IllegalArgumentException();
 
-        String email = tokenService.getUserId(accessToken);
+        String email = tokenProvider.getUserId(accessToken);
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException());
@@ -153,10 +171,10 @@ public class UserServiceImpl implements UserService {
 
         //사용자가 입력한 이전 비밀번호가 현재 비밀번호와 일치하지 않는 경우
         if (!bCryptPasswordEncoder.matches(oldPassword, currentPassword)) throw new IllegalArgumentException();
-        
+
         //비밀번호 조건 충족 여부 추가할 위치
         //ex) if (newPassword.length() == 0) throw new WrongPasswordFormatException();
-        
+
         user.setPassword(bCryptPasswordEncoder.encode(newPassword));
 
         userRepository.save(user);
@@ -166,7 +184,7 @@ public class UserServiceImpl implements UserService {
     public UserDto login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException());
-        
+
         if (!bCryptPasswordEncoder.matches(loginDto.getPassword(), user.getPassword())) throw new IllegalArgumentException();
 
         UserDto userDto = Utils.dtoSetter(user);
@@ -180,7 +198,7 @@ public class UserServiceImpl implements UserService {
     //포인트 결제 메서드
     public long payPoints(PayDto payDto) {
         User user = userRepository.findByEmail(payDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
 
         int userPoint = user.getPoint(), payPoints = payDto.getPayPoints();
 
@@ -198,10 +216,10 @@ public class UserServiceImpl implements UserService {
     //비밀번호 찾기 메서드 (SMTP 사용)
     public void findPassword(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
 
         //15 자리 임시 비밀번호 생성
-        String tempPassword = getRandomPassword(15);
+        String tempPassword = getRandomString(15);
 
         user.setPassword(tempPassword);
 
@@ -210,9 +228,9 @@ public class UserServiceImpl implements UserService {
 
     public MailDto createMailAndChangePassword(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
 
-        String tempPassword = getRandomPassword(15);
+        String tempPassword = getRandomString(15);
 
         MailDto mailDto = new MailDto();
         mailDto.setAddress(new String[] {email});
@@ -225,6 +243,22 @@ public class UserServiceImpl implements UserService {
         return mailDto;
     }
 
+    public MailDto createMailAndCertificate(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+
+        String tempCertification = getRandomString(15);
+
+        //비밀번호 저장 기능 필요
+
+        MailDto mailDto = new MailDto();
+        mailDto.setAddress(new String[] {email});
+        mailDto.setTitle("Rhythm4Cuts 인증번호 발급 안내 메일입니다.");
+        mailDto.setContent("안녕하세요. Rhythm4Cuts 인증번호를 발급드립니다. 회원님의 임시 인증번호는 " + tempCertification + "입니다.");
+
+        return mailDto;
+    }
+
     public void sendEmail(MailDto mailDto) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(mailDto.getAddress());
@@ -233,5 +267,54 @@ public class UserServiceImpl implements UserService {
         message.setFrom("dropice@naver.com");
         message.setReplyTo("dropice@naver.com");
         javaMailSender.send(message);
+    }
+
+    public boolean checkCertificate(CertificateDto certificateDto) {
+        User user = userRepository.findByEmail(certificateDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+
+        return false;
+        //return (certificateDto.getCertificate().equals(user.getCertificate()))? true:false;
+    }
+
+    public TokenResponse generateToken(UserDto userDto) {
+        User user = userRepository.findByEmail(userDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+        TokenResponse tokenResponse = tokenProvider.generateToken(userDto);
+        Authentication authentication = tokenProvider.getAuthentication(tokenResponse.getAccessToken());
+
+        // Redis 에 Refresh Token 저장
+        redisTemplate.opsForValue().set("RT:" + tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), TokenProvider.refreshExpiredAt.toMillis(), TimeUnit.MILLISECONDS);
+
+        return tokenResponse;
+    }
+
+    public ResponseEntity<?> reissueAuthenticationToken(TokenRequestDto tokenRequestDto) {
+        // 사용자로부터 받은 Refresh Token 유효성 검사
+        // Refresh Token 마저 만료되면 다시 로그인
+        if(tokenProvider.isTokenExpired(tokenRequestDto.getRefreshToken()) || !tokenProvider.validToken(tokenRequestDto.getRefreshToken())) {
+            throw new IllegalArgumentException("잘못된 요청입니다. 다시 로그인해주세요.");
+        }
+
+        // Access Token 에 기술된 사용자 이름 가져오기
+        //String email = tokenProvider.getUserId(tokenRequestDto.getAccessToken());
+        User user = userRepository.findByEmail(tokenRequestDto.getEmail()).orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+        UserDto userDto = dtoSetter(user);
+
+        // Redis 에 저장된 Refresh Token 과 비교
+        String refreshToken = (String) redisTemplate.opsForValue().get("RT:" + tokenRequestDto.getAccessToken());
+
+        if(ObjectUtils.isEmpty(refreshToken)) {
+            throw new IllegalArgumentException("잘못된 요청입니다. 다시 로그인해주세요.");
+        }
+        if(!refreshToken.equals(tokenRequestDto.getRefreshToken())) {
+            throw new IllegalArgumentException("Refresh Token 정보가 일치하지 않습니다.");
+        }
+
+        // 새로운 Access Token 발급
+        final TokenResponse tokenResponse = tokenProvider.generateToken(userDto);
+        tokenResponse.setRefreshToken(tokenRequestDto.getRefreshToken());
+
+        return ResponseEntity.ok().body(tokenResponse);
     }
 }

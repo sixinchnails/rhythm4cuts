@@ -17,4 +17,5 @@ public class UserDto {
     private int playCount;
     private int scoreSum;
     private int profileImageSeq;
+    private String refreshToken;
 }
