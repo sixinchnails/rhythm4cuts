@@ -24,18 +24,11 @@ public class FilmController {
 
     // API 1. 데일리 방명록 사진 리스트
     // date: 방명록 조회 날짜 (ex. 2023-07-24)
-    @GetMapping("/daily/info/{year}/{month}/{day}")
-    public ResponseEntity<?> dailyPhotoList(@PathVariable int year, @PathVariable int month, @PathVariable int day) {
-        List<FilmDto> filmInfos = filmService.getPhotoList(year, month, day);
+    @GetMapping("/daily/info/{year}/{month}/{day}/{page}")
+    public ResponseEntity<?> dailyPhotoList(@PathVariable int year, @PathVariable int month, @PathVariable int day, @PathVariable int page) {
+        List<FilmDto> filmInfos = filmService.getPhotoList(year, month, day, page);
 
         return new ResponseEntity<>(filmInfos, HttpStatus.OK);
-    }
-
-    @GetMapping("/daily/download/{year}/{month}/{day}")
-    public ResponseEntity<?> dailyDownPhoto(@PathVariable int year, @PathVariable int month, @PathVariable int day) {
-        List<Resource> resources = filmService.downDailyFilm(year, month, day);
-
-        return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
     // API 2. 인생네컷 테두리 전체 조회
@@ -53,18 +46,5 @@ public class FilmController {
         // 넘어온 사진 정보를 DB에 저장할 예정
         filmService.saveFilm(filmInfo);
         return ResponseEntity.ok("File uploaded success");
-    }
-
-    @GetMapping("/download/{fileName}")
-    public ResponseEntity<?> downLoad(@PathVariable String fileName) throws Exception {
-        Resource resource = filmService.downFilm(fileName);
-        return new ResponseEntity<>(resource, HttpStatus.OK);
-    }
-
-    @GetMapping("/url/{fileName}")
-    public ResponseEntity<?> getUrl(@PathVariable String fileName) throws Exception {
-        String filePath = "/film/" + fileName;
-        UrlResource resource = new UrlResource(Paths.get(filePath).toUri());
-        return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 }

@@ -80,6 +80,7 @@ public class GameImage {
         filmDto.setDownloadState(this.downloadState);
         filmDto.setPlayerRank(this.gameRank);
         filmDto.setTotalFileName(this.totalFileName);
+        filmDto.setCreateDate(this.createDate);
 
         return filmDto;
     }

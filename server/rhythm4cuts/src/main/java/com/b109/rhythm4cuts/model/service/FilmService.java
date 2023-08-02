@@ -15,9 +15,9 @@ import java.util.List;
 @Service
 public interface FilmService {
 
-    public List<FilmDto> getPhotoList(int year, int month, int day);
+    public List<FilmDto> getPhotoList(int year, int month, int day, int page);
     public List<BackgroundDto> getBackgroundList();
     public void saveFilm(FilmDto filmInfo) throws IOException;
     public Resource downFilm(String filmName) throws Exception;
-    public List<Resource> downDailyFilm(int year, int month, int day);
+    public List<Resource> downDailyFilm(int year, int month, int day, int page);
 }

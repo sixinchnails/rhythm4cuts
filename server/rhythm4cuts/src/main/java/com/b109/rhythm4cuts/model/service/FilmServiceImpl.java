@@ -7,9 +7,13 @@ import com.b109.rhythm4cuts.model.dto.FilmDto;
 import com.b109.rhythm4cuts.model.repository.FilmRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -32,12 +36,14 @@ public class FilmServiceImpl implements FilmService {
     private final FilmRepository filmRepository;
     private final UserRepository userRepository;
 
-    private final String saveFolder = "/film";
+    @Value("${photo.storage.path}")
+    private String imageStoragePath;
 
     @Override
-    public List<FilmDto> getPhotoList(int year, int month, int day) {
+    public List<FilmDto> getPhotoList(int year, int month, int day, int page) {
         List<FilmDto> res = new ArrayList<>();
-        List<GameImage> gameImages = filmRepository.findByDate(year, month, day);
+        Pageable pageable = PageRequest.of(page - 1, 10);
+        Page<GameImage> gameImages = filmRepository.findByDate(year, month, day, pageable);
 
         gameImages.forEach(gameImage -> {
             res.add(gameImage.getFilmDto());
@@ -70,21 +76,21 @@ public class FilmServiceImpl implements FilmService {
         byte[] commonFileDate = filmInfo.getCommonFilm().getBytes();
 
 
-        File folder = new File(saveFolder);
+        File folder = new File(imageStoragePath);
         if (!folder.exists()) {
             folder.mkdirs();
         }
 
-        Path privateFilePath = Paths.get(saveFolder, gameImage.getFileName());
+        Path privateFilePath = Paths.get(imageStoragePath, gameImage.getFileName());
         Files.write(privateFilePath, privateFileData);
 
-        Path commonFilePath = Paths.get(saveFolder, gameImage.getTotalFileName());
+        Path commonFilePath = Paths.get(imageStoragePath, gameImage.getTotalFileName());
         Files.write(commonFilePath, commonFileDate);
     }
 
     @Override
     public Resource downFilm(String filmName) throws Exception {
-        String file = saveFolder + "/" + filmName;
+        String file = imageStoragePath + "/" + filmName;
         Path filePath = Paths.get(file);
         Resource resource = new InputStreamResource(Files.newInputStream(filePath));
 
@@ -92,9 +98,11 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<Resource> downDailyFilm(int year, int month, int day) {
-        List<GameImage> gameImages = filmRepository.findByDate(year, month, day);
+    public List<Resource> downDailyFilm(int year, int month, int day, int page) {
+        Pageable pageable = PageRequest.of(page - 1, 10);
+        Page<GameImage> gameImages = filmRepository.findByDate(year, month, day, pageable);
         List<Resource> resources = new ArrayList<>();
+
         gameImages.forEach(gameImage -> {
             try {
                 Resource resource = downFilm(gameImage.getTotalFileName());
@@ -109,7 +117,6 @@ public class FilmServiceImpl implements FilmService {
 
 
     private String generateFileName(String originalFilename) {
-        System.out.println("파일 이름 : " + originalFilename);
         // 현재 시간 정보
         LocalDateTime now = LocalDateTime.now();
 
