@@ -1,3 +1,4 @@
+/* eslint-disable */
 import "./My_ModifyInfo.css";
 import Button from "@mui/material/Button";
 import { useState, useEffect } from "react";
@@ -7,7 +8,7 @@ import { updateNickname, updatePassword, updateProfilePic } from "../../store";
 import { useNavigate } from "react-router-dom";
 
 function UserInfo() {
-  const Info = useSelector(state => state.MyPage_MyInfo);
+  const Info = useSelector((state) => state.MyPage_MyInfo);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   //라우터
@@ -17,9 +18,9 @@ function UserInfo() {
   const [passwordEdit, setPasswordEdit] = useState(false);
 
   // 값들 불러오기
-  const nicknameItem = Info.find(item => item.name === "닉네임");
-  const passwordItem = Info.find(item => item.name === "비밀번호");
-  const profilePic = Info.find(item => item.name === "프로필 사진")?.value;
+  const nicknameItem = Info.find((item) => item.name === "닉네임");
+  const passwordItem = Info.find((item) => item.name === "비밀번호");
+  const profilePic = Info.find((item) => item.name === "프로필 사진")?.value;
 
   // 비밀번호 수정 관련 상태 변수 추가
   const [password, setPassword] = useState("");
@@ -35,7 +36,8 @@ function UserInfo() {
   const [selectedImage, setSelectedImage] = useState(profilePic);
 
   const handleComplete = () => {
-    if (!isValidPassword) {
+    if (!isValidPassword && password.length > 0) {
+      // 비밀번호가 비어있지 않으면서 형식이 잘못된 경우에만 메시지 표시
       window.alert("비밀번호 형식을 확인해주세요");
       return;
     }
@@ -49,25 +51,25 @@ function UserInfo() {
     }
   };
 
-  const handleNicknameUpdate = newNickname => {
+  const handleNicknameUpdate = (newNickname) => {
     if (newNickname === "") {
       newNickname = nicknameItem.value; // if no new nickname is provided, use the original one
     }
     dispatch(updateNickname(newNickname));
   };
 
-  const handlePasswordUpdate = newPassword => {
+  const handlePasswordUpdate = (newPassword) => {
     if (newPassword === "") {
       newPassword = passwordItem.value; // if no new password is provided, use the original one
     }
     dispatch(updatePassword(newPassword));
   };
 
-  const handleProfilePicUpdate = newProfilePic => {
+  const handleProfilePicUpdate = (newProfilePic) => {
     dispatch(updateProfilePic(newProfilePic));
   };
 
-  const handleFileChange = e => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -83,13 +85,14 @@ function UserInfo() {
   };
 
   // 비밀번호 유효성 검사 함수
-  const checkPassword = password => {
+  const checkPassword = (password) => {
     const regex =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     return regex.test(password);
   };
 
   useEffect(() => {
+    // 비밀번호가 비어있지 않은 경우에만 유효성 검사 수행
     setIsValidPassword(checkPassword(password));
     setIsMatchPassword(password === confirmPassword);
   }, [password, confirmPassword]);
@@ -132,7 +135,7 @@ function UserInfo() {
                   type="text"
                   className="modify-input"
                   value={nickname}
-                  onChange={e => setNickname(e.target.value)}
+                  onChange={(e) => setNickname(e.target.value)}
                 />
                 <Button
                   color="primary"
@@ -176,7 +179,7 @@ function UserInfo() {
                     className="modify-input"
                     placeholder="영어,숫자,특수 기호 포함 8자리 이상"
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   {isValidPassword && password && (
                     <img
@@ -219,7 +222,7 @@ function UserInfo() {
                     className="modify-input"
                     placeholder="영어,숫자,특수 기호 포함 8자리 이상"
                     value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                   />
                   {password === confirmPassword && confirmPassword && (
                     <img

@@ -1,16 +1,38 @@
-import Header from "../../components/Home/Mypage_Header";
+// Mypage.js
+/* eslint-disable */
 import { useNavigate } from "react-router-dom";
-// Home.js
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./Mypage.css";
 import Sidebar from "../../components/My/My_SideBar";
 // 마이 페이지들 import
 import MainContent from "../../components/My/My_MainContent"; // MainContent 컴포넌트를 import
 import UserInfo from "../../components/My/My_UserInfo"; // UserInfo 컴포넌트를 import
 import Button from "@mui/material/Button";
+import { userInfo } from "../../apis/userInfo";
+import LoginMypageHeader from "../../components/Home/LoginMypageHeader";
 
-const Home = () => {
-  let navigate = useNavigate();
+const Mypage = () => {
+  const navigate = useNavigate();
+
+  //로그인 상태 확인
+  const [isLogin, setIsLogin] = useState(false);
+
+  try {
+    userInfo()
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res);
+          setIsLogin(true);
+        }
+      })
+      .catch((error) => {
+        navigate("/");
+        window.alert("로그인을 해주세요!");
+      });
+  } catch (error) {
+    console.log(error);
+  }
+
   // 배경색 변경
   useEffect(() => {
     document.body.style.backgroundColor = "#F8E8EE";
@@ -22,7 +44,7 @@ const Home = () => {
   }, []);
   return (
     <>
-      <Header></Header>
+      <LoginMypageHeader />
       {/* 사이드바와 메인 제목을 수평으로 배치하기 위해서는 Flexbox 또는 CSS Grid를 사용해야한다.
       그럴려면 사이드 바와 메인 제목을 감싸고 있는 부모 요소가 필요하다.
       그 부모 요소는 사이드 바와 메인 제목을 자식 요소로 갖고, 이 자식 요소들을 수평으로 배치한다. */}
@@ -68,4 +90,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Mypage;

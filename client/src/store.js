@@ -66,7 +66,21 @@ const sessionSlice = createSlice({
   },
 });
 
-//친구 정보
+// 알림 상태를 저장하는 슬라이스
+const notificationSlice = createSlice({
+  name: "notification",
+  initialState: {
+    hasNotification: false,
+  },
+  reducers: {
+    setHasNotification: (state, action) => {
+      state.hasNotification = action.payload;
+    },
+  },
+});
+
+export const { setHasNotification } = notificationSlice.actions;
+
 const MyPage_Friend = createSlice({
   name: "friend",
   initialState: [
@@ -97,21 +111,21 @@ const MyPage_MyInfo = createSlice({
   reducers: {
     // 닉네임 수정 action
     updateNickname: (state, action) => {
-      const item = state.find((item) => item.name === "닉네임");
+      const item = state.find(item => item.name === "닉네임");
       if (item) {
         item.value = action.payload;
       }
     },
     // 비밀번호 수정 action
     updatePassword: (state, action) => {
-      const item = state.find((item) => item.name === "비밀번호");
+      const item = state.find(item => item.name === "비밀번호");
       if (item) {
         item.value = action.payload;
       }
     },
     // 프로필 사진 수정 action
     updateProfilePic: (state, action) => {
-      const item = state.find((item) => item.name === "프로필 사진");
+      const item = state.find(item => item.name === "프로필 사진");
       if (item) {
         item.value = action.payload;
       }
@@ -491,5 +505,6 @@ export default configureStore({
     MyPage_Friend: MyPage_Friend.reducer,
     MyPage_MyInfo: MyPage_MyInfo.reducer,
     webcamStream: webcamStreamSlice.reducer,
+    notification: notificationSlice.reducer,
   },
 });
