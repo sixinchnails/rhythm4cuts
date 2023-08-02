@@ -1,11 +1,35 @@
+/* eslint-disable */
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Box, Button, Card, Grid, Typography, Container } from "@mui/material";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import Header from "../../components/Game/Header_dark";
 import Webcam from "../../components/Game/Webcam";
+import { useNavigate } from "react-router-dom";
+import { userInfo } from "../../apis/userInfo";
 
 const GameShot = () => {
+  const navigate = useNavigate();
+
+  //로그인 상태 확인
+  const [isLogin, setIsLogin] = useState(false);
+
+  try {
+    userInfo()
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res);
+          setIsLogin(true);
+        }
+      })
+      .catch((error) => {
+        window.alert("로그인을 해주세요!");
+        navigate("/");
+      });
+  } catch (error) {
+    console.log(error);
+  }
+
   // 5초 타이머를 설정하기 위한 상태 변수
   const [seconds, setSeconds] = useState(5);
 
@@ -25,7 +49,7 @@ const GameShot = () => {
   const webcamRef = useRef(null);
 
   // Frame 이미지 배열을 리덕스 상태로부터 가져옵니다.
-  let frameImage = useSelector(state => state.GameShot_frameImage);
+  let frameImage = useSelector((state) => state.GameShot_frameImage);
 
   // 웹캠으로부터 스크린샷을 찍어 이미지를 캡처하는 함수
   const handleCapture = useCallback(() => {
@@ -56,7 +80,7 @@ const GameShot = () => {
   // 5초 타이머를 설정하고 타이머가 끝나면 캡처 함수를 호출합니다.
   useEffect(() => {
     const timerId = setInterval(() => {
-      setSeconds(prevSeconds => {
+      setSeconds((prevSeconds) => {
         if (prevSeconds === 1) {
           handleCapture();
           return 0;
@@ -73,14 +97,14 @@ const GameShot = () => {
 
   // Frame 이미지 이전 버튼 핸들러
   const handlePrev = () => {
-    setImageIndex(prevIndex =>
+    setImageIndex((prevIndex) =>
       prevIndex === 0 ? frameImage.length - 1 : prevIndex - 1
     );
   };
 
   // Frame 이미지 다음 버튼 핸들러
   const handleNext = () => {
-    setImageIndex(prevIndex =>
+    setImageIndex((prevIndex) =>
       prevIndex === frameImage.length - 1 ? 0 : prevIndex + 1
     );
   };
@@ -95,7 +119,8 @@ const GameShot = () => {
         position: "relative",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/Game_Shot.png')",
-      }}>
+      }}
+    >
       {/* 상단 헤더 */}
       <Header />
 
@@ -106,7 +131,8 @@ const GameShot = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100%",
-        }}>
+        }}
+      >
         <Grid container spacing={10}>
           {/* Webcam 영역 */}
           <Grid item xs={12} md={8}>
@@ -117,7 +143,8 @@ const GameShot = () => {
                 height: "70%",
                 width: "100%",
               }}
-              ref={captureRef}>
+              ref={captureRef}
+            >
               <Box
                 sx={{
                   flex: "1 1 auto",
@@ -127,7 +154,8 @@ const GameShot = () => {
                   overflow: "hidden",
                   position: "relative",
                   borderRadius: "borderRadius",
-                }}>
+                }}
+              >
                 {/* Webcam 컴포넌트를 표시합니다. */}
                 <Box
                   sx={{
@@ -139,7 +167,8 @@ const GameShot = () => {
                     right: 0,
                     bottom: 0,
                     left: 0,
-                  }}>
+                  }}
+                >
                   <Webcam ref={webcamRef} />
                 </Box>
               </Box>
@@ -147,7 +176,8 @@ const GameShot = () => {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
-                p={2}>
+                p={2}
+              >
                 {/* 촬영 버튼 */}
                 <Typography variant="h6">
                   {captured
@@ -157,7 +187,8 @@ const GameShot = () => {
                 <Button
                   variant={captured ? "contained" : "outlined"}
                   color={captured ? "secondary" : "primary"}
-                  onClick={handleCapture}>
+                  onClick={handleCapture}
+                >
                   {captured ? "촬영 완료" : "촬영"}
                 </Button>
               </Box>
@@ -170,7 +201,8 @@ const GameShot = () => {
               display="flex"
               flexDirection="column"
               justifyContent="space-between"
-              alignItems="center">
+              alignItems="center"
+            >
               <Box
                 sx={{
                   height: "80%",
@@ -180,7 +212,8 @@ const GameShot = () => {
                   borderRadius: "borderRadius",
                   backgroundImage: `url(${frameImage[imageIndex]})`,
                   backgroundSize: "cover",
-                }}>
+                }}
+              >
                 {/* 유저 이미지를 표시하는 Card */}
                 <Card
                   ref={user1Ref}
@@ -191,13 +224,15 @@ const GameShot = () => {
                       : `url("/images/ShotEmpty.jfif")`,
                     height: "15vh",
                     margin: "5%",
-                  }}></Card>
+                  }}
+                ></Card>
                 <Card
                   sx={{
                     backgroundImage: `url("/images/ShotEmpty.jfif")`,
                     height: "15vh",
                     margin: "5%",
-                  }}>
+                  }}
+                >
                   User 2
                 </Card>
                 <Card
@@ -205,7 +240,8 @@ const GameShot = () => {
                     backgroundImage: `url("/images/ShotEmpty.jfif")`,
                     height: "15vh",
                     margin: "5%",
-                  }}>
+                  }}
+                >
                   User 3
                 </Card>
                 <Card
@@ -213,7 +249,8 @@ const GameShot = () => {
                     backgroundImage: `url("/images/ShotEmpty.jfif")`,
                     height: "15vh",
                     margin: "5%",
-                  }}>
+                  }}
+                >
                   User 4
                 </Card>
               </Box>
@@ -222,7 +259,8 @@ const GameShot = () => {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
-                p={2}>
+                p={2}
+              >
                 <Button variant="outlined" color="primary" onClick={handlePrev}>
                   <FaArrowLeft />
                 </Button>

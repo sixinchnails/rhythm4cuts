@@ -1,26 +1,5 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 
-// 로그인 유저 정보
-const loginUser = createSlice({
-  name: "loginUser",
-  initialState: {
-    nickname: " ",
-    loginState: false,
-    points: "",
-    profile_img_seq: "",
-  },
-  reducers: {
-    doLogin(state, action) {
-      state.nickname = action.nickname.payload;
-      state.points = action.points.payload;
-      state.profile_img_seq = action.profile_img_seq.payload;
-      state.loginState = true;
-    },
-  },
-});
-
-export let { doLogin } = loginUser.actions;
-
 //친구 정보
 const MyPage_Friend = createSlice({
   name: "friend",
@@ -445,6 +424,5 @@ export default configureStore({
     User_Rank: User_Rank.reducer,
     MyPage_Friend: MyPage_Friend.reducer,
     MyPage_MyInfo: MyPage_MyInfo.reducer,
-    loginUser: loginUser.reducer,
   },
 });
