@@ -30,7 +30,7 @@ const Home = () => {
   const handleJoinComplete = async () => {
     try {
       const response = await axios.post(
-        "http://i9b109.p.ssafy.io/member/register",
+        "http://localhost:8080/member/register",
         joinInfo
       );
       const confirmed = window.confirm("회원가입이 완료! 로그인 해주세요");

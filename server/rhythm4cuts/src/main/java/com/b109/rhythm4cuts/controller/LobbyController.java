@@ -34,7 +34,7 @@ public class LobbyController {
     }
 
     // API 2. 대기방 검색 (방 번호)
-    @GetMapping("/gameSeq}")
+    @GetMapping("/gameSeq")
     public ResponseEntity<?> getSeqLobby(@PathVariable("gameSeq") int gameSeq) throws SQLException {
         LobbyDto lobbyDto = lobbyService.getSeqLobby(gameSeq);
 

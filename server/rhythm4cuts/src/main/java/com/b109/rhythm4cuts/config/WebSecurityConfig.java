@@ -32,7 +32,9 @@ public class WebSecurityConfig {
             "/member/reissue",
             "/member/login",
             "/member/register",
-            "/member/reissue"
+            "/member/reissue",
+            "/",
+            "/**"
     );
 
     @Bean
@@ -43,7 +45,7 @@ public class WebSecurityConfig {
         return http
                 .authorizeRequests()
                 .antMatchers(excludedUrlPatterns.toArray(new String[0])).permitAll()
-                .antMatchers(HttpMethod.OPTIONS, "/member/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/member/**", "/", "/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
