@@ -4,12 +4,14 @@ import com.b109.rhythm4cuts.model.domain.ProfileImage;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import com.b109.rhythm4cuts.config.WebSecurityConfig.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 
 @Component
 public class DummyDataInitializer {
@@ -57,14 +59,16 @@ public class DummyDataInitializer {
         profileImage5.setFileName("5 file name");
         profileImageRepository.save(profileImage5);
 
+        LocalDate targetDate = LocalDate.of(2019,11,12);
         // 더미 데이터 추가
-//        User user = new User();
-//        user.setName("Han");
-//        user.setNickname("ssafy");
-//        user.setEmail("ssafy@naver.com");
-//        user.setProfileImage(profileImage1);
-//        user.setPassword(bCryptPasswordEncoder.encode("1234"));
-//
-//        userRepository.save(user);
+        User user = new User();
+        user.setName("Han");
+        user.setNickname("ssafy");
+        user.setEmail("ssafy@naver.com");
+        user.setProfileImage(profileImage1);
+        user.setBirthDate(targetDate);
+        user.setPassword(bCryptPasswordEncoder.encode("1234"));
+
+        userRepository.save(user);
     }
 }
