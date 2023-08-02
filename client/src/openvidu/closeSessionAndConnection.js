@@ -1,4 +1,4 @@
-// sessionExit.js
+// closeSessionAndConnection.js
 import axios from "axios";
 
 const OPENVIDU_SERVER_URL = "https://i9b109.p.ssafy.io";
@@ -11,7 +11,9 @@ export const closeSessionAndConnection = async (sessionId, connectionId) => {
       headers: {
         Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
       },
-    });
+    }
+    );
+    console.log('연결 종료?');
 
     // 세션 종료
     await axios.delete(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}`, {
@@ -19,6 +21,8 @@ export const closeSessionAndConnection = async (sessionId, connectionId) => {
         Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
       },
     });
+    console.log('세션 종료?');
+
 
     return "Session and connection closed successfully.";
   } catch (error) {

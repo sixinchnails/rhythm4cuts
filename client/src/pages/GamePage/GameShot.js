@@ -1,42 +1,53 @@
+// import React, { useState, useEffect, useRef, useCallback } from "react";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Box, Button, Card, Grid, Typography, Container } from "@mui/material";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Header from "../../components/Game/Header_dark";
 import { createSession } from "../../openvidu/sessionInitialization";
 import { createConnection } from "../../openvidu/connectionInitialization";
 import Webcam from "../../components/Game/Webcam";
 
 //close test
-import { closeSessionAndConnection } from '../../../src/openvidu/closeSessionAndConnection';
-
-const handleTestClose = async () => {
-  try {
-    const sessionData = await createSession();
-    const sessionId = sessionData.id; // 방을 만들 때 생성되는 것
-    const connectionData = await createConnection(sessionId);
-    const connectionId = connectionData.connectionId;
-
-    // 버튼 클릭 전의 세션과 연결 상태를 확인합니다.
-    console.log("버튼 클릭 전 세션 데이터:", sessionData);
-    console.log("버튼 클릭 전 연결 데이터:", connectionData);
-
-    const response = await closeSessionAndConnection(sessionId, connectionId);
-    console.log(response);
-
-    // 세션과 연결이 정상적으로 닫혔는지 확인하기 위해 다시 상태를 가져옵니다.
-    setTimeout(async () => {
-      console.log("버튼 클릭 후 세션 데이터:", sessionData);
-      console.log("버튼 클릭 후 연결 데이터:", connectionData);
-    }, 10000);
-
-  } catch (error) {
-    console.error("에러 발생:", error);
-  }
-
-};
+import { closeSession } from '../../store';
 
 const GameShot = () => {
+  const dispatch = useDispatch();
+
+  const handleTestClose = async () => {
+    try {
+      const sessionData = await createSession();
+      const sessionId = sessionData.id;
+      const connectionData = await createConnection(sessionId);
+      const connectionId = connectionData.connectionId;
+      console.log("버튼 클릭 전 세션 데이터:", sessionData);
+      console.log("버튼 클릭 전 연결 데이터:", connectionData);
+
+      // closeSession 액션을 호출하여 세션을 종료합니다.
+      await dispatch(closeSession({ sessionId, connectionId }));
+
+      // 세션/연결 종료 후 상태 확인
+      console.log('세션 종료 후 상태:', sessionData);
+      console.log('세션 종료 후 상태:', connectionData);
+
+      // 세션 종료 후 5초 후에 상태를 다시 확인
+      setTimeout(async () => {
+        const newSessionData = await createSession();
+        const newSessionId = newSessionData.id;
+        const newConnectionData = await createConnection(newSessionId);
+        console.log('5초 후 세션 데이터:', newSessionData);
+        console.log('5초 후 연결 데이터:', newConnectionData);
+      }, 5000);
+
+    } catch (error) {
+      // closeSession 액션이 실패한 경우 에러 처리
+      console.error('세션 종료 실패:', error);
+    }
+  };
+
+  // 캡처된 이미지를 저장하는 상태 변수
+  const [capturedImage, setCapturedImage] = useState(null);
+
   // 5초 타이머를 설정하기 위한 상태 변수
   const [seconds, setSeconds] = useState(5);
 
@@ -56,7 +67,7 @@ const GameShot = () => {
   const webcamRef = useRef(null);
 
   // Frame 이미지 배열을 리덕스 상태로부터 가져옵니다.
-  let frameImage = useSelector(state => state.GameShot_frameImage);
+  let frameImage = useSelector((state) => state.GameShot_frameImage);
 
   // 웹캠으로부터 스크린샷을 찍어 이미지를 캡처하는 함수
   const handleCapture = useCallback(() => {
@@ -64,6 +75,10 @@ const GameShot = () => {
       const screenshot = webcamRef.current.getScreenshot();
 
       if (screenshot) {
+        // 이미지를 캡처하고 URL을 상태에 저장
+        setCapturedImage(screenshot);
+
+        // 캡처된 이미지를 user1Ref에 추가하여 표시
         const img = document.createElement("img");
         img.src = screenshot;
         img.style.objectFit = "cover";
@@ -84,10 +99,10 @@ const GameShot = () => {
     }
   }, [webcamRef, captured]);
 
-  // 5초 타이머를 설정하고 타이머가 끝나면 캡처 함수를 호출합니다.
+  // 5초 타이머를 설정하고 타이머가 끝나면 촬영 함수를 호출하거나 자동 촬영 함수를 호출합니다.
   useEffect(() => {
     const timerId = setInterval(() => {
-      setSeconds(prevSeconds => {
+      setSeconds((prevSeconds) => {
         if (prevSeconds === 1) {
           handleCapture();
           return 0;
@@ -100,7 +115,7 @@ const GameShot = () => {
     return () => {
       clearInterval(timerId);
     };
-  }, [handleCapture, seconds]);
+  }, [handleCapture]);
 
   // Frame 이미지 이전 버튼 핸들러
   const handlePrev = () => {
@@ -209,20 +224,23 @@ const GameShot = () => {
                   display: "flex",
                   flexDirection: "column",
                   borderRadius: "borderRadius",
-                  backgroundImage: `url(${frameImage[imageIndex]})`,
+                  backgroundImage: capturedImage // 캡처된 이미지 URL로 설정
+                    ? `url(${capturedImage})`
+                    : `url(${frameImage[imageIndex]})`, // 캡처가 되지 않은 경우 기본 Frame 이미지 URL 설정
                   backgroundSize: "cover",
-                }}>
+                }}
+              >
                 {/* 유저 이미지를 표시하는 Card */}
                 <Card
                   ref={user1Ref}
                   sx={{
-                    backgroundColor: "#f9f9f9",
-                    backgroundImage: captured
-                      ? `url(${frameImage[imageIndex]})`
-                      : `url("/images/ShotEmpty.jfif")`,
+                    backgroundImage: `url("/images/ShotEmpty.jfif")`,
                     height: "15vh",
                     margin: "5%",
-                  }}></Card>
+                  }}
+                >
+                  User 1
+                </Card>
                 <Card
                   sx={{
                     backgroundImage: `url("/images/ShotEmpty.jfif")`,
