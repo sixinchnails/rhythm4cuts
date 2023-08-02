@@ -54,7 +54,7 @@ const GameShot = () => {
   const navigate = useNavigate();
 
   //로그인 상태 확인
-  const [isLogin, setIsLogin] = useState(false);
+  // const [isLogin, setIsLogin] = useState(false);
 
   // try {
   //   userInfo()
@@ -100,7 +100,6 @@ const GameShot = () => {
   const handleCapture = useCallback(() => {
     if (webcamRef.current && !captured) {
       const screenshot = webcamRef.current.getScreenshot();
-
       if (screenshot) {
         // 이미지를 캡처하고 URL을 상태에 저장
         setCapturedImage(screenshot);
@@ -120,12 +119,18 @@ const GameShot = () => {
           }
           user1Ref.current.appendChild(img);
         }
-
-        // setCaptured(true);
-        // copyCapture(copyRef.current);
+        setCaptured(true);
+        // copyCapture(copyRef.current); // 이건 4개 묶음 사진
       }
     }
   }, [webcamRef, captured]);
+
+  // "captured" 상태가 변경될 때 메시지를 업데이트하는 useEffect 훅 추가
+  useEffect(() => {
+    if (captured) {
+      setSeconds(0); // "captured"가 true가 되면 "땡초 남았습니다~" 메시지를 강제로 "촬영이 완료되었습니다."로 변경합니다.
+    }
+  }, [captured]);
 
   // 5초 타이머를 설정하고 타이머가 끝나면 촬영 함수를 호출하거나 자동 촬영 함수를 호출합니다.
   useEffect(() => {
@@ -133,9 +138,14 @@ const GameShot = () => {
       setSeconds(prevSeconds => {
         if (prevSeconds === 1) {
           handleCapture();
-          return 0;
+          clearInterval(timerId); // 타이머를 종료합니다.
+
+          return prevSeconds;
         } else {
-          return prevSeconds - 1;
+          if (prevSeconds > 0) {
+            return prevSeconds - 1;
+          }
+          return prevSeconds;
         }
       });
     }, 1000);
@@ -143,7 +153,7 @@ const GameShot = () => {
     return () => {
       clearInterval(timerId);
     };
-  }, [handleCapture]);
+  }, [handleCapture, captured]);
 
   // Frame 이미지 이전 버튼 핸들러
   const handlePrev = () => {
@@ -158,7 +168,6 @@ const GameShot = () => {
       prevIndex === frameImage.length - 1 ? 0 : prevIndex + 1
     );
   };
-
   return (
     <Box
       sx={{
@@ -230,7 +239,7 @@ const GameShot = () => {
               >
                 {/* 촬영 버튼 */}
                 <Typography variant="h6">
-                  {captured
+                  {seconds == 0
                     ? "촬영이 완료되었습니다."
                     : `${seconds}초 남았습니다~`}
                 </Typography>
@@ -262,10 +271,7 @@ const GameShot = () => {
                   display: "flex",
                   flexDirection: "column",
                   borderRadius: "borderRadius",
-                  backgroundImage: capturedImage // 캡처된 이미지 URL로 설정
-                    ? `url(${capturedImage})`
-                    : `url(${frameImage[imageIndex]})`, // 캡처가 되지 않은 경우 기본 Frame 이미지 URL 설정
-                  backgroundSize: "cover",
+                  backgroundImage: `url(${frameImage[imageIndex]})`,
                 }}
               >
                 {/* 유저 이미지를 표시하는 Card */}
@@ -340,6 +346,7 @@ const GameShot = () => {
   );
 };
 
+// 인생네컷 저장 컴포넌트
 function copyCapture(element) {
   if (element) {
     domtoimage

@@ -27,7 +27,9 @@ function GameList() {
   // 방 리스트 가져오기
   useEffect(() => {
     axios
-      .get("/lobby/list") // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
+      // .get("/lobby/list") // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
+      // .then(response => {
+      .get("http://i9b109.p.ssafy.io/lobby/list") // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
       .then(response => {
         setRooms(response.data); // 서버 응답으로 받은 방 리스트를 상태로 업데이트합니다.
       })
@@ -40,8 +42,8 @@ function GameList() {
 
   const navigate = useNavigate();
 
-  //로그인 상태 확인
-  const [isLogin, setIsLogin] = useState(false);
+  // //로그인 상태 확인
+  // const [isLogin, setIsLogin] = useState(false);
 
   // try {
   //   userInfo()

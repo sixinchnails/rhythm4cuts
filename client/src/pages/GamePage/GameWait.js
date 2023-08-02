@@ -20,24 +20,24 @@ function GameWait() {
 
   const navigate = useNavigate();
 
-  //로그인 상태 확인
-  const [isLogin, setIsLogin] = useState(false);
+  // //로그인 상태 확인
+  // const [isLogin, setIsLogin] = useState(false);
 
-  try {
-    userInfo()
-      .then((res) => {
-        if (res.status === 200) {
-          console.log(res);
-          setIsLogin(true);
-        }
-      })
-      .catch((error) => {
-        window.alert("로그인을 해주세요!");
-        navigate("/");
-      });
-  } catch (error) {
-    console.log(error);
-  }
+  // try {
+  //   userInfo()
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         console.log(res);
+  //         setIsLogin(true);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       window.alert("로그인을 해주세요!");
+  //       navigate("/");
+  //     });
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
   // 친구 목록 모달의 상태를 관리
   const [isInviteFriendModalOpen, setInviteFriendModalOpen] =

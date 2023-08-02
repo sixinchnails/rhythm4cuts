@@ -28,9 +28,26 @@ const Home = () => {
   }, []);
 
   const handleJoinComplete = async () => {
+    // 비밀번호 유효성 검사
+    const passwordRegex = new RegExp(
+      "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+    );
+    const isPasswordValid = passwordRegex.test(joinInfo.password);
+
+    if (!isPasswordValid) {
+      alert("비밀번호 형식을 확인해주세요!");
+      return;
+    }
+
+    // 비밀번호와 비밀번호 확인 입력이 같은지 확인
+    if (joinInfo.password !== joinInfo.passwordConfirm) {
+      alert("비밀번호가 다릅니다!");
+      return;
+    }
+
     try {
       const response = await axios.post(
-        "http://localhost:8080/member/register",
+        "http://i9b109.p.ssafy.io:8080/member/register",
         joinInfo
       );
       const confirmed = window.confirm("회원가입이 완료! 로그인 해주세요");
@@ -41,6 +58,7 @@ const Home = () => {
       console.error(error);
     }
   };
+
   return (
     <div>
       {/* 위쪽 컨테이너 */}
