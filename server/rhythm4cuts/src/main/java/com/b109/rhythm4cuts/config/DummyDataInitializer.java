@@ -46,7 +46,6 @@ public class DummyDataInitializer {
         profileImageRepository.save(profileImage4);
 
         ProfileImage profileImage5 = new ProfileImage();
-        profileImage5.setProfileImageSeq(5);
         profileImage5.setImageName("5 profile image");
         profileImage5.setDescription("5 image");
         profileImage5.setFileName("5 file name");
