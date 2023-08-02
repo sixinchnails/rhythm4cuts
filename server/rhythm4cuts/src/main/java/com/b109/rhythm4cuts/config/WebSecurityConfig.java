@@ -65,12 +65,9 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers(excludedUrlPatterns.toArray(new String[0])).permitAll()
-<<<<<<< HEAD
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-=======
                 .antMatchers(HttpMethod.OPTIONS, "/member/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/member/**").permitAll()
->>>>>>> 264763d2b489ffa96f40102edcdbca92c8fd76f5
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
