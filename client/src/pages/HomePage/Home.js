@@ -13,6 +13,8 @@ import { Grid, Pagination } from "@mui/material";
 import "./Home.css";
 //이모지 들고오는 import
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from "../../apis/userInfo";
 
@@ -25,13 +27,13 @@ function Home() {
 
   try {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           console.log(res);
           setIsLogin(true);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         setIsLogin(false);
       });
@@ -43,7 +45,7 @@ function Home() {
   const outerDivRef = useRef();
 
   //음악 랭킹
-  let music_rank = useSelector((state) => {
+  let music_rank = useSelector(state => {
     return state.Music_Rank;
   });
 
@@ -60,7 +62,7 @@ function Home() {
   const noOfMusicPages = Math.ceil(music_rank.length / musicPerPage);
 
   //유저 랭킹
-  let user_rank = useSelector((state) => {
+  let user_rank = useSelector(state => {
     return state.User_Rank;
   });
 
@@ -77,7 +79,7 @@ function Home() {
   const noOfUserPages = Math.ceil(user_rank.length / userPerPage);
 
   useEffect(() => {
-    const wheelHandler = (e) => {
+    const wheelHandler = e => {
       e.preventDefault();
       const { deltaY } = e;
       const { scrollTop } = outerDivRef.current; // 스크롤 위쪽 끝부분 위치
@@ -319,7 +321,7 @@ function Home() {
               dateFormat="yyyy.MM.dd" // 날짜 형태
               shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
               selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              onChange={date => setStartDate(date)}
             />
           </div>
         </div>

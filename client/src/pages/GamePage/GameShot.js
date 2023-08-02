@@ -5,6 +5,8 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import Header from "../../components/Game/Header_dark";
 import Webcam from "../../components/Game/Webcam";
+import html2canvas from "html2canvas";
+import domtoimage from "dom-to-image";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
 
@@ -16,13 +18,13 @@ const GameShot = () => {
 
   try {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           console.log(res);
           setIsLogin(true);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         window.alert("로그인을 해주세요!");
         navigate("/");
       });
@@ -49,7 +51,10 @@ const GameShot = () => {
   const webcamRef = useRef(null);
 
   // Frame 이미지 배열을 리덕스 상태로부터 가져옵니다.
-  let frameImage = useSelector((state) => state.GameShot_frameImage);
+  let frameImage = useSelector(state => state.GameShot_frameImage);
+
+  // Ref를 최상위 레벨로 이동하고, DOM 요소를 가리킬 수 있도록 설정합니다.
+  const copyRef = useRef(null);
 
   // 웹캠으로부터 스크린샷을 찍어 이미지를 캡처하는 함수
   const handleCapture = useCallback(() => {
@@ -73,6 +78,7 @@ const GameShot = () => {
         }
 
         setCaptured(true);
+        copyCapture(copyRef.current);
       }
     }
   }, [webcamRef, captured]);
@@ -80,7 +86,7 @@ const GameShot = () => {
   // 5초 타이머를 설정하고 타이머가 끝나면 캡처 함수를 호출합니다.
   useEffect(() => {
     const timerId = setInterval(() => {
-      setSeconds((prevSeconds) => {
+      setSeconds(prevSeconds => {
         if (prevSeconds === 1) {
           handleCapture();
           return 0;
@@ -97,14 +103,14 @@ const GameShot = () => {
 
   // Frame 이미지 이전 버튼 핸들러
   const handlePrev = () => {
-    setImageIndex((prevIndex) =>
+    setImageIndex(prevIndex =>
       prevIndex === 0 ? frameImage.length - 1 : prevIndex - 1
     );
   };
 
   // Frame 이미지 다음 버튼 핸들러
   const handleNext = () => {
-    setImageIndex((prevIndex) =>
+    setImageIndex(prevIndex =>
       prevIndex === frameImage.length - 1 ? 0 : prevIndex + 1
     );
   };
@@ -204,6 +210,8 @@ const GameShot = () => {
               alignItems="center"
             >
               <Box
+                // copyRef를 캡처하려는 DOM 요소에 연결합니다.
+                ref={copyRef}
                 sx={{
                   height: "80%",
                   width: "70%",
@@ -278,5 +286,21 @@ const GameShot = () => {
     </Box>
   );
 };
+
+function copyCapture(element) {
+  if (element) {
+    domtoimage
+      .toPng(element)
+      .then(function (dataUrl) {
+        const link = document.createElement("a");
+        link.download = "capture.png";
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch(function (error) {
+        console.error("oops, something went wrong!", error);
+      });
+  }
+}
 
 export default GameShot;

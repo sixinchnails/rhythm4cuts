@@ -2,6 +2,7 @@ import React from "react";
 import "./My_Friend.css"; // 이 CSS 파일은 FriendInfo 컴포넌트에 적용할 스타일을 정의하는 파일입니다.
 // Store.js 파일 불러와서 쓰기 위해
 import { useSelector } from "react-redux";
+import { current } from '@reduxjs/toolkit';
 function FriendInfo() {
   const Info = useSelector(state => state.MyPage_Friend);
 
@@ -16,6 +17,12 @@ function FriendInfo() {
       return "/images/플레.png";
     } else {
       return "/images/다이아.png";
+    }
+  }
+
+  function deleteFriend(params) {
+    if (window.confirm("친구를 삭제하시겠습니까?")) {
+      window.alert("삭제되었습니다.")
     }
   }
 
@@ -45,6 +52,8 @@ function FriendInfo() {
               src="/images/친구삭제.png"
               alt="Profile"
               className="deleteFriend"
+              onClick={deleteFriend}
+              style={{cursor:"pointer"}}
             />
           </div>
         ))}
