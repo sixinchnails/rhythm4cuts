@@ -4,7 +4,10 @@ import com.b109.rhythm4cuts.model.domain.ProfileImage;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import com.b109.rhythm4cuts.config.WebSecurityConfig.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.PostConstruct;
 
@@ -14,9 +17,12 @@ public class DummyDataInitializer {
     private final UserRepository userRepository;
     private final ProfileImageRepository profileImageRepository;
 
-    public DummyDataInitializer(UserRepository userRepository, ProfileImageRepository profileImageRepository) {
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public DummyDataInitializer(UserRepository userRepository, ProfileImageRepository profileImageRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @PostConstruct
@@ -52,13 +58,13 @@ public class DummyDataInitializer {
         profileImageRepository.save(profileImage5);
 
         // 더미 데이터 추가
-        User user = new User();
-        user.setName("Han");
-        user.setNickname("ssafy");
-        user.setEmail("ssafy@naver.com");
-        user.setProfileImage(profileImage1);
-        user.setPassword("1234");
-
-        userRepository.save(user);
+//        User user = new User();
+//        user.setName("Han");
+//        user.setNickname("ssafy");
+//        user.setEmail("ssafy@naver.com");
+//        user.setProfileImage(profileImage1);
+//        user.setPassword(bCryptPasswordEncoder.encode("1234"));
+//
+//        userRepository.save(user);
     }
 }
