@@ -1,6 +1,6 @@
-// Home.js
-import React, { useCallback, useEffect, useState } from "react";
+// Join.js
 /* eslint-disable */
+import React, { useCallback, useEffect, useState } from "react";
 import "./Join.css";
 import JoinImage from "../../components/My/My_JoinImage";
 import JoinInfo from "../../components/My/My_JoinInfo";
@@ -9,7 +9,7 @@ import Header from "../../components/Home/Header";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Home = () => {
+const Join = () => {
   useEffect(() => {
     document.body.style.backgroundColor = "#F8E8EE";
     // 컴포넌트 unmount 시점에 원래의 배경색으로 되돌리기 위한 cleanup 함수
@@ -27,11 +27,12 @@ const Home = () => {
     setJoinInfo(data); // JoinInfo 컴포넌트로부터 받은 데이터를 상태에 저장
   }, []);
 
+  //회원가입
   const handleJoinComplete = async () => {
     try {
       const response = await axios.post(
-        "http://i9b109.p.ssafy.io:8080/member/register",
-        // "http://localhost:8080/member/register",
+        // "http://i9b109.p.ssafy.io:8080/member/register",
+        "http://localhost:8080/member/register",
         joinInfo
       );
       const confirmed = window.confirm("회원가입이 완료! 로그인 해주세요");
@@ -42,6 +43,11 @@ const Home = () => {
       console.error(error);
     }
   };
+
+  //이메일 인증 확인
+
+  //닉네임 중복 확인
+
   return (
     <div>
       {/* 위쪽 컨테이너 */}
@@ -69,4 +75,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Join;

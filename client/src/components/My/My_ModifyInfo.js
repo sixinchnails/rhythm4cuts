@@ -6,8 +6,9 @@ import React, { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateNickname, updatePassword, updateProfilePic } from "../../store";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-function UserInfo() {
+function UserInfo(props) {
   const Info = useSelector((state) => state.MyPage_MyInfo);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -43,19 +44,11 @@ function UserInfo() {
     }
     const confirmed = window.confirm("수정을 완료하시겠습니까?");
     if (confirmed) {
-      handleNicknameUpdate(nickname);
       handlePasswordUpdate(confirmPassword);
       handleProfilePicUpdate(selectedImage);
       window.alert("수정이 완료되었습니다.");
       navigate("/Mypage");
     }
-  };
-
-  const handleNicknameUpdate = (newNickname) => {
-    if (newNickname === "") {
-      newNickname = nicknameItem.value; // if no new nickname is provided, use the original one
-    }
-    dispatch(updateNickname(newNickname));
   };
 
   const handlePasswordUpdate = (newPassword) => {
@@ -97,6 +90,23 @@ function UserInfo() {
     setIsMatchPassword(password === confirmPassword);
   }, [password, confirmPassword]);
 
+  //닉네임 인증
+  const nickNameCheck = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/member/nickname?nickname=${nickname}`
+      );
+      if (response.data.duplicate === false) {
+        window.confirm("사용 가능한 닉네임입니다.");
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      console.log(error);
+      window.confirm("사용중인 닉네임입니다.");
+    }
+  };
+
   return (
     <div className="mainn-container">
       <div className="modify-info-container">
@@ -110,7 +120,7 @@ function UserInfo() {
               }}
             >
               <span className="modify-name">닉네임</span>
-              <span className="modify-value">{nicknameItem.value}</span>
+              <span className="modify-value">{props.nickName}</span>
               <Button
                 className="modify-value-button"
                 style={{ left: "170px" }}
@@ -135,11 +145,13 @@ function UserInfo() {
                   type="text"
                   className="modify-input"
                   value={nickname}
+                  placeholder={props.nickName}
                   onChange={(e) => setNickname(e.target.value)}
                 />
                 <Button
                   color="primary"
                   style={{ minWidth: "90px", top: "20px" }}
+                  onClick={nickNameCheck}
                 >
                   중복 확인
                 </Button>

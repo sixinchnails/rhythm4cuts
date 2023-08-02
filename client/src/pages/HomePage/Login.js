@@ -41,11 +41,6 @@ const Home = () => {
     setPW(e.target.value);
   };
 
-  // // 로그인 유저 정보
-  // let loginUser = useSelector((state) => {
-  //   return state.loginUser;
-  // });
-
   const onKeyPress = (e) => {
     if (e.key === "Enter") {
       Login();
@@ -55,16 +50,13 @@ const Home = () => {
   // 로그인
   const Login = async () => {
     try {
-      console.log(id);
-      console.log(pw);
       const result = await login(id, pw);
-      console.log(result);
       if (result.status === 200) {
         window.alert("로그인을 성공하였습니다!");
         // dispatch(loginHandler(result.data));
         setCookie("access", result.data.accessToken);
         setCookie("refresh", result.data.refreshToken);
-        // setCookie("email", result.data.email);
+        setCookie("email", result.data.email);
         navigate("/");
       } else {
         window.alert("로그인에 실패하였습니다!");

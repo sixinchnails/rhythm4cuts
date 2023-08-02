@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./My_JoinInfo.css";
 import Button from "@mui/material/Button";
+import axios from "axios";
 
 const JoinInfo = ({ onJoinInfo }) => {
   const [name, setName] = useState("");
@@ -53,6 +54,39 @@ const JoinInfo = ({ onJoinInfo }) => {
       nicknameRef.current.focus(); // gender 입력 필드로 초점을 이동합니다.
     }
   };
+
+  //이메일 인증
+  const emailCheck = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/member/mail?email=${email}`
+      );
+      if (response.status === 200) {
+        window.confirm("인증번호가 발송되었습니다.");
+      }
+    } catch (error) {
+      console.log(error);
+      window.confirm("인증번호 발송을 실패하였습니다.");
+    }
+  };
+
+  //닉네임 인증
+  const nickNameCheck = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/member/nickname?nickname=${nickname}`
+      );
+      if (response.data.duplicate === false) {
+        window.confirm("사용 가능한 닉네임입니다.");
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      console.log(error);
+      window.confirm("사용중인 닉네임입니다.");
+    }
+  };
+
   return (
     <div className="Join-info-container">
       <div className="Join-info">
@@ -98,7 +132,9 @@ const JoinInfo = ({ onJoinInfo }) => {
             placeholder="닉네임"
             ref={nicknameRef}
           />
-          <Button color="primary">중복 확인</Button>
+          <Button color="primary" onClick={nickNameCheck}>
+            중복 확인
+          </Button>
         </div>
         <div className="Join-item">
           <span className="Join-name">이메일</span>
@@ -109,7 +145,9 @@ const JoinInfo = ({ onJoinInfo }) => {
             placeholder="이메일"
             className="Join-value"
           />
-          <Button color="primary">인증</Button>
+          <Button color="primary" onClick={emailCheck}>
+            인증
+          </Button>
         </div>
         <div className="Join-item">
           <span className="Join-name">이메일 인증</span>
