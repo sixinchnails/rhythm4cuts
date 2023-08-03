@@ -38,6 +38,7 @@ const Home = () => {
         profile_img_seq: joinInfo.profile_img_seq,
       });
       const confirmed = window.confirm("회원가입 완료! 로그인 해주세요");
+
       if (confirmed) {
         navigate("/Login");
       }

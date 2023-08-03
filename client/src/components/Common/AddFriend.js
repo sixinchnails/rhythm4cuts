@@ -12,22 +12,22 @@ function AddFriend({ isOpen, handleClose }) {
   //   setfriendNickname(event.target.value); // 친구 이름 변경 이벤트 핸들러
   // };
 
-  useEffect(() => {
-    const stompClient = new Client({
-      webSocketFactory: () =>
-        new SockJS("http://i9b109.p.ssafy.io:8080/stomp/chat"),
-    });
-    stompClient.onConnect = () => {};
+  // useEffect(() => {
+  //   const stompClient = new Client({
+  //     webSocketFactory: () =>
+  //       new SockJS("http://i9b109.p.ssafy.io:8080/stomp/chat"),
+  //   });
+  //   stompClient.onConnect = () => {};
 
-    stompClient.activate();
+  //   stompClient.activate();
 
-    setClient(stompClient);
+  //   setClient(stompClient);
 
-    // Clean up function
-    return () => {
-      stompClient.deactivate();
-    };
-  }, []);
+  //   // Clean up function
+  //   return () => {
+  //     stompClient.deactivate();
+  //   };
+  // }, []);
 
   const handleNameChange = event => {
     setfriendNickname(event.target.value); // 친구 이름 변경 이벤트 핸들러

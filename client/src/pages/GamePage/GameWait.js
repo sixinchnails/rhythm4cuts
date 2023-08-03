@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useState } from "react";
 import { Button, Card, Container, Grid, Link as MuiLink } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleReady } from "../../store";
 import Header from "../../components/Game/Header_light";
@@ -10,34 +10,35 @@ import WaitPlayer from "../../components/Game/WaitPlayer";
 // import PlayerComing from "../../components/Game/PlayerComing";
 import PlayerEmpty from "../../components/Game/PlayerEmpty";
 import InviteFriend from "../../components/Common/InviteFriend";
-import { fetchToken } from '../../store';
+import { fetchToken } from "../../store";
 import { userInfo } from "../../apis/userInfo";
 
 function GameWait() {
+  const { roomId } = useParams();
   const dispatch = useDispatch();
-  const roomId = useSelector(state => state.room.roomId); // 리덕스 스토어에서 방 번호를 가져옵니다.
+  // const roomId = useSelector(state => state.room.roomId); // 리덕스 스토어에서 방 번호를 가져옵니다.
   const token = useSelector(state => state.session.token); // fetchToken 액션의 결과로부터 토큰을 가져옴
 
   const navigate = useNavigate();
 
-  //로그인 상태 확인
-  const [isLogin, setIsLogin] = useState(false);
+  // //로그인 상태 확인
+  // const [isLogin, setIsLogin] = useState(false);
 
-  try {
-    userInfo()
-      .then((res) => {
-        if (res.status === 200) {
-          console.log(res);
-          setIsLogin(true);
-        }
-      })
-      .catch((error) => {
-        window.alert("로그인을 해주세요!");
-        navigate("/");
-      });
-  } catch (error) {
-    console.log(error);
-  }
+  // try {
+  //   userInfo()
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         console.log(res);
+  //         setIsLogin(true);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       window.alert("로그인을 해주세요!");
+  //       navigate("/");
+  //     });
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
   // 친구 목록 모달의 상태를 관리
   const [isInviteFriendModalOpen, setInviteFriendModalOpen] =
@@ -51,9 +52,9 @@ function GameWait() {
     setInviteFriendModalOpen(false);
   };
 
-  let isReady = useSelector((state) => state.GameWait_Ready); // 준비 상태 전체를 조회
+  let isReady = useSelector(state => state.GameWait_Ready); // 준비 상태 전체를 조회
 
-  const handleToggleReady = (playerId) => {
+  const handleToggleReady = playerId => {
     dispatch(toggleReady(playerId));
   };
 

@@ -16,7 +16,7 @@ const JoinInfo = ({ onJoinInfo }) => {
   // 비밀번호 유효성 검사
   useEffect(() => {
     const passwordRegex = new RegExp(
-      "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+      "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$"
     );
     setIsPasswordValid(passwordRegex.test(password));
   }, [password]);

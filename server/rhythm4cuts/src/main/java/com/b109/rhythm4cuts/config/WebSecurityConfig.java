@@ -51,7 +51,11 @@ public class WebSecurityConfig {
             "/member/register",
             "/member/reissue",
             "/",
-            "/**"
+//            "/**"
+            "/member/mail",
+            "/member/mailcheck",
+            "/member/nickname",
+            "/stomp/**"
     );
 
     @Bean
