@@ -22,25 +22,24 @@ import { userInfo } from "../../apis/userInfo";
 import { getCookie } from "../../utils/cookie";
 
 function GameList() {
+  // //로그인 상태 확인
+  // const [isLogin, setIsLogin] = useState(false);
 
-    // //로그인 상태 확인
-    // const [isLogin, setIsLogin] = useState(false);
-
-    // try {
-    //   userInfo()
-    //     .then((res) => {
-    //       if (res.status === 200) {
-    //         console.log(res);
-    //         setIsLogin(true);
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       window.alert("로그인을 해주세요!");
-    //       navigate("/");
-    //     });
-    // } catch (error) {
-    //   console.log(error);
-    // }
+  // try {
+  //   userInfo()
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         console.log(res);
+  //         setIsLogin(true);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       window.alert("로그인을 해주세요!");
+  //       navigate("/");
+  //     });
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
   let rooms = useSelector(state => state.GameList_Room); // 방 리스트
   // const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
@@ -48,19 +47,23 @@ function GameList() {
   // 방 리스트 가져오기
   useEffect(() => {
     axios
+      // <<<<<<< HEAD
+      //       .get("/lobby/list") // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
+      //       .then(response => {
+      // =======
       .get("/lobby/list", {
-        headers : {
+        headers: {
           Authorization: "Bearer " + getCookie("access"),
         },
       }) // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
-      .then((response) => {
-        setRooms(response.data); // 서버 응답으로 받은 방 리스트를 상태로 업데이트합니다.
+      .then(response => {
+        console.log(response.data);
+        setRooms(response.data.data); // 서버 응답으로 받은 방 리스트를 상태로 업데이트합니다.
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("Failed to fetch room list.", error);
       });
   }, []); // 두 번째 매개변수인 빈 배열은 useEffect가 컴포넌트가 처음 렌더링될 때 한 번만 실행되도록 설정합니다.
-
 
   let friends = useSelector(state => state.GameList_Friend); // 친구 리스트
 
@@ -80,7 +83,6 @@ function GameList() {
     setCreateRoomModalOpen(false);
   };
 
-
   // 친구 추가
   const [isAddFriendModalOpen, setAddFriendModalOpen] = useState(false); // '친구 추가' 모달의 상태를 관리
   // '친구 추가' 모달 상태를 업데이트하는 함수
@@ -99,7 +101,7 @@ function GameList() {
 
   // 검색어에 따라 방 리스트 필터링
   let filteredRooms = rooms.filter(
-    (room) =>
+    room =>
       room.number.toString().toLowerCase().includes(searchTerm.toLowerCase()) || // 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
       room.song.toLowerCase().includes(searchTerm.toLowerCase()) // 노래 제목이 검색어를 포함하는지 확인
   );
@@ -110,7 +112,7 @@ function GameList() {
     setPage(value); // 페이지 변경 이벤트 핸들러
   };
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = event => {
     setSearchTerm(event.target.value); // 검색어 변경 이벤트 핸들러
   };
 
