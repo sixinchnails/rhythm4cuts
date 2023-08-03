@@ -33,17 +33,14 @@ function CreateRoom({ isOpen, handleClose }) {
   const handleCreateRoom = async () => {
     try {
       const sessionResponse = await createSession(); // 수정된 함수 호출
+
       if (sessionResponse != null) {
         // OpenVidu 세션에 연결 생성
         const connectionResponse = await createConnection(sessionResponse.sessionId); // 수정된 함수 호출
 
-        // if (connectionResponse.token) {
         if (connectionResponse != null) {
           console.log("Token: ", connectionResponse.token);
-          // 세션과 연결하거나 다른 로직을 실행합니다.
 
-          // 상태를 업데이트
-          setTitle(uuidv4());
 
           // 방 정보를 서버로 전송하는 Axios 요청
           const response = await axios.post(
@@ -62,20 +59,22 @@ function CreateRoom({ isOpen, handleClose }) {
               },
             }
           );
+          console.log("연결아이디: " + connectionResponse.connectionId);
+          console.log("세션아이디: " + sessionResponse.id);
+          console.log("방이 만들어 졌엉.", response.data.data);
 
-          console.log("방이 만들어 졌엉.", response.data);
-
-          // // 방 번호를 상태에 업데이트
-          // setGameSeq(response.data.gameSeq);
+          // 방 번호를 상태에 업데이트
+          setGameSeq(response.data.data);
 
           // 방 생성 후 해당 방으로 이동
-          navigate(`/GameWait/${response.data.gameSeq}`);
-          
+          console.log("${response.data.gameSeq}");
+          navigate(`/GameWait/${response.data.data}`);
+
         } else {
-          console.log("실패 to create a connection or token.");
+          console.log("만들기 실패 a connection or token.");
         }
       } else {
-        console.log("세션 생성 실패.");
+        console.log("세션 생성 실패 약!.");
       }
     } catch (error) {
       console.error("방 생성 실패 닥!.", error);
