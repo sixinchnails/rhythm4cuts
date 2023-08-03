@@ -7,6 +7,7 @@ const LoginMypageHeader = () => {
   const checkLogin = () => {
     removeCookie("access");
     removeCookie("refresh");
+    removeCookie("email");
   };
 
   return (
