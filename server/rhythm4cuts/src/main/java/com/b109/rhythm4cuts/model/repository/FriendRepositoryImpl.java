@@ -34,7 +34,7 @@ public class FriendRepositoryImpl implements FriendRepository{
         //select u from user as u where u.nickname like 'searchStr%'
         String jpql = "SELECT u FROM User u WHERE u.nickname LIKE :searchStr";
         return em.createQuery(jpql, User.class)
-                .setParameter("searchStr", searchStr)
+                .setParameter("searchStr", searchStr + "%")
                 .getResultList();
     }
 

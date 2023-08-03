@@ -59,6 +59,10 @@ public class User implements UserDetails {
     @Column(name = "resign_date")
     private LocalDateTime resignDate;
 
+    //최재용
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
     //유저가 생성된 시간
     @CreationTimestamp
     @Column(name = "create_date")

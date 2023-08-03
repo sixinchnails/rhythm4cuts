@@ -38,8 +38,14 @@ const sessionSlice = createSlice({
   name: 'session',
   // 이 상태는 토큰 값, 상태(대기 중, 로딩 중, 성공, 실패), 에러 메시지 등을 관리합니다.
   initialState: { token: null, status: 'idle', error: null },
-  // 슬라이스에 대한 리듀서를 정의하지 않았으므로, 이 부분은 비어 있습니다.
-  reducers: {},
+  // 슬라이스에 대한 리듀서를 정의
+  reducers: {
+    // 여기서 액션을 정의합니다.
+    setToken: (state, action) => {
+      state.token = action.payload;
+    },
+    // ... 다른 액션들 ...
+  },
   // 추가 리듀서를 정의합니다. 
   // fetchToken 및 closeSession 액션에 대한 응답을 처리하는 방법을 정의합니다.
   extraReducers: (builder) => {
@@ -66,7 +72,23 @@ const sessionSlice = createSlice({
   },
 });
 
-//친구 정보
+export const { setToken } = sessionSlice.actions;
+
+// 알림 상태를 저장하는 슬라이스
+const notificationSlice = createSlice({
+  name: "notification",
+  initialState: {
+    hasNotification: false,
+  },
+  reducers: {
+    setHasNotification: (state, action) => {
+      state.hasNotification = action.payload;
+    },
+  },
+});
+
+export const { setHasNotification } = notificationSlice.actions;
+
 const MyPage_Friend = createSlice({
   name: "friend",
   initialState: [
@@ -97,21 +119,21 @@ const MyPage_MyInfo = createSlice({
   reducers: {
     // 닉네임 수정 action
     updateNickname: (state, action) => {
-      const item = state.find((item) => item.name === "닉네임");
+      const item = state.find(item => item.name === "닉네임");
       if (item) {
         item.value = action.payload;
       }
     },
     // 비밀번호 수정 action
     updatePassword: (state, action) => {
-      const item = state.find((item) => item.name === "비밀번호");
+      const item = state.find(item => item.name === "비밀번호");
       if (item) {
         item.value = action.payload;
       }
     },
     // 프로필 사진 수정 action
     updateProfilePic: (state, action) => {
-      const item = state.find((item) => item.name === "프로필 사진");
+      const item = state.find(item => item.name === "프로필 사진");
       if (item) {
         item.value = action.payload;
       }
@@ -254,6 +276,7 @@ export const { toggleReady } = GameWait_Ready.actions;
 let GameShot_frameImage = createSlice({
   name: "frameImage",
   initialState: [
+    "/images/크리스마스.png",
     "/images/Black.jfif",
     "/images/Blue.png",
     "/images/Green.png",
@@ -491,5 +514,6 @@ export default configureStore({
     MyPage_Friend: MyPage_Friend.reducer,
     MyPage_MyInfo: MyPage_MyInfo.reducer,
     webcamStream: webcamStreamSlice.reducer,
+    notification: notificationSlice.reducer,
   },
 });

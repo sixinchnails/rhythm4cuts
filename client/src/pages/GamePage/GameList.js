@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -16,6 +17,8 @@ import { useSelector } from "react-redux";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CreateRoom from "../../components/Common/CreateRoom";
 import AddFriend from "../../components/Common/AddFriend";
+import { useNavigate } from "react-router-dom";
+import { userInfo } from "../../apis/userInfo";
 
 function GameList() {
   // let rooms = useSelector(state => state.GameList_Room); // 방 리스트
@@ -24,7 +27,7 @@ function GameList() {
   // 방 리스트 가져오기
   useEffect(() => {
     axios
-      .get("/lobby/list") // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
+      .get("http://i9b109.p.ssafy.io/lobby/list") // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
       .then((response) => {
         setRooms(response.data); // 서버 응답으로 받은 방 리스트를 상태로 업데이트합니다.
       })
@@ -35,6 +38,30 @@ function GameList() {
 
 
   let friends = useSelector(state => state.GameList_Friend); // 친구 리스트
+
+  const navigate = useNavigate();
+
+  // //로그인 상태 확인
+  // const [isLogin, setIsLogin] = useState(false);
+
+  // try {
+  //   userInfo()
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         console.log(res);
+  //         setIsLogin(true);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       window.alert("로그인을 해주세요!");
+  //       navigate("/");
+  //     });
+  // } catch (error) {
+  //   console.log(error);
+  // }
+
+  // let rooms = useSelector((state) => state.GameList_Room); // 방 리스트
+  // let friends = useSelector((state) => state.GameList_Friend); // 친구 리스트
 
   // 방 만들기
   const [isCreateRoomModalOpen, setCreateRoomModalOpen] = useState(false); //  '방 만들기' 모달의 상태를 관리
@@ -66,7 +93,7 @@ function GameList() {
 
   // 검색어에 따라 방 리스트 필터링
   let filteredRooms = rooms.filter(
-    room =>
+    (room) =>
       room.number.toString().toLowerCase().includes(searchTerm.toLowerCase()) || // 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
       room.song.toLowerCase().includes(searchTerm.toLowerCase()) // 노래 제목이 검색어를 포함하는지 확인
   );
@@ -77,7 +104,7 @@ function GameList() {
     setPage(value); // 페이지 변경 이벤트 핸들러
   };
 
-  const handleSearchChange = event => {
+  const handleSearchChange = (event) => {
     setSearchTerm(event.target.value); // 검색어 변경 이벤트 핸들러
   };
 
@@ -90,7 +117,8 @@ function GameList() {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/Game_List.png')",
-      }}>
+      }}
+    >
       <Header />
       <Grid container spacing="2%">
         <Grid item xs={8} margin={"3%"}>
@@ -113,7 +141,8 @@ function GameList() {
               backgroundColor: "#f5f5f5", // 배경색을 연한 회색으로 설정
               marginTop: "1%",
               width: "100%", // 너비를 100%로 설정
-            }}>
+            }}
+          >
             <Pagination
               count={noOfPages}
               page={page}
@@ -143,7 +172,8 @@ function GameList() {
               onClick={() => {
                 // State상태 Update되도록 추후 추가예정
               }}
-              sx={{ marginRight: 1 }}>
+              sx={{ marginRight: 1 }}
+            >
               <RefreshIcon style={{ color: "#ffffff" }} />
             </IconButton>
             <TextField
@@ -166,7 +196,8 @@ function GameList() {
                     {/* <Button variant="contained">방 만들기</Button> */}
                     <Button
                       variant="contained"
-                      onClick={handleOpenCreateRoomModal}>
+                      onClick={handleOpenCreateRoomModal}
+                    >
                       방 만들기
                     </Button>
                     <Button variant="contained">빠른 입장</Button>
@@ -176,7 +207,8 @@ function GameList() {
                   <Box display="flex" justifyContent="center" mb={2}>
                     <Button
                       variant="contained"
-                      onClick={handleOpenAddFriendModal}>
+                      onClick={handleOpenAddFriendModal}
+                    >
                       친구 추가
                     </Button>
                   </Box>
@@ -188,7 +220,8 @@ function GameList() {
                       justifyContent: "center",
                       height: "50vh",
                       overflow: "auto",
-                    }}>
+                    }}
+                  >
                     <FriendList friends={friends} />
                   </Box>
                 </Grid>

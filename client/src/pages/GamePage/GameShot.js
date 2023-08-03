@@ -1,4 +1,4 @@
-// import React, { useState, useEffect, useRef, useCallback } from "react";
+/* eslint-disable */
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Box, Button, Card, Grid, Typography, Container } from "@mui/material";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
@@ -7,6 +7,10 @@ import Header from "../../components/Game/Header_dark";
 import { createSession } from "../../openvidu/sessionInitialization";
 import { createConnection } from "../../openvidu/connectionInitialization";
 import Webcam from "../../components/Game/Webcam";
+import html2canvas from "html2canvas";
+import domtoimage from "dom-to-image";
+import { useNavigate } from "react-router-dom";
+import { userInfo } from "../../apis/userInfo";
 
 //close test
 import { closeSession } from '../../store';
@@ -48,6 +52,27 @@ const GameShot = () => {
   // 캡처된 이미지를 저장하는 상태 변수
   const [capturedImage, setCapturedImage] = useState(null);
 
+  const navigate = useNavigate();
+
+  //로그인 상태 확인
+  // const [isLogin, setIsLogin] = useState(false);
+
+  // try {
+  //   userInfo()
+  //     .then(res => {
+  //       if (res.status === 200) {
+  //         console.log(res);
+  //         setIsLogin(true);
+  //       }
+  //     })
+  //     .catch(error => {
+  //       window.alert("로그인을 해주세요!");
+  //       navigate("/");
+  //     });
+  // } catch (error) {
+  //   console.log(error);
+  // }
+
   // 5초 타이머를 설정하기 위한 상태 변수
   const [seconds, setSeconds] = useState(5);
 
@@ -67,13 +92,15 @@ const GameShot = () => {
   const webcamRef = useRef(null);
 
   // Frame 이미지 배열을 리덕스 상태로부터 가져옵니다.
-  let frameImage = useSelector((state) => state.GameShot_frameImage);
+  let frameImage = useSelector(state => state.GameShot_frameImage);
+
+  // Ref를 최상위 레벨로 이동하고, DOM 요소를 가리킬 수 있도록 설정합니다.
+  const copyRef = useRef(null);
 
   // 웹캠으로부터 스크린샷을 찍어 이미지를 캡처하는 함수
   const handleCapture = useCallback(() => {
     if (webcamRef.current && !captured) {
       const screenshot = webcamRef.current.getScreenshot();
-
       if (screenshot) {
         // 이미지를 캡처하고 URL을 상태에 저장
         setCapturedImage(screenshot);
@@ -95,19 +122,32 @@ const GameShot = () => {
         }
 
         setCaptured(true);
+        // copyCapture(copyRef.current); // 이건 4개 묶음 사진
       }
     }
   }, [webcamRef, captured]);
 
+  // "captured" 상태가 변경될 때 메시지를 업데이트하는 useEffect 훅 추가
+  useEffect(() => {
+    if (captured) {
+      setSeconds(0); // "captured"가 true가 되면 "땡초 남았습니다~" 메시지를 강제로 "촬영이 완료되었습니다."로 변경합니다.
+    }
+  }, [captured]);
+
   // 5초 타이머를 설정하고 타이머가 끝나면 촬영 함수를 호출하거나 자동 촬영 함수를 호출합니다.
   useEffect(() => {
     const timerId = setInterval(() => {
-      setSeconds((prevSeconds) => {
+      setSeconds(prevSeconds => {
         if (prevSeconds === 1) {
           handleCapture();
-          return 0;
+          clearInterval(timerId); // 타이머를 종료합니다.
+
+          return prevSeconds;
         } else {
-          return prevSeconds - 1;
+          if (prevSeconds > 0) {
+            return prevSeconds - 1;
+          }
+          return prevSeconds;
         }
       });
     }, 1000);
@@ -115,7 +155,7 @@ const GameShot = () => {
     return () => {
       clearInterval(timerId);
     };
-  }, [handleCapture]);
+  }, [handleCapture, captured]);
 
   // Frame 이미지 이전 버튼 핸들러
   const handlePrev = () => {
@@ -130,7 +170,6 @@ const GameShot = () => {
       prevIndex === frameImage.length - 1 ? 0 : prevIndex + 1
     );
   };
-
   return (
     <Box
       sx={{
@@ -141,7 +180,8 @@ const GameShot = () => {
         position: "relative",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/Game_Shot.png')",
-      }}>
+      }}
+    >
       {/* 상단 헤더 */}
       <Header />
 
@@ -152,7 +192,8 @@ const GameShot = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100%",
-        }}>
+        }}
+      >
         <Grid container spacing={10}>
           {/* Webcam 영역 */}
           <Grid item xs={12} md={8}>
@@ -163,7 +204,8 @@ const GameShot = () => {
                 height: "70%",
                 width: "100%",
               }}
-              ref={captureRef}>
+              ref={captureRef}
+            >
               <Box
                 sx={{
                   flex: "1 1 auto",
@@ -173,7 +215,8 @@ const GameShot = () => {
                   overflow: "hidden",
                   position: "relative",
                   borderRadius: "borderRadius",
-                }}>
+                }}
+              >
                 {/* Webcam 컴포넌트를 표시합니다. */}
                 <Box
                   sx={{
@@ -185,7 +228,8 @@ const GameShot = () => {
                     right: 0,
                     bottom: 0,
                     left: 0,
-                  }}>
+                  }}
+                >
                   <Webcam ref={webcamRef} />
                 </Box>
               </Box>
@@ -193,17 +237,19 @@ const GameShot = () => {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
-                p={2}>
+                p={2}
+              >
                 {/* 촬영 버튼 */}
                 <Typography variant="h6">
-                  {captured
+                  {seconds == 0
                     ? "촬영이 완료되었습니다."
                     : `${seconds}초 남았습니다~`}
                 </Typography>
                 <Button
                   variant={captured ? "contained" : "outlined"}
                   color={captured ? "secondary" : "primary"}
-                  onClick={handleCapture}>
+                  onClick={handleCapture}
+                >
                   {captured ? "촬영 완료" : "촬영"}
                 </Button>
               </Box>
@@ -216,18 +262,18 @@ const GameShot = () => {
               display="flex"
               flexDirection="column"
               justifyContent="space-between"
-              alignItems="center">
+              alignItems="center"
+            >
               <Box
+                // copyRef를 캡처하려는 DOM 요소에 연결합니다.
+                ref={copyRef}
                 sx={{
                   height: "80%",
                   width: "70%",
                   display: "flex",
                   flexDirection: "column",
                   borderRadius: "borderRadius",
-                  backgroundImage: capturedImage // 캡처된 이미지 URL로 설정
-                    ? `url(${capturedImage})`
-                    : `url(${frameImage[imageIndex]})`, // 캡처가 되지 않은 경우 기본 Frame 이미지 URL 설정
-                  backgroundSize: "cover",
+                  backgroundImage: `url(${frameImage[imageIndex]})`
                 }}
               >
                 {/* 유저 이미지를 표시하는 Card */}
@@ -246,7 +292,8 @@ const GameShot = () => {
                     backgroundImage: `url("/images/ShotEmpty.jfif")`,
                     height: "15vh",
                     margin: "5%",
-                  }}>
+                  }}
+                >
                   User 2
                 </Card>
                 <Card
@@ -254,7 +301,8 @@ const GameShot = () => {
                     backgroundImage: `url("/images/ShotEmpty.jfif")`,
                     height: "15vh",
                     margin: "5%",
-                  }}>
+                  }}
+                >
                   User 3
                 </Card>
                 <Card
@@ -262,7 +310,8 @@ const GameShot = () => {
                     backgroundImage: `url("/images/ShotEmpty.jfif")`,
                     height: "15vh",
                     margin: "5%",
-                  }}>
+                  }}
+                >
                   User 4
                 </Card>
               </Box>
@@ -271,11 +320,16 @@ const GameShot = () => {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
-                p={2}>
+                p={2}
+              >
                 <Button variant="outlined" color="primary" onClick={handlePrev}>
                   <FaArrowLeft />
                 </Button>
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => copyCapture(copyRef.current)}
+                >
                   확인
                 </Button>
                 <Button variant="outlined" color="primary" onClick={handleNext}>
@@ -292,5 +346,22 @@ const GameShot = () => {
     </Box>
   );
 };
+
+// 인생네컷 저장 컴포넌트
+function copyCapture(element) {
+  if (element) {
+    domtoimage
+      .toPng(element)
+      .then(function (dataUrl) {
+        const link = document.createElement("a");
+        link.download = "capture.png";
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch(function (error) {
+        console.error("oops, something went wrong!", error);
+      });
+  }
+}
 
 export default GameShot;
