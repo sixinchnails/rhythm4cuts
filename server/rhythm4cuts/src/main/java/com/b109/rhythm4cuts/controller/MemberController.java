@@ -152,6 +152,7 @@ public class MemberController {
         System.out.println("updateNickname");
         userService.updateNickname(dto);
 
+
         return ResponseEntity.status(200).build();
     }
 
