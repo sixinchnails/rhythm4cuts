@@ -29,17 +29,14 @@ const Home = () => {
 
   const handleJoinComplete = async () => {
     try {
-      const response = await axios.post(
-        "http://i9b109.p.ssafy.io:8080/member/register",
-        {
-          name: joinInfo.name,
-          ssn: joinInfo.ssn,
-          nickname: joinInfo.nickname,
-          email: joinInfo.email,
-          password: joinInfo.password,
-          profile_img_seq: joinInfo.profile_img_seq,
-        }
-      );
+      const response = await axios.post("/member/register", {
+        name: joinInfo.name,
+        ssn: joinInfo.ssn,
+        nickname: joinInfo.nickname,
+        email: joinInfo.email,
+        password: joinInfo.password,
+        profile_img_seq: joinInfo.profile_img_seq,
+      });
       const confirmed = window.confirm("회원가입 완료! 로그인 해주세요");
       if (confirmed) {
         navigate("/Login");
