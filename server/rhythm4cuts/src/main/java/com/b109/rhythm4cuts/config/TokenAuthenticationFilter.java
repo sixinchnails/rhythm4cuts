@@ -32,7 +32,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final List<String> excludedUrlPatterns = Arrays.asList(
             "/member/reissue",
             "/member/login",
-            "/member/register"
+            "/member/register",
+            "/member/mail",
+            "/member/mailcheck",
+            "/member/nickname",
+            "/stomp/chat"
     );
 
     @Override
@@ -41,12 +45,24 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             String path = request.getServletPath();
             boolean isExcludedUrl = excludedUrlPatterns.stream().anyMatch(path::startsWith);
 
+            System.out.println("[출력]");
+
+            System.out.println(path);
+
+
             //가져온 토큰이 유요한지 확인하고, 유효한 때는 인증 정보 설정
             if (!isExcludedUrl) {
                 //요청 헤더의 Authorization(Bearer 액세스 토큰의 키 값) 키의 값 조회
                 String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
+
                 //가져온 값에서 접두사 제거
                 String token = getAccessToken(authorizationHeader);
+                System.out.println("토큰");
+
+                System.out.println(authorizationHeader);
+                System.out.println(token);
+
+
 
                 System.out.println("만료일 : " + tokenProvider.getExpirationDateFromToken(token));
                 System.out.println(tokenProvider.isTokenExpired(token));

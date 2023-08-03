@@ -18,7 +18,7 @@ import { createSession } from "../../openvidu/sessionInitialization";
 import { createConnection } from "../../openvidu/connectionInitialization";
 // UUID는 "Universally Unique Identifier"의 약자로, 고유한 값을 생성하기 위한 표준
 import { v4 as uuidv4 } from "uuid";
-
+import { getCookie } from "../../utils/cookie";
 
 function CreateRoom({ isOpen, handleClose }) {
   const [room_title, setRoom_title] = useState(uuidv4()); // 방 제목
@@ -44,14 +44,31 @@ function CreateRoom({ isOpen, handleClose }) {
 
     // 방 정보를 서버로 전송하는 Axios 요청
     try {
-      const response = await axios.post("http://i9b109.p.ssafy.io:8080/lobby/room", {
-        room_title: room_title, // 방제목
-        song_seq: song_seq, // 노래제목 (일련번호 : 검색 예정)
-        mode: mode, // 방 모드 (일반 vs 비밀)
-        password: password, // 비밀번호
-        session_id: sessionResponse.id, // 세션 아이디
-        connection_id: connectionResponse.connectionId, // 연결 아이디
-      });
+      const response = await axios.post(
+        "/lobby/room",
+        {
+          title: room_title,
+          song: song_seq,
+          isSecret: mode === "비밀 방" ? 1 : 0,
+          password: password,
+          sessionID: sessionResponse.id,
+          connectionID: connectionResponse.connectionId,
+          // =======
+          //         room_title: room_title, // 방제목
+          //         song_seq: song_seq, // 노래제목 (일련번호 : 검색 예정)
+          //         mode: mode, // 방 모드 (일반 vs 비밀)
+          //         password: password, // 비밀번호
+          //         session_id: sessionResponse.id, // 세션 아이디
+          //         connection_id: connectionResponse.connectionId, // 연결 아이디
+          // >>>>>>> 52f28dbbc0a4a12eec865904332079153c69f780
+        },
+        //로그인 됐을 때의 토큰을 들고 와야 됨.
+        {
+          headers: {
+            Authorization: "Bearer " + getCookie("access"),
+          },
+        }
+      );
 
       const roomId = response.data.roomId;
       console.log("방이 만들어 졌엉.", response.data);
@@ -60,11 +77,9 @@ function CreateRoom({ isOpen, handleClose }) {
       // 방 생성 후 해당 방으로 이동
       // return <Link to={`/GameWait/${roomId}`} />; // 클릭이벤트를 발생시키지 않아서 사용 x
       navigate(`/GameWait/${roomId}`);
-
     } catch (error) {
       console.error("방 생성 실패 닥!.", error);
     }
-
   };
 
   const handleSongChange = event => {
@@ -92,7 +107,8 @@ function CreateRoom({ isOpen, handleClose }) {
           border: "2px solid #000",
           boxShadow: 24,
           p: 4,
-        }}>
+        }}
+      >
         <img
           src="/images/CreateRoom.gif"
           alt="망치질"
@@ -109,7 +125,7 @@ function CreateRoom({ isOpen, handleClose }) {
           variant="outlined"
           fullWidth
           style={{ marginBottom: "20px" }}
-          onChange={(event) => setRoom_title(event.target.value)}
+          onChange={event => setRoom_title(event.target.value)}
         />
         <TextField
           label="노래 제목"
@@ -126,7 +142,8 @@ function CreateRoom({ isOpen, handleClose }) {
             aria-label="mode"
             name="row-radio-buttons-group"
             value={mode}
-            onChange={handleModeChange}>
+            onChange={handleModeChange}
+          >
             <FormControlLabel
               value="일반 방"
               control={<Radio />}
@@ -151,7 +168,11 @@ function CreateRoom({ isOpen, handleClose }) {
           />
         )}
         <Stack direction="row" spacing={2} justifyContent="center">
-          <Button variant="contained" color="primary" onClick={handleCreateRoom}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleCreateRoom}
+          >
             방 만들기
           </Button>
           <Button variant="contained" onClick={handleClose}>

@@ -59,14 +59,14 @@ const JoinInfo = ({ onJoinInfo }) => {
 
   const genderRef = useRef(); // ref를 생성합니다.
   const nicknameRef = useRef(); // ref를 생성합니다.
-  const handleBirthChange = (e) => {
+  const handleBirthChange = e => {
     setbirth(e.target.value);
     if (e.target.value.length >= 6) {
       // 입력 값의 길이가 6 이상이면
       genderRef.current.focus(); // gender 입력 필드로 초점을 이동합니다.
     }
   };
-  const handleGenderChange = (e) => {
+  const handleGenderChange = e => {
     setgender(e.target.value);
     if (e.target.value.length >= 1) {
       // 입력 값의 길이가 6 이상이면
@@ -84,6 +84,7 @@ const JoinInfo = ({ onJoinInfo }) => {
       if (response.status === 200) {
         setEmailCodeStatus(false);
         window.confirm("인증번호가 발송되었습니다.");
+        console.log(email);
       }
     } catch (error) {
       console.log(error);
@@ -145,7 +146,7 @@ const JoinInfo = ({ onJoinInfo }) => {
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={e => setName(e.target.value)}
             placeholder="이름"
             className="Join-value"
           />
@@ -177,7 +178,7 @@ const JoinInfo = ({ onJoinInfo }) => {
           <input
             type="text"
             value={nickname}
-            onChange={(e) => {
+            onChange={e => {
               setnickname(e.target.value);
               setNickNameStatus(false);
             }}
@@ -194,7 +195,7 @@ const JoinInfo = ({ onJoinInfo }) => {
           <input
             type="text"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             placeholder="이메일"
             className="Join-value"
           />
@@ -209,7 +210,7 @@ const JoinInfo = ({ onJoinInfo }) => {
             className="Join-value"
             placeholder="이메일 인증"
             value={emailCode}
-            onChange={(e) => {
+            onChange={e => {
               setEmailCode(e.target.value);
               setEmailCodeStatus(false);
             }}
@@ -223,7 +224,7 @@ const JoinInfo = ({ onJoinInfo }) => {
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             className="Join-value"
             placeholder="영어,숫자,특수 기호 포함 8자리 이상"
           />
@@ -241,7 +242,7 @@ const JoinInfo = ({ onJoinInfo }) => {
                 src={"/images/오답.png"}
                 alt="Check"
                 className="Join-check password-check"
-                style={{ width: "40px", height: "40px" }}
+                style={{ width: "40px", height: "40px", marginRight: "-15px" }}
               />
             </span>
           )}
@@ -253,7 +254,7 @@ const JoinInfo = ({ onJoinInfo }) => {
             className="Join-value"
             placeholder="비밀 번호 확인"
             value={passwordConfirm}
-            onChange={(e) => setPasswordConfirm(e.target.value)}
+            onChange={e => setPasswordConfirm(e.target.value)}
           />
           {/* 비밀번호와 일치하는지 가르쳐줌 */}
           {password === passwordConfirm && passwordConfirm && (

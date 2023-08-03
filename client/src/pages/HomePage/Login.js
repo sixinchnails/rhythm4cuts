@@ -31,17 +31,17 @@ const Home = () => {
 
   // id 파트
   const [id, setId] = useState("");
-  const onChangeId = (e) => {
+  const onChangeId = e => {
     setId(e.target.value);
   };
 
   // pw 파트
   const [pw, setPW] = useState("");
-  const onChangePW = (e) => {
+  const onChangePW = e => {
     setPW(e.target.value);
   };
 
-  const onKeyPress = (e) => {
+  const onKeyPress = e => {
     if (e.key === "Enter") {
       Login();
     }
@@ -97,7 +97,7 @@ const Home = () => {
           ></input>
         </div>
         <div className="login">
-          <button type="submit" onClick={login}>
+          <button type="submit" onClick={Login}>
             로그인
           </button>
         </div>

@@ -49,7 +49,13 @@ public class WebSecurityConfig {
             "/member/reissue",
             "/member/login",
             "/member/register",
-            "/member/reissue"
+            "/member/reissue",
+            "/",
+//            "/**"
+            "/member/mail",
+            "/member/mailcheck",
+            "/member/nickname",
+            "/stomp/**"
     );
 
     @Bean
@@ -63,6 +69,7 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers(excludedUrlPatterns.toArray(new String[0])).permitAll()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/member/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/member/**").permitAll()
                 .anyRequest().authenticated()
