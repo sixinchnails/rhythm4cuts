@@ -152,14 +152,20 @@ public class MemberController {
         System.out.println("updateNickname");
         userService.updateNickname(dto);
 
-
         return ResponseEntity.status(200).build();
     }
 
     //비밀번호 변경
     @PatchMapping("/pw")
-    public ResponseEntity updatePassword(@RequestHeader("Authorization") String accessToken, @RequestBody UpdateUserPasswordDto dto) {
-        userService.updatePassword(accessToken, dto);
+    public ResponseEntity updatePassword(@RequestBody UpdateUserPasswordDto dto) {
+        System.out.println("HEY?");
+        userService.updatePassword(dto);
+
+        System.out.println("SSDSAD");
+
+        System.out.println(dto.getNewPassword());
+        System.out.println(dto.getOldPassword());
+        System.out.println(dto.getEmail());
 
         return ResponseEntity.status(200).build();
     }
