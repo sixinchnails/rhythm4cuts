@@ -48,8 +48,10 @@ public class LobbyRepositoryImpl implements LobbyRepository {
     }
 
     @Override
-    public Integer insertGameRoom(LobbyDto lobbyDto) throws SQLException {
+    public int insertGameRoom(LobbyDto lobbyDto) throws SQLException {
         Song song = em.find(Song.class, lobbyDto.getSongSeq());
+
+        System.out.println("songSeq: " + lobbyDto.getSongSeq()); // debug
 
         GameInfo gameInfo = new GameInfo();
         gameInfo.setTitle(lobbyDto.getTitle()); // 방 제목
@@ -62,6 +64,7 @@ public class LobbyRepositoryImpl implements LobbyRepository {
         em.persist(gameInfo);
 
         GameInfo res = em.find(GameInfo.class, lobbyDto.getSessionId());
+        System.out.println("gameSeq: " + lobbyDto.getGameSeq()); // debug
         return res.getGameSeq();
     }
 

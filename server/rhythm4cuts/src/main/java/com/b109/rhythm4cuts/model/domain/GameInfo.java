@@ -17,7 +17,7 @@ import java.util.List;
 public class GameInfo {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "game_seq")
-    private Integer gameSeq;
+    private int gameSeq;
 
     //게임방 제목
     private String title;
