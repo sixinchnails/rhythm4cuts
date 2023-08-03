@@ -52,8 +52,8 @@ public class LobbyServiceImpl implements LobbyService {
     }
 
     @Override
-    public void addGameRoom(LobbyDto lobbyDto) throws SQLException {
-        lobbyRepository.insertGameRoom(lobbyDto);
+    public int addGameRoom(LobbyDto lobbyDto) throws SQLException {
+        return lobbyRepository.insertGameRoom(lobbyDto);
     }
 
     @Override
