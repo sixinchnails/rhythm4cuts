@@ -48,7 +48,7 @@ public class LobbyRepositoryImpl implements LobbyRepository {
     }
 
     @Override
-    public void insertGameRoom(LobbyDto lobbyDto) throws SQLException {
+    public int insertGameRoom(LobbyDto lobbyDto) throws SQLException {
         Song song = em.find(Song.class, lobbyDto.getSongSeq());
 
         GameInfo gameInfo = new GameInfo();
@@ -60,6 +60,9 @@ public class LobbyRepositoryImpl implements LobbyRepository {
         gameInfo.setConnectionId(lobbyDto.getConnectionId()); // Openvidu 커넥션 아이디
 
         em.persist(gameInfo);
+
+        GameInfo res = em.find(GameInfo.class, lobbyDto.getSessionId());
+        return res.getGameSeq();
     }
 
     @Override
