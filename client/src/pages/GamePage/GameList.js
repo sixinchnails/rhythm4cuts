@@ -27,13 +27,13 @@ function GameList() {
 
   // try {
   //   userInfo()
-  //     .then((res) => {
+  //     .then(res => {
   //       if (res.status === 200) {
   //         console.log(res);
   //         setIsLogin(true);
   //       }
   //     })
-  //     .catch((error) => {
+  //     .catch(error => {
   //       window.alert("로그인을 해주세요!");
   //       navigate("/");
   //     });
@@ -142,6 +142,7 @@ function GameList() {
               .slice((page - 1) * itemsPerPage, page * itemsPerPage)
               .map((room, index) => (
                 <Grid item xs={6} key={index}>
+                  {/* Rommlist로 room값들을 전해준다. */}
                   <RoomList key={index} room={room} />
                 </Grid>
               ))}
