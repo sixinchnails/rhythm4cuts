@@ -2,21 +2,25 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./My_JoinInfo.css";
 import Button from "@mui/material/Button";
+import axios from "axios";
 
 const JoinInfo = ({ onJoinInfo }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [emailCode, setEmailCode] = useState("");
+  const [emailCodeStatus, setEmailCodeStatus] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState(""); // 비밀번호 확인을 위한 상태 추가
   const [isPasswordValid, setIsPasswordValid] = useState(false); // 비밀번호 유효성 상태
   const [birth, setbirth] = useState("");
   const [nickname, setnickname] = useState("");
+  const [nickNameStatus, setNickNameStatus] = useState(false);
   const [gender, setgender] = useState("");
 
-  // 비밀번호 유효성 검사
   useEffect(() => {
+    //이게진짜임
     const passwordRegex = new RegExp(
-      "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$"
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).{8,}$/
     );
     setIsPasswordValid(passwordRegex.test(password));
   }, [password]);
@@ -30,10 +34,26 @@ const JoinInfo = ({ onJoinInfo }) => {
         nickname,
         email,
         password,
+        passwordConfirm,
         profile_img_seq: 1,
+        emailCodeStatus,
+        isPasswordValid,
+        nickNameStatus,
       });
     }
-  }, [name, email, password, birth, gender, nickname, onJoinInfo]);
+  }, [
+    name,
+    email,
+    password,
+    passwordConfirm,
+    birth,
+    gender,
+    nickname,
+    onJoinInfo,
+    emailCodeStatus,
+    isPasswordValid,
+    nickNameStatus,
+  ]);
 
   // 상태가 변경될 때마다 콜백 함수를 호출
 
@@ -53,6 +73,71 @@ const JoinInfo = ({ onJoinInfo }) => {
       nicknameRef.current.focus(); // gender 입력 필드로 초점을 이동합니다.
     }
   };
+
+  //이메일 코드 전송
+  const emailCheck = async () => {
+    try {
+      const response = await axios.post(
+        // `http://localhost:8080/member/mail?email=${email}`
+        `member/mail?email=${email}`
+      );
+      if (response.status === 200) {
+        setEmailCodeStatus(false);
+        window.confirm("인증번호가 발송되었습니다.");
+        console.log(email);
+      }
+    } catch (error) {
+      console.log(error);
+      window.confirm("인증번호 발송을 실패하였습니다.");
+    }
+  };
+  //이메일 코드 인증
+
+  const emailCodeCheck = async () => {
+    try {
+      const response = await axios.post(
+        // "http://localhost:8080/member/mailcheck",
+        `member/mailcheck`,
+        {
+          email: email,
+          certificate: emailCode,
+        }
+      );
+      if (response.data.checked === true) {
+        setEmailCodeStatus(true);
+        window.confirm("인증되었습니다.");
+      } else {
+        setEmailCodeStatus(false);
+        window.confirm("인증을 실패하였습니다.");
+      }
+    } catch (error) {
+      console.log(error);
+      window.confirm("인증을 실패하였습니다.");
+    }
+  };
+
+  //닉네임 인증
+
+  const nickNameCheck = async () => {
+    try {
+      const response = await axios.get(
+        // `http://localhost:8080/member/nickname?nickname=${nickname}`
+        `member/nickname?nickname=${nickname}`
+      );
+      if (response.data.duplicate === false) {
+        setNickNameStatus(true);
+        window.confirm("사용 가능한 닉네임입니다.");
+      } else {
+        setNickNameStatus(false);
+        throw new Error();
+      }
+    } catch (error) {
+      console.log(error);
+      setNickNameStatus(false);
+      window.confirm("사용중인 닉네임입니다.");
+    }
+  };
+
   return (
     <div className="Join-info-container">
       <div className="Join-info">
@@ -93,12 +178,17 @@ const JoinInfo = ({ onJoinInfo }) => {
           <input
             type="text"
             value={nickname}
-            onChange={e => setnickname(e.target.value)}
+            onChange={e => {
+              setnickname(e.target.value);
+              setNickNameStatus(false);
+            }}
             className="Join-value"
             placeholder="닉네임"
             ref={nicknameRef}
           />
-          <Button color="primary">중복 확인</Button>
+          <Button color="primary" onClick={nickNameCheck}>
+            중복 확인
+          </Button>
         </div>
         <div className="Join-item">
           <span className="Join-name">이메일</span>
@@ -109,12 +199,25 @@ const JoinInfo = ({ onJoinInfo }) => {
             placeholder="이메일"
             className="Join-value"
           />
-          <Button color="primary">인증</Button>
+          <Button color="primary" onClick={emailCheck}>
+            인증
+          </Button>
         </div>
         <div className="Join-item">
           <span className="Join-name">이메일 인증</span>
-          <input type="text" className="Join-value" placeholder="이메일 인증" />
-          <Button color="primary">인증 확인</Button>
+          <input
+            type="text"
+            className="Join-value"
+            placeholder="이메일 인증"
+            value={emailCode}
+            onChange={e => {
+              setEmailCode(e.target.value);
+              setEmailCodeStatus(false);
+            }}
+          />
+          <Button color="primary" onClick={emailCodeCheck}>
+            인증 확인
+          </Button>
         </div>
         <div className="Join-item">
           <span className="Join-name">비밀 번호</span>
@@ -139,7 +242,7 @@ const JoinInfo = ({ onJoinInfo }) => {
                 src={"/images/오답.png"}
                 alt="Check"
                 className="Join-check password-check"
-                style={{ width: "40px", height: "40px" }}
+                style={{ width: "40px", height: "40px", marginRight: "-15px" }}
               />
             </span>
           )}

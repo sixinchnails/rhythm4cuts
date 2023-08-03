@@ -52,6 +52,7 @@ function GameList() {
   // 방 리스트 가져오기
   useEffect(() => {
     axios
+
       // <<<<<<< HEAD
       //       .get("/lobby/list") // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
       //       .then(response => {
@@ -73,6 +74,25 @@ function GameList() {
   let friends = useSelector(state => state.GameList_Friend); // 친구 리스트
 
   const navigate = useNavigate();
+
+  //로그인 상태 확인
+  const [isLogin, setIsLogin] = useState(false);
+
+  try {
+    userInfo()
+      .then(res => {
+        if (res.status === 200) {
+          console.log(res);
+          setIsLogin(true);
+        }
+      })
+      .catch(error => {
+        window.alert("로그인을 해주세요!");
+        navigate("/");
+      });
+  } catch (error) {
+    console.log(error);
+  }
 
   // let rooms = useSelector((state) => state.GameList_Room); // 방 리스트
   // let friends = useSelector((state) => state.GameList_Friend); // 친구 리스트
