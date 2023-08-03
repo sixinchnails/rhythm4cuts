@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from "react";
 import { Modal, Box, TextField, Button, Stack } from "@mui/material";
 import { Client } from "@stomp/stompjs";
@@ -29,7 +30,7 @@ function AddFriend({ isOpen, handleClose }) {
   //   };
   // }, []);
 
-  const handleNameChange = event => {
+  const handleNameChange = (event) => {
     setfriendNickname(event.target.value); // 친구 이름 변경 이벤트 핸들러
   };
 
