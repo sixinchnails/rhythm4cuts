@@ -42,8 +42,8 @@ function GameList() {
     //   console.log(error);
     // }
 
-  // let rooms = useSelector(state => state.GameList_Room); // 방 리스트
-  const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
+  let rooms = useSelector(state => state.GameList_Room); // 방 리스트
+  // const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
 
   // 방 리스트 가져오기
   useEffect(() => {
