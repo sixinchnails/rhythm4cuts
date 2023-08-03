@@ -29,24 +29,31 @@ const Join = () => {
 
   //회원가입
   const handleJoinComplete = async () => {
-    try {
-      const response = await axios.post(
-        // "http://i9b109.p.ssafy.io:8080/member/register",
-        "http://localhost:8080/member/register",
-        joinInfo
-      );
-      const confirmed = window.confirm("회원가입이 완료! 로그인 해주세요");
-      if (confirmed) {
-        navigate("/Login");
+    if (joinInfo.nickNameStatus === false) {
+      window.confirm("닉네임 중복확인하세요.");
+    } else if (joinInfo.emailCodeStatus === false) {
+      window.confirm("이메일 인증확인하세요.");
+    } else if (
+      joinInfo.isPasswordValid === false ||
+      joinInfo.password !== joinInfo.passwordConfirm
+    ) {
+      window.confirm("비밀번호 확인하세요.");
+    } else {
+      try {
+        const response = await axios.post(
+          // "http://i9b109.p.ssafy.io:8080/member/register",
+          "http://localhost:8080/member/register",
+          joinInfo
+        );
+        const confirmed = window.confirm("회원가입이 완료! 로그인 해주세요");
+        if (confirmed) {
+          navigate("/Login");
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
     }
   };
-
-  //이메일 인증 확인
-
-  //닉네임 중복 확인
 
   return (
     <div>

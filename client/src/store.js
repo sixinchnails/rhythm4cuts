@@ -1,10 +1,14 @@
-import { configureStore, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { createRoom } from './openvidu/RoomToken';
-import { closeSessionAndConnection } from './openvidu/closeSessionAndConnection';
+import {
+  configureStore,
+  createSlice,
+  createAsyncThunk,
+} from "@reduxjs/toolkit";
+import { createRoom } from "./openvidu/RoomToken";
+import { closeSessionAndConnection } from "./openvidu/closeSessionAndConnection";
 
 // 웹캠 스트림 상태를 저장하는 slice를 생성합니다.
 const webcamStreamSlice = createSlice({
-  name: 'webcamStream',
+  name: "webcamStream",
   initialState: null, // 웹캠 스트림이 없을 때는 null로 초기화합니다.
   reducers: {
     setWebcamStream: (state, action) => {
@@ -16,51 +20,57 @@ const webcamStreamSlice = createSlice({
 // 웹캠 스트림을 설정하는 액션을 export 합니다.
 export const { setWebcamStream } = webcamStreamSlice.actions;
 
-// 방 토큰을 가져오는 비동기 액션을 생성합니다. 
+// 방 토큰을 가져오는 비동기 액션을 생성합니다.
 // 이 액션은 방의 sessionId를 인수로 받아 OpenVidu 서버에서 토큰을 요청하고 이를 반환합니다.
-export const fetchToken = createAsyncThunk('session/fetchToken', async (roomId) => {
-  try {
-    return await createRoom(roomId); // createRoom 함수를 호출하여 토큰을 가져옵니다.
-  } catch (error) {
-    throw error; // 에러를 다시 던집니다.
+export const fetchToken = createAsyncThunk(
+  "session/fetchToken",
+  async (roomId) => {
+    try {
+      return await createRoom(roomId); // createRoom 함수를 호출하여 토큰을 가져옵니다.
+    } catch (error) {
+      throw error; // 에러를 다시 던집니다.
+    }
   }
-});
+);
 
-// 방을 종료하는 비동기 액션을 생성합니다. 
+// 방을 종료하는 비동기 액션을 생성합니다.
 // 이 액션은 방의 sessionId와 연결의 connectionId를 인수로 받아 OpenVidu 서버에서 세션을 종료하고 이를 반환합니다.
-export const closeSession = createAsyncThunk('session/closeSession', async ({ sessionId, connectionId }) => {
-  await closeSessionAndConnection(sessionId, connectionId);
-});
+export const closeSession = createAsyncThunk(
+  "session/closeSession",
+  async ({ sessionId, connectionId }) => {
+    await closeSessionAndConnection(sessionId, connectionId);
+  }
+);
 
-// 세션에 관한 Redux 슬라이스를 생성합니다. 
+// 세션에 관한 Redux 슬라이스를 생성합니다.
 // 이 슬라이스는 세션의 상태와 관련된 정보를 Redux 상태에 저장하고 관리합니다.
 const sessionSlice = createSlice({
-  name: 'session',
+  name: "session",
   // 이 상태는 토큰 값, 상태(대기 중, 로딩 중, 성공, 실패), 에러 메시지 등을 관리합니다.
-  initialState: { token: null, status: 'idle', error: null },
+  initialState: { token: null, status: "idle", error: null },
   // 슬라이스에 대한 리듀서를 정의하지 않았으므로, 이 부분은 비어 있습니다.
   reducers: {},
-  // 추가 리듀서를 정의합니다. 
+  // 추가 리듀서를 정의합니다.
   // fetchToken 및 closeSession 액션에 대한 응답을 처리하는 방법을 정의합니다.
   extraReducers: (builder) => {
     builder
       .addCase(fetchToken.pending, (state) => {
         // 토큰을 요청하는 동안 상태를 '로딩 중'으로 변경합니다.
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(fetchToken.fulfilled, (state, action) => {
         // 토큰 요청이 성공하면 상태를 '성공'으로 변경하고, 토큰 값을 저장합니다.
-        state.status = 'succeeded';
+        state.status = "succeeded";
         state.token = action.payload;
       })
       .addCase(fetchToken.rejected, (state, action) => {
         // 토큰 요청이 실패하면 상태를 '실패'로 변경하고, 에러 메시지를 저장합니다.
-        state.status = 'failed';
+        state.status = "failed";
         state.error = action.error.message;
       })
       .addCase(closeSession.fulfilled, (state, action) => {
         // 세션이 종료되면 상태를 '대기 중'으로 변경하고, 토큰 값을 null로 설정합니다.
-        state.status = 'idle';
+        state.status = "idle";
         state.token = null;
       });
   },
@@ -111,21 +121,21 @@ const MyPage_MyInfo = createSlice({
   reducers: {
     // 닉네임 수정 action
     updateNickname: (state, action) => {
-      const item = state.find(item => item.name === "닉네임");
+      const item = state.find((item) => item.name === "닉네임");
       if (item) {
         item.value = action.payload;
       }
     },
     // 비밀번호 수정 action
     updatePassword: (state, action) => {
-      const item = state.find(item => item.name === "비밀번호");
+      const item = state.find((item) => item.name === "비밀번호");
       if (item) {
         item.value = action.payload;
       }
     },
     // 프로필 사진 수정 action
     updateProfilePic: (state, action) => {
-      const item = state.find(item => item.name === "프로필 사진");
+      const item = state.find((item) => item.name === "프로필 사진");
       if (item) {
         item.value = action.payload;
       }

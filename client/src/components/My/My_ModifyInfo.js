@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateNickname, updatePassword, updateProfilePic } from "../../store";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { getCookie } from "../../utils/cookie";
 
 function UserInfo(props) {
   const Info = useSelector((state) => state.MyPage_MyInfo);
@@ -91,12 +92,15 @@ function UserInfo(props) {
   }, [password, confirmPassword]);
 
   //닉네임 인증
+  const [nickNameCheckStatus, setNickNameCheckStatus] = useState(false);
+
   const nickNameCheck = async () => {
     try {
       const response = await axios.get(
         `http://localhost:8080/member/nickname?nickname=${nickname}`
       );
       if (response.data.duplicate === false) {
+        setNickNameCheckStatus(true);
         window.confirm("사용 가능한 닉네임입니다.");
       } else {
         throw new Error();
@@ -104,6 +108,39 @@ function UserInfo(props) {
     } catch (error) {
       console.log(error);
       window.confirm("사용중인 닉네임입니다.");
+    }
+  };
+
+  //닉네임 변경
+  const nickNameModify = async () => {
+    const access = getCookie("access");
+    try {
+      if (nickNameCheckStatus) {
+        const response = await axios.patch(
+          "http://localhost:8080/member/nickname",
+          {
+            email: getCookie("email"),
+            nickname: nickname,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + access,
+            },
+          }
+        );
+        if (response.status === 200) {
+          window.confirm("닉네임이 변경되었습니다.");
+          setNicknameEdit(!nicknameEdit);
+          navigate("/MyModify");
+        } else {
+          throw new Error();
+        }
+      } else {
+        window.confirm("닉네임 중복 확인을 해주세요.");
+      }
+    } catch (error) {
+      console.log(error);
+      window.confirm("닉네임 변경에 실패했습니다.");
     }
   };
 
@@ -146,7 +183,10 @@ function UserInfo(props) {
                   className="modify-input"
                   value={nickname}
                   placeholder={props.nickName}
-                  onChange={(e) => setNickname(e.target.value)}
+                  onChange={(e) => {
+                    setNickname(e.target.value);
+                    setNickNameCheckStatus(false);
+                  }}
                 />
                 <Button
                   color="primary"
@@ -154,6 +194,13 @@ function UserInfo(props) {
                   onClick={nickNameCheck}
                 >
                   중복 확인
+                </Button>
+                <Button
+                  color="warning"
+                  style={{ minWidth: "50px", top: "20px" }}
+                  onClick={nickNameModify}
+                >
+                  완료
                 </Button>
               </div>
             )}
@@ -236,6 +283,17 @@ function UserInfo(props) {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
+                  <Button
+                    color="warning"
+                    style={{
+                      minWidth: "50px",
+                      top: "20px",
+                      marginLeft: "100px",
+                    }}
+                    onClick={nickNameModify}
+                  >
+                    완료
+                  </Button>
                   {password === confirmPassword && confirmPassword && (
                     <img
                       src={"/images/체크.png"}
