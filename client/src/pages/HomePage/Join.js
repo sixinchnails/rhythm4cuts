@@ -41,8 +41,8 @@ const Join = () => {
     } else {
       try {
         const response = await axios.post(
-          // "http://i9b109.p.ssafy.io:8080/member/register",
-          "http://localhost:8080/member/register",
+          "member/register",
+          // "http://localhost:8080/member/register",
           joinInfo
         );
         const confirmed = window.confirm("회원가입이 완료! 로그인 해주세요");

@@ -96,9 +96,10 @@ function UserInfo(props) {
 
   const nickNameCheck = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/member/nickname?nickname=${nickname}`
-      );
+      // const response = await axios.get(
+      //   `http://localhost:8080/member/nickname?nickname=${nickname}`
+      // );
+      const response = await axios.get(`nickname?nickname=${nickname}`);
       if (response.data.duplicate === false) {
         setNickNameCheckStatus(true);
         window.confirm("사용 가능한 닉네임입니다.");
@@ -117,7 +118,8 @@ function UserInfo(props) {
     try {
       if (nickNameCheckStatus) {
         const response = await axios.patch(
-          "http://localhost:8080/member/nickname",
+          // "http://localhost:8080/member/nickname",
+          "member/nickname",
           {
             email: getCookie("email"),
             nickname: nickname,

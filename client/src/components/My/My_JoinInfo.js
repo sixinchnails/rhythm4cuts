@@ -78,7 +78,8 @@ const JoinInfo = ({ onJoinInfo }) => {
   const emailCheck = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/member/mail?email=${email}`
+        // `http://localhost:8080/member/mail?email=${email}`
+        `member/mail?email=${email}`
       );
       if (response.status === 200) {
         setEmailCodeStatus(false);
@@ -94,7 +95,8 @@ const JoinInfo = ({ onJoinInfo }) => {
   const emailCodeCheck = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/member/mailcheck",
+        // "http://localhost:8080/member/mailcheck",
+        `member/mailcheck`,
         {
           email: email,
           certificate: emailCode,
@@ -118,7 +120,8 @@ const JoinInfo = ({ onJoinInfo }) => {
   const nickNameCheck = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/member/nickname?nickname=${nickname}`
+        // `http://localhost:8080/member/nickname?nickname=${nickname}`
+        `member/nickname?nickname=${nickname}`
       );
       if (response.data.duplicate === false) {
         setNickNameStatus(true);

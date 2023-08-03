@@ -53,7 +53,6 @@ const Home = () => {
       const result = await login(id, pw);
       if (result.status === 200) {
         window.alert("로그인을 성공하였습니다!");
-        // dispatch(loginHandler(result.data));
         setCookie("access", result.data.accessToken);
         setCookie("refresh", result.data.refreshToken);
         setCookie("email", result.data.email);
