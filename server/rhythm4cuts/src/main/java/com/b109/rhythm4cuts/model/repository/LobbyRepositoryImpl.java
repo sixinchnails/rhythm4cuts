@@ -61,14 +61,10 @@ public class LobbyRepositoryImpl implements LobbyRepository {
         gameInfo.setSessionId(lobbyDto.getSessionId()); // Openvidu 세션 아이디
         gameInfo.setConnectionId(lobbyDto.getConnectionId()); // Openvidu 커넥션 아이디
 
-        em.persist(gameInfo);
-        em.flush();
-        em.clear();
-
-        System.out.println("gameSeq: " + lobbyDto.getSessionId()); // debug
-        GameInfo res = em.find(GameInfo.class, lobbyDto.getSessionId());
-        System.out.println("gameSeq: " + lobbyDto.getGameSeq()); // debug
-        return res.getGameSeq();
+        em.persist(gameInfo.getGameSeq());
+        
+        System.out.println(gameInfo.getGameSeq()); // debug
+        return gameInfo.getGameSeq();
     }
 
     @Override
