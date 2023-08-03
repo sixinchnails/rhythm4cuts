@@ -42,7 +42,7 @@ const Join = () => {
       try {
         const response = await axios.post(
           "/member/register",
-          // "http://localhost:8080/member/register",
+          // "http://lo/calhost:8080/member/register",
           joinInfo
         );
         const confirmed = window.confirm("회원가입이 완료! 로그인 해주세요");
