@@ -12,7 +12,7 @@ public interface LobbyRepository {
     List<GameInfo> selectLobbyList() throws SQLException;
     GameInfo selectSeqLobby(int gameSeq) throws SQLException;
     List<GameInfo> selectTitleLobbyList(String title) throws SQLException;
-    Integer insertGameRoom(LobbyDto lobbyDto) throws SQLException;
+    int insertGameRoom(LobbyDto lobbyDto) throws SQLException;
     List<Song> selectSongTitleList(String title) throws SQLException;
     GameInfo selectPw(int gameSeq) throws SQLException;
 }
