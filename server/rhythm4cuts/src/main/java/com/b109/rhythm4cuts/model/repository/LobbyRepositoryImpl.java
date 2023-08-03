@@ -51,6 +51,8 @@ public class LobbyRepositoryImpl implements LobbyRepository {
     public int insertGameRoom(LobbyDto lobbyDto) throws SQLException {
         Song song = em.find(Song.class, lobbyDto.getSongSeq());
 
+        System.out.println("songSeq: " + lobbyDto.getSongSeq()); // debug
+
         GameInfo gameInfo = new GameInfo();
         gameInfo.setTitle(lobbyDto.getTitle()); // 방 제목
         gameInfo.setSong(song); // 노래 일련번호 (노래 객체)
@@ -60,8 +62,12 @@ public class LobbyRepositoryImpl implements LobbyRepository {
         gameInfo.setConnectionId(lobbyDto.getConnectionId()); // Openvidu 커넥션 아이디
 
         em.persist(gameInfo);
+        em.flush();
+        em.clear();
 
+        System.out.println("gameSeq: " + lobbyDto.getSessionId()); // debug
         GameInfo res = em.find(GameInfo.class, lobbyDto.getSessionId());
+        System.out.println("gameSeq: " + lobbyDto.getGameSeq()); // debug
         return res.getGameSeq();
     }
 

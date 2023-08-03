@@ -14,7 +14,7 @@ import java.util.List;
 public class Song {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "song_seq")
-    private Integer songSeq;
+    private int songSeq;
 
     //제목
     private String title;

@@ -236,8 +236,8 @@ public class UserServiceImpl implements UserService {
         mailDto.setAddress(new String[] {email});
         mailDto.setTitle("Rhythm4Cuts 임시 비밀번호 발급 안내 메일입니다.");
         mailDto.setContent("안녕하세요. Rhythm4Cuts 로그인을 위한 임시 비밀번호 발급드립니다. 회원님의 임시 비밀번호는 " + tempPassword + "입니다.");
+        user.setPassword(bCryptPasswordEncoder.encode(tempPassword));
 
-        user.setPassword(tempPassword);
         userRepository.save(user);
 
         return mailDto;
