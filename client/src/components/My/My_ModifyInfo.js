@@ -80,8 +80,7 @@ function UserInfo(props) {
 
   // 비밀번호 유효성 검사 함수
   const checkPassword = (password) => {
-    const regex =
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     return regex.test(password);
   };
 
@@ -99,16 +98,18 @@ function UserInfo(props) {
       // const response = await axios.get(
       //   `http://localhost:8080/member/nickname?nickname=${nickname}`
       // );
-      const response = await axios.get(`nickname?nickname=${nickname}`);
+      const response = await axios.get(`member/nickname?nickname=${nickname}`);
       if (response.data.duplicate === false) {
         setNickNameCheckStatus(true);
         window.confirm("사용 가능한 닉네임입니다.");
       } else {
-        throw new Error();
+        console.log(response);
+        setNickNameCheckStatus(false);
+        window.confirm("사용중인 닉네임입니다.");
       }
     } catch (error) {
       console.log(error);
-      window.confirm("사용중인 닉네임입니다.");
+      window.confirm("오류가 발생했습니다.");
     }
   };
 
@@ -116,7 +117,7 @@ function UserInfo(props) {
   const nickNameModify = async () => {
     const access = getCookie("access");
     try {
-      if (nickNameCheckStatus) {
+      if (nickNameCheckStatus === true) {
         const response = await axios.patch(
           // "http://localhost:8080/member/nickname",
           "member/nickname",
@@ -234,7 +235,7 @@ function UserInfo(props) {
                     width: "600px",
                   }}
                 >
-                  <span className="modify-password-name">비밀번호 수정</span>
+                  <span className="modify-password-name">새 비밀번호</span>
                   <input
                     type="password"
                     className="modify-input"
@@ -292,7 +293,6 @@ function UserInfo(props) {
                       top: "20px",
                       marginLeft: "100px",
                     }}
-                    onClick={nickNameModify}
                   >
                     완료
                   </Button>

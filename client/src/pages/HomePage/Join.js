@@ -23,7 +23,7 @@ const Join = () => {
   // 회원가입 정보를 저장할 상태
   const [joinInfo, setJoinInfo] = useState({});
 
-  const handleJoinInfo = useCallback(data => {
+  const handleJoinInfo = useCallback((data) => {
     setJoinInfo(data); // JoinInfo 컴포넌트로부터 받은 데이터를 상태에 저장
   }, []);
 
@@ -41,7 +41,7 @@ const Join = () => {
     } else {
       try {
         const response = await axios.post(
-          "member/register",
+          "/member/register",
           // "http://localhost:8080/member/register",
           joinInfo
         );
