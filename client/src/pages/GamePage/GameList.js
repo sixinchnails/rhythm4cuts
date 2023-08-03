@@ -57,7 +57,8 @@ function GameList() {
         },
       }) // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
       .then(response => {
-        setRooms(response.data); // 서버 응답으로 받은 방 리스트를 상태로 업데이트합니다.
+        console.log(response.data);
+        setRooms(response.data.data); // 서버 응답으로 받은 방 리스트를 상태로 업데이트합니다.
       })
       .catch(error => {
         console.error("Failed to fetch room list.", error);

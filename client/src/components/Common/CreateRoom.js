@@ -18,6 +18,7 @@ import { createSession } from "../../openvidu/sessionInitialization";
 import { createConnection } from "../../openvidu/connectionInitialization";
 // UUID는 "Universally Unique Identifier"의 약자로, 고유한 값을 생성하기 위한 표준
 import { v4 as uuidv4 } from "uuid";
+import { getCookie } from "../../utils/cookie";
 
 function CreateRoom({ isOpen, handleClose }) {
   const [room_title, setRoom_title] = useState(uuidv4()); // 방 제목
@@ -43,22 +44,30 @@ function CreateRoom({ isOpen, handleClose }) {
 
     // 방 정보를 서버로 전송하는 Axios 요청
     try {
-      const response = await axios.post("/lobby/room", {
-        title: room_title,
-        song: song_seq,
-        isSecret: mode === "비밀 방" ? 1 : 0,
-        password: password,
-        sessionID: sessionResponse.id,
-        connectionID: connectionResponse.connectionId,
-        // =======
-        //         room_title: room_title, // 방제목
-        //         song_seq: song_seq, // 노래제목 (일련번호 : 검색 예정)
-        //         mode: mode, // 방 모드 (일반 vs 비밀)
-        //         password: password, // 비밀번호
-        //         session_id: sessionResponse.id, // 세션 아이디
-        //         connection_id: connectionResponse.connectionId, // 연결 아이디
-        // >>>>>>> 52f28dbbc0a4a12eec865904332079153c69f780
-      });
+      const response = await axios.post(
+        "/lobby/room",
+        {
+          title: room_title,
+          song: song_seq,
+          isSecret: mode === "비밀 방" ? 1 : 0,
+          password: password,
+          sessionID: sessionResponse.id,
+          connectionID: connectionResponse.connectionId,
+          // =======
+          //         room_title: room_title, // 방제목
+          //         song_seq: song_seq, // 노래제목 (일련번호 : 검색 예정)
+          //         mode: mode, // 방 모드 (일반 vs 비밀)
+          //         password: password, // 비밀번호
+          //         session_id: sessionResponse.id, // 세션 아이디
+          //         connection_id: connectionResponse.connectionId, // 연결 아이디
+          // >>>>>>> 52f28dbbc0a4a12eec865904332079153c69f780
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + getCookie("access"),
+          },
+        }
+      );
 
       const roomId = response.data.roomId;
       console.log("방이 만들어 졌엉.", response.data);
