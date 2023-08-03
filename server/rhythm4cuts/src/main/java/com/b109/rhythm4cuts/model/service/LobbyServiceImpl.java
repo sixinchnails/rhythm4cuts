@@ -52,7 +52,7 @@ public class LobbyServiceImpl implements LobbyService {
     }
 
     @Override
-    public int addGameRoom(LobbyDto lobbyDto) throws SQLException {
+    public Integer addGameRoom(LobbyDto lobbyDto) throws SQLException {
         return lobbyRepository.insertGameRoom(lobbyDto);
     }
 

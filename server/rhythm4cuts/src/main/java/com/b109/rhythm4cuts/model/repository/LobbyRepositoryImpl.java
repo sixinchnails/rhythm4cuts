@@ -48,7 +48,7 @@ public class LobbyRepositoryImpl implements LobbyRepository {
     }
 
     @Override
-    public int insertGameRoom(LobbyDto lobbyDto) throws SQLException {
+    public Integer insertGameRoom(LobbyDto lobbyDto) throws SQLException {
         Song song = em.find(Song.class, lobbyDto.getSongSeq());
 
         GameInfo gameInfo = new GameInfo();

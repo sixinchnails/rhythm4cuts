@@ -15,7 +15,7 @@ public interface LobbyService {
     List<LobbyDto> getLobbyList() throws SQLException;
     LobbyDto getSeqLobby(int gameSeq) throws SQLException;
     List<LobbyDto> getTitleLobbyList(String title) throws SQLException;
-    int addGameRoom(LobbyDto lobbyDto) throws SQLException;
+    Integer addGameRoom(LobbyDto lobbyDto) throws SQLException;
     List<SongDto> getSongTitle(String title) throws SQLException;
     String getPw(int gameSeq) throws SQLException;
 }

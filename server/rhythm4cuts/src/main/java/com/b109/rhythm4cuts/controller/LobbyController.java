@@ -62,7 +62,7 @@ public class LobbyController {
     // API 4. 방 만들기
     @PostMapping("/room")
     public ResponseEntity<?> addGameroom(@RequestBody LobbyDto lobbyDto) throws SQLException {
-        int gameSeq = lobbyService.addGameRoom(lobbyDto);
+        Integer gameSeq = lobbyService.addGameRoom(lobbyDto);
 
         Map<String, Object> res = new HashMap<>();
         res.put("message", "Success");
