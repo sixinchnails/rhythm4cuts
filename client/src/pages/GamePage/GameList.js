@@ -41,8 +41,8 @@ function GameList() {
   //   console.log(error);
   // }
 
-  let rooms = useSelector(state => state.GameList_Room); // 방 리스트
-  // const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
+  // let rooms = useSelector(state => state.GameList_Room); // 방 리스트
+  const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
 
   // 방 리스트 가져오기
   useEffect(() => {
@@ -102,8 +102,8 @@ function GameList() {
   // 검색어에 따라 방 리스트 필터링
   let filteredRooms = rooms.filter(
     room =>
-      room.number.toString().toLowerCase().includes(searchTerm.toLowerCase()) || // 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
-      room.song.toLowerCase().includes(searchTerm.toLowerCase()) // 노래 제목이 검색어를 포함하는지 확인
+      room.gameSeq.toString().toLowerCase().includes(searchTerm.toLowerCase()) || // 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
+      room.songSeq.toLowerCase().includes(searchTerm.toLowerCase()) // 노래 제목이 검색어를 포함하는지 확인
   );
 
   const noOfPages = Math.ceil(filteredRooms.length / itemsPerPage); // 필터링된 방 리스트를 통해 페이지 수 계산
