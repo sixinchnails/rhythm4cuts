@@ -43,10 +43,16 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String path = request.getServletPath();
+            String httpMethod = request.getMethod();
             boolean isExcludedUrl = excludedUrlPatterns.stream().anyMatch(path::startsWith);
 
+            System.out.println("경로");
+                    
+            System.out.println(path);
+            System.out.println(isExcludedUrl);
+
             //가져온 토큰이 유요한지 확인하고, 유효한 때는 인증 정보 설정
-            if (!isExcludedUrl) {
+            if (!isExcludedUrl || (httpMethod.equals("PATCH") && path.equals("/member/nickname"))) {
                 //요청 헤더의 Authorization(Bearer 액세스 토큰의 키 값) 키의 값 조회
                 String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
                 //가져온 값에서 접두사 제거
