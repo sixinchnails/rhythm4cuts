@@ -16,7 +16,7 @@ const JoinInfo = ({ onJoinInfo }) => {
   // 비밀번호 유효성 검사
   useEffect(() => {
     const passwordRegex = new RegExp(
-      "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+      "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$"
     );
     setIsPasswordValid(passwordRegex.test(password));
   }, [password]);
@@ -30,7 +30,7 @@ const JoinInfo = ({ onJoinInfo }) => {
         nickname,
         email,
         password,
-        profile_img_seq:1
+        profile_img_seq: 1,
       });
     }
   }, [name, email, password, birth, gender, nickname, onJoinInfo]);
@@ -39,14 +39,14 @@ const JoinInfo = ({ onJoinInfo }) => {
 
   const genderRef = useRef(); // ref를 생성합니다.
   const nicknameRef = useRef(); // ref를 생성합니다.
-  const handleBirthChange = (e) => {
+  const handleBirthChange = e => {
     setbirth(e.target.value);
     if (e.target.value.length >= 6) {
       // 입력 값의 길이가 6 이상이면
       genderRef.current.focus(); // gender 입력 필드로 초점을 이동합니다.
     }
   };
-  const handleGenderChange = (e) => {
+  const handleGenderChange = e => {
     setgender(e.target.value);
     if (e.target.value.length >= 1) {
       // 입력 값의 길이가 6 이상이면
@@ -61,7 +61,7 @@ const JoinInfo = ({ onJoinInfo }) => {
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={e => setName(e.target.value)}
             placeholder="이름"
             className="Join-value"
           />
@@ -93,7 +93,7 @@ const JoinInfo = ({ onJoinInfo }) => {
           <input
             type="text"
             value={nickname}
-            onChange={(e) => setnickname(e.target.value)}
+            onChange={e => setnickname(e.target.value)}
             className="Join-value"
             placeholder="닉네임"
             ref={nicknameRef}
@@ -105,7 +105,7 @@ const JoinInfo = ({ onJoinInfo }) => {
           <input
             type="text"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             placeholder="이메일"
             className="Join-value"
           />
@@ -121,7 +121,7 @@ const JoinInfo = ({ onJoinInfo }) => {
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             className="Join-value"
             placeholder="영어,숫자,특수 기호 포함 8자리 이상"
           />
@@ -151,7 +151,7 @@ const JoinInfo = ({ onJoinInfo }) => {
             className="Join-value"
             placeholder="비밀 번호 확인"
             value={passwordConfirm}
-            onChange={(e) => setPasswordConfirm(e.target.value)}
+            onChange={e => setPasswordConfirm(e.target.value)}
           />
           {/* 비밀번호와 일치하는지 가르쳐줌 */}
           {password === passwordConfirm && passwordConfirm && (

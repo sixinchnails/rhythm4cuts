@@ -9,6 +9,8 @@ import {
   Paper,
   TextField,
   IconButton,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import RoomList from "../../components/Game/RoomList";
 import FriendList from "../../components/Game/FriendList";
@@ -43,6 +45,9 @@ function GameList() {
 
   // let rooms = useSelector(state => state.GameList_Room); // 방 리스트
   const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
+
+  // 검색 카테고리 상태 추가
+  const [searchCategory, setSearchCategory] = useState("gameSeq"); // 기본값을 'gameSeq'로 설정
 
   // 방 리스트 가져오기
   useEffect(() => {
@@ -100,18 +105,24 @@ function GameList() {
   const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
 
   // 검색어에 따라 방 리스트 필터링
-  let filteredRooms = rooms.filter(
-    room =>
-      room.gameSeq
-        .toString()
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) || // 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
-      room.gameSeq
-        .toString()
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) || // 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
-      room.songSeq.toLowerCase().includes(searchTerm.toLowerCase()) // 노래 제목이 검색어를 포함하는지 확인
-  );
+  let filteredRooms = rooms.filter(room => {
+    switch (searchCategory) {
+      case "gameSeq":
+        return room.gameSeq
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()); // 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
+      case "title":
+        return room.title.toLowerCase().includes(searchTerm.toLowerCase()); // 방 제목이 검색어를 포함하는지 확인
+      case "songSeq":
+        return room.songSeq
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()); // 노래 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
+      default:
+        return true; // 검색 카테고리가 설정되지 않은 경우, 모든 방을 표시
+    }
+  });
 
   const noOfPages = Math.ceil(filteredRooms.length / itemsPerPage); // 필터링된 방 리스트를 통해 페이지 수 계산
 
@@ -192,6 +203,16 @@ function GameList() {
             >
               <RefreshIcon style={{ color: "#ffffff" }} />
             </IconButton>
+            {/* 검색 카테고리 추가 */}
+            <Select
+              value={searchCategory}
+              onChange={e => setSearchCategory(e.target.value)}
+              style={{ marginRight: "1em" }}
+            >
+              <MenuItem value={"gameSeq"}>방 번호</MenuItem>
+              <MenuItem value={"title"}>방 이름</MenuItem>
+              <MenuItem value={"songSeq"}>노래 제목</MenuItem>
+            </Select>
             <TextField
               label="검색"
               variant="outlined"
