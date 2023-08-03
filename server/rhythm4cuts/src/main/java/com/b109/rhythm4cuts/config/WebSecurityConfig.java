@@ -48,6 +48,9 @@ public class WebSecurityConfig {
             "/member/reissue",
             "/member/login",
             "/member/register",
+            "/member/reissue",
+            "/",
+//            "/**"
             "/member/mail",
             "/member/mailcheck",
             "/stomp/**"
@@ -64,6 +67,7 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers(excludedUrlPatterns.toArray(new String[0])).permitAll()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/member/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/member/**").permitAll()
                 .anyRequest().authenticated()

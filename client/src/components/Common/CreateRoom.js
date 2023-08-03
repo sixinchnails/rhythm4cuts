@@ -18,61 +18,71 @@ import { createSession } from "../../openvidu/sessionInitialization";
 import { createConnection } from "../../openvidu/connectionInitialization";
 // UUID는 "Universally Unique Identifier"의 약자로, 고유한 값을 생성하기 위한 표준
 import { v4 as uuidv4 } from "uuid";
-
+import { getCookie } from "../../utils/cookie";
 
 function CreateRoom({ isOpen, handleClose }) {
-  const [room_title, setRoom_title] = useState(uuidv4()); // 방 제목
-  const [song_seq, setSong_seq] = useState(""); // 노래 제목
-  const [mode, setMode] = useState("일반 방");
+  const [title, setTitle] = useState(uuidv4()); // 방 제목
+  const [songSeq, setSongSeq] = useState(""); // 노래 제목
+  const [isSecret, setIsSecret] = useState("일반 방");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate(); // 페이지 이동
 
   const handleCreateRoom = async () => {
-    const sessionResponse = await createSession(setRoom_title); // 수정된 함수 호출
-    const connectionResponse = await createConnection(sessionResponse.id); // 수정된 함수 호출
 
-    if (connectionResponse.token) {
-      console.log("Token: ", connectionResponse.token);
-      // 세션과 연결하거나 다른 로직을 실행합니다.
-    } else {
-      console.log("Failed to create a session or token.");
-    }
-
-    // 상태를 업데이트
-    setRoom_title(uuidv4());
-
-    // 방 정보를 서버로 전송하는 Axios 요청
     try {
-      const response = await axios.post("/lobby/room", {
-        room_title: room_title, // 방제목
-        song_seq: song_seq, // 노래제목 (일련번호 : 검색 예정)
-        mode: mode, // 방 모드 (일반 vs 비밀)
-        password: password, // 비밀번호
-        session_id: sessionResponse.id, // 세션 아이디
-        connection_id: connectionResponse.connectionId, // 연결 아이디
-      });
+      const sessionResponse = await createSession(); // 수정된 함수 호출
+      if (sessionResponse != null) {
+        // OpenVidu 세션에 연결 생성
+        const connectionResponse = await createConnection(sessionResponse.sessionId); // 수정된 함수 호출
 
-      const roomId = response.data.roomId;
-      console.log("방이 만들어 졌엉.", response.data);
-      console.log("Room created Room ID:", roomId);
+        if (connectionResponse.token) {
+          console.log("Token: ", connectionResponse.token);
+          // 세션과 연결하거나 다른 로직을 실행합니다.
 
-      // 방 생성 후 해당 방으로 이동
-      // return <Link to={`/GameWait/${roomId}`} />; // 클릭이벤트를 발생시키지 않아서 사용 x
-      navigate(`/GameWait/${roomId}`);
+          // 상태를 업데이트
+          // setTitle(uuidv4());
 
+          // 방 정보를 서버로 전송하는 Axios 요청
+          // try {
+          const response = await axios.post(
+            "/lobby/room",
+            {
+              title: title, // 방 제목
+              songSeq: songSeq, // 노래제목 (일련번호 : 검색 예정)
+              isSecret: isSecret === "비밀 방" ? 1 : 0, // 방 모드 (일반 vs 비밀)
+              password: password, // 비밀번호
+              sessionId: sessionResponse.id,  // 세션 아이디
+              connectionId: connectionResponse.connectionId, // 연결 아이디
+            },
+            //로그인 됐을 때의 토큰을 들고 와야 됨.
+            {
+              headers: {
+                Authorization: "Bearer " + getCookie("access"),
+              },
+            }
+          );
+          console.log("방이 만들어 졌엉.", response.data);
+
+          // 방 생성 후 해당 방으로 이동
+          navigate(`/GameWait/${title}`);
+        } else {
+          console.log("Failed to create a connection or token.");
+        }
+      } else {
+        console.log("세션 생성 실패.");
+      }
     } catch (error) {
       console.error("방 생성 실패 닥!.", error);
     }
-
   };
 
   const handleSongChange = event => {
-    setSong_seq(event.target.value);
+    setSongSeq(event.target.value);
   };
 
   const handleModeChange = event => {
-    setMode(event.target.value);
+    setIsSecret(event.target.value);
   };
 
   const handlePasswordChange = event => {
@@ -92,7 +102,8 @@ function CreateRoom({ isOpen, handleClose }) {
           border: "2px solid #000",
           boxShadow: 24,
           p: 4,
-        }}>
+        }}
+      >
         <img
           src="/images/CreateRoom.gif"
           alt="망치질"
@@ -109,24 +120,25 @@ function CreateRoom({ isOpen, handleClose }) {
           variant="outlined"
           fullWidth
           style={{ marginBottom: "20px" }}
-          onChange={(event) => setRoom_title(event.target.value)}
+          onChange={event => setTitle(event.target.value)}
         />
         <TextField
           label="노래 제목"
           variant="outlined"
           fullWidth
           style={{ marginBottom: "20px" }}
-          value={song_seq}
+          value={songSeq}
           onChange={handleSongChange}
         />
         <FormControl component="fieldset" style={{ marginBottom: "20px" }}>
           <FormLabel component="legend">모드</FormLabel>
           <RadioGroup
             row
-            aria-label="mode"
+            aria-label="isSecret"
             name="row-radio-buttons-group"
-            value={mode}
-            onChange={handleModeChange}>
+            value={isSecret}
+            onChange={handleModeChange}
+          >
             <FormControlLabel
               value="일반 방"
               control={<Radio />}
@@ -139,7 +151,7 @@ function CreateRoom({ isOpen, handleClose }) {
             />
           </RadioGroup>
         </FormControl>
-        {mode === "비밀 방" && (
+        {isSecret === "비밀 방" && (
           <TextField
             type="password"
             label="비밀번호"
@@ -151,7 +163,11 @@ function CreateRoom({ isOpen, handleClose }) {
           />
         )}
         <Stack direction="row" spacing={2} justifyContent="center">
-          <Button variant="contained" color="primary" onClick={handleCreateRoom}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleCreateRoom}
+          >
             방 만들기
           </Button>
           <Button variant="contained" onClick={handleClose}>

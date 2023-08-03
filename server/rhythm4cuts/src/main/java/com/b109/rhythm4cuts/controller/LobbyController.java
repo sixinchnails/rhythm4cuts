@@ -34,7 +34,7 @@ public class LobbyController {
     }
 
     // API 2. 대기방 검색 (방 번호)
-    @GetMapping("/{gameSeq}")
+    @GetMapping("/gameSeq")
     public ResponseEntity<?> getSeqLobby(@PathVariable("gameSeq") int gameSeq) throws SQLException {
         LobbyDto lobbyDto = lobbyService.getSeqLobby(gameSeq);
 
@@ -62,11 +62,12 @@ public class LobbyController {
     // API 4. 방 만들기
     @PostMapping("/room")
     public ResponseEntity<?> addGameroom(@RequestBody LobbyDto lobbyDto) throws SQLException {
-        lobbyService.addGameRoom(lobbyDto);
+        int gameSeq = lobbyService.addGameRoom(lobbyDto);
 
         Map<String, Object> res = new HashMap<>();
         res.put("message", "Success");
         res.put("statusCode", 200);
+        res.put("data", gameSeq);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
