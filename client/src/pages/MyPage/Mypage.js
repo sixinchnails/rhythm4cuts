@@ -10,8 +10,19 @@ import UserInfo from "../../components/My/My_UserInfo"; // UserInfo 컴포넌트
 import Button from "@mui/material/Button";
 import { userInfo } from "../../apis/userInfo";
 import LoginMypageHeader from "../../components/Home/LoginMypageHeader";
+import CheckUserToModiInfo from "../../components/Common/CheckUserToModiInfo";
 
 const Mypage = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenSearchPasswordModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseSearchPasswordModal = () => {
+    setIsModalOpen(false);
+  };
+
   const navigate = useNavigate();
 
   //이름
@@ -25,7 +36,6 @@ const Mypage = () => {
     userInfo()
       .then((res) => {
         if (res.status === 200) {
-          console.log(res);
           setNickName(res.data.nickname);
           setName(res.data.name);
         }
@@ -66,9 +76,7 @@ const Mypage = () => {
             variant="contained"
             color="primary"
             className="edit-button"
-            onClick={() => {
-              navigate("/MyModify");
-            }}
+            onClick={handleOpenSearchPasswordModal}
             style={{
               backgroundColor: "#F2BED1",
               color: "#000000",
@@ -91,6 +99,11 @@ const Mypage = () => {
           </Button>
         </div>
       </div>
+
+      <CheckUserToModiInfo
+        isOpen={isModalOpen}
+        handleClose={handleCloseSearchPasswordModal}
+      />
     </>
   );
 };
