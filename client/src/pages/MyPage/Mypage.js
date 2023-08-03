@@ -14,15 +14,20 @@ import LoginMypageHeader from "../../components/Home/LoginMypageHeader";
 const Mypage = () => {
   const navigate = useNavigate();
 
-  //로그인 상태 확인
-  const [isLogin, setIsLogin] = useState(false);
+  //이름
+  const [name, setName] = useState("");
 
+  //닉네임
+  const [nickName, setNickName] = useState("");
+
+  //로그인 상태 확인
   try {
     userInfo()
       .then((res) => {
         if (res.status === 200) {
           console.log(res);
-          setIsLogin(true);
+          setNickName(res.data.nickname);
+          setName(res.data.name);
         }
       })
       .catch((error) => {
@@ -52,7 +57,7 @@ const Mypage = () => {
         <Sidebar></Sidebar>
         <div className="main-container">
           <MainContent></MainContent>
-          <UserInfo />
+          <UserInfo name={name} nickName={nickName} />
           {/* UserInfo 컴포넌트를 사용하여 사용자 정보를 표시합니다. */}
         </div>
         <div className="buttons">

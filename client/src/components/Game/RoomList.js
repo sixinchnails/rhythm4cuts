@@ -24,7 +24,8 @@ function RoomList({ room }) {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-            }}>
+            }}
+          >
             <CardMedia
               component="img"
               image={room.image}
@@ -42,8 +43,9 @@ function RoomList({ room }) {
                 <Grid item xs={12}>
                   <Typography
                     variant="subtitle1"
-                    style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-                    방 번호: {room.number} / 방 이름: {room.name}
+                    style={{ fontSize: "1.2rem", fontWeight: "bold" }}
+                  >
+                    방 번호: {room.gameSeq} / 방 이름: {room.title}
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
@@ -53,23 +55,26 @@ function RoomList({ room }) {
                       textAlign: "center",
                       fontWeight: "bold",
                       padding: "2%",
-                    }}>
-                    🎵 {room.song}
+                    }}
+                  >
+                    🎵 {room.songSeq}
                   </Typography>
                 </Grid>
                 <Grid
                   container
                   justifyContent="space-between"
-                  alignItems="center">
+                  alignItems="center"
+                >
                   <Grid item>
                     <Box
                       style={{
                         border: "1px solid",
                         padding: "5px",
                         color: isFull ? "red" : "green",
-                      }}>
+                      }}
+                    >
                       <Typography variant="body2">
-                        방 인원수: {room.currentOccupancy} / {room.maxOccupancy}
+                        방 인원수: {room.headcount} / 4
                       </Typography>
                     </Box>
                   </Grid>
