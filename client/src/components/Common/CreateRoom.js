@@ -50,6 +50,14 @@ function CreateRoom({ isOpen, handleClose }) {
         password: password,
         sessionID: sessionResponse.id,
         connectionID: connectionResponse.connectionId,
+        // =======
+        //         room_title: room_title, // 방제목
+        //         song_seq: song_seq, // 노래제목 (일련번호 : 검색 예정)
+        //         mode: mode, // 방 모드 (일반 vs 비밀)
+        //         password: password, // 비밀번호
+        //         session_id: sessionResponse.id, // 세션 아이디
+        //         connection_id: connectionResponse.connectionId, // 연결 아이디
+        // >>>>>>> 52f28dbbc0a4a12eec865904332079153c69f780
       });
 
       const roomId = response.data.roomId;

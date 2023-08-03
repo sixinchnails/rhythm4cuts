@@ -75,7 +75,7 @@ public class GameInfo {
 
         lobbyDto.setGameSeq(this.getGameSeq());
         lobbyDto.setTitle(this.getTitle());
-        lobbyDto.setSongSeq(this.getSong().getSongSeq());
+//        lobbyDto.setSongSeq(this.getSong().getSongSeq());
         lobbyDto.setHeadcount(this.getHeadCount());
         lobbyDto.setIsSecret(this.getIsSecret() ? 1 : 0);
         lobbyDto.setPassword(this.getPassword());
