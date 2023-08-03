@@ -244,9 +244,6 @@ public class UserServiceImpl implements UserService {
     }
 
     public MailDto createMailAndCertificate(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
-
         String tempCertification = getRandomString(15);
 
         //비밀번호 저장 기능 필요
