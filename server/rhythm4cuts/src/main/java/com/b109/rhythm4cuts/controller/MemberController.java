@@ -149,6 +149,7 @@ public class MemberController {
     //닉네임 변경
     @PatchMapping("/nickname")
     public ResponseEntity updateNickname(@RequestBody UpdateUserNicknameDto dto){
+        System.out.println("updateNickname");
         userService.updateNickname(dto);
 
         return ResponseEntity.status(200).build();
