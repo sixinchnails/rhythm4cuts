@@ -62,6 +62,7 @@ function CreateRoom({ isOpen, handleClose }) {
           //         connection_id: connectionResponse.connectionId, // 연결 아이디
           // >>>>>>> 52f28dbbc0a4a12eec865904332079153c69f780
         },
+        //로그인 됐을 때의 토큰을 들고 와야 됨.
         {
           headers: {
             Authorization: "Bearer " + getCookie("access"),
