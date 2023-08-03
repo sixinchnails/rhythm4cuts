@@ -7,16 +7,15 @@ import { toggleReady } from "../../store";
 import Header from "../../components/Game/Header_light";
 import Next from "../../components/Game/NextToPlay";
 import WaitPlayer from "../../components/Game/WaitPlayer";
-// import PlayerComing from "../../components/Game/PlayerComing";
 import PlayerEmpty from "../../components/Game/PlayerEmpty";
 import InviteFriend from "../../components/Common/InviteFriend";
 import { fetchToken } from "../../store";
 import { userInfo } from "../../apis/userInfo";
 
 function GameWait() {
-  const { roomId } = useParams();
+  const { gameSeq } = useParams();
   const dispatch = useDispatch();
-  // const roomId = useSelector(state => state.room.roomId); // 리덕스 스토어에서 방 번호를 가져옵니다.
+
   const token = useSelector(state => state.session.token); // fetchToken 액션의 결과로부터 토큰을 가져옴
 
   const navigate = useNavigate();
@@ -59,11 +58,11 @@ function GameWait() {
   };
 
   useEffect(() => {
-    // roomId가 실제 방 번호일 경우 fetchToken 액션을 호출하여 방 토큰을 가져옵니다.
-    if (roomId) {
-      dispatch(fetchToken(roomId));
+    // gameSeq가 실제 방 번호일 경우 fetchToken 액션을 호출하여 방 토큰을 가져옵니다.
+    if (gameSeq) {
+      dispatch(fetchToken(gameSeq));
     }
-  }, [dispatch, roomId]);
+  }, [dispatch, gameSeq]);
 
   // 토큰이 가져와지고 세션을 생성해야 할 때 처리하는 useEffect 블록
   useEffect(() => {

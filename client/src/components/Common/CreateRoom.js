@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from "react";
 import axios from "axios";
 // import { Link } from "react-router-dom";
@@ -25,26 +26,26 @@ function CreateRoom({ isOpen, handleClose }) {
   const [songSeq, setSongSeq] = useState(""); // 노래 제목
   const [isSecret, setIsSecret] = useState("일반 방");
   const [password, setPassword] = useState("");
+  const [gameSeq, setGameSeq] = useState(""); // 방 번호
 
   const navigate = useNavigate(); // 페이지 이동
 
   const handleCreateRoom = async () => {
-
     try {
       const sessionResponse = await createSession(); // 수정된 함수 호출
       if (sessionResponse != null) {
         // OpenVidu 세션에 연결 생성
         const connectionResponse = await createConnection(sessionResponse.sessionId); // 수정된 함수 호출
 
-        if (connectionResponse.token) {
+        // if (connectionResponse.token) {
+        if (connectionResponse != null) {
           console.log("Token: ", connectionResponse.token);
           // 세션과 연결하거나 다른 로직을 실행합니다.
 
           // 상태를 업데이트
-          // setTitle(uuidv4());
+          setTitle(uuidv4());
 
           // 방 정보를 서버로 전송하는 Axios 요청
-          // try {
           const response = await axios.post(
             "/lobby/room",
             {
@@ -55,19 +56,23 @@ function CreateRoom({ isOpen, handleClose }) {
               sessionId: sessionResponse.id,  // 세션 아이디
               connectionId: connectionResponse.connectionId, // 연결 아이디
             },
-            //로그인 됐을 때의 토큰을 들고 와야 됨.
             {
               headers: {
                 Authorization: "Bearer " + getCookie("access"),
               },
             }
           );
+
           console.log("방이 만들어 졌엉.", response.data);
 
+          // // 방 번호를 상태에 업데이트
+          // setGameSeq(response.data.gameSeq);
+
           // 방 생성 후 해당 방으로 이동
-          navigate(`/GameWait/${title}`);
+          navigate(`/GameWait/${response.data.gameSeq}`);
+          
         } else {
-          console.log("Failed to create a connection or token.");
+          console.log("실패 to create a connection or token.");
         }
       } else {
         console.log("세션 생성 실패.");

@@ -70,7 +70,6 @@ function App() {
         <Route path="/Join" element={<Join />} />
 
         <Route path="/GameList" element={<GameList />} />
-        {/* <Route path="/GameWait" element={<GameWait />} /> */}
         <Route path="/GameWait/:roomId" element={<GameWait />} />
         <Route path="/GamePlay" element={<GamePlay />} />
         <Route path="/GameScore" element={<GameScore />} />
