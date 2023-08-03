@@ -99,7 +99,7 @@ const Home = () => {
           ></input>
         </div>
         <div className="login">
-          <button type="submit" onClick={login}>
+          <button type="submit" onClick={Login}>
             로그인
           </button>
         </div>
