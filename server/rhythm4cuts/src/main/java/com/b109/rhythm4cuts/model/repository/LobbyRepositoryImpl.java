@@ -65,6 +65,7 @@ public class LobbyRepositoryImpl implements LobbyRepository {
         em.flush();
         em.clear();
 
+        System.out.println("gameSeq: " + lobbyDto.getSessionId()); // debug
         GameInfo res = em.find(GameInfo.class, lobbyDto.getSessionId());
         System.out.println("gameSeq: " + lobbyDto.getGameSeq()); // debug
         return res.getGameSeq();
