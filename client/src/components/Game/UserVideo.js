@@ -1,35 +1,70 @@
-import React, { useEffect, useRef } from "react";
-import { Session } from "openvidu-browser";
+import React, { useEffect, useRef } from 'react';
+import { OpenVidu } from 'openvidu-browser';
 
-function UserVideo({ token, streamId }) {
-    const videoRef = useRef(null);
-    const sessionRef = useRef(null);
-    const subscriberRef = useRef(null);
+function UserVideo({ userToken, roomSession }) {
+    console.log('UserVideo roomSession:', roomSession);
+    console.log('UserVideo userToken:', userToken);
+
+    const videoRef = useRef();
 
     useEffect(() => {
-        const session = new Session();
-        sessionRef.current = session;
+        if (!roomSession || !userToken) {
+            return;
+        }
 
-        session.connect(token)
+        const OV = new OpenVidu();
+        const session = OV.initSession();
+
+        session.on('streamCreated', (event) => {
+            console.log('Stream created:', event.stream);
+            session.subscribe(event.stream, videoRef.current);
+        });
+
+        session.on('streamDestroyed', (event) => {
+            console.log('Stream destroyed:', event.stream);
+        });
+
+        session.connect(userToken)
             .then(() => {
-                const subscriber = session.subscribe(streamId, videoRef.current);
-                subscriberRef.current = subscriber;
+                let publisher;
+                try {
+                    publisher = OV.initPublisher(videoRef.current);
+                    session.publish(publisher);
+                } catch (error) {
+                    console.error('퍼블리셔 초기화 실패:', error);
+                    return;
+                }
+
+                publisher.on('streamCreated', (event) => {
+                    console.log('Publisher stream created:', event.stream);
+                });
+
+                publisher.on('streamDestroyed', (event) => {
+                    console.log('Publisher stream destroyed:', event.stream);
+                });
             })
-            .catch((error) => {
-                console.error("오픈비두 연결 실패:", error);
+            .catch(error => {
+                console.error('OpenVidu 세션 연결 실패: ', error);
             });
 
         return () => {
-            if (subscriberRef.current) {
-                sessionRef.current.unsubscribe(subscriberRef.current);
-            }
-            if (sessionRef.current) {
-                sessionRef.current.disconnect();
-            }
+            session.disconnect();
         };
-    }, [token, streamId]);
+    }, [roomSession, userToken]);
 
-    return <video ref={videoRef} autoPlay playsInline />;
+    return (
+        <div
+            style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}
+        >
+            <video ref={videoRef} autoPlay={true} style={{ width: '100%', height: '100%' }} />
+        </div>
+    );
 }
 
 export default UserVideo;

@@ -17,9 +17,10 @@ export const createConnection = async (sessionId) => {
         },
       }
     );
-    return response.data;
+    return response.data.token;
   } catch (error) {
-    console.error(error);
+
+    console.error("연결할때 에러:" + error);
     return null;
   }
 };

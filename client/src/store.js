@@ -3,8 +3,27 @@ import {
   createSlice,
   createAsyncThunk,
 } from "@reduxjs/toolkit";
-import { createRoom } from "./openvidu/RoomToken";
 import { closeSessionAndConnection } from "./openvidu/closeSessionAndConnection";
+
+// ----------------------------------------------------------------------------------------------------------------
+// 방 세션 관리
+const initialState = {
+  gameSeq: null,
+  session: null,
+};
+const roomState = createSlice({
+  name: "roomState",
+  initialState, // 초기값
+  reducers: {
+    setGameSeq: (state, action) => {
+      state.gameSeq = action.payload;
+    },
+    setSession: (state, action) => {
+      state.session = action.payload;
+    },
+  },
+})
+export const { setGameSeq, setSession } = roomState.actions;
 
 // 웹캠 스트림 상태를 저장하는 slice를 생성합니다.
 const webcamStreamSlice = createSlice({
@@ -17,21 +36,7 @@ const webcamStreamSlice = createSlice({
   },
 });
 
-// 웹캠 스트림을 설정하는 액션을 export 합니다.
 export const { setWebcamStream } = webcamStreamSlice.actions;
-
-// 방 토큰을 가져오는 비동기 액션을 생성합니다.
-// 이 액션은 방의 sessionId를 인수로 받아 OpenVidu 서버에서 토큰을 요청하고 이를 반환합니다.
-export const fetchToken = createAsyncThunk(
-  "session/fetchToken",
-  async (roomId) => {
-    try {
-      return await createRoom(roomId); // createRoom 함수를 호출하여 토큰을 가져옵니다.
-    } catch (error) {
-      throw error; // 에러를 다시 던집니다.
-    }
-  }
-);
 
 // 방을 종료하는 비동기 액션을 생성합니다.
 // 이 액션은 방의 sessionId와 연결의 connectionId를 인수로 받아 OpenVidu 서버에서 세션을 종료하고 이를 반환합니다.
@@ -41,49 +46,8 @@ export const closeSession = createAsyncThunk(
     await closeSessionAndConnection(sessionId, connectionId);
   }
 );
+// ----------------------------------------------------------------------------------------------------------------
 
-// 세션에 관한 Redux 슬라이스를 생성합니다.
-// 이 슬라이스는 세션의 상태와 관련된 정보를 Redux 상태에 저장하고 관리합니다.
-const sessionSlice = createSlice({
-  name: "session",
-  // 이 상태는 토큰 값, 상태(대기 중, 로딩 중, 성공, 실패), 에러 메시지 등을 관리합니다.
-
-  initialState: { token: null, status: "idle", error: null },
-  // 슬라이스에 대한 리듀서를 정의
-  reducers: {
-    // 여기서 액션을 정의합니다.
-    setToken: (state, action) => {
-      state.token = action.payload;
-    },
-    // ... 다른 액션들 ...
-  },
-  // 추가 리듀서를 정의합니다.
-  // fetchToken 및 closeSession 액션에 대한 응답을 처리하는 방법을 정의합니다.
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchToken.pending, (state) => {
-        // 토큰을 요청하는 동안 상태를 '로딩 중'으로 변경합니다.
-        state.status = "loading";
-      })
-      .addCase(fetchToken.fulfilled, (state, action) => {
-        // 토큰 요청이 성공하면 상태를 '성공'으로 변경하고, 토큰 값을 저장합니다.
-        state.status = "succeeded";
-        state.token = action.payload;
-      })
-      .addCase(fetchToken.rejected, (state, action) => {
-        // 토큰 요청이 실패하면 상태를 '실패'로 변경하고, 에러 메시지를 저장합니다.
-        state.status = "failed";
-        state.error = action.error.message;
-      })
-      .addCase(closeSession.fulfilled, (state, action) => {
-        // 세션이 종료되면 상태를 '대기 중'으로 변경하고, 토큰 값을 null로 설정합니다.
-        state.status = "idle";
-        state.token = null;
-      });
-  },
-});
-
-export const { setToken } = sessionSlice.actions;
 
 // 알림 상태를 저장하는 슬라이스
 const notificationSlice = createSlice({
@@ -426,7 +390,6 @@ let User_Rank = createSlice({
 
 export default configureStore({
   reducer: {
-    session: sessionSlice.reducer,
     GameShot_frameImage: GameShot_frameImage.reducer,
     GameScore_Result: GameScore_Result.reducer,
     GameWait_Ready: GameWait_Ready.reducer,
@@ -437,5 +400,6 @@ export default configureStore({
     MyPage_MyInfo: MyPage_MyInfo.reducer,
     webcamStream: webcamStreamSlice.reducer,
     notification: notificationSlice.reducer,
+    roomState: roomState.reducer,
   },
 });
