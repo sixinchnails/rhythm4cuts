@@ -18,4 +18,5 @@ public class UserDto {
     private int scoreSum;
     private int profileImageSeq;
     private String refreshToken;
+    private String connectionId;
 }

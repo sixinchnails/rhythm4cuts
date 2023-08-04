@@ -59,10 +59,6 @@ public class GameInfo {
     @Column(name = "session_id")
     private String sessionId;
 
-    // OpenVidu 커넥션 아이디
-    @Column(name = "connection_id")
-    private String connectionId;
-
     public GameInfo() {
         this.headCount = 1;
         this.isSecret = false;
@@ -81,7 +77,6 @@ public class GameInfo {
         lobbyDto.setPassword(this.getPassword());
 //        lobbyDto.setStatus(this.getRoomStatus());
         lobbyDto.setSessionId(this.getSessionId());
-        lobbyDto.setConnectionId(this.getConnectionId());
 
         return lobbyDto;
     }

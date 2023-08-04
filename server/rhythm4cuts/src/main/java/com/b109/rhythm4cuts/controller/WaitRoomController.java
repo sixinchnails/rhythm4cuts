@@ -11,7 +11,6 @@ public class WaitRoomController {
 
     // API 1. 대기방 친구 초대
 
-
     // API 2. 대기방 준비 완료
 
     // API 3. 대기방 (방장 권한) 게임 시작
