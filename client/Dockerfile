@@ -7,7 +7,7 @@ WORKDIR /app
 # 소스 코드 복사
 COPY package*.json ./
 COPY . .
-RUN npm ci --quiet
+RUN npm install
 
 # 패키지 설치 및 앱 빌드
 # RUN npm ci --quiet
