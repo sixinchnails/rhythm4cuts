@@ -35,9 +35,8 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        //configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT"));
+        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -51,7 +50,10 @@ public class WebSecurityConfig {
             "/member/register",
             "/member/reissue",
             "/",
-            "/**"
+//            "/**"
+            "/member/mail",
+            "/member/mailcheck",
+            "/stomp/**"
     );
 
     @Bean
@@ -65,12 +67,9 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers(excludedUrlPatterns.toArray(new String[0])).permitAll()
-<<<<<<< HEAD
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-=======
                 .antMatchers(HttpMethod.OPTIONS, "/member/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/member/**").permitAll()
->>>>>>> 264763d2b489ffa96f40102edcdbca92c8fd76f5
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()

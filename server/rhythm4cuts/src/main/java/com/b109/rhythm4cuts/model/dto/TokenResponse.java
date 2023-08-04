@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class TokenResponse {
+    private String email;
     private String accessToken;
     private String refreshToken;
     //요청 시 토큰만 반환하는 것으로 변경

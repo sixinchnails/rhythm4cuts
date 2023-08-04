@@ -9,6 +9,8 @@ import {
   Paper,
   TextField,
   IconButton,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import RoomList from "../../components/Game/RoomList";
 import FriendList from "../../components/Game/FriendList";
@@ -19,19 +21,49 @@ import CreateRoom from "../../components/Common/CreateRoom";
 import AddFriend from "../../components/Common/AddFriend";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
+import { getCookie } from "../../utils/cookie";
 
 function GameList() {
+  // //로그인 상태 확인
+  // const [isLogin, setIsLogin] = useState(false);
+
+  // try {
+  //   userInfo()
+  //     .then(res => {
+  //       if (res.status === 200) {
+  //         console.log(res);
+  //         setIsLogin(true);
+  //       }
+  //     })
+  //     .catch(error => {
+  //       window.alert("로그인을 해주세요!");
+  //       navigate("/");
+  //     });
+  // } catch (error) {
+  //   console.log(error);
+  // }
+
   // let rooms = useSelector(state => state.GameList_Room); // 방 리스트
   const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
+
+  // 검색 카테고리 상태 추가
+  const [searchCategory, setSearchCategory] = useState("gameSeq"); // 기본값을 'gameSeq'로 설정
 
   // 방 리스트 가져오기
   useEffect(() => {
     axios
-      // .get("/lobby/list") // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
-      // .then(response => {
-      .get("http://i9b109.p.ssafy.io/lobby/list") // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
+      // <<<<<<< HEAD
+      //       .get("/lobby/list") // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
+      //       .then(response => {
+      // =======
+      .get("/lobby/list", {
+        headers: {
+          Authorization: "Bearer " + getCookie("access"),
+        },
+      }) // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
       .then(response => {
-        setRooms(response.data); // 서버 응답으로 받은 방 리스트를 상태로 업데이트합니다.
+        console.log(response.data);
+        setRooms(response.data.data); // 서버 응답으로 받은 방 리스트를 상태로 업데이트합니다.
       })
       .catch(error => {
         console.error("Failed to fetch room list.", error);
@@ -42,24 +74,24 @@ function GameList() {
 
   const navigate = useNavigate();
 
-  // //로그인 상태 확인
-  // const [isLogin, setIsLogin] = useState(false);
+  //로그인 상태 확인
+  const [isLogin, setIsLogin] = useState(false);
 
-  // try {
-  //   userInfo()
-  //     .then((res) => {
-  //       if (res.status === 200) {
-  //         console.log(res);
-  //         setIsLogin(true);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       window.alert("로그인을 해주세요!");
-  //       navigate("/");
-  //     });
-  // } catch (error) {
-  //   console.log(error);
-  // }
+  try {
+    userInfo()
+      .then(res => {
+        if (res.status === 200) {
+          console.log(res);
+          setIsLogin(true);
+        }
+      })
+      .catch(error => {
+        window.alert("로그인을 해주세요!");
+        navigate("/");
+      });
+  } catch (error) {
+    console.log(error);
+  }
 
   // let rooms = useSelector((state) => state.GameList_Room); // 방 리스트
   // let friends = useSelector((state) => state.GameList_Friend); // 친구 리스트
@@ -92,11 +124,24 @@ function GameList() {
   const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
 
   // 검색어에 따라 방 리스트 필터링
-  let filteredRooms = rooms.filter(
-    room =>
-      room.number.toString().toLowerCase().includes(searchTerm.toLowerCase()) || // 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
-      room.song.toLowerCase().includes(searchTerm.toLowerCase()) // 노래 제목이 검색어를 포함하는지 확인
-  );
+  let filteredRooms = rooms.filter(room => {
+    switch (searchCategory) {
+      case "gameSeq":
+        return room.gameSeq
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()); // 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
+      case "title":
+        return room.title.toLowerCase().includes(searchTerm.toLowerCase()); // 방 제목이 검색어를 포함하는지 확인
+      case "songSeq":
+        return room.songSeq
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()); // 노래 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
+      default:
+        return true; // 검색 카테고리가 설정되지 않은 경우, 모든 방을 표시
+    }
+  });
 
   const noOfPages = Math.ceil(filteredRooms.length / itemsPerPage); // 필터링된 방 리스트를 통해 페이지 수 계산
 
@@ -127,6 +172,7 @@ function GameList() {
               .slice((page - 1) * itemsPerPage, page * itemsPerPage)
               .map((room, index) => (
                 <Grid item xs={6} key={index}>
+                  {/* Rommlist로 room값들을 전해준다. */}
                   <RoomList key={index} room={room} />
                 </Grid>
               ))}
@@ -176,6 +222,16 @@ function GameList() {
             >
               <RefreshIcon style={{ color: "#ffffff" }} />
             </IconButton>
+            {/* 검색 카테고리 추가 */}
+            <Select
+              value={searchCategory}
+              onChange={e => setSearchCategory(e.target.value)}
+              style={{ marginRight: "1em" }}
+            >
+              <MenuItem value={"gameSeq"}>방 번호</MenuItem>
+              <MenuItem value={"title"}>방 이름</MenuItem>
+              <MenuItem value={"songSeq"}>노래 제목</MenuItem>
+            </Select>
             <TextField
               label="검색"
               variant="outlined"

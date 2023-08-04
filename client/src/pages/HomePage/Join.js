@@ -1,6 +1,6 @@
-// Home.js
-import React, { useCallback, useEffect, useState } from "react";
+// Join.js
 /* eslint-disable */
+import React, { useCallback, useEffect, useState } from "react";
 import "./Join.css";
 import JoinImage from "../../components/My/My_JoinImage";
 import JoinInfo from "../../components/My/My_JoinInfo";
@@ -9,7 +9,7 @@ import Header from "../../components/Home/Header";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Home = () => {
+const Join = () => {
   useEffect(() => {
     document.body.style.backgroundColor = "#F8E8EE";
     // 컴포넌트 unmount 시점에 원래의 배경색으로 되돌리기 위한 cleanup 함수
@@ -27,35 +27,31 @@ const Home = () => {
     setJoinInfo(data); // JoinInfo 컴포넌트로부터 받은 데이터를 상태에 저장
   }, []);
 
+  //회원가입
   const handleJoinComplete = async () => {
-    // 비밀번호 유효성 검사
-    const passwordRegex = new RegExp(
-      "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-    );
-    const isPasswordValid = passwordRegex.test(joinInfo.password);
-
-    if (!isPasswordValid) {
-      alert("비밀번호 형식을 확인해주세요!");
-      return;
-    }
-
-    // 비밀번호와 비밀번호 확인 입력이 같은지 확인
-    if (joinInfo.password !== joinInfo.passwordConfirm) {
-      alert("비밀번호가 다릅니다!");
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        "http://i9b109.p.ssafy.io:8080/member/register",
-        joinInfo
-      );
-      const confirmed = window.confirm("회원가입이 완료! 로그인 해주세요");
-      if (confirmed) {
-        navigate("/Login");
+    if (joinInfo.nickNameStatus === false) {
+      window.confirm("닉네임 중복확인하세요.");
+    } else if (joinInfo.emailCodeStatus === false) {
+      window.confirm("이메일 인증확인하세요.");
+    } else if (
+      joinInfo.isPasswordValid === false ||
+      joinInfo.password !== joinInfo.passwordConfirm
+    ) {
+      window.confirm("비밀번호 확인하세요.");
+    } else {
+      try {
+        const response = await axios.post(
+          "/member/register",
+          // "http://lo/calhost:8080/member/register",
+          joinInfo
+        );
+        const confirmed = window.confirm("회원가입이 완료! 로그인 해주세요");
+        if (confirmed) {
+          navigate("/Login");
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
     }
   };
 
@@ -86,4 +82,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Join;

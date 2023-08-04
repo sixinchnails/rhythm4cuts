@@ -244,17 +244,15 @@ public class UserServiceImpl implements UserService {
     }
 
     public MailDto createMailAndCertificate(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
-
         String tempCertification = getRandomString(15);
 
         //비밀번호 저장 기능 필요
+        redisTemplate.opsForValue().set(email, tempCertification, Duration.ofMinutes(5).toMillis(), TimeUnit.MILLISECONDS);
 
         MailDto mailDto = new MailDto();
         mailDto.setAddress(new String[] {email});
         mailDto.setTitle("Rhythm4Cuts 인증번호 발급 안내 메일입니다.");
-        mailDto.setContent("안녕하세요. Rhythm4Cuts 인증번호를 발급드립니다. 회원님의 임시 인증번호는 " + tempCertification + "입니다.");
+        mailDto.setContent("안녕하세요. Rhythm4Cuts 인증번호를 발급드립니다. 회원님의 임시 인증번호는 " + tempCertification + "입니다. 임시 비밀번호의 유효기간은 5분입니다.");
 
         return mailDto;
     }
@@ -270,11 +268,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public boolean checkCertificate(CertificateDto certificateDto) {
-        User user = userRepository.findByEmail(certificateDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+        String redisCert = (String) redisTemplate.opsForValue().get(certificateDto.getEmail());
+        boolean res = (redisCert.equals(certificateDto.getCertificate()))? true:false;
 
-        return false;
-        //return (certificateDto.getCertificate().equals(user.getCertificate()))? true:false;
+        if (res) redisTemplate.delete(certificateDto.getCertificate());
+
+        return res;
     }
 
     public TokenResponse generateToken(UserDto userDto) {

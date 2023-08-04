@@ -11,6 +11,7 @@ const LoginHeader = () => {
   const checkLogin = () => {
     removeCookie("access");
     removeCookie("refresh");
+    removeCookie("email");
     window.location.reload();
   };
 

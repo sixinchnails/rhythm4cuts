@@ -1,18 +1,21 @@
 // Login.js
 /* eslint-disable */
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SearchPassword from "../../components/Common/SearchPassword";
 import "./Login.css";
 import { Box } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../apis/login";
-// import { loginHandler } from "../../store";
 import { setCookie } from "../../utils/cookie";
 
 const Home = () => {
+  const emailRef = useRef();
+
+  useEffect(() => {
+    emailRef.current.focus();
+  }, []);
+
   let navigate = useNavigate();
-  let dispatch = useDispatch();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -26,22 +29,17 @@ const Home = () => {
 
   // id 파트
   const [id, setId] = useState("");
-  const onChangeId = e => {
+  const onChangeId = (e) => {
     setId(e.target.value);
   };
 
   // pw 파트
   const [pw, setPW] = useState("");
-  const onChangePW = e => {
+  const onChangePW = (e) => {
     setPW(e.target.value);
   };
 
-  // // 로그인 유저 정보
-  // let loginUser = useSelector((state) => {
-  //   return state.loginUser;
-  // });
-
-  const onKeyPress = e => {
+  const onKeyPress = (e) => {
     if (e.key === "Enter") {
       Login();
     }
@@ -51,14 +49,11 @@ const Home = () => {
   const Login = async () => {
     try {
       const result = await login(id, pw);
-      console.log(result);
       if (result.status === 200) {
         window.alert("로그인을 성공하였습니다!");
-        // dispatch(loginHandler(result.data));
-
         setCookie("access", result.data.accessToken);
         setCookie("refresh", result.data.refreshToken);
-        // setCookie("email", result.data.email);
+        setCookie("email", result.data.email);
         navigate("/");
       } else {
         window.alert("로그인에 실패하였습니다!");
@@ -83,6 +78,7 @@ const Home = () => {
         <div className="input">
           <input
             type="text"
+            ref={emailRef}
             placeholder="ID(이메일)"
             value={id}
             onChange={onChangeId}
@@ -99,7 +95,7 @@ const Home = () => {
           ></input>
         </div>
         <div className="login">
-          <button type="submit" onClick={login}>
+          <button type="submit" onClick={Login}>
             로그인
           </button>
         </div>
