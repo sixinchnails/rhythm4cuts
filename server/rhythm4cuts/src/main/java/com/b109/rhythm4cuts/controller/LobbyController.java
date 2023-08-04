@@ -2,6 +2,7 @@ package com.b109.rhythm4cuts.controller;
 
 import com.b109.rhythm4cuts.model.dto.LobbyDto;
 import com.b109.rhythm4cuts.model.dto.SongDto;
+import com.b109.rhythm4cuts.model.dto.UserDto;
 import com.b109.rhythm4cuts.model.service.LobbyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -94,6 +95,18 @@ public class LobbyController {
         res.put("message", "Success");
         res.put("statusCode", 200);
         res.put("data", pw);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    // API 7. 방 입장
+    @PutMapping("/enter")
+    public ResponseEntity<?> updateConnectionId(@RequestBody UserDto userDto) throws SQLException {
+        lobbyService.updateConnectionId(userDto);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("message", "Success");
+        res.put("statusCode", 200);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }

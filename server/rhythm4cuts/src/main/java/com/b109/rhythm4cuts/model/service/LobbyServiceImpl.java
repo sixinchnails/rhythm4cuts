@@ -4,6 +4,7 @@ import com.b109.rhythm4cuts.model.domain.GameInfo;
 import com.b109.rhythm4cuts.model.domain.Song;
 import com.b109.rhythm4cuts.model.dto.LobbyDto;
 import com.b109.rhythm4cuts.model.dto.SongDto;
+import com.b109.rhythm4cuts.model.dto.UserDto;
 import com.b109.rhythm4cuts.model.repository.LobbyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -73,5 +74,10 @@ public class LobbyServiceImpl implements LobbyService {
         GameInfo gameInfo = lobbyRepository.selectPw(gameSeq);
 
         return gameInfo.getPassword();
+    }
+
+    @Override
+    public void updateConnectionId(UserDto userDto) throws SQLException {
+        lobbyRepository.putConnectionId(userDto);
     }
 }

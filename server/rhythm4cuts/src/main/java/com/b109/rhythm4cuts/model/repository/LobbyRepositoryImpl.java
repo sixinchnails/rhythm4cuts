@@ -2,7 +2,9 @@ package com.b109.rhythm4cuts.model.repository;
 
 import com.b109.rhythm4cuts.model.domain.GameInfo;
 import com.b109.rhythm4cuts.model.domain.Song;
+import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.LobbyDto;
+import com.b109.rhythm4cuts.model.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -84,5 +86,17 @@ public class LobbyRepositoryImpl implements LobbyRepository {
         return em.createQuery(jpql, GameInfo.class)
                 .setParameter("gameSeq", gameSeq)
                 .getSingleResult();
+    }
+
+    @Override
+    public void putConnectionId(UserDto userDto) throws SQLException {
+        // UPDATE User u SET u.connectionId = userDto.connectionId WHERE u.userSeq = userDto.userSeq
+        String jpql = "UPDATE User u SET u.connectionId = :connectionId WHERE u.userSeq = :userSeq";
+
+        em.createQuery(jpql, User.class)
+                .setParameter("connectionId", userDto.getConnectionId())
+                .setParameter("userSeq", userDto.getUserSeq())
+                .executeUpdate();
+        em.clear();
     }
 }
