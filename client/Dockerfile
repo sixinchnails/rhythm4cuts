@@ -23,7 +23,7 @@ FROM nginx:latest
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Nginx 포트 노출
-EXPOSE 80
+EXPOSE 5442
 
 # Nginx 서버 시작
 CMD ["nginx", "-g", "daemon off;"]
