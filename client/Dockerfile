@@ -13,17 +13,20 @@ COPY . ./
 RUN npm run build
 
 
-# Nginx 이미지를 사용하여 앱 실행 단계
-FROM nginx:latest
+# prod environment
+FROM nginx:stable-alpine
 
-# Nginx 설정 파일 복사
-COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
-
-# 빌드된 앱을 Nginx에 복사
+# 이전 빌드 단계에서 빌드한 결과물을 /usr/share/nginx/html 으로 복사한다.
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Nginx 포트 노출
-EXPOSE 5442
+# 기본 nginx 설정 파일을 삭제한다. (custom 설정과 충돌 방지)
+RUN rm /etc/nginx/conf.d/default.conf
+
+# custom 설정파일을 컨테이너 내부로 복사한다.
+COPY nginx/nginx.conf /etc/nginx/conf.d
+
+# 컨테이너의 80번 포트를 열어준다.
+EXPOSE 80
 
 # Nginx 서버 시작
 CMD ["nginx", "-g", "daemon off;"]
