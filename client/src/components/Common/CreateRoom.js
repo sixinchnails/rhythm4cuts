@@ -1,4 +1,8 @@
+/* eslint-disable */
 import React, { useState } from "react";
+import axios from "axios";
+// import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Modal,
   Box,
@@ -11,13 +15,78 @@ import {
   FormControlLabel,
   Radio,
 } from "@mui/material";
+import { createSession } from "../../openvidu/sessionInitialization";
+import { createConnection } from "../../openvidu/connectionInitialization";
+// UUID는 "Universally Unique Identifier"의 약자로, 고유한 값을 생성하기 위한 표준
+import { v4 as uuidv4 } from "uuid";
+import { getCookie } from "../../utils/cookie";
 
 function CreateRoom({ isOpen, handleClose }) {
-  const [mode, setMode] = useState("일반 방");
+  const [title, setTitle] = useState(uuidv4()); // 방 제목
+  const [songSeq, setSongSeq] = useState(""); // 노래 제목
+  const [isSecret, setIsSecret] = useState("일반 방");
   const [password, setPassword] = useState("");
+  const [gameSeq, setGameSeq] = useState(""); // 방 번호
+
+  const navigate = useNavigate(); // 페이지 이동
+
+  const handleCreateRoom = async () => {
+    try {
+      const sessionResponse = await createSession(); // 수정된 함수 호출
+
+      if (sessionResponse != null) {
+        // OpenVidu 세션에 연결 생성
+        const connectionResponse = await createConnection(sessionResponse.sessionId); // 수정된 함수 호출
+
+        if (connectionResponse != null) {
+          console.log("Token: ", connectionResponse.token);
+
+
+          // 방 정보를 서버로 전송하는 Axios 요청
+          const response = await axios.post(
+            "/lobby/room",
+            {
+              title: title, // 방 제목
+              songSeq: songSeq, // 노래제목 (일련번호 : 검색 예정)
+              isSecret: isSecret === "비밀 방" ? 1 : 0, // 방 모드 (일반 vs 비밀)
+              password: password, // 비밀번호
+              sessionId: sessionResponse.id,  // 세션 아이디
+              connectionId: connectionResponse.connectionId, // 연결 아이디
+            },
+            {
+              headers: {
+                Authorization: "Bearer " + getCookie("access"),
+              },
+            }
+          );
+          console.log("연결아이디: " + connectionResponse.connectionId);
+          console.log("세션아이디: " + sessionResponse.id);
+          console.log("방이 만들어 졌엉.", response.data.data);
+
+          // 방 번호를 상태에 업데이트
+          setGameSeq(response.data.data);
+
+          // 방 생성 후 해당 방으로 이동
+          console.log("${response.data.gameSeq}");
+          navigate(`/GameWait/${response.data.data}`);
+
+        } else {
+          console.log("만들기 실패 a connection or token.");
+        }
+      } else {
+        console.log("세션 생성 실패 약!.");
+      }
+    } catch (error) {
+      console.error("방 생성 실패 닥!.", error);
+    }
+  };
+
+  const handleSongChange = event => {
+    setSongSeq(event.target.value);
+  };
 
   const handleModeChange = event => {
-    setMode(event.target.value);
+    setIsSecret(event.target.value);
   };
 
   const handlePasswordChange = event => {
@@ -37,7 +106,8 @@ function CreateRoom({ isOpen, handleClose }) {
           border: "2px solid #000",
           boxShadow: 24,
           p: 4,
-        }}>
+        }}
+      >
         <img
           src="/images/CreateRoom.gif"
           alt="망치질"
@@ -54,21 +124,25 @@ function CreateRoom({ isOpen, handleClose }) {
           variant="outlined"
           fullWidth
           style={{ marginBottom: "20px" }}
+          onChange={event => setTitle(event.target.value)}
         />
         <TextField
           label="노래 제목"
           variant="outlined"
           fullWidth
           style={{ marginBottom: "20px" }}
+          value={songSeq}
+          onChange={handleSongChange}
         />
         <FormControl component="fieldset" style={{ marginBottom: "20px" }}>
           <FormLabel component="legend">모드</FormLabel>
           <RadioGroup
             row
-            aria-label="mode"
+            aria-label="isSecret"
             name="row-radio-buttons-group"
-            value={mode}
-            onChange={handleModeChange}>
+            value={isSecret}
+            onChange={handleModeChange}
+          >
             <FormControlLabel
               value="일반 방"
               control={<Radio />}
@@ -81,7 +155,7 @@ function CreateRoom({ isOpen, handleClose }) {
             />
           </RadioGroup>
         </FormControl>
-        {mode === "비밀 방" && (
+        {isSecret === "비밀 방" && (
           <TextField
             type="password"
             label="비밀번호"
@@ -93,8 +167,11 @@ function CreateRoom({ isOpen, handleClose }) {
           />
         )}
         <Stack direction="row" spacing={2} justifyContent="center">
-          {/* 지금은 누르면 창이 닫히도록 해놨지만, 나중엔 서버에 Axios로 보내야 함 */}
-          <Button variant="contained" color="primary" onClick={handleClose}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleCreateRoom}
+          >
             방 만들기
           </Button>
           <Button variant="contained" onClick={handleClose}>

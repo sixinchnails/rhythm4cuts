@@ -1,3 +1,4 @@
+/* eslint-disable */
 import "./My_ModifyInfo.css";
 import Button from "@mui/material/Button";
 import { useState, useEffect } from "react";
@@ -5,9 +6,11 @@ import React, { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateNickname, updatePassword, updateProfilePic } from "../../store";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { getCookie } from "../../utils/cookie";
 
-function UserInfo() {
-  const Info = useSelector(state => state.MyPage_MyInfo);
+function UserInfo(props) {
+  const Info = useSelector((state) => state.MyPage_MyInfo);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   //라우터
@@ -17,9 +20,9 @@ function UserInfo() {
   const [passwordEdit, setPasswordEdit] = useState(false);
 
   // 값들 불러오기
-  const nicknameItem = Info.find(item => item.name === "닉네임");
-  const passwordItem = Info.find(item => item.name === "비밀번호");
-  const profilePic = Info.find(item => item.name === "프로필 사진")?.value;
+  const nicknameItem = Info.find((item) => item.name === "닉네임");
+  const passwordItem = Info.find((item) => item.name === "비밀번호");
+  const profilePic = Info.find((item) => item.name === "프로필 사진")?.value;
 
   // 비밀번호 수정 관련 상태 변수 추가
   const [password, setPassword] = useState("");
@@ -35,13 +38,13 @@ function UserInfo() {
   const [selectedImage, setSelectedImage] = useState(profilePic);
 
   const handleComplete = () => {
-    if (!isValidPassword) {
+    if (!isValidPassword && password.length > 0) {
+      // 비밀번호가 비어있지 않으면서 형식이 잘못된 경우에만 메시지 표시
       window.alert("비밀번호 형식을 확인해주세요");
       return;
     }
     const confirmed = window.confirm("수정을 완료하시겠습니까?");
     if (confirmed) {
-      handleNicknameUpdate(nickname);
       handlePasswordUpdate(confirmPassword);
       handleProfilePicUpdate(selectedImage);
       window.alert("수정이 완료되었습니다.");
@@ -49,25 +52,18 @@ function UserInfo() {
     }
   };
 
-  const handleNicknameUpdate = newNickname => {
-    if (newNickname === "") {
-      newNickname = nicknameItem.value; // if no new nickname is provided, use the original one
-    }
-    dispatch(updateNickname(newNickname));
-  };
-
-  const handlePasswordUpdate = newPassword => {
+  const handlePasswordUpdate = (newPassword) => {
     if (newPassword === "") {
       newPassword = passwordItem.value; // if no new password is provided, use the original one
     }
     dispatch(updatePassword(newPassword));
   };
 
-  const handleProfilePicUpdate = newProfilePic => {
+  const handleProfilePicUpdate = (newProfilePic) => {
     dispatch(updateProfilePic(newProfilePic));
   };
 
-  const handleFileChange = e => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -83,16 +79,72 @@ function UserInfo() {
   };
 
   // 비밀번호 유효성 검사 함수
-  const checkPassword = password => {
+  const checkPassword = (password) => {
     const regex =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     return regex.test(password);
   };
 
   useEffect(() => {
+    // 비밀번호가 비어있지 않은 경우에만 유효성 검사 수행
     setIsValidPassword(checkPassword(password));
     setIsMatchPassword(password === confirmPassword);
   }, [password, confirmPassword]);
+
+  //닉네임 인증
+  const [nickNameCheckStatus, setNickNameCheckStatus] = useState(false);
+
+  const nickNameCheck = async () => {
+    try {
+      // const response = await axios.get(
+      //   `http://localhost:8080/member/nickname?nickname=${nickname}`
+      // );
+      const response = await axios.get(`nickname?nickname=${nickname}`);
+      if (response.data.duplicate === false) {
+        setNickNameCheckStatus(true);
+        window.confirm("사용 가능한 닉네임입니다.");
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      console.log(error);
+      window.confirm("사용중인 닉네임입니다.");
+    }
+  };
+
+  //닉네임 변경
+  const nickNameModify = async () => {
+    const access = getCookie("access");
+    try {
+      if (nickNameCheckStatus) {
+        const response = await axios.patch(
+          // "http://localhost:8080/member/nickname",
+          "member/nickname",
+          {
+            email: getCookie("email"),
+            nickname: nickname,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + access,
+            },
+          }
+        );
+        if (response.status === 200) {
+          window.confirm("닉네임이 변경되었습니다.");
+          setNicknameEdit(!nicknameEdit);
+          navigate("/MyModify");
+        } else {
+          throw new Error();
+        }
+      } else {
+        window.confirm("닉네임 중복 확인을 해주세요.");
+      }
+    } catch (error) {
+      console.log(error);
+      window.confirm("닉네임 변경에 실패했습니다.");
+    }
+  };
 
   return (
     <div className="mainn-container">
@@ -107,7 +159,7 @@ function UserInfo() {
               }}
             >
               <span className="modify-name">닉네임</span>
-              <span className="modify-value">{nicknameItem.value}</span>
+              <span className="modify-value">{props.nickName}</span>
               <Button
                 className="modify-value-button"
                 style={{ left: "170px" }}
@@ -132,13 +184,25 @@ function UserInfo() {
                   type="text"
                   className="modify-input"
                   value={nickname}
-                  onChange={e => setNickname(e.target.value)}
+                  placeholder={props.nickName}
+                  onChange={(e) => {
+                    setNickname(e.target.value);
+                    setNickNameCheckStatus(false);
+                  }}
                 />
                 <Button
                   color="primary"
                   style={{ minWidth: "90px", top: "20px" }}
+                  onClick={nickNameCheck}
                 >
                   중복 확인
+                </Button>
+                <Button
+                  color="warning"
+                  style={{ minWidth: "50px", top: "20px" }}
+                  onClick={nickNameModify}
+                >
+                  완료
                 </Button>
               </div>
             )}
@@ -176,7 +240,7 @@ function UserInfo() {
                     className="modify-input"
                     placeholder="영어,숫자,특수 기호 포함 8자리 이상"
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   {isValidPassword && password && (
                     <img
@@ -219,8 +283,19 @@ function UserInfo() {
                     className="modify-input"
                     placeholder="영어,숫자,특수 기호 포함 8자리 이상"
                     value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                   />
+                  <Button
+                    color="warning"
+                    style={{
+                      minWidth: "50px",
+                      top: "20px",
+                      marginLeft: "100px",
+                    }}
+                    onClick={nickNameModify}
+                  >
+                    완료
+                  </Button>
                   {password === confirmPassword && confirmPassword && (
                     <img
                       src={"/images/체크.png"}

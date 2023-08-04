@@ -68,8 +68,10 @@ body {
   position: relative;
 }
 
-.Home2 > h1 {
+.Home2 > .title {
   color: aqua;
+  font-size: xx-large;
+  font-weight: bold;
   text-align: center;
   padding-top: 50px;
 }
@@ -104,7 +106,7 @@ body {
 }
 
 .Home3 > .content > .rank1 {
-  margin-top: 5%;
+  margin-top: 3%;
 }
 
 .Home3 > .content > .rank1 > h1 {
@@ -163,7 +165,7 @@ body {
 }
 
 .Home3 > .content > .rank2 {
-  margin-top: 5%;
+  margin-top: 3%;
 }
 .Home3 > .content > .rank2 > .total_rank {
   margin-top: 50px;
@@ -182,7 +184,7 @@ body {
 }
 
 .Home3 > .content > .rank2 > .top100 {
-  height: 43%;
+  height: 38%;
   width: 35vw;
   background-color: #eeccd9;
   opacity: 0.8;
@@ -192,7 +194,6 @@ body {
   display: flex;
   justify-content: center;
   width: 100%;
-  height: 10%;
 }
 
 .Home3 > .content > .rank2 > .top100 > div > .category {
@@ -242,6 +243,9 @@ body {
 }
 
 .Home4 > .sideBar > .calender > .react-datepicker-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding-top: 5%;
 }
 
@@ -253,6 +257,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 5vh;
 }
 
 .Home4
@@ -266,9 +271,10 @@ body {
   background-color: black;
   box-sizing: border-box;
   width: 80%;
-  height: 10%;
+  height: 100%;
   color: WHITE;
   text-align: center;
+  font-size: x-large;
 }
 
 .Home4

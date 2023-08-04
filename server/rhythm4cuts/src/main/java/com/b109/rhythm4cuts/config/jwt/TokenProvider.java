@@ -6,6 +6,8 @@ import com.b109.rhythm4cuts.model.dto.TokenResponse;
 import com.b109.rhythm4cuts.model.dto.UserDto;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,8 +22,10 @@ import java.util.Set;
 @Service
 public class TokenProvider {
     private final JwtProperties jwtProperties;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    public final static Duration accessExpiredAt = Duration.ofMinutes(30), refreshExpiredAt = Duration.ofDays(14);
 
-    public TokenResponse generateToken(UserDto userDto, Duration accessExpiredAt, Duration refreshExpiredAt) {
+    public TokenResponse generateToken(UserDto userDto) {
         Date now = new Date();
 
         return makeToken(new Date(now.getTime() + accessExpiredAt.toMillis()), new Date(now.getTime() + refreshExpiredAt.toMillis()), userDto);
@@ -55,6 +59,7 @@ public class TokenProvider {
                 .builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .email(userDto.getEmail())
                 .build();
     }
 
@@ -66,9 +71,14 @@ public class TokenProvider {
                     .parseClaimsJws(token);
 
             return true;
-        } catch (ExpiredJwtException e) {
+        } catch(SecurityException | MalformedJwtException e) {
+            logger.error("Invalid JWT signature");
             return false;
-        } catch(Exception e) {
+        } catch(UnsupportedJwtException e) {
+            logger.error("Unsupported JWT token");
+            return false;
+        } catch(IllegalArgumentException e) {
+            logger.error("JWT token is invalid");
             return false;
         }
     }
@@ -83,12 +93,22 @@ public class TokenProvider {
 
     //메서드 4. 토큰 기반으로 유저 ID(이메일)를 가져오는 메서드
     public String getUserId(String token) {
-        Claims claims = getClaims(token);
-        return claims.get("id", String.class);
+        //Claims claims = getClaims(token);
+        //return claims.get("id", String.class);
+        return getClaims(token).getSubject();
+    }
+
+    public Date getExpirationDateFromToken(String token) {
+        return getClaims(token).getExpiration();
+    }
+
+    public Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
     }
 
     //메서드 5. 클레임 조회 메서드
-    private Claims getClaims(String token) {
+    private Claims getClaims(String token) throws ExpiredJwtException {
         return Jwts.parser()
                 .setSigningKey(jwtProperties.getSecretKey())
                 .parseClaimsJws(token)

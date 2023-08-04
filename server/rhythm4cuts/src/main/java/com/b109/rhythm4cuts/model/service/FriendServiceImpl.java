@@ -84,8 +84,7 @@ public class FriendServiceImpl implements FriendService{
     @Override
     public UserDto getUserInfo(Integer userSeq) throws Exception{
         User user = friendRepository.selectUser(userSeq);
-        UserDto userDto = user.getUserDto();
 
-        return userDto;
+        return user.getUserDto();
     }
 }

@@ -14,4 +14,3 @@ public interface FilmRepository extends JpaRepository<GameImage, Long> {
     @Query("SELECT g FROM GameImage g WHERE YEAR(g.createDate) = :year AND MONTH(g.createDate) = :month AND DAY(g.createDate) = :day")
     Page<GameImage> findByDate(int year, int month, int day, Pageable pageable);
 }
-

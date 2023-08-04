@@ -3,6 +3,7 @@ package com.b109.rhythm4cuts.model.service;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.*;
 import org.hibernate.sql.Update;
+import org.springframework.http.ResponseEntity;
 
 public interface UserService {
     // Find a user by their ID
@@ -21,13 +22,13 @@ public interface UserService {
     // Save a new user with the provided information
     String save(AddUserRequest dto);
 
-    String getProfileImg(String email);
+    Integer getProfileImg(String email);
 
     void patchProfileImg(UpdateProfileImgDto dto);
 
     void updateNickname(UpdateUserNicknameDto dto);
 
-    void updatePassword(String accessToken, UpdateUserPasswordDto dto);
+    void updatePassword(UpdateUserPasswordDto dto);
 
     //상태 변환만 할 예정
     void logout();
@@ -45,4 +46,8 @@ public interface UserService {
     void sendEmail(MailDto mailDto);
 
     boolean checkCertificate(CertificateDto certificateDto);
+
+    TokenResponse generateToken(UserDto userDto);
+
+    ResponseEntity<?> reissueAuthenticationToken(TokenRequestDto tokenRequestDto);
 }

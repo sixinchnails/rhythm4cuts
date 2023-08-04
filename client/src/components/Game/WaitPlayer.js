@@ -1,10 +1,14 @@
+// WaitPlayer.js
+// 필요없을수도.
+
 import React from "react";
 import { useSelector } from "react-redux";
 import { Card, CardContent, Box } from "@mui/material";
-import Webcam from "./Webcam";
+import Webcam from './Webcam'; // 웹캠 컴포넌트 불러오기
 
-function WaitPlayer({ playerId }) {
+function WaitPlayer({ playerId, gameSeq }) {
   const isReady = useSelector((state) => state.GameWait_Ready[playerId]);
+  const webcamStream = useSelector((state) => state.webcamStream); // 웹캠 스트림 가져오기
 
   return (
     <Box>
@@ -13,8 +17,8 @@ function WaitPlayer({ playerId }) {
           width: "15vw",
           height: "32vh",
           position: "relative",
-        }}>
-        {/* 준비 상태일 때만 대각선 띠와 READY 텍스트를 표시합니다 */}
+        }}
+      >
         {isReady && (
           <Box
             sx={{
@@ -28,7 +32,8 @@ function WaitPlayer({ playerId }) {
                 "linear-gradient(to top right, transparent 50%, green 50%)",
               opacity: 0.7,
               zIndex: 1,
-            }}>
+            }}
+          >
             <Box
               sx={{
                 position: "absolute",
@@ -38,7 +43,8 @@ function WaitPlayer({ playerId }) {
                 fontSize: "2em",
                 color: "white",
                 fontWeight: "bold",
-              }}>
+              }}
+            >
               READY
             </Box>
           </Box>
@@ -48,9 +54,15 @@ function WaitPlayer({ playerId }) {
             sx={{
               height: "15vh",
               margin: "2%",
-            }}>
-            {/* 사용자 카메라 */}
-            <Webcam />
+            }}
+          >
+            {/* Webcam 컴포넌트를 사용하여 웹캠 스트림을 표시합니다. */}
+            {webcamStream ? (
+              <Webcam stream={webcamStream} />
+            ) : (
+              // 웹캠 스트림이 없을 경우 로딩 또는 기본 이미지 표시
+              <div>Loading...</div>
+            )}
           </Card>
         </CardContent>
         <Box sx={{ p: 1 }}>

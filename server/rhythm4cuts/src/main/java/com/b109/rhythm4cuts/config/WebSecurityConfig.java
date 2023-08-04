@@ -15,16 +15,46 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
+
     private final UserDetailService userService;
-    @Autowired
     private final TokenProvider tokenProvider;
-    @Autowired
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
+    private final TokenExceptionFilter tokenExceptionFilter;
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    private final List<String> excludedUrlPatterns = Arrays.asList(
+            "/member/reissue",
+            "/member/login",
+            "/member/register",
+            "/member/reissue",
+            "/",
+//            "/**"
+            "/member/mail",
+            "/member/mailcheck",
+            "/stomp/**"
+    );
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -32,15 +62,22 @@ public class WebSecurityConfig {
 
         //시큐리티 핵심
         return http
+                .httpBasic().disable()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
                 .authorizeRequests()
-                .antMatchers("/member/login", "/member/register", "/member/profile").permitAll()
+                .antMatchers(excludedUrlPatterns.toArray(new String[0])).permitAll()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/member/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/member/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/member/pw").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                //.addFilterBefore(tokenExceptionFilter, TokenAuthenticationFilter.class)
                 .build();
     }
 

@@ -1,4 +1,5 @@
-import React from "react";
+/* eslint-disable */
+import React, { useState } from "react";
 import {
   Container,
   Grid,
@@ -12,23 +13,28 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import { styled } from '@mui/system';
+import { styled } from "@mui/system";
 import Header from "../../components/Game/Header_dark";
 import Next from "../../components/Game/NextToShot";
 import { useSelector } from "react-redux";
 import Podium from "../../components/Game/Podium";
+import { useNavigate } from "react-router-dom";
+import { userInfo } from "../../apis/userInfo";
+import FlowerAnimation from '../../components/Game/FlowerAnimation';
 
-const Root = styled('div')({
+const Root = styled("div")({
   width: "100%",
   height: "100vh",
+  position: "relative", // 배경 이미지를 감싸는 레이아웃 컨테이너를 상대적으로 설정
   backgroundPosition: "center",
   backgroundSize: "cover",
   backgroundRepeat: "no-repeat",
   backgroundImage: "url('/images/Game_Shot.png')", // 배경 이미지 URL
+  zIndex: 0, // 위치확인
 });
 
 const Title = styled(Typography)({
-  textAlign: "center", 
+  textAlign: "center",
   marginBottom: 2,
 });
 
@@ -39,13 +45,37 @@ const PodiumContainer = styled(Box)({
 });
 
 function GameScore() {
-  let Result = useSelector(state => state.GameScore_Result);
+  const navigate = useNavigate();
+
+  //로그인 상태 확인
+  const [isLogin, setIsLogin] = useState(false);
+
+  try {
+    userInfo()
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res);
+          setIsLogin(true);
+        }
+      })
+      .catch((error) => {
+        window.alert("로그인을 해주세요!");
+        navigate("/");
+      });
+  } catch (error) {
+    console.log(error);
+  }
+
+  let Result = useSelector((state) => state.GameScore_Result);
 
   return (
     <Root>
+      <FlowerAnimation /> {/* FlowerAnimation 컴포넌트를 Root 컴포넌트로 감싸줍니다 */}
       <Container>
         <Header />
-        <Title variant="h3" style={{marginBottom: "3%"}}>Score Board</Title>
+        <Title variant="h3" style={{ marginBottom: "3%" }}>
+          Score Board
+        </Title>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <PodiumContainer>
@@ -84,7 +114,7 @@ function GameScore() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Result.map(result => (
+                  {Result.map((result) => (
                     <TableRow key={result.rank}>
                       <TableCell component="th" scope="row">
                         {result.rank}
