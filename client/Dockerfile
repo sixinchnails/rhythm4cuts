@@ -10,7 +10,7 @@ COPY public ./public
 COPY src ./src
 
 # 패키지 설치 및 앱 빌드
-RUN npm ci --quiet
+# RUN npm ci --quiet
 RUN npm run build
 
 # Nginx 이미지를 사용하여 앱 실행 단계
