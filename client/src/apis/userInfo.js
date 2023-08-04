@@ -10,7 +10,7 @@ export const userInfo = async () => {
   };
 
   // const result = await axios.get("http://localhost:8080/member/info", {
-  const result = await axios.get("member/info", {
+  const result = await axios.get("/member/info", {
     params,
     headers,
   });

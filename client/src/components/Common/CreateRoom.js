@@ -29,12 +29,13 @@ function CreateRoom({ isOpen, handleClose }) {
   const navigate = useNavigate(); // 페이지 이동
 
   const handleCreateRoom = async () => {
-
     try {
       const sessionResponse = await createSession(); // 수정된 함수 호출
       if (sessionResponse != null) {
         // OpenVidu 세션에 연결 생성
-        const connectionResponse = await createConnection(sessionResponse.sessionId); // 수정된 함수 호출
+        const connectionResponse = await createConnection(
+          sessionResponse.sessionId
+        ); // 수정된 함수 호출
 
         if (connectionResponse.token) {
           console.log("Token: ", connectionResponse.token);
@@ -52,7 +53,7 @@ function CreateRoom({ isOpen, handleClose }) {
               songSeq: songSeq, // 노래제목 (일련번호 : 검색 예정)
               isSecret: isSecret === "비밀 방" ? 1 : 0, // 방 모드 (일반 vs 비밀)
               password: password, // 비밀번호
-              sessionId: sessionResponse.id,  // 세션 아이디
+              sessionId: sessionResponse.id, // 세션 아이디
               connectionId: connectionResponse.connectionId, // 연결 아이디
             },
             //로그인 됐을 때의 토큰을 들고 와야 됨.
