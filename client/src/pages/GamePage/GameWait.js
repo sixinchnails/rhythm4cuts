@@ -9,6 +9,7 @@ import Next from "../../components/Game/NextToPlay";
 import Webcam from '../../components/Game/Webcam';
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
+import { userInfo } from '../../apis/userInfo';
 
 function GameWait() {
   const { gameSeq } = useParams(); // URL에서 gameSeq 파라미터를 가져옵니다.
@@ -35,21 +36,27 @@ function GameWait() {
 
   //로그인 상태 확인
   // const [isLogin, setIsLogin] = useState(false);
-  const user_seq="";
+  let user_seq = 6; // ssafy 토큰
   try {
     userInfo()
       .then(res => {
+
+        console.log("성공 seq: " + res.data.user_seq);
         if (res.status === 200) {
           console.log(res.data.user_seq);
           user_seq = res.data.user_seq;
+        } else {
+          console.log(1);
         }
       })
       .catch(error => {
+        console.log(error);
+        console.log("실패 seq: " + user_seq);
         window.alert("로그인을 해주세요!");
         navigate("/");
       });
   } catch (error) {
-    console.log(error);
+    console.log("뭐지: " + error);
   }
 
   useEffect(() => {
@@ -58,14 +65,20 @@ function GameWait() {
     }
   }, [dispatch, gameSeq]);
 
+  // 세션 토큰 추출 함수
+  const extractToken = (connectionId) => {
+    const match = connectionId.match(/tok_([A-Za-z0-9]+)/);
+    return match ? match[1] : null;
+  };
 
   useEffect(() => {
     if (token) {
+      const extractedToken = extractToken(token);
       axios.put(
         "/lobby/enter",
         {
-          user_seq: user_seq,
-          connection_id: token, // 저장할 연결 토큰
+          userSeq: user_seq,
+          connectionId: extractedToken, // 저장할 연결 토큰
         },
         {
           headers: {
@@ -75,10 +88,12 @@ function GameWait() {
       )
         .then((response) => {
           // 저장 성공 시의 처리를 추가할 수 있습니다.
+          console.log("DB저장 커넥션 토큰" + extractedToken);
           console.log("연결 토큰이 사용자 DB에 저장되었습니다.");
         })
         .catch((error) => {
           // 저장 실패 시의 처리를 추가할 수 있습니다.
+          console.log("실패 커넥션 토큰" + extractedToken);
           console.error("연결 토큰 저장에 실패했습니다.", error);
         });
     }
