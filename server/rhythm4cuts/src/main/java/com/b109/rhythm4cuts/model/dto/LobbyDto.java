@@ -18,5 +18,4 @@ public class LobbyDto {
     private int hasImage;
     private LocalDateTime createDate;
     private String sessionId;
-    private String connectionId;
 }

@@ -153,6 +153,22 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public void updatePassword(UpdateUserPasswordDto dto) {
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+
+        String newPassword = dto.getNewPassword();
+        String oldPassword = dto.getOldPassword();
+        String currentPassword = user.getPassword();
+
+        if (!bCryptPasswordEncoder.matches(oldPassword, currentPassword)) throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
+
+        user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+
+        userRepository.save(user);
+    }
+
     //비밀번호 변경 메서드
     public void updatePassword(String accessToken, UpdateUserPasswordDto dto) {
         if (!tokenProvider.validToken(accessToken)) throw new IllegalArgumentException();
