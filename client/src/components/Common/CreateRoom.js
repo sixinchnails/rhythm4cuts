@@ -51,7 +51,6 @@ function CreateRoom({ isOpen, handleClose }) {
               isSecret: isSecret === "비밀 방" ? 1 : 0, // 방 모드 (일반 vs 비밀)
               password: password, // 비밀번호
               sessionId: sessionResponse.id,  // 세션 아이디
-              connectionId: connectionResponse.connectionId, // 연결 아이디
             },
             {
               headers: {
@@ -62,6 +61,19 @@ function CreateRoom({ isOpen, handleClose }) {
           console.log("연결아이디: " + connectionResponse.connectionId);
           console.log("세션아이디: " + sessionResponse.id);
           console.log("방이 만들어 졌엉.", response.data.data);
+
+          // // 방 정보를 서버로 전송하는 Axios 요청
+          // response = await axios.post(
+          //   "/member/info",
+          //   {
+          //     connectionId: connectionResponse.connectionId, // 방 연결 토큰
+          //   },
+          //   {
+          //     headers: {
+          //       Authorization: "Bearer " + getCookie("access"),
+          //     },
+          //   }
+          // );
 
           // 방 번호를 상태에 업데이트
           setGameSeq(response.data.data);
