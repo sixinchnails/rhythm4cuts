@@ -80,5 +80,15 @@ public class DummyDataInitializer {
         user2.setPassword(bCryptPasswordEncoder.encode("1234"));
 
         userRepository.save(user2);
+
+        User user3 = new User();
+        user3.setName("민국");
+        user3.setNickname("민국");
+        user3.setEmail("acd4548@naver.com");
+        user3.setProfileImage(profileImage1);
+        user3.setBirthDate(targetDate);
+        user3.setPassword(bCryptPasswordEncoder.encode("1234"));
+        userRepository.save(user3);
+
     }
 }
