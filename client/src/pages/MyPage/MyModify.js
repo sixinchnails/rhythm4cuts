@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 const MyModify = () => {
   const navigate = useNavigate();
+  const checkstatus = localStorage.getItem("checkstatus");
 
   //닉네임
   const [nickName, setNickName] = useState("");
@@ -19,7 +20,6 @@ const MyModify = () => {
     userInfo()
       .then((res) => {
         if (res.status === 200) {
-          // console.log(res);
           setNickName(res.data.nickname);
         }
       })
@@ -29,6 +29,10 @@ const MyModify = () => {
       });
   } catch (error) {
     console.log(error);
+  } finally {
+    if (checkstatus === "false") {
+      navigate("/MyPage");
+    }
   }
 
   useEffect(() => {
