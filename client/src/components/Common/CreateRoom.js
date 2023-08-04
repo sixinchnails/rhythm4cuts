@@ -35,12 +35,6 @@ function CreateRoom({ isOpen, handleClose }) {
       const sessionResponse = await createSession(); // 수정된 함수 호출
 
       if (sessionResponse != null) {
-        // OpenVidu 세션에 연결 생성
-        const connectionResponse = await createConnection(sessionResponse.sessionId); // 수정된 함수 호출
-
-        if (connectionResponse != null) {
-          console.log("Token: ", connectionResponse.token);
-
 
           // 방 정보를 서버로 전송하는 Axios 요청
           const response = await axios.post(
@@ -58,22 +52,9 @@ function CreateRoom({ isOpen, handleClose }) {
               },
             }
           );
-          console.log("연결아이디: " + connectionResponse.connectionId);
+          // console.log("연결아이디: " + connectionResponse.connectionId);
           console.log("세션아이디: " + sessionResponse.id);
           console.log("방이 만들어 졌엉.", response.data.data);
-
-          // // 방 정보를 서버로 전송하는 Axios 요청
-          // response = await axios.post(
-          //   "/member/info",
-          //   {
-          //     connectionId: connectionResponse.connectionId, // 방 연결 토큰
-          //   },
-          //   {
-          //     headers: {
-          //       Authorization: "Bearer " + getCookie("access"),
-          //     },
-          //   }
-          // );
 
           // 방 번호를 상태에 업데이트
           setGameSeq(response.data.data);
@@ -82,12 +63,7 @@ function CreateRoom({ isOpen, handleClose }) {
           console.log("${response.data.gameSeq}");
           navigate(`/GameWait/${response.data.data}`);
 
-        } else {
-          console.log("만들기 실패 a connection or token.");
         }
-      } else {
-        console.log("세션 생성 실패 약!.");
-      }
     } catch (error) {
       console.error("방 생성 실패 닥!.", error);
     }

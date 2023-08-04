@@ -1,22 +1,45 @@
 /* eslint-disable */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Container, Grid, Link as MuiLink } from "@mui/material";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleReady, fetchToken } from "../../store";
 import Header from "../../components/Game/Header_light";
 import Next from "../../components/Game/NextToPlay";
-import Webcam from '../../components/Game/Webcam';
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from '../../apis/userInfo';
+import UserVideo from '../../components/Game/UserVideo';
 
 function GameWait() {
   const { gameSeq } = useParams(); // URL에서 gameSeq 파라미터를 가져옵니다.
+
+  // 테스트ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+  const [roomSession, setRoomSession] = useState(null);
+
+  useEffect(() => {
+    axios.get(
+      "/wait/info/" + gameSeq,
+      {
+        headers: {
+          Authorization: "Bearer " + getCookie("access"),
+        },
+      }
+    ).then((response) => {
+      console.log("테스트 세션 id" + roomSession.data);
+      setRoomSession(response.data); // 받아온 데이터를 상태로 설정합니다.
+    }).catch((error) => {
+      console.error("테스트 세션 id 불러오기 실패:", error);
+    });
+  }, [gameSeq]);
+  // ------------------------------------
+
   const navigate = useNavigate(); // React Router의 useNavigate hook을 사용하여 페이지 이동을 수행합니다.
   const dispatch = useDispatch(); // Redux의 dispatch 함수를 가져옵니다.
 
   const token = useSelector((state) => state.session.token); // Redux의 상태에서 세션 토큰을 가져옵니다.
+
+
 
   const [isInviteFriendModalOpen, setInviteFriendModalOpen] = React.useState(false); // 친구 초대 모달 상태를 관리하는 상태 변수를 생성합니다.
 
@@ -35,19 +58,62 @@ function GameWait() {
   };
 
   //로그인 상태 확인
-  // const [isLogin, setIsLogin] = useState(false);
-  let user_seq = 6; // ssafy 토큰
+  let user_seq = 0; // ssafy 토큰
   try {
     userInfo()
-      .then(res => {
+      .then(resp => {
 
-        console.log("성공 seq: " + res.data.user_seq);
-        if (res.status === 200) {
-          console.log(res.data.user_seq);
-          user_seq = res.data.user_seq;
+        console.log("성공 seq: " + resp.data.user_seq);
+        if (resp.status === 200) {
+          user_seq = resp.data.user_seq;
+          console.log(resp.data.user_seq);
         } else {
           console.log(1);
         }
+      })
+      .then(() => {
+        console.log("한윤:")
+        useEffect(() => {
+          if (gameSeq) {
+            dispatch(fetchToken(gameSeq)); // 컴포넌트가 마운트되고 gameSeq가 있을 때 fetchToken 액션을 호출하여 토큰을 가져옵니다.
+          }
+        }, [dispatch, gameSeq]);
+
+        // 토큰 추출 함수
+        const extractToken = (connectionId) => {
+          const match = connectionId.match(/tok_([A-Za-z0-9]+)/);
+          return match ? match[0] : null;
+        };
+
+        useEffect(() => {
+          if (token) {
+            const extractedToken = extractToken(token);
+            console.log("ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ:" + user_seq)
+            axios.put(
+              "/lobby/enter",
+              {
+                userSeq: user_seq,
+                connectionId: extractedToken, // 저장할 연결 토큰
+              },
+              {
+                headers: {
+                  Authorization: "Bearer " + getCookie("access"), // 사용자 인증 토큰을 헤더에 넣어서 보냅니다.
+                },
+              }
+            )
+              .then((response) => {
+                // 저장 성공 시의 처리를 추가할 수 있습니다.
+                console.log("방 세션 : " + token)
+                console.log("DB저장 커넥션 토큰" + extractedToken);
+                console.log("연결 토큰이 사용자 DB에 저장되었습니다.");
+              })
+              .catch((error) => {
+                // 저장 실패 시의 처리를 추가할 수 있습니다.
+                console.log("실패 커넥션 토큰" + extractedToken);
+                console.error("연결 토큰 저장에 실패했습니다.", error);
+              });
+          }
+        }, [token]);
       })
       .catch(error => {
         console.log(error);
@@ -59,45 +125,6 @@ function GameWait() {
     console.log("뭐지: " + error);
   }
 
-  useEffect(() => {
-    if (gameSeq) {
-      dispatch(fetchToken(gameSeq)); // 컴포넌트가 마운트되고 gameSeq가 있을 때 fetchToken 액션을 호출하여 토큰을 가져옵니다.
-    }
-  }, [dispatch, gameSeq]);
-
-  // 세션 토큰 추출 함수
-  const extractToken = (connectionId) => {
-    const match = connectionId.match(/tok_([A-Za-z0-9]+)/);
-    return match ? match[1] : null;
-  };
-
-  useEffect(() => {
-    if (token) {
-      const extractedToken = extractToken(token);
-      axios.put(
-        "/lobby/enter",
-        {
-          userSeq: user_seq,
-          connectionId: extractedToken, // 저장할 연결 토큰
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + getCookie("access"), // 사용자 인증 토큰을 헤더에 넣어서 보냅니다.
-          },
-        }
-      )
-        .then((response) => {
-          // 저장 성공 시의 처리를 추가할 수 있습니다.
-          console.log("DB저장 커넥션 토큰" + extractedToken);
-          console.log("연결 토큰이 사용자 DB에 저장되었습니다.");
-        })
-        .catch((error) => {
-          // 저장 실패 시의 처리를 추가할 수 있습니다.
-          console.log("실패 커넥션 토큰" + extractedToken);
-          console.error("연결 토큰 저장에 실패했습니다.", error);
-        });
-    }
-  }, [token]);
 
   return (
     <div
@@ -164,19 +191,19 @@ function GameWait() {
               {/* Bottom */}
               <Grid container>
                 <Grid item xs>
-                  <Webcam token={token} playerId="player1" />
+                  <UserVideo token={roomSession.token} streamId={roomSession.streamId} />
                   {/* 플레이어 1의 웹캠 스트림을 렌더링합니다. */}
                 </Grid>
                 <Grid item xs>
-                  <Webcam token={token} playerId="player2" />
+                  {/* <UserVideo token={token} streamId={player2StreamId} /> */}
                   {/* 플레이어 2의 웹캠 스트림을 렌더링합니다. */}
                 </Grid>
                 <Grid item xs>
-                  <Webcam token={token} playerId="player3" />
+                  {/* <UserVideo token={token} streamId={player3StreamId} /> */}
                   {/* 플레이어 3의 웹캠 스트림을 렌더링합니다. */}
                 </Grid>
                 <Grid item xs>
-                  <Webcam token={token} playerId="player4" />
+                  {/* <UserVideo token={token} streamId={player4StreamId} /> */}
                   {/* 플레이어 4의 웹캠 스트림을 렌더링합니다. */}
                 </Grid>
               </Grid>
