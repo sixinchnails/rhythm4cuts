@@ -153,6 +153,22 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public void updatePassword(UpdateUserPasswordDto dto) {
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+
+        String newPassword = dto.getNewPassword();
+        String oldPassword = dto.getOldPassword();
+        String currentPassword = user.getPassword();
+
+        if (!bCryptPasswordEncoder.matches(oldPassword, currentPassword)) throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
+
+        user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+
+        userRepository.save(user);
+    }
+
     //비밀번호 변경 메서드
     public void updatePassword(String accessToken, UpdateUserPasswordDto dto) {
         if (!tokenProvider.validToken(accessToken)) throw new IllegalArgumentException();
@@ -236,8 +252,8 @@ public class UserServiceImpl implements UserService {
         mailDto.setAddress(new String[] {email});
         mailDto.setTitle("Rhythm4Cuts 임시 비밀번호 발급 안내 메일입니다.");
         mailDto.setContent("안녕하세요. Rhythm4Cuts 로그인을 위한 임시 비밀번호 발급드립니다. 회원님의 임시 비밀번호는 " + tempPassword + "입니다.");
+        user.setPassword(bCryptPasswordEncoder.encode(tempPassword));
 
-        user.setPassword(tempPassword);
         userRepository.save(user);
 
         return mailDto;

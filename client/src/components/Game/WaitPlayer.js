@@ -1,11 +1,12 @@
 // WaitPlayer.js
+// 필요없을수도.
 
 import React from "react";
 import { useSelector } from "react-redux";
 import { Card, CardContent, Box } from "@mui/material";
 import Webcam from './Webcam'; // 웹캠 컴포넌트 불러오기
 
-function WaitPlayer({ playerId }) {
+function WaitPlayer({ playerId, gameSeq }) {
   const isReady = useSelector((state) => state.GameWait_Ready[playerId]);
   const webcamStream = useSelector((state) => state.webcamStream); // 웹캠 스트림 가져오기
 

@@ -70,6 +70,7 @@ public class WebSecurityConfig {
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/member/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/member/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/member/pw").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()

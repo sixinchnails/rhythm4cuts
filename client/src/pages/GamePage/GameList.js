@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CreateRoom from "../../components/Common/CreateRoom";
 import AddFriend from "../../components/Common/AddFriend";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
 import { getCookie } from "../../utils/cookie";
 
@@ -173,8 +173,10 @@ function GameList() {
               .slice((page - 1) * itemsPerPage, page * itemsPerPage)
               .map((room, index) => (
                 <Grid item xs={6} key={index}>
-                  {/* Rommlist로 room값들을 전해준다. */}
-                  <RoomList key={index} room={room} />
+                  <Link to={`/GameWait/${room.gameSeq}`}>
+                    {/* Rommlist로 room값들을 전해준다. */}
+                    <RoomList key={index} room={room} />
+                  </Link>
                 </Grid>
               ))}
           </Grid>
