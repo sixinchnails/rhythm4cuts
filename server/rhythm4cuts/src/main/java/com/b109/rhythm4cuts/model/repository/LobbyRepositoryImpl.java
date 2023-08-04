@@ -91,12 +91,12 @@ public class LobbyRepositoryImpl implements LobbyRepository {
     @Override
     public void putConnectionId(UserDto userDto) throws SQLException {
         // UPDATE User u SET u.connectionId = userDto.connectionId WHERE u.userSeq = userDto.userSeq
-        String jpql = "UPDATE User u SET u.connectionId = :connectionId WHERE u.userSeq = :userSeq";
+        // String jpql = "UPDATE User u SET u.connectionId = :connectionId WHERE u.userSeq = :userSeq";
+        String jpql = "SELECT u FROM User u WHERE u.userSeq = :userSeq";
+        User user = em.createQuery(jpql, User.class)
+                    .setParameter("userSeq", userDto.getUserSeq())
+                    .getSingleResult();
 
-        em.createQuery(jpql, User.class)
-                .setParameter("connectionId", userDto.getConnectionId())
-                .setParameter("userSeq", userDto.getUserSeq())
-                .executeUpdate();
-        em.clear();
+        user.setConnectionId(userDto.getConnectionId());
     }
 }
