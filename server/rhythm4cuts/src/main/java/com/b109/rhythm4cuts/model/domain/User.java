@@ -80,6 +80,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<GameImage> gameImages = new ArrayList<>();
 
+    // OpenVidu 커넥션 아이디
+    @Column(name = "connection_id")
+    private String connectionId;
+
     public User() {
         this.point = 0;
         this.playCount = 0;
@@ -125,6 +129,8 @@ public class User implements UserDetails {
         userDto.setPoint(this.getPoint());
         userDto.setScoreSum(this.getScoreSum());
         userDto.setBirthDate(this.birthDate);
+        userDto.setConnectionId(this.getConnectionId());
+
         return userDto;
     }
 }

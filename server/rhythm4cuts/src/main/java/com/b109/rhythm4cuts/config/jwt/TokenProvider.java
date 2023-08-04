@@ -2,10 +2,12 @@ package com.b109.rhythm4cuts.config.jwt;
 
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.LoginDto;
+import org.springframework.data.redis.core.RedisTemplate;
 import com.b109.rhythm4cuts.model.dto.TokenResponse;
 import com.b109.rhythm4cuts.model.dto.UserDto;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +24,7 @@ import java.util.Set;
 @Service
 public class TokenProvider {
     private final JwtProperties jwtProperties;
+    private final RedisTemplate redisTemplate;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     public final static Duration accessExpiredAt = Duration.ofMinutes(30), refreshExpiredAt = Duration.ofDays(14);
 
@@ -69,6 +72,14 @@ public class TokenProvider {
             Jwts.parser()
                     .setSigningKey(jwtProperties.getSecretKey())
                     .parseClaimsJws(token);
+
+            if (redisTemplate.hasKey(token)) throw new IllegalArgumentException("로그인을 다시 해주시기 바랍니다.");
+
+            Set<String> redisKeys = redisTemplate.keys("*");
+
+            if (redisKeys.contains(token)) {
+                throw new IllegalArgumentException("로그인을 다시 해주세요.");
+            }
 
             return true;
         } catch(SecurityException | MalformedJwtException e) {

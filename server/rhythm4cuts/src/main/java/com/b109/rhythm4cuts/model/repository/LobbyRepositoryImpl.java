@@ -2,7 +2,9 @@ package com.b109.rhythm4cuts.model.repository;
 
 import com.b109.rhythm4cuts.model.domain.GameInfo;
 import com.b109.rhythm4cuts.model.domain.Song;
+import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.LobbyDto;
+import com.b109.rhythm4cuts.model.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -59,7 +61,6 @@ public class LobbyRepositoryImpl implements LobbyRepository {
         gameInfo.setIsSecret(lobbyDto.getIsSecret() == 1); // 방 모드 (비밀방 여부) -> 1이면 true, 0이면 false
         gameInfo.setPassword(lobbyDto.getPassword()); // 비밀번호
         gameInfo.setSessionId(lobbyDto.getSessionId()); // Openvidu 세션 아이디
-        gameInfo.setConnectionId(lobbyDto.getConnectionId()); // Openvidu 커넥션 아이디
 
         em.persist(gameInfo);
 
@@ -85,5 +86,17 @@ public class LobbyRepositoryImpl implements LobbyRepository {
         return em.createQuery(jpql, GameInfo.class)
                 .setParameter("gameSeq", gameSeq)
                 .getSingleResult();
+    }
+
+    @Override
+    public void putConnectionId(UserDto userDto) throws SQLException {
+        // UPDATE User u SET u.connectionId = userDto.connectionId WHERE u.userSeq = userDto.userSeq
+        // String jpql = "UPDATE User u SET u.connectionId = :connectionId WHERE u.userSeq = :userSeq";
+        String jpql = "SELECT u FROM User u WHERE u.userSeq = :userSeq";
+        User user = em.createQuery(jpql, User.class)
+                    .setParameter("userSeq", userDto.getUserSeq())
+                    .getSingleResult();
+
+        user.setConnectionId(userDto.getConnectionId());
     }
 }

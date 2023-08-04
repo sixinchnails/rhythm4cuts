@@ -1,83 +1,51 @@
-import React, { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import OpenVidu from "openvidu-browser";
-import { closeSession, setWebcamStream } from "../../store";
+import React, { useEffect, useRef } from "react";
+import { connect, Publisher, Session, StreamEvent } from "openvidu-browser";
 
-const Webcam = forwardRef((props, ref) => {
-  const dispatch = useDispatch();
+function Webcam({ token, playerId }) {
+  // 웹캠 스트림을 보여줄 video 엘리먼트에 접근하기 위한 ref를 생성합니다.
   const videoRef = useRef(null);
+
+  // OpenVidu 세션과 publisher를 저장하기 위한 ref를 생성합니다.
   const sessionRef = useRef(null);
-  const streamRef = useRef(null);
+  const publisherRef = useRef(null);
 
   useEffect(() => {
-    const startWebcam = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        streamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = streamRef.current;
+    // OpenVidu 세션을 생성합니다.
+    const session = new Session();
+    sessionRef.current = session;
 
-          // const roomId = "YOUR_ROOM_ID_HERE"; // 실제 방의 sessionId를 전달합니다.
-        }
-      } catch (error) {
-        console.error("Error accessing webcam:", error);
-      }
-    };
+    // OpenVidu 세션에 연결합니다.
+    session.connect(token)
+      .then(() => {
+        // 웹캠 스트림을 획득하고 publisher를 생성합니다.
+        const publisher = new Publisher(videoRef.current);
+        publisherRef.current = publisher;
 
-    startWebcam();
+        // 생성한 publisher를 OpenVidu 세션에 추가합니다.
+        session.publish(publisher);
 
+        // 플레이어 식별자(playerId)를 사용하여 퍼블리셔 객체에 player ID를 저장합니다.
+        publisher.stream.publishers.playerId = playerId;
+      })
+      .catch((error) => {
+        console.error("Failed to connect to OpenVidu session:", error);
+      });
+
+    // 컴포넌트 언마운트 시에 연결 해제 및 스트림 해제를 수행합니다.
     return () => {
+      if (publisherRef.current) {
+        // 생성한 publisher를 세션에서 unpublish합니다.
+        sessionRef.current.unpublish(publisherRef.current);
+      }
       if (sessionRef.current) {
-        dispatch(closeSession({ sessionId: sessionRef.current.sessionId, connectionId: sessionRef.current.connection.connectionId }));
-        dispatch(setWebcamStream(null));
+        // 컴포넌트가 언마운트 될 때 OpenVidu 세션과의 연결을 해제합니다.
+        sessionRef.current.disconnect();
       }
     };
-  }, [dispatch]);
+  }, [token, playerId]);
 
-  const token = useSelector((state) => state.session.token);
-
-  useEffect(() => {
-    if (token && streamRef.current) {
-      const OV = new OpenVidu();
-      const session = OV.initSession();
-      sessionRef.current = session;
-
-      session.connect(token)
-        .then(() => {
-          session.publish(streamRef.current);
-          dispatch(setWebcamStream(streamRef.current));
-        })
-        .catch((error) => {
-          console.error("Error connecting to OpenVidu:", error);
-        });
-    }
-  }, [token, dispatch]);
-
-  // useImperativeHandle을 사용하여 부모 컴포넌트에서 getScreenshot 함수를 호출할 수 있도록 전달
-  useImperativeHandle(ref, () => ({
-    getScreenshot: () => {
-      if (videoRef.current) {
-        const canvas = document.createElement("canvas");
-        canvas.width = videoRef.current.videoWidth;
-        canvas.height = videoRef.current.videoHeight;
-        canvas.getContext("2d").drawImage(videoRef.current, 0, 0);
-        return canvas.toDataURL("image/png");
-      }
-      return null;
-    },
-  }));
-
-  return (
-    <video
-      ref={videoRef}
-      autoPlay
-      style={{
-        width: "100%",
-        height: "100%",
-        objectFit: "cover",
-      }}
-    />
-  );
-});
+  // video 엘리먼트를 렌더링하여 웹캠 스트림을 화면에 보여줍니다.
+  return <video ref={videoRef} autoPlay muted playsInline />;
+}
 
 export default Webcam;
