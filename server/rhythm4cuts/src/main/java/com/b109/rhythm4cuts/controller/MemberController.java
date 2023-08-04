@@ -173,9 +173,12 @@ public class MemberController {
     }
 
     //로그아웃
-    @PostMapping("logout")
-    public ResponseEntity logout() {
+    @PostMapping("/logout")
+    public ResponseEntity logout(@RequestBody LogoutDto logoutDto) {
         //상태 변경할 예정
+
+        userService.logout(logoutDto);
+
         return ResponseEntity.status(200).build();
     }
 

@@ -1,8 +1,14 @@
 package com.b109.rhythm4cuts.config;
 
 import com.b109.rhythm4cuts.config.jwt.TokenProvider;
+import java.util.*;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +33,7 @@ import java.util.List;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
     private final UserDetailsService userDetailsService;
+    private final ObjectMapper mapper;
     private final static String HEADER_AUTHORIZATION = "Authorization";
     private final static String TOKEN_PREFIX = "Bearer ";
     private final List<String> excludedUrlPatterns = Arrays.asList(
@@ -73,13 +80,21 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                     logger.info("authenticated user " + email + ", setting security context");
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    throw new JwtException("Invalid token");
                 }
             }
 
             filterChain.doFilter(request, response);
         } catch (JwtException e) {//oauth2.jwtexception
-            e.printStackTrace();
-            System.out.println("만료됐네요");
+            Map<String, Object> errorDetails = new HashMap<>();
+
+            errorDetails.put("message", "Invalid token");
+
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+            mapper.writeValue(response.getWriter(), errorDetails);
         }
     }
 

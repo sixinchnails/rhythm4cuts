@@ -8,6 +8,7 @@ import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -209,7 +210,17 @@ public class UserServiceImpl implements UserService {
     }
 
     //로그아웃 메서드(상태 변환)
-    public void logout() {}
+    public void logout(LogoutDto logoutDto) {
+        System.out.println(logoutDto.getEmail());
+
+        User user = userRepository.findByEmail(logoutDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+
+        long expiryMilliSeconds = tokenProvider.getExpirationDateFromToken(logoutDto.getAccessToken()).getTime() - new Date().getTime();
+
+        //유효시간만큼 액세스 토큰을 블랙리스트 상에서 유지
+        if (expiryMilliSeconds > 0) redisTemplate.opsForValue().set(logoutDto.getAccessToken(), "access_token", expiryMilliSeconds, TimeUnit.MILLISECONDS);
+    }
 
     //포인트 결제 메서드
     public long payPoints(PayDto payDto) {

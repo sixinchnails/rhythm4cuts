@@ -31,7 +31,7 @@ public interface UserService {
     void updatePassword(UpdateUserPasswordDto dto);
 
     //상태 변환만 할 예정
-    void logout();
+    void logout(LogoutDto logoutDto);
 
     UserDto login(LoginDto loginDto);
 
