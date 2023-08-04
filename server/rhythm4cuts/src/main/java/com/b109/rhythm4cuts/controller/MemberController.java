@@ -157,8 +157,8 @@ public class MemberController {
 
     //비밀번호 변경
     @PatchMapping("/pw")
-    public ResponseEntity updatePassword(@RequestHeader("Authorization") String accessToken, @RequestBody UpdateUserPasswordDto dto) {
-        userService.updatePassword(accessToken, dto);
+    public ResponseEntity updatePassword(@RequestBody UpdateUserPasswordDto dto) {
+        userService.updatePassword(dto);
 
         return ResponseEntity.status(200).build();
     }
