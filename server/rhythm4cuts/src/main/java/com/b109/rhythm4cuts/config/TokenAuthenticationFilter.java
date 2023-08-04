@@ -50,27 +50,28 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
+            //요청 경로 추출
             String path = request.getServletPath();
+            //HTTP 메소드 추출
             String httpMethod = request.getMethod();
+            //토큰 검증에서 제외할 url 리스트
             boolean isExcludedUrl = excludedUrlPatterns.stream().anyMatch(path::startsWith);
 
-            //가져온 토큰이 유요한지 확인하고, 유효한 때는 인증 정보 설정
             if (!isExcludedUrl || (httpMethod.equals("PATCH"))) {
                 //요청 헤더의 Authorization(Bearer 액세스 토큰의 키 값) 키의 값 조회
                 String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
-                //가져온 값에서 접두사 제거
+                //가져온 값에서 접두사("Bearer ") 제거
                 String token = getAccessToken(authorizationHeader);
 
-                System.out.println("만료일 : " + tokenProvider.getExpirationDateFromToken(token));
-                System.out.println(tokenProvider.isTokenExpired(token));
-
-                if (tokenProvider.isTokenExpired(token)) {
-                    throw new JwtException("access token is expired");
-                }
-
+                //유효한가? (만료 체크 X)
                 boolean isTokenValid = tokenProvider.validToken(token);
 
-                if (StringUtils.hasText(token) && isTokenValid) {
+                //만료 체크
+                if (tokenProvider.isTokenExpired(token)) {
+                    throw new JwtException("Expired token");
+                }
+                //유효 체크(분기 진입 시 유효한 토큰)
+                else if (StringUtils.hasText(token) && isTokenValid) {
                     String email = tokenProvider.getUserId(token);
                     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
@@ -80,18 +81,25 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                     logger.info("authenticated user " + email + ", setting security context");
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
+                }
+                //유효 X, 만료 O인 경우 예외 던짐
+                else {
                     throw new JwtException("Invalid token");
                 }
             }
 
             filterChain.doFilter(request, response);
         } catch (JwtException e) {//oauth2.jwtexception
+            //에러 메세지 생성 및 응답
             Map<String, Object> errorDetails = new HashMap<>();
 
-            errorDetails.put("message", "Invalid token");
+            errorDetails.put("message", e.getMessage());
 
-            response.setStatus(HttpStatus.FORBIDDEN.value());
+            //401
+            if (e.getMessage().equals("Invalid token")) response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            //403
+            else response.setStatus(HttpStatus.FORBIDDEN.value());
+
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
             mapper.writeValue(response.getWriter(), errorDetails);
@@ -106,9 +114,4 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         return null;
     }
-//
-//    private void setAuthentication(String token) {
-//        Authentication authentication = tokenProvider.getAuthentication(token);
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//    }
 }

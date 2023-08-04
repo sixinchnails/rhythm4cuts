@@ -2,6 +2,7 @@ package com.b109.rhythm4cuts.config.jwt;
 
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.LoginDto;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import com.b109.rhythm4cuts.model.dto.TokenResponse;
 import com.b109.rhythm4cuts.model.dto.UserDto;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -73,11 +75,11 @@ public class TokenProvider {
                     .setSigningKey(jwtProperties.getSecretKey())
                     .parseClaimsJws(token);
 
-            if (redisTemplate.hasKey(token)) throw new IllegalArgumentException("로그인을 다시 해주시기 바랍니다.");
+            ScanOptions options = ScanOptions.scanOptions().match(token).build();
+            Cursor cursor = redisTemplate.scan(options);
 
-            Set<String> redisKeys = redisTemplate.keys("*");
-
-            if (redisKeys.contains(token)) {
+            if (cursor.hasNext()) {
+                System.out.println(cursor.next());
                 throw new IllegalArgumentException("로그인을 다시 해주세요.");
             }
 
