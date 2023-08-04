@@ -59,7 +59,6 @@ public class LobbyRepositoryImpl implements LobbyRepository {
         gameInfo.setIsSecret(lobbyDto.getIsSecret() == 1); // 방 모드 (비밀방 여부) -> 1이면 true, 0이면 false
         gameInfo.setPassword(lobbyDto.getPassword()); // 비밀번호
         gameInfo.setSessionId(lobbyDto.getSessionId()); // Openvidu 세션 아이디
-        gameInfo.setConnectionId(lobbyDto.getConnectionId()); // Openvidu 커넥션 아이디
 
         em.persist(gameInfo);
 
