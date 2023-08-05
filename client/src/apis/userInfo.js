@@ -8,11 +8,8 @@ export const userInfo = async () => {
   const headers = {
     Authorization: "Bearer " + getCookie("access"),
   };
-  // <<<<<<< HEAD
 
-  //   const result = await axios.get("/member/info", {
-  // =======
-  const result = await axios.get("member/info", {
+  const result = await axios.get("/member/info", {
     params,
     headers,
   });
