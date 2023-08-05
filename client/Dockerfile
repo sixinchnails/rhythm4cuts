@@ -26,7 +26,7 @@ COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/build /usr/share/nginx/html
 
 # 80번 포트로 Nginx를 실행합니다.
-EXPOSE 80
-
+# EXPOSE 80
+EXPOSE 5442
 # 컨테이너가 시작되면 Nginx를 실행합니다.
 CMD ["nginx", "-g", "daemon off;"]
