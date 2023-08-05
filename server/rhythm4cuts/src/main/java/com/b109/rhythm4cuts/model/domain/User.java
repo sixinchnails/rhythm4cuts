@@ -128,6 +128,7 @@ public class User implements UserDetails {
         userDto.setEmail(this.getEmail());
         userDto.setPoint(this.getPoint());
         userDto.setScoreSum(this.getScoreSum());
+        userDto.setBirthDate(this.birthDate);
         userDto.setConnectionId(this.getConnectionId());
 
         return userDto;
