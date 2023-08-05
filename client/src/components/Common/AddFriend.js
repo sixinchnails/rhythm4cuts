@@ -34,23 +34,23 @@ function AddFriend({ isOpen, handleClose }) {
     setfriendNickname(event.target.value); // 친구 이름 변경 이벤트 핸들러
   };
 
-  function requestFriend(a, b) {
-    a = 1;
-    b = 2;
-    const requestPayload = {
-      fromUser: a,
-      toUser: b,
-    };
+  // function requestFriend(a, b) {
+  //   a = 1;
+  //   b = 2;
+  //   const requestPayload = {
+  //     fromUser: a,
+  //     toUser: b,
+  //   };
 
-    if (client && client.connected) {
-      client.publish({
-        destination: "/public/request",
-        body: JSON.stringify(requestPayload),
-      });
-    } else {
-      console.error("The client is not connected.");
-    }
-  }
+  //   if (client && client.connected) {
+  //     client.publish({
+  //       destination: "/public/request",
+  //       body: JSON.stringify(requestPayload),
+  //     });
+  //   } else {
+  //     console.error("The client is not connected.");
+  //   }
+  // }
 
   return (
     <Modal open={isOpen} onClose={handleClose}>
