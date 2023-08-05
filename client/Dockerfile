@@ -11,7 +11,7 @@ COPY client/package.json client/package-lock.json ./
 RUN npm install
 
 # 앱 소스를 복사합니다.
-COPY /client/. .
+COPY client .
 
 # 앱을 빌드합니다.
 RUN npm run build
