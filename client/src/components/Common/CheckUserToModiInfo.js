@@ -1,8 +1,9 @@
+/* eslint-disable */
 import { React, useState } from "react";
 import { Modal, Box, TextField, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../apis/login";
-import { getCookie, setCookie } from "../../utils/cookie";
+import { getCookie } from "../../utils/cookie";
 
 function CheckUserToModiInfo({ isOpen, handleClose }) {
   localStorage.setItem("checkstatus", "false");
@@ -11,6 +12,12 @@ function CheckUserToModiInfo({ isOpen, handleClose }) {
   const [pw, setPW] = useState("");
   const onChangePW = (e) => {
     setPW(e.target.value);
+  };
+
+  const onKeyPress = (e) => {
+    if (e.key === "Enter") {
+      checkPW();
+    }
   };
 
   const checkPW = async () => {
@@ -54,6 +61,7 @@ function CheckUserToModiInfo({ isOpen, handleClose }) {
           onChange={onChangePW}
           sx={{ width: 3 / 4 }}
           style={{ marginBottom: "20px" }}
+          onKeyDown={onKeyPress}
         />
         <Button
           variant="contained"
