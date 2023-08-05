@@ -27,22 +27,6 @@ function GameList() {
   // //로그인 상태 확인
   // const [isLogin, setIsLogin] = useState(false);
 
-  // try {
-  //   userInfo()
-  //     .then(res => {
-  //       if (res.status === 200) {
-  //         console.log(res);
-  //         setIsLogin(true);
-  //       }
-  //     })
-  //     .catch(error => {
-  //       window.alert("로그인을 해주세요!");
-  //       navigate("/");
-  //     });
-  // } catch (error) {
-  //   console.log(error);
-  // }
-
   // let rooms = useSelector(state => state.GameList_Room); // 방 리스트
   const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
 
@@ -166,7 +150,62 @@ function GameList() {
     >
       <Header />
       <Grid container spacing="2%">
-        <Grid item xs={8} margin={"3%"}>
+        <Grid item xs={8} marginLeft={"3%"} marginTop={"-1.5%"}>
+          <Box display="flex" justifyContent="flex-end" marginBottom="1%">
+            <IconButton
+              onClick={() => {
+                // State상태 Update되도록 추후 추가예정
+              }}
+              sx={{ marginRight: 1 }}
+            >
+              <RefreshIcon style={{ color: "#ffffff" }} />
+            </IconButton>
+            {/* 검색 카테고리 추가 */}
+            <Select
+              value={searchCategory}
+              onChange={e => setSearchCategory(e.target.value)}
+              style={{
+                marginRight: "1em",
+                color: "#ffffff",
+                borderColor: "#ffffff",
+              }}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    backgroundColor: "white",
+                    color: "black",
+                  },
+                },
+              }}
+            >
+              <MenuItem value={"gameSeq"} style={{ color: "black" }}>
+                방 번호
+              </MenuItem>
+              <MenuItem value={"title"} style={{ color: "black" }}>
+                방 이름
+              </MenuItem>
+              <MenuItem value={"songSeq"} style={{ color: "black" }}>
+                노래 제목
+              </MenuItem>
+            </Select>
+            <TextField
+              label="검색"
+              variant="outlined"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              style={{
+                width: "33%",
+                borderColor: "#ffffff", // 테두리 색상 변경
+              }}
+              placeholder="방 번호 or 노래 제목"
+              InputProps={{
+                style: { color: "#ffffff", borderColor: "#ffffff" }, // 글자 색상 변경
+              }}
+              InputLabelProps={{
+                style: { color: "#ffffff" }, // 레이블 색상 변경
+              }}
+            />
+          </Box>
           <Grid container spacing={2}>
             {filteredRooms
               .slice((page - 1) * itemsPerPage, page * itemsPerPage)
@@ -214,38 +253,7 @@ function GameList() {
             />
           </Paper>
         </Grid>
-        <Grid item xs={3}>
-          <Box display="flex" justifyContent="flex-end" marginBottom="1%">
-            <IconButton
-              onClick={() => {
-                // State상태 Update되도록 추후 추가예정
-              }}
-              sx={{ marginRight: 1 }}
-            >
-              <RefreshIcon style={{ color: "#ffffff" }} />
-            </IconButton>
-            {/* 검색 카테고리 추가 */}
-            <Select
-              value={searchCategory}
-              onChange={e => setSearchCategory(e.target.value)}
-              style={{ marginRight: "1em" }}
-            >
-              <MenuItem value={"gameSeq"}>방 번호</MenuItem>
-              <MenuItem value={"title"}>방 이름</MenuItem>
-              <MenuItem value={"songSeq"}>노래 제목</MenuItem>
-            </Select>
-            <TextField
-              label="검색"
-              variant="outlined"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              style={{ width: "100%" }} // 검색창 스타일링
-              placeholder="방 번호 or 노래 제목"
-              InputProps={{
-                style: { color: "#ffffff" },
-              }}
-            />
-          </Box>
+        <Grid item xs={3} marginTop={"3%"} marginLeft={"3%"}>
           <Paper elevation={10}>
             <Box p={5}>
               <Grid container direction="column">

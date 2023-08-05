@@ -15,7 +15,7 @@ function RoomList({ room }) {
 
   return (
     <Grid item xs={6} sm={12}>
-      <Card>
+      <Card style={{ height: "100%" }}>
         <Grid container>
           <Grid
             item
