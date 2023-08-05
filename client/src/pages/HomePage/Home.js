@@ -18,20 +18,25 @@ import { userInfo } from "../../apis/userInfo";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import { renewAccesToken } from "../../apis/renewAccesToken";
 
 const DIVIDER_HEIGHT = 5;
 
 function Home() {
-  const accessToken = getCookie("access");
-
+  //로그인 상태 저장변수
   const [isLogin, setIsLogin] = useState(false);
 
+  //로그인 상태 확인 및 유저 정보 불러오는 부분
   try {
     userInfo()
       .then((res) => {
         if (res.status === 200) {
-          console.log(res);
+          console.log(res.data.data);
           setIsLogin(true);
+        } else if (res.status === 401) {
+          renewAccesToken().then((res) => {});
+        } else if (res.status === 403) {
+          checkLogin();
         }
       })
       .catch((error) => {
@@ -41,6 +46,36 @@ function Home() {
   } catch (error) {
     console.log(error);
   }
+
+  //로그아웃 관련 코드
+  const checkLogin = async () => {
+    try {
+      const response = await axios.post(
+        "/member/logout",
+        {
+          email: getCookie("email"),
+          accessToken: access,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + access,
+          },
+        }
+      );
+      if (response.status === 200) {
+        console.log("로그아웃 성공");
+        removeCookie("access");
+        removeCookie("refresh");
+        removeCookie("email");
+        window.location.reload();
+      } else {
+        window.confirm("1오류가 발생했습니다.");
+      }
+    } catch (error) {
+      console.log(error);
+      window.confirm("2오류가 발생했습니다.");
+    }
+  };
 
   const [startDate, setStartDate] = useState(new Date());
   const outerDivRef = useRef();
