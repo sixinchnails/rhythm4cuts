@@ -24,89 +24,17 @@ import { userInfo } from "../../apis/userInfo";
 import { getCookie } from "../../utils/cookie";
 
 function GameList() {
-  // //로그인 상태 확인
-  // const [isLogin, setIsLogin] = useState(false);
 
-  // try {
-  //   userInfo()
-  //     .then(res => {
-  //       if (res.status === 200) {
-  //         console.log(res);
-  //         setIsLogin(true);
-  //       }
-  //     })
-  //     .catch(error => {
-  //       window.alert("로그인을 해주세요!");
-  //       navigate("/");
-  //     });
-  // } catch (error) {
-  //   console.log(error);
-  // }
 
-  // let rooms = useSelector(state => state.GameList_Room); // 방 리스트
-  const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
-
-  // 검색 카테고리 상태 추가
-  const [searchCategory, setSearchCategory] = useState("gameSeq"); // 기본값을 'gameSeq'로 설정
-
-  // 방 리스트 가져오기
-  useEffect(() => {
-    axios
-
-      // <<<<<<< HEAD
-      //       .get("/lobby/list") // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
-      //       .then(response => {
-      // =======
-      .get("/lobby/list", {
-        headers: {
-          Authorization: "Bearer " + getCookie("access"),
-        },
-      }) // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
-      .then(response => {
-        console.log(response.data);
-        setRooms(response.data.data); // 서버 응답으로 받은 방 리스트를 상태로 업데이트합니다.
-      })
-      .catch(error => {
-        console.error("Failed to fetch room list.", error);
-      });
-  }, []); // 두 번째 매개변수인 빈 배열은 useEffect가 컴포넌트가 처음 렌더링될 때 한 번만 실행되도록 설정합니다.
-
-  let friends = useSelector(state => state.GameList_Friend); // 친구 리스트
 
   const navigate = useNavigate();
-
-  //로그인 상태 확인
-  const [isLogin, setIsLogin] = useState(false);
-
-  try {
-    userInfo()
-      .then(res => {
-        if (res.status === 200) {
-          console.log(res);
-          setIsLogin(true);
-        }
-      })
-      .catch(error => {
-        window.alert("로그인을 해주세요!");
-        navigate("/");
-      });
-  } catch (error) {
-    console.log(error);
-  }
-
-  // let rooms = useSelector((state) => state.GameList_Room); // 방 리스트
-  // let friends = useSelector((state) => state.GameList_Friend); // 친구 리스트
-
-  // 방 만들기
+  const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
   const [isCreateRoomModalOpen, setCreateRoomModalOpen] = useState(false); //  '방 만들기' 모달의 상태를 관리
-  // 방만들기 상태를 업데이트하는 함수
-  const handleOpenCreateRoomModal = () => {
-    setCreateRoomModalOpen(true);
-  };
-
-  const handleCloseCreateRoomModal = () => {
-    setCreateRoomModalOpen(false);
-  };
+  let friends = useSelector(state => state.GameList_Friend); // 친구 리스트
+  const itemsPerPage = 6; // 한 페이지당 표시할 방 수
+  const [page, setPage] = useState(1); // 페이지 상태
+  const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
+  const [searchCategory, setSearchCategory] = useState("gameSeq"); //  검색 카테고리 상태 (기본값을 'gameSeq'로 설정)
 
   // 친구 추가
   const [isAddFriendModalOpen, setAddFriendModalOpen] = useState(false); // '친구 추가' 모달의 상태를 관리
@@ -119,10 +47,46 @@ function GameList() {
     setAddFriendModalOpen(false);
   };
 
-  // 방 개수 컨트롤러
-  const itemsPerPage = 6; // 한 페이지당 표시할 방 수
-  const [page, setPage] = useState(1); // 페이지 상태
-  const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
+  // 방만들기 상태를 업데이트하는 함수
+  const handleOpenCreateRoomModal = () => {
+    setCreateRoomModalOpen(true);
+  };
+
+  const handleCloseCreateRoomModal = () => {
+    setCreateRoomModalOpen(false);
+  };
+
+  //로그인 상태 확인
+  try {
+    userInfo()
+      .then(res => {
+        if (res.status === 200) {
+          console.log(res);
+        }
+      })
+      .catch(error => {
+        window.alert("로그인을 해주세요!");
+        navigate("/");
+      });
+  } catch (error) {
+    console.log(error);
+  }
+
+  // 방 리스트 가져오기
+  useEffect(() => {
+    axios
+      .get("/lobby/list", {
+        headers: {
+          Authorization: "Bearer " + getCookie("access"),
+        },
+      })
+      .then(response => {
+        setRooms(response.data.data); // 서버 응답으로 받은 방 리스트를 상태로 업데이트합니다.
+      })
+      .catch(error => {
+        console.error("방 리스트 가져오는데 실패 뽝! : ", error);
+      });
+  }, []);
 
   // 검색어에 따라 방 리스트 필터링
   let filteredRooms = rooms.filter(room => {
@@ -131,7 +95,7 @@ function GameList() {
         return room.gameSeq
           .toString()
           .toLowerCase()
-          .includes(searchTerm.toLowerCase()); // 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
+          .includes(searchTerm.toLowerCase()); // 방 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
       case "title":
         return room.title.toLowerCase().includes(searchTerm.toLowerCase()); // 방 제목이 검색어를 포함하는지 확인
       case "songSeq":
@@ -143,15 +107,15 @@ function GameList() {
         return true; // 검색 카테고리가 설정되지 않은 경우, 모든 방을 표시
     }
   });
-
-  const noOfPages = Math.ceil(filteredRooms.length / itemsPerPage); // 필터링된 방 리스트를 통해 페이지 수 계산
-
+  // 필터링된 방 리스트를 통해 페이지 수 계산
+  const noOfPages = Math.ceil(filteredRooms.length / itemsPerPage);
+  // 페이지 변경 이벤트 핸들러
   const handleChange = (event, value) => {
-    setPage(value); // 페이지 변경 이벤트 핸들러
+    setPage(value);
   };
-
+  // 검색어 변경 이벤트 핸들러
   const handleSearchChange = event => {
-    setSearchTerm(event.target.value); // 검색어 변경 이벤트 핸들러
+    setSearchTerm(event.target.value);
   };
 
   return (
@@ -171,11 +135,11 @@ function GameList() {
           <Grid container spacing={2}>
             {filteredRooms
               .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-              .map((room, index) => (
-                <Grid item xs={6} key={index}>
+              .map((room, gameSeq) => (
+                <Grid item xs={6} key={gameSeq}>
+                  {/* 방 누르면 입장 */}
                   <Link to={`/GameWait/${room.gameSeq}`}>
-                    {/* Rommlist로 room값들을 전해준다. */}
-                    <RoomList key={index} room={room} />
+                    <RoomList key={gameSeq} room={room} />
                   </Link>
                 </Grid>
               ))}
@@ -217,14 +181,16 @@ function GameList() {
         </Grid>
         <Grid item xs={3}>
           <Box display="flex" justifyContent="flex-end" marginBottom="1%">
+
+            {/* 새로고침 아이콘 : 기능 추가예정 */}
             <IconButton
               onClick={() => {
-                // State상태 Update되도록 추후 추가예정
               }}
               sx={{ marginRight: 1 }}
             >
               <RefreshIcon style={{ color: "#ffffff" }} />
             </IconButton>
+
             {/* 검색 카테고리 추가 */}
             <Select
               value={searchCategory}
@@ -233,7 +199,7 @@ function GameList() {
             >
               <MenuItem value={"gameSeq"}>방 번호</MenuItem>
               <MenuItem value={"title"}>방 이름</MenuItem>
-              <MenuItem value={"songSeq"}>노래 제목</MenuItem>
+              <MenuItem value={"songSeq"}>노래 일련번호</MenuItem>
             </Select>
             <TextField
               label="검색"
@@ -241,7 +207,6 @@ function GameList() {
               value={searchTerm}
               onChange={handleSearchChange}
               style={{ width: "100%" }} // 검색창 스타일링
-              placeholder="방 번호 or 노래 제목"
               InputProps={{
                 style: { color: "#ffffff" },
               }}
@@ -252,7 +217,6 @@ function GameList() {
               <Grid container direction="column">
                 <Grid item xs={12}>
                   <Box display="flex" justifyContent="space-between" mb={2}>
-                    {/* <Button variant="contained">방 만들기</Button> */}
                     <Button
                       variant="contained"
                       onClick={handleOpenCreateRoomModal}

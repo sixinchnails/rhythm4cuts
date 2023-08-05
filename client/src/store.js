@@ -3,8 +3,40 @@ import {
   createSlice,
   createAsyncThunk,
 } from "@reduxjs/toolkit";
-import { createRoom } from "./openvidu/RoomToken";
 import { closeSessionAndConnection } from "./openvidu/closeSessionAndConnection";
+
+// ----------------------------------------------------------------------------------------------------------------
+// 방 세션 관리
+const initialState = {
+  session: null,
+  connectionToken: null,
+};
+
+const roomState = createSlice({
+  name: "roomState",
+  initialState,
+  reducers: {
+
+    setSession: (state, action) => {
+      state.session = action.payload;
+    },
+    setConnectionToken: (state, action) => {
+      state.connectionToken = action.payload;
+    },
+  },
+});
+
+export const { setSession, setConnectionToken } = roomState.actions;
+
+// Room 세션 ID를 설정하는 액션 함수
+export const setRoomSession = (sessionId) => (dispatch) => {
+  dispatch(setSession(sessionId));
+};
+
+// 유저 토큰을 설정하는 액션 함수
+export const setUserToken = (userToken) => (dispatch) => {
+  dispatch(setConnectionToken(userToken));
+};
 
 // 웹캠 스트림 상태를 저장하는 slice를 생성합니다.
 const webcamStreamSlice = createSlice({
@@ -17,21 +49,7 @@ const webcamStreamSlice = createSlice({
   },
 });
 
-// 웹캠 스트림을 설정하는 액션을 export 합니다.
 export const { setWebcamStream } = webcamStreamSlice.actions;
-
-// 방 토큰을 가져오는 비동기 액션을 생성합니다.
-// 이 액션은 방의 sessionId를 인수로 받아 OpenVidu 서버에서 토큰을 요청하고 이를 반환합니다.
-export const fetchToken = createAsyncThunk(
-  "session/fetchToken",
-  async (roomId) => {
-    try {
-      return await createRoom(roomId); // createRoom 함수를 호출하여 토큰을 가져옵니다.
-    } catch (error) {
-      throw error; // 에러를 다시 던집니다.
-    }
-  }
-);
 
 // 방을 종료하는 비동기 액션을 생성합니다.
 // 이 액션은 방의 sessionId와 연결의 connectionId를 인수로 받아 OpenVidu 서버에서 세션을 종료하고 이를 반환합니다.
@@ -41,49 +59,8 @@ export const closeSession = createAsyncThunk(
     await closeSessionAndConnection(sessionId, connectionId);
   }
 );
+// ----------------------------------------------------------------------------------------------------------------
 
-// 세션에 관한 Redux 슬라이스를 생성합니다.
-// 이 슬라이스는 세션의 상태와 관련된 정보를 Redux 상태에 저장하고 관리합니다.
-const sessionSlice = createSlice({
-  name: "session",
-  // 이 상태는 토큰 값, 상태(대기 중, 로딩 중, 성공, 실패), 에러 메시지 등을 관리합니다.
-
-  initialState: { token: null, status: "idle", error: null },
-  // 슬라이스에 대한 리듀서를 정의
-  reducers: {
-    // 여기서 액션을 정의합니다.
-    setToken: (state, action) => {
-      state.token = action.payload;
-    },
-    // ... 다른 액션들 ...
-  },
-  // 추가 리듀서를 정의합니다.
-  // fetchToken 및 closeSession 액션에 대한 응답을 처리하는 방법을 정의합니다.
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchToken.pending, (state) => {
-        // 토큰을 요청하는 동안 상태를 '로딩 중'으로 변경합니다.
-        state.status = "loading";
-      })
-      .addCase(fetchToken.fulfilled, (state, action) => {
-        // 토큰 요청이 성공하면 상태를 '성공'으로 변경하고, 토큰 값을 저장합니다.
-        state.status = "succeeded";
-        state.token = action.payload;
-      })
-      .addCase(fetchToken.rejected, (state, action) => {
-        // 토큰 요청이 실패하면 상태를 '실패'로 변경하고, 에러 메시지를 저장합니다.
-        state.status = "failed";
-        state.error = action.error.message;
-      })
-      .addCase(closeSession.fulfilled, (state, action) => {
-        // 세션이 종료되면 상태를 '대기 중'으로 변경하고, 토큰 값을 null로 설정합니다.
-        state.status = "idle";
-        state.token = null;
-      });
-  },
-});
-
-export const { setToken } = sessionSlice.actions;
 
 // 알림 상태를 저장하는 슬라이스
 const notificationSlice = createSlice({
@@ -153,94 +130,6 @@ let GameList_Friend = createSlice({
     { name: "Friend 다", isOnline: false },
 
     // More friends here...
-  ],
-});
-
-// GameList : 방 리스트
-let GameList_Room = createSlice({
-  name: "Room",
-  initialState: [
-    {
-      number: 1, // 방 넘버 ( Primary Value )
-      name: "Room 1", // 방 이름
-      description: "This is Room 1",
-      song: "주저하는 연인들을 위해", // 노래 이름
-      image: "/images/잔나비.jfif", // 노래에 따른 이미지
-      currentOccupancy: 6, // 현재 인원 ( 서버 연결 예정)
-      maxOccupancy: 6, // 최대 인원
-      isSecret: true, // 비밀 방 여부
-    },
-    {
-      number: 2,
-      name: "Room 2",
-      description: "This is Room 2",
-      song: "Song 2",
-      image: "/path/to/image2.jpg",
-      currentOccupancy: 2,
-      maxOccupancy: 4,
-      isSecret: false,
-    },
-    {
-      number: 3,
-      name: "Room 3",
-      description: "This is Room 3",
-      song: "Song 3",
-      image: "/path/to/image3.jpg",
-      currentOccupancy: 1,
-      maxOccupancy: 4,
-      isSecret: false,
-    },
-    {
-      number: 4,
-      name: "Room 4",
-      description: "This is Room 4",
-      song: "Song 4",
-      image: "/path/to/image4.jpg",
-      currentOccupancy: 5,
-      maxOccupancy: 5,
-      isSecret: true,
-    },
-    {
-      number: 5,
-      name: "Room 5",
-      description: "This is Room 5",
-      song: "Song 5",
-      image: "/path/to/image5.jpg",
-      currentOccupancy: 4,
-      maxOccupancy: 6,
-      isSecret: false,
-    },
-    {
-      number: 6,
-      name: "Room 6",
-      description: "This is Room 6",
-      song: "Song 6",
-      image: "/path/to/image6.jpg",
-      currentOccupancy: 3,
-      maxOccupancy: 6,
-      isSecret: true,
-    },
-    {
-      number: 7,
-      name: "Room 7",
-      description: "This is Room 7",
-      song: "Song 7",
-      image: "/path/to/image7.jpg",
-      currentOccupancy: 2,
-      maxOccupancy: 4,
-      isSecret: false,
-    },
-    {
-      number: 8,
-      name: "Room 8",
-      description: "This is Room 8",
-      song: "Song 8",
-      image: "/path/to/image8.jpg",
-      currentOccupancy: 4,
-      maxOccupancy: 6,
-      isSecret: false,
-    },
-    // More rooms here...
   ],
 });
 
@@ -494,16 +383,15 @@ let User_Rank = createSlice({
 
 export default configureStore({
   reducer: {
-    session: sessionSlice.reducer,
     GameShot_frameImage: GameShot_frameImage.reducer,
     GameScore_Result: GameScore_Result.reducer,
     GameWait_Ready: GameWait_Ready.reducer,
-    GameList_Room: GameList_Room.reducer,
     GameList_Friend: GameList_Friend.reducer,
     Music_Rank: Music_Rank.reducer,
     User_Rank: User_Rank.reducer,
     MyPage_Friend: MyPage_Friend.reducer,
     webcamStream: webcamStreamSlice.reducer,
     notification: notificationSlice.reducer,
+    roomState: roomState.reducer,
   },
 });
