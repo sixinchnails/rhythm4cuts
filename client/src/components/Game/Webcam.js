@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useRef } from "react";
 import { connect, Publisher, Session, StreamEvent } from "openvidu-browser";
 
@@ -15,7 +16,8 @@ function Webcam({ token, playerId }) {
     sessionRef.current = session;
 
     // OpenVidu 세션에 연결합니다.
-    session.connect(token)
+    session
+      .connect(token)
       .then(() => {
         // 웹캠 스트림을 획득하고 publisher를 생성합니다.
         const publisher = new Publisher(videoRef.current);

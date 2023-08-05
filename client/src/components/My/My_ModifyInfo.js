@@ -18,7 +18,6 @@ function UserInfo(props) {
   const [passwordEdit, setPasswordEdit] = useState(false);
 
   // 값들 불러오기
-  const profilePic = Info.find((item) => item.name === "프로필 사진")?.value;
 
   //이전 비밀번호
   const [oldPassWord, setOldPassWord] = useState("");
@@ -34,18 +33,18 @@ function UserInfo(props) {
 
   const fileInput = useRef();
 
-  const [selectedImage, setSelectedImage] = useState(profilePic);
+  // const [selectedImage, setSelectedImage] = useState(profilePic);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // const handleFileChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setSelectedImage(reader.result);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
 
   const handleFileOpen = () => {
     fileInput.current.click();
@@ -353,7 +352,7 @@ function UserInfo(props) {
           </div>
         </div>
         <div className="profile-container">
-          <img className="profile-picture" src={selectedImage} alt="Profile" />
+          {/* <img className="profile-picture" src={selectedImage} alt="Profile" /> */}
           <div>
             <Button
               variant="contained"
@@ -372,7 +371,7 @@ function UserInfo(props) {
               type="file"
               style={{ display: "none" }}
               ref={fileInput}
-              onChange={handleFileChange}
+              // onChange={handleFileChange}
             />
           </div>
           <Button

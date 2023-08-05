@@ -12,6 +12,7 @@ import axios from "axios";
 import UserVideo from '../../components/Game/UserVideo';
 import { createConnection } from '../../openvidu/connectionInitialization';
 
+
 function GameWait() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ function GameWait() {
 
   // -----------------------------------------------------------------------------------------------------------------
   const handleToggleReady = playerId => {
+
     dispatch(toggleReady(playerId)); // Redux의 toggleReady 액션을 호출하여 플레이어의 준비 상태를 변경합니다.
   };
   const isReady = useSelector(state => state.GameWait_Ready); // Redux의 상태에서 플레이어의 준비 상태를 가져옵니다.
