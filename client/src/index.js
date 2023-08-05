@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { HashRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store";
 import { CookiesProvider } from "react-cookie";
@@ -13,9 +13,9 @@ root.render(
   // <React.StrictMode>
   <Provider store={store}>
     <CookiesProvider>
-      <HashRouter>
+      <BrowserRouter basename="https://i9b109.p.ssafy.io/">
         <App />
-      </HashRouter>
+      </BrowserRouter>
     </CookiesProvider>
   </Provider>
   // </React.StrictMode>
