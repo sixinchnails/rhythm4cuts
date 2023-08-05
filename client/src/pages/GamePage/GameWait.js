@@ -6,10 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleReady, fetchToken } from "../../store";
 import Header from "../../components/Game/Header_light";
 import Next from "../../components/Game/NextToPlay";
-import Webcam from '../../components/Game/Webcam';
+import Webcam from "../../components/Game/Webcam";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
-import { userInfo } from '../../apis/userInfo';
+import { userInfo } from "../../apis/userInfo";
 
 function GameWait() {
   const { gameSeq } = useParams(); // URL에서 gameSeq 파라미터를 가져옵니다.
@@ -18,7 +18,8 @@ function GameWait() {
 
   const token = useSelector((state) => state.session.token); // Redux의 상태에서 세션 토큰을 가져옵니다.
 
-  const [isInviteFriendModalOpen, setInviteFriendModalOpen] = React.useState(false); // 친구 초대 모달 상태를 관리하는 상태 변수를 생성합니다.
+  const [isInviteFriendModalOpen, setInviteFriendModalOpen] =
+    React.useState(false); // 친구 초대 모달 상태를 관리하는 상태 변수를 생성합니다.
 
   const handleOpenInviteFriendModal = () => {
     setInviteFriendModalOpen(true); // 친구 초대 모달을 열기 위한 핸들러 함수입니다.
@@ -28,9 +29,9 @@ function GameWait() {
     setInviteFriendModalOpen(false); // 친구 초대 모달을 닫기 위한 핸들러 함수입니다.
   };
 
-  let isReady = useSelector(state => state.GameWait_Ready); // Redux의 상태에서 플레이어의 준비 상태를 가져옵니다.
+  let isReady = useSelector((state) => state.GameWait_Ready); // Redux의 상태에서 플레이어의 준비 상태를 가져옵니다.
 
-  const handleToggleReady = playerId => {
+  const handleToggleReady = (playerId) => {
     dispatch(toggleReady(playerId)); // Redux의 toggleReady 액션을 호출하여 플레이어의 준비 상태를 변경합니다.
   };
 
@@ -39,8 +40,7 @@ function GameWait() {
   let user_seq = 6; // ssafy 토큰
   try {
     userInfo()
-      .then(res => {
-
+      .then((res) => {
         console.log("성공 seq: " + res.data.user_seq);
         if (res.status === 200) {
           console.log(res.data.user_seq);
@@ -49,7 +49,7 @@ function GameWait() {
           console.log(1);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         console.log("실패 seq: " + user_seq);
         window.alert("로그인을 해주세요!");
@@ -74,18 +74,19 @@ function GameWait() {
   useEffect(() => {
     if (token) {
       const extractedToken = extractToken(token);
-      axios.put(
-        "/lobby/enter",
-        {
-          userSeq: user_seq,
-          connectionId: extractedToken, // 저장할 연결 토큰
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + getCookie("access"), // 사용자 인증 토큰을 헤더에 넣어서 보냅니다.
+      axios
+        .put(
+          "/lobby/enter",
+          {
+            userSeq: user_seq,
+            connectionId: extractedToken, // 저장할 연결 토큰
           },
-        }
-      )
+          {
+            headers: {
+              Authorization: "Bearer " + getCookie("access"), // 사용자 인증 토큰을 헤더에 넣어서 보냅니다.
+            },
+          }
+        )
         .then((response) => {
           // 저장 성공 시의 처리를 추가할 수 있습니다.
           console.log("DB저장 커넥션 토큰" + extractedToken);

@@ -3,14 +3,40 @@ import { removeCookie } from "../../utils/cookie";
 import "./LoginMypageHeader.css";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { getCookie } from "../../utils/cookie";
+import axios from "axios";
 
 const LoginMypageHeader = () => {
   const navigate = useNavigate();
+  const access = getCookie("access");
 
-  const checkLogin = () => {
-    removeCookie("access");
-    removeCookie("refresh");
-    removeCookie("email");
+  const checkLogin = async () => {
+    try {
+      const response = await axios.post(
+        "/member/logout",
+        {
+          email: getCookie("email"),
+          accessToken: access,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + access,
+          },
+        }
+      );
+      if (response.status === 200) {
+        console.log("로그아웃 성공");
+        removeCookie("access");
+        removeCookie("refresh");
+        removeCookie("email");
+        window.location.reload();
+      } else {
+        window.confirm("1오류가 발생했습니다.");
+      }
+    } catch (error) {
+      console.log(error);
+      window.confirm("2오류가 발생했습니다.");
+    }
   };
 
   const GoMain = () => {

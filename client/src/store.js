@@ -115,33 +115,13 @@ const MyPage_Friend = createSlice({
 const MyPage_MyInfo = createSlice({
   name: "info",
   initialState: [
-    { id: 0, name: "이름", value: "응애강현" },
-    { id: 1, name: "닉네임", value: "코딩응애애앵애애애" },
-    { id: 2, name: "아이디", value: "hyun123" },
-    { id: 3, name: "생일", value: "1998-08-21 ^^" },
-    { id: 4, name: "성별", value: "남자" },
     {
       id: 5,
       name: "프로필 사진",
       // value:
     },
-    { id: 6, name: "비밀번호", value: "1234" },
   ],
   reducers: {
-    // 닉네임 수정 action
-    updateNickname: (state, action) => {
-      const item = state.find((item) => item.name === "닉네임");
-      if (item) {
-        item.value = action.payload;
-      }
-    },
-    // 비밀번호 수정 action
-    updatePassword: (state, action) => {
-      const item = state.find((item) => item.name === "비밀번호");
-      if (item) {
-        item.value = action.payload;
-      }
-    },
     // 프로필 사진 수정 action
     updateProfilePic: (state, action) => {
       const item = state.find((item) => item.name === "프로필 사진");
@@ -523,7 +503,6 @@ export default configureStore({
     Music_Rank: Music_Rank.reducer,
     User_Rank: User_Rank.reducer,
     MyPage_Friend: MyPage_Friend.reducer,
-    MyPage_MyInfo: MyPage_MyInfo.reducer,
     webcamStream: webcamStreamSlice.reducer,
     notification: notificationSlice.reducer,
   },

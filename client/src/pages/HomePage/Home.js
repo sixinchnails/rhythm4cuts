@@ -11,12 +11,13 @@ import MusicRank from "../../components/Home/MusicRank";
 import UserRank from "../../components/Home/UserRank";
 import { Grid, Pagination } from "@mui/material";
 import "./Home.css";
+import Dots from "../../components/Home/Dots";
+import { getCookie } from "../../utils/cookie";
+import { userInfo } from "../../apis/userInfo";
 //이모지 들고오는 import
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { getCookie } from "../../utils/cookie";
-import { userInfo } from "../../apis/userInfo";
 
 const DIVIDER_HEIGHT = 5;
 
@@ -43,7 +44,7 @@ function Home() {
 
   const [startDate, setStartDate] = useState(new Date());
   const outerDivRef = useRef();
-
+  const [scrollIndex, setScrollIndex] = useState(1);
   //음악 랭킹
   let music_rank = useSelector((state) => {
     return state.Music_Rank;
@@ -93,24 +94,28 @@ function Home() {
             left: 0,
             behavior: "smooth",
           });
+          setScrollIndex(2);
         } else if (scrollTop >= pageHeight && scrollTop < pageHeight * 2) {
           outerDivRef.current.scrollTo({
             top: pageHeight * 2 + DIVIDER_HEIGHT * 2,
             left: 0,
             behavior: "smooth",
           });
+          setScrollIndex(3);
         } else if (scrollTop >= pageHeight && scrollTop < pageHeight * 3) {
           outerDivRef.current.scrollTo({
             top: pageHeight * 4 + DIVIDER_HEIGHT * 3,
             left: 0,
             behavior: "smooth",
           });
+          setScrollIndex(4);
         } else {
           outerDivRef.current.scrollTo({
             top: pageHeight * 4 + DIVIDER_HEIGHT * 4,
             left: 0,
             behavior: "smooth",
           });
+          setScrollIndex(4);
         }
       } else {
         // 스크롤 올릴 때
@@ -120,24 +125,28 @@ function Home() {
             left: 0,
             behavior: "smooth",
           });
+          setScrollIndex(1);
         } else if (scrollTop >= pageHeight && scrollTop < pageHeight * 2) {
           outerDivRef.current.scrollTo({
             top: 0,
             left: 0,
             behavior: "smooth",
           });
+          setScrollIndex(1);
         } else if (scrollTop >= pageHeight * 2 && scrollTop < pageHeight * 3) {
           outerDivRef.current.scrollTo({
             top: pageHeight + DIVIDER_HEIGHT,
             left: 0,
             behavior: "smooth",
           });
+          setScrollIndex(2);
         } else {
           outerDivRef.current.scrollTo({
             top: pageHeight * 2 + DIVIDER_HEIGHT * 2,
             left: 0,
             behavior: "smooth",
           });
+          setScrollIndex(3);
         }
       }
     };
@@ -149,6 +158,7 @@ function Home() {
   }, []);
   return (
     <div ref={outerDivRef} className="outer">
+      <Dots scrollIndex={scrollIndex} />
       {/** Home 1 시작하는 곳 */}
       <div className="Home1">
         {isLogin ? <LoginHeader /> : <Header />}
