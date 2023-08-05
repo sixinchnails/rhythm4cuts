@@ -1,33 +1,32 @@
-# Node.js 이미지를 사용하여 앱 빌드 단계
-FROM node:18 AS build
+# Node.js 이미지를 사용하여 Node.js 앱을 빌드합니다.
+FROM node:18 AS builder
 
-# 작업 디렉토리 설정
+# 작업 디렉토리를 /app 으로 설정합니다.
 WORKDIR /app
 
-# 앱 의존성 설치
-COPY package*.json ./
+# package.json 및 package-lock.json 을 복사하여 종속성 설치에 사용합니다.
+COPY client/package.json client/package-lock.json ./
+
+# 종속성 설치
 RUN npm install
 
-# 소스 코드 복사 및 빌드
-COPY . ./
+# 앱 소스를 복사합니다.
+COPY client/ .
+
+# 앱을 빌드합니다.
 RUN npm run build
 
+# Nginx 이미지를 사용하여 정적 파일을 서비스합니다.
+FROM nginx:alpine
 
-# prod environment
-FROM nginx:stable-alpine
+# Nginx 설정을 복사합니다.
+COPY client/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
-# 이전 빌드 단계에서 빌드한 결과물을 /usr/share/nginx/html 으로 복사한다.
- COPY --from=build /app/build /usr/share/nginx/html
+# 빌드된 React 앱을 Nginx에 복사합니다.
+COPY --from=builder /app/build /usr/share/nginx/html
 
-# 기본 nginx 설정 파일을 삭제한다. (custom 설정과 충돌 방지)
-RUN rm /etc/nginx/conf.d/default.conf
-
-# custom 설정파일을 컨테이너 내부로 복사한다.
-COPY nginx/nginx.conf /etc/nginx/conf.d
-
-# 컨테이너의 80번 포트를 열어준다.
-# EXPOSE 5442
+# 80번 포트로 Nginx를 실행합니다.
 EXPOSE 80
 
-# Nginx 서버 시작
+# 컨테이너가 시작되면 Nginx를 실행합니다.
 CMD ["nginx", "-g", "daemon off;"]
