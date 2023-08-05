@@ -18,7 +18,9 @@ import { userInfo } from "../../apis/userInfo";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { renewAccesToken } from "../../apis/renewAccesToken";
+import { renewAccessToken } from "../../apis/renewAccessToken";
+import { setCookie } from "../../utils/cookie";
+import { width } from "@mui/system";
 
 const DIVIDER_HEIGHT = 5;
 
@@ -31,12 +33,27 @@ function Home() {
     userInfo()
       .then((res) => {
         if (res.status === 200) {
-          console.log(res.data.data);
+          console.log(res);
           setIsLogin(true);
+          // 401은 access토큰이 틀린거
         } else if (res.status === 401) {
-          renewAccesToken().then((res) => {});
+          console.log("access토큰이 틀렸습니다.");
+          // 403은 access토큰이 만료된거
         } else if (res.status === 403) {
-          checkLogin();
+          console.log("accessToken이 만료되었습니다.");
+          renewAccessToken().then((res) => {
+            if (res.status === 200) {
+              setCookie("access", res.accessToken);
+              console.log("accessToken 재발급 완료");
+              window.location.reload();
+            } else if (res.status === 401) {
+              console.log("refresh토큰이 틀렸습니다.");
+            } else if (res.status === 403) {
+              checkLogin();
+              console.log("refresh토큰이 만료되었습니다.");
+              window.confirm("로그인 기간이 만료되었습니다.");
+            }
+          });
         }
       })
       .catch((error) => {
@@ -229,7 +246,9 @@ function Home() {
         </div>
         <div className="content">
           <div className="intro"></div>
-          <div className="rules"></div>
+          <div className="rules">
+            <img style={{ height: 560, width: 514 }} src="images/Rules.png" />
+          </div>
         </div>
       </div>
       <div className="divider"></div>
