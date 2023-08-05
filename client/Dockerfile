@@ -20,7 +20,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Nginx 설정을 복사합니다.
-COPY client/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 # 빌드된 React 앱을 Nginx에 복사합니다.
 COPY --from=builder /app/build /usr/share/nginx/html
