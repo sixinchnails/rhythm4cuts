@@ -5,13 +5,13 @@ FROM node:18 AS builder
 WORKDIR /app
 
 # package.json 및 package-lock.json 을 복사하여 종속성 설치에 사용합니다.
-COPY client/package.json client/package-lock.json ./
+COPY package.json package-lock.json ./
 
 # 종속성 설치
 RUN npm install
 
 # 앱 소스를 복사합니다.
-COPY client .
+COPY . .
 
 # 앱을 빌드합니다.
 RUN npm run build
