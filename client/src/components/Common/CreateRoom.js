@@ -53,7 +53,6 @@ function CreateRoom({ isOpen, handleClose }) {
               password: password, // 비밀번호
               sessionId: sessionResponse.id, // 세션 아이디
               connectionId: connectionResponse.connectionId, // 연결 아이디
-              sessionId: sessionResponse.id, // 세션 아이디
             },
             {
               headers: {

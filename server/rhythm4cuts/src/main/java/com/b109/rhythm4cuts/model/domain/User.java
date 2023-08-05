@@ -129,7 +129,7 @@ public class User implements UserDetails {
         userDto.setPoint(this.getPoint());
         userDto.setScoreSum(this.getScoreSum());
         userDto.setConnectionId(this.getConnectionId());
-
+        userDto.setBirthDate(this.getBirthDate());
         return userDto;
     }
 }

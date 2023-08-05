@@ -4,7 +4,7 @@ import "./My_JoinInfo.css";
 import Button from "@mui/material/Button";
 import axios from "axios";
 
-const JoinInfo = ({ onJoinInfo }) => {
+const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [emailCode, setEmailCode] = useState("");
@@ -35,7 +35,7 @@ const JoinInfo = ({ onJoinInfo }) => {
         email,
         password,
         passwordConfirm,
-        profile_img_seq: 1,
+        profile_img_seq: profileImgSeq,
         emailCodeStatus,
         isPasswordValid,
         nickNameStatus,
@@ -53,6 +53,7 @@ const JoinInfo = ({ onJoinInfo }) => {
     emailCodeStatus,
     isPasswordValid,
     nickNameStatus,
+    profileImgSeq,
   ]);
 
   // 상태가 변경될 때마다 콜백 함수를 호출
