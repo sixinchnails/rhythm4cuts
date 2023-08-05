@@ -18,20 +18,42 @@ import { userInfo } from "../../apis/userInfo";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import { renewAccessToken } from "../../apis/renewAccessToken";
+import { setCookie } from "../../utils/cookie";
+import { width } from "@mui/system";
 
 const DIVIDER_HEIGHT = 5;
 
 function Home() {
-  const accessToken = getCookie("access");
-
+  //로그인 상태 저장변수
   const [isLogin, setIsLogin] = useState(false);
 
+  //로그인 상태 확인 및 유저 정보 불러오는 부분
   try {
     userInfo()
       .then(res => {
         if (res.status === 200) {
           console.log(res);
           setIsLogin(true);
+          // 401은 access토큰이 틀린거
+        } else if (res.status === 401) {
+          console.log("access토큰이 틀렸습니다.");
+          // 403은 access토큰이 만료된거
+        } else if (res.status === 403) {
+          console.log("accessToken이 만료되었습니다.");
+          renewAccessToken().then((res) => {
+            if (res.status === 200) {
+              setCookie("access", res.accessToken);
+              console.log("accessToken 재발급 완료");
+              window.location.reload();
+            } else if (res.status === 401) {
+              console.log("refresh토큰이 틀렸습니다.");
+            } else if (res.status === 403) {
+              checkLogin();
+              console.log("refresh토큰이 만료되었습니다.");
+              window.confirm("로그인 기간이 만료되었습니다.");
+            }
+          });
         }
       })
       .catch(error => {
@@ -41,6 +63,36 @@ function Home() {
   } catch (error) {
     console.log(error);
   }
+
+  //로그아웃 관련 코드
+  const checkLogin = async () => {
+    try {
+      const response = await axios.post(
+        "/member/logout",
+        {
+          email: getCookie("email"),
+          accessToken: access,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + access,
+          },
+        }
+      );
+      if (response.status === 200) {
+        console.log("로그아웃 성공");
+        removeCookie("access");
+        removeCookie("refresh");
+        removeCookie("email");
+        window.location.reload();
+      } else {
+        window.confirm("1오류가 발생했습니다.");
+      }
+    } catch (error) {
+      console.log(error);
+      window.confirm("2오류가 발생했습니다.");
+    }
+  };
 
   const [startDate, setStartDate] = useState(new Date());
   const outerDivRef = useRef();
@@ -194,7 +246,9 @@ function Home() {
         </div>
         <div className="content">
           <div className="intro"></div>
-          <div className="rules"></div>
+          <div className="rules">
+            <img style={{ height: 560, width: 514 }} src="images/Rules.png" />
+          </div>
         </div>
       </div>
       <div className="divider"></div>
