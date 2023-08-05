@@ -13,7 +13,7 @@ root.render(
   // <React.StrictMode>
   <Provider store={store}>
     <CookiesProvider>
-      <BrowserRouter basename="https://i9b109.p.ssafy.io/">
+      <BrowserRouter>
         <App />
       </BrowserRouter>
     </CookiesProvider>
