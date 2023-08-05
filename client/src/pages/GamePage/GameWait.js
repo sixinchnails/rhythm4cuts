@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, Container, Grid, Link as MuiLink } from "@mui/material";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleReady, fetchToken } from "../../store";
+import { toggleReady, setSession, setConnectionToken } from "../../store";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from '../../apis/userInfo';
 import Header from "../../components/Game/Header_light";
@@ -16,67 +16,70 @@ function GameWait() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let { gameSeq } = useParams(); // URL에서 가져와
-  const [session, setSession] = useState("");
-  const [connectionToken, setConnectionToken] = useState("");
+
+  const session = useSelector(state => state.roomState.session);
+  const connectionToken = useSelector(state => state.roomState.connectionToken);
 
   // -----------------------------------------------------------------------------------------------------------------
   const handleToggleReady = playerId => {
     dispatch(toggleReady(playerId)); // Redux의 toggleReady 액션을 호출하여 플레이어의 준비 상태를 변경합니다.
   };
-  let isReady = useSelector(state => state.GameWait_Ready); // Redux의 상태에서 플레이어의 준비 상태를 가져옵니다.
+  const isReady = useSelector(state => state.GameWait_Ready); // Redux의 상태에서 플레이어의 준비 상태를 가져옵니다.
   // -----------------------------------------------------------------------------------------------------------------
 
-  userInfo()
-    .then(res => {
-      if (res.status === 200) {
-      }
-    })
-    .catch(error => {
-      window.alert("로그인을 해주세요!");
-      navigate("/");
-    });
-
-
-  // 방 세션 ID 가져오기
   useEffect(() => {
-    const fetchSession = async () => {
-      const access = getCookie("access");
-      try {
-        const response = await axios.get(
-          "/wait/info/" + gameSeq,
-          {
-            headers: {
-              Authorization: "Bearer " + access,
-            },
-          }
-        );
-        setSession(response.data.data.sessionId);
-      } catch (error) {
-        console.error("DB에서 세션 id 불러오기 실패:", error);
-      }
-    };
-
+    userInfo()
+      .then(res => {
+        if (res.status !== 200) {
+          window.alert("로그인을 해주세요!");
+          navigate("/");
+        }
+      })
+      .catch(error => {
+        console.error("유저 정보 불러오기 실패:", error);
+        window.alert("로그인을 해주세요!");
+        navigate("/");
+      });
     fetchSession();
   }, [gameSeq]);
 
-  // 연결 유저 토큰 만들기 
-  useEffect(() => {
-    const fetchConnectionToken = async () => {
-      try {
-        const token = await createConnection(session);
-        setConnectionToken(token);
-      } catch (error) {
-        console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
-      }
-    };
+  // 방 세션 ID 가져오기
+  const fetchSession = async () => {
+    try {
+      const access = getCookie("access");
+      const response = await axios.get(
+        "/wait/info/" + gameSeq,
+        {
+          headers: {
+            Authorization: "Bearer " + access,
+          },
+        }
+      );
+      dispatch(setSession(response.data.data.sessionId));
+    } catch (error) {
+      console.error("DB에서 세션 id 불러오기 실패:", error);
+    }
+  };
 
-    fetchConnectionToken();
+  // 연결 유저 토큰 만들기 
+  const fetchConnectionToken = async () => {
+    try {
+      await createConnection();
+
+    } catch (error) {
+      console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (session) {
+      fetchConnectionToken();
+    }
   }, [session]);
 
   console.log("게임 시퀀스입니다 : " + gameSeq);
   console.log("세션입니다 : " + session);
   console.log("연결 토큰입니다 : " + connectionToken);
-
 
   return (
     <div
@@ -93,11 +96,11 @@ function GameWait() {
       <Grid container>
         <Grid item xs={12}>
           <Container>
-            {/* <Grid container spacing={3} justifyContent="space-between">
+            <Grid container spacing={3} justifyContent="space-between">
               <Grid item xs>
-                <Next />  다음 게임으로 이동하는 버튼을 렌더링합니다. 
+                <Next />
               </Grid>
-            </Grid> */}
+            </Grid>
             <div>
               {/* Top */}
               <Grid>
@@ -137,8 +140,7 @@ function GameWait() {
               {/* Bottom */}
               <Grid container style={{ height: '100%' }}>
                 <Grid item xs={12} style={{ height: '25%' }}>
-                  asdfasdfadsf
-                  <UserVideo roomSession={session} userToken={connectionToken} />
+                  <UserVideo />
                 </Grid>
 
                 <Grid item xs={12} style={{ height: '25%' }}>

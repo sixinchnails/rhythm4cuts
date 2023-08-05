@@ -8,22 +8,35 @@ import { closeSessionAndConnection } from "./openvidu/closeSessionAndConnection"
 // ----------------------------------------------------------------------------------------------------------------
 // 방 세션 관리
 const initialState = {
-  gameSeq: null,
   session: null,
+  connectionToken: null,
 };
+
 const roomState = createSlice({
   name: "roomState",
-  initialState, // 초기값
+  initialState,
   reducers: {
-    setGameSeq: (state, action) => {
-      state.gameSeq = action.payload;
-    },
+
     setSession: (state, action) => {
       state.session = action.payload;
     },
+    setConnectionToken: (state, action) => {
+      state.connectionToken = action.payload;
+    },
   },
-})
-export const { setGameSeq, setSession } = roomState.actions;
+});
+
+export const { setSession, setConnectionToken } = roomState.actions;
+
+// Room 세션 ID를 설정하는 액션 함수
+export const setRoomSession = (sessionId) => (dispatch) => {
+  dispatch(setSession(sessionId));
+};
+
+// 유저 토큰을 설정하는 액션 함수
+export const setUserToken = (userToken) => (dispatch) => {
+  dispatch(setConnectionToken(userToken));
+};
 
 // 웹캠 스트림 상태를 저장하는 slice를 생성합니다.
 const webcamStreamSlice = createSlice({

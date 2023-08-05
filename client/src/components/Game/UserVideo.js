@@ -1,11 +1,16 @@
 import React, { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { OpenVidu } from 'openvidu-browser';
 
-function UserVideo({ userToken, roomSession }) {
-    console.log('UserVideo roomSession:', roomSession);
-    console.log('UserVideo userToken:', userToken);
+function UserVideo() {
+
 
     const videoRef = useRef();
+    const roomSession = useSelector(state => state.roomState.session);
+    const userToken = useSelector(state => state.roomState.connectionToken);
+
+    console.log('리덕스에 담긴 roomSession:', roomSession);
+    console.log('리덕스에 담긴 userToken:', userToken);
 
     useEffect(() => {
         if (!roomSession || !userToken) {
