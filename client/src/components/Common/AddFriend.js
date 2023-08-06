@@ -59,12 +59,11 @@ function AddFriend({ isOpen, handleClose }) {
           position: "absolute",
           top: "50%",
           left: "50%",
-          transform: "translate(-50%, -50%)",
-          backgroundColor: "rgba(50, 100, 255, 0.8)",
+          transform: "translate(-50%, -60%)",
+          backgroundColor: "rgba(50, 50, 255, 0.9)",
           color: "#ffffff",
           padding: "50px",
           width: "500px"
-
         }}
       >
         <h2 style={{ textAlign: "center" }}>친구 추가</h2>

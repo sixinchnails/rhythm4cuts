@@ -303,7 +303,7 @@ function GameList() {
         {/* Right */}
         <Grid item xs={3} padding={"15px"}>
 
-          <Paper elevation={10} style={{ backgroundColor: "rgba(0, 0, 0, 0.8)", height: "82vh" }}>
+          <Paper elevation={10} style={{ backgroundColor: "rgba(0, 0, 0, 0.8)", height: "81vh" }}>
             <Box padding={"20px"} >
 
               <Grid direction="column" container>
@@ -328,7 +328,7 @@ function GameList() {
                     <Button
                       variant="contained"
                       onClick={handleOpenAddFriendModal}
-                      style={{ backgroundColor: "rgba(0, 128, 255, 0.3)", width: "30%", height: "5vh", fontFamily: 'Pretendard-Regular', fontSize: "15px" }}
+                      style={{ borderRadius: "30px", backgroundColor: "rgba(0, 128, 255, 0.3)", width: "30%", height: "5vh", fontFamily: 'Pretendard-Regular', fontSize: "15px" }}
                     >
                       Add
                     </Button>

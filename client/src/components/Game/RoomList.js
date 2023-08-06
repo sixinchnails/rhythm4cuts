@@ -21,9 +21,11 @@ function RoomList({ room }) {
           color: "white",
           border: "1px solid white", // 테두리를 흰색으로 설정
           height: "19vh",
+          borderRadius: "20px",
+
         }}
       >
-        <Grid container>
+        <Grid container >
 
           {/* 왼쪽 : 노래 사진 */}
           <Grid
@@ -33,7 +35,7 @@ function RoomList({ room }) {
               height: "20vh",
               display: "flex",
               alignItems: "center",
-              padding: "10px"
+              padding: "15px",
             }}
           >
             <CardMedia
@@ -45,6 +47,7 @@ function RoomList({ room }) {
                 objectFit: "cover",
                 width: "100%",
                 height: "100%",
+                borderRadius: "20px",
               }}
             />
           </Grid>
