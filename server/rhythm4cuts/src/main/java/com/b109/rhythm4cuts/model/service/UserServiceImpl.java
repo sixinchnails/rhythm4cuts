@@ -14,6 +14,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import java.util.Optional;
@@ -175,7 +176,7 @@ public class UserServiceImpl implements UserService {
     public void updatePassword(String accessToken, UpdateUserPasswordDto dto) {
         if (!tokenProvider.validToken(accessToken)) throw new IllegalArgumentException();
 
-        String email = tokenProvider.getUserId(accessToken);
+        String email = tokenProvider.getSubject(accessToken);
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException());
@@ -212,8 +213,6 @@ public class UserServiceImpl implements UserService {
 
     //로그아웃 메서드(상태 변환)
     public void logout(LogoutDto logoutDto) {
-        System.out.println(logoutDto.getEmail());
-
         User user = userRepository.findByEmail(logoutDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
 
@@ -317,22 +316,32 @@ public class UserServiceImpl implements UserService {
     }
 
     public ResponseEntity<?> reissueAuthenticationToken(TokenRequestDto tokenRequestDto) {
-        // Refresh Token 만료 여부와 유효성 검증
-        if(tokenProvider.isTokenExpired(tokenRequestDto.getRefreshToken()) || !tokenProvider.validToken(tokenRequestDto.getRefreshToken())) {
+        // Refresh Token 블랙리스트, 만료, 유효성 체크
+        if(!tokenProvider.validToken(tokenRequestDto.getRefreshToken())) {
             throw new IllegalArgumentException("잘못된 요청입니다. 다시 로그인해주세요.");
         }
 
         // Access Token 에 기술된 사용자 이름 가져오기
-        User user = userRepository.findByEmail(tokenRequestDto.getEmail()).orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+        //User user = userRepository.findByEmail(tokenRequestDto.getEmail()).orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+        User user = userRepository.findByEmail(tokenProvider.getSubject(tokenRequestDto.getRefreshToken())).orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+
         UserDto userDto = dtoSetter(user);
+        String redisATKKey = "RT:" + tokenRequestDto.getAccessToken();
 
         // Redis 에 저장된 Refresh Token 과 비교
-        String refreshToken = (String) redisTemplate.opsForValue().get("RT:" + tokenRequestDto.getAccessToken());
+        String refreshToken = (String) redisTemplate.opsForValue().get(redisATKKey);
 
+        //레디스에서 기존 액세스 토큰(키)과 리프레쉬 토큰(밸류)를 삭제
+        if (redisTemplate.hasKey(redisATKKey)) redisTemplate.delete(redisATKKey);
+        //해당 토큰을 키로 가진 매핑이 없는데요? 이미 리프레쉬 한번하는데 쓴 액세스 토큰을 다시 보냈을 때 발생.
+        else throw new JwtException("Invalid access token. Possible reason is the access token provided was previously used for refresh.");
+
+        //RefreshToken이 없을 때 실행
         if(ObjectUtils.isEmpty(refreshToken)) {
-            throw new IllegalArgumentException("잘못된 요청입니다. 다시 로그인해주세요.");
+            throw new IllegalArgumentException("액세스 토큰이 무효합니다. 다시 로그인해주세요.");
         }
 
+        //Redis 리프레쉬 토큰과 요청에 담긴 리프레쉬 토큰의 일치 여부 확인
         if(!refreshToken.equals(tokenRequestDto.getRefreshToken())) {
             throw new IllegalArgumentException("Refresh Token 정보가 일치하지 않습니다.");
         }

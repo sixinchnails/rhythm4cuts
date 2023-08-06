@@ -72,7 +72,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 }
                 //유효 체크(분기 진입 시 유효한 토큰)
                 else if (StringUtils.hasText(token) && isTokenValid) {
-                    String email = tokenProvider.getUserId(token);
+                    String email = tokenProvider.getSubject(token);
                     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, null);
@@ -89,16 +89,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             }
 
             filterChain.doFilter(request, response);
-        } catch (JwtException e) {//oauth2.jwtexception
+        } catch (Exception e) {//oauth2.jwtexception
             //에러 메세지 생성 및 응답
             Map<String, Object> errorDetails = new HashMap<>();
 
             errorDetails.put("message", e.getMessage());
 
-            //401
-            if (e.getMessage().equals("Invalid token")) response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            //403
-            else response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 

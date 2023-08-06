@@ -69,20 +69,38 @@ public class TokenProvider {
     }
 
     //메서드 2. JWT 토큰(액세스/리프레쉬 둘 다) 유효성 검증 메서드
+    //1. 토큰 클레임 체크, 2. 블랙리스트 여부, 3. 만료 여부 확인
     public boolean validToken(String token) {
         try{
+            //Signature 불일치 시 403 반환하는 원인
+            //클레임 파싱하는 코드 -> 문제 있으면 원인에 따라 예외 던짐
             Jwts.parser()
                     .setSigningKey(jwtProperties.getSecretKey())
                     .parseClaimsJws(token);
 
-            ScanOptions options = ScanOptions.scanOptions().match(token).build();
-            Cursor cursor = redisTemplate.scan(options);
+            //토큰의 블랙리스트 등록 여부 확인
+//            ScanOptions options = ScanOptions.scanOptions().match(token).build();
+//            Cursor cursor = redisTemplate.scan(options);
+//
+//            if (cursor.hasNext()) {
+//                System.out.println(cursor.next());
+//                throw new IllegalArgumentException("토큰이 블랙리스트에 등록되어 있습니다.");
+//            }
 
-            if (cursor.hasNext()) {
-                System.out.println(cursor.next());
-                throw new IllegalArgumentException("로그인을 다시 해주세요.");
+            boolean isBlackListed  = ((String) redisTemplate.opsForValue().get(token) == null)? false : true;
+
+            if (isBlackListed) {
+                System.out.println("블랙리스트 등록된 ATK");
+                throw new IllegalArgumentException("ATK is blacklisted.");
             }
 
+            //토큰 만료 여부 확인
+            if (isTokenExpired(token)) {
+                System.out.println("토큰 만료");
+                throw new IllegalArgumentException("Token is expired.");
+            }
+
+            //유효한 토큰
             return true;
         } catch(SecurityException | MalformedJwtException e) {
             logger.error("Invalid JWT signature");
@@ -90,7 +108,7 @@ public class TokenProvider {
         } catch(UnsupportedJwtException e) {
             logger.error("Unsupported JWT token");
             return false;
-        } catch(IllegalArgumentException e) {
+        } catch(IllegalArgumentException | SignatureException e) {
             logger.error("JWT token is invalid");
             return false;
         }
@@ -105,23 +123,23 @@ public class TokenProvider {
     }
 
     //메서드 4. 토큰 기반으로 유저 ID(이메일)를 가져오는 메서드
-    public String getUserId(String token) {
+    public String getSubject(String token) {
         //Claims claims = getClaims(token);
         //return claims.get("id", String.class);
         return getClaims(token).getSubject();
     }
 
-    public Date getExpirationDateFromToken(String token) {
+    public Date getExpirationDateFromToken(String token) throws ExpiredJwtException, SignatureException {
         return getClaims(token).getExpiration();
     }
 
-    public Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token) throws ExpiredJwtException, SignatureException {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }
 
     //메서드 5. 클레임 조회 메서드
-    private Claims getClaims(String token) throws ExpiredJwtException {
+    private Claims getClaims(String token) throws ExpiredJwtException, SignatureException {
         return Jwts.parser()
                 .setSigningKey(jwtProperties.getSecretKey())
                 .parseClaimsJws(token)
