@@ -1,19 +1,20 @@
 /* eslint-disable */
-import React, { useEffect, useState } from "react";
-import { Button, Card, Container, Grid, Link as MuiLink } from "@mui/material";
+import { Button, Card, Container, Grid, Link as MuiLink, Typography } from "@mui/material";
+import { createConnection } from '../../openvidu/connectionInitialization';
+import { toggleReady, setSession, setConnectionToken } from "../../store";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleReady, setSession, setConnectionToken } from "../../store";
+import React, { useEffect, useState } from "react";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from '../../apis/userInfo';
-import Header from "../../components/Game/Header_light";
+import LoginAlert from '../../components/Common/LoginAlert';
+import UserVideo from '../../components/Game/UserVideo';
+import Header from "../../components/Game/HeaderPlay";
 import Next from "../../components/Game/NextToPlay";
 import axios from "axios";
-import UserVideo from '../../components/Game/UserVideo';
-import { createConnection } from '../../openvidu/connectionInitialization';
-
 
 function GameWait() {
+  const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let { gameSeq } = useParams(); // URL에서 가져와
@@ -22,12 +23,31 @@ function GameWait() {
   const connectionToken = useSelector(state => state.roomState.connectionToken);
 
   // -----------------------------------------------------------------------------------------------------------------
-  const handleToggleReady = playerId => {
 
-    dispatch(toggleReady(playerId)); // Redux의 toggleReady 액션을 호출하여 플레이어의 준비 상태를 변경합니다.
+  // 로그인 상태를 업데이트하는 함수
+  const handleOpenLoginAlert = () => {
+    setLoginAlertOpen(true);
   };
-  const isReady = useSelector(state => state.GameWait_Ready); // Redux의 상태에서 플레이어의 준비 상태를 가져옵니다.
-  // -----------------------------------------------------------------------------------------------------------------
+  const handleCloseLoginAlert = () => {
+    setLoginAlertOpen(false);
+    navigate("/Login");
+  };
+
+  // 로그인 상태관리
+  useEffect(() => {
+    userInfo()
+      .then(res => {
+        if (res.status === 200) {
+        } else {
+          // 로그인 상태가 아니라면 알림.
+          handleOpenLoginAlert();
+        }
+      })
+      .catch(error => {
+        // 오류가 발생하면 로그인 알림.
+        handleOpenLoginAlert();
+      });
+  }, []);
 
   useEffect(() => {
     userInfo()
@@ -87,81 +107,90 @@ function GameWait() {
     <div
       style={{
         width: "100%",
-        height: "100%",
+        height: "100vh",
         backgroundPosition: "center",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
-        backgroundImage: "url('/images/Game_Waiting.jpg')",
+        backgroundImage: "url('/images/GameImage/GameList.jpg')",
       }}
     >
       <Header />
+
       <Grid container>
         <Grid item xs={12}>
+
           <Container>
-            <Grid container spacing={3} justifyContent="space-between">
-              <Grid item xs>
-                <Next />
-              </Grid>
-            </Grid>
-            <div>
-              {/* Top */}
-              <Grid>
-                <Card
+            {/* Top */}
+            <Grid >
+              <Card
+                style={{
+                  height: "50vh",
+                  margin: "1%",
+                  background: "transparent",
+                }}
+              >
+                {/* 대기중 비디오 */}
+                <video
+                  src="/images/GameImage/Dance.mp4"
+                  autoPlay
+                  loop
                   style={{
-                    width: "90%",
+                    width: "100%",
                     height: "50vh",
-                    margin: "1%",
+                    objectFit: "contain",
                   }}
-                >
-                  대기중 비디오
-                </Card>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    position: "fixed",
-                    bottom: "2%",
-                    right: "2%",
-                  }}
-                >
-                  <Button
-                    variant={isReady.player1 ? "warning" : "success"}
-                    // onClick={() => handleToggleReady("player")}
-                    className="mb-2"
-                  >
-                    {isReady.player1 ? "Ready" : "준비하자!"}
-                    {/* 플레이어 1의 준비 상태에 따라 준비 버튼의 텍스트를 변경합니다. */}
-                  </Button>
-                  <MuiLink to="/GameList" component={Link}>
-                    <Button variant="contained" color="secondary">
-                      GameList Page
-                    </Button>
-                  </MuiLink>
-                </div>
-              </Grid>
-              {/* Bottom */}
-              <Grid container style={{ height: '100%' }}>
-                <Grid item xs={12} style={{ height: '25%' }}>
-                  <UserVideo />
-                </Grid>
+                />
+              </Card>
+            </Grid>
 
-                <Grid item xs={12} style={{ height: '25%' }}>
-                  {/* <UserVideo roomSession={token} streamId={player2_token} /> */}
-                </Grid>
+            <Grid
+              container
+              style={{
+                height: '35vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'absolute', // 텍스트를 카드 내부에서 절대 위치로 설정
+                top: 0, // 상단 위치를 필요에 따라 조정
+                left: 0, // 좌측 위치를 필요에 따라 조정
+                right: 0, // 우측 위치를 필요에 따라 조정
+                bottom: 0, // 하단 위치를 필요에 따라 조정
+                zIndex: 1, // z-index를 1로 설정하여 비디오 위에 텍스트가 나타나도록
+              }}
+            >
+              <Typography variant="h5" style={{ fontFamily: 'Pretendard-Regular', fontWeight: "bold", fontSize: "px", color: "red" }}>
+                전원 준비가 되면 게임이 시작합니다 악!
+              </Typography>
+            </Grid>
 
-                <Grid item xs={12} style={{ height: '25%' }}>
-                  {/* <UserVideo roomSession={token} streamId={player3_token} /> */}
-                </Grid>
+            {/* Bottom */}
+            <Grid container style={{ height: '30vh', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
-                <Grid item xs={12} style={{ height: '25%' }}>
-                  {/* <UserVideo roomSession={token} streamId={player4_token} /> */}
-                </Grid>
+              <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '5px solid white', padding: '2px', margin: '5px' }}>
+                <UserVideo />
               </Grid>
 
-            </div>
+              <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '5px solid white', padding: '2px', margin: '5px' }}>
+                <UserVideo />
+              </Grid>
+
+              <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '5px solid white', padding: '2px', margin: '5px' }}>
+                <UserVideo />
+              </Grid>
+
+              <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '5px solid white', padding: '2px', margin: '5px' }}>
+                <UserVideo />
+              </Grid>
+
+            </Grid>
+
           </Container>
         </Grid>
       </Grid>
+
+      {/* '로그인 경고' 모달 */}
+      <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
+
     </div >
   );
 }

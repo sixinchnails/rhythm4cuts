@@ -5,7 +5,7 @@ import Sidebar from "../../components/My/My_SideBar";
 import "./MyPhoto.css";
 import ImageByMonth from "../../components/My/My_Image";
 import { userInfo } from "../../apis/userInfo";
-import LoginMypageHeader from "../../components/Home/LoginMypageHeader";
+import LoginMypageHeader from "../../components/Home/BlackHeader";
 import { useNavigate } from "react-router-dom";
 
 const MyPhoto = () => {

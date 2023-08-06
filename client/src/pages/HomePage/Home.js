@@ -2,25 +2,25 @@
 /* eslint-disable */
 import "animate.css";
 import { React, useRef, useEffect, useState } from "react";
-import Header from "../../components/Home/Header";
-import LoginHeader from "../../components/Home/LoginHeader";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { useSelector } from "react-redux";
-import MusicRank from "../../components/Home/MusicRank";
-import UserRank from "../../components/Home/UserRank";
 import { Grid, Pagination } from "@mui/material";
-import "./Home.css";
-import Dots from "../../components/Home/Dots";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from "../../apis/userInfo";
+import Header from "../../components/Home/Header";
+import LoginHeader from "../../components/Home/WhiteHeader";
+import DatePicker from "react-datepicker";
+import MusicRank from "../../components/Home/MusicRank";
+import UserRank from "../../components/Home/UserRank";
+import Dots from "../../components/Home/Dots";
+import "react-datepicker/dist/react-datepicker.css";
+import "./Home.css";
 //이모지 들고오는 import
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import { Client } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
 import { renewAccessToken } from "../../apis/renewAccessToken";
 import { setCookie } from "../../utils/cookie";
+import { Client } from "@stomp/stompjs";
 import { width } from "@mui/system";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import SockJS from "sockjs-client";
 
 const DIVIDER_HEIGHT = 5;
 

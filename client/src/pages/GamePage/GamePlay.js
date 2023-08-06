@@ -4,10 +4,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { Container, Grid, Card, CardContent } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Header from "../../components/Game/Header_light";
+import Header from "../../components/Game/HeaderPlay";
 import PlayPlayer from "../../components/Game/PlayPlayer";
 import NextToScore from "../../components/Game/NextToScore"; // 추가된 컴포넌트 import
-import OpenVidu from "openvidu-browser";
 import UserVideo from '../../components/Game/UserVideo';
 
 function GamePlay() {

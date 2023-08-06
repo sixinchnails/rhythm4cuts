@@ -60,35 +60,37 @@ function AddFriend({ isOpen, handleClose }) {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: "30%",
-          bgcolor: "background.paper",
-          border: "2px solid #000",
-          boxShadow: 24,
-          p: 4,
+          backgroundColor: "rgba(50, 100, 255, 0.8)",
+          color: "#ffffff",
+          padding: "50px",
+          width: "500px"
+
         }}
       >
         <h2 style={{ textAlign: "center" }}>친구 추가</h2>
+
         <TextField
           label="닉네임 입력"
           variant="outlined"
           fullWidth
           value={friendNickname}
           onChange={handleNameChange}
-          style={{ marginBottom: "20px" }}
+          style={{ marginBottom: "30px", }}
+          inputProps={{ style: { color: "#ffffff" } }}
+          InputLabelProps={{ style: { color: "#ffffff" } }}
         />
         <Stack direction="row" spacing={2} justifyContent="center">
           {/* 나중에 친구 목록 DB에서 가져와야돼 (친구가 있는지도 Check) */}
           <Button
-            variant="contained"
-            color="primary"
+            variant="contained" style={{ backgroundColor: "rgba(0, 128, 255, 0.1)", width: "100px" }}
             onClick={() => {
               handleClose();
               requestFriend();
             }}
           >
-            추가
+            요청
           </Button>
-          <Button variant="contained" onClick={handleClose}>
+          <Button variant="contained" style={{ backgroundColor: "rgba(0, 128, 255, 0.1)", width: "100px" }} onClick={handleClose} >
             취소
           </Button>
         </Stack>
