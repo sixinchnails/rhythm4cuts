@@ -1,37 +1,51 @@
-/* eslint-disable */
-import React, { useState } from "react";
-import { Modal, Box, TextField, Button, Stack } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  Box,
+  TextField,
+  Button,
+  Stack,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { useEffect } from "react";
+import axios from "axios";
+import { useDebounce } from "use-debounce";
+import { getCookie } from "../../utils/cookie";
 
 function AddFriend({ isOpen, handleClose }) {
-  const [friendNickname, setfriendNickname] = useState(""); // 친구 이름 상태
-  const [client, setClient] = useState(null);
+  const [friendNickname, setfriendNickname] = useState("");
+  const [userInfo, setUserInfo] = useState({ nickname: "", email: "" });
+  const [debouncedFriendNickname] = useDebounce(friendNickname, 300);
 
-  // const handleNameChange = event => {
-  //   setfriendNickname(event.target.value); // 친구 이름 변경 이벤트 핸들러
-  // };
+  useEffect(() => {
+    if (debouncedFriendNickname) {
+      axios
+        .get(`/friend/search/${debouncedFriendNickname}`, {
+          headers: {
+            Authorization: "Bearer " + getCookie("access"),
+          },
+        })
+        .then(response => {
+          if (response.data.data.length > 0) {
+            const { nickname, email } = response.data.data[0];
+            setUserInfo({ nickname, email });
+          } else {
+            setUserInfo({ nickname: "", email: "" });
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    } else {
+      setUserInfo({ nickname: "", email: "" });
+    }
+  }, [debouncedFriendNickname]);
 
-  // useEffect(() => {
-  //   const stompClient = new Client({
-  //     webSocketFactory: () =>
-  //       new SockJS("http://i9b109.p.ssafy.io:8080/stomp/chat"),
-  //   });
-  //   stompClient.onConnect = () => {};
-
-  //   stompClient.activate();
-
-  //   setClient(stompClient);
-
-  //   // Clean up function
-  //   return () => {
-  //     stompClient.deactivate();
-  //   };
-  // }, []);
-
-  const handleNameChange = (event) => {
-    setfriendNickname(event.target.value); // 친구 이름 변경 이벤트 핸들러
+  const handleNameChange = async event => {
+    setfriendNickname(event.target.value);
   };
 
   function requestFriend(a, b) {
@@ -42,14 +56,14 @@ function AddFriend({ isOpen, handleClose }) {
       toUser: b,
     };
 
-    if (client && client.connected) {
-      client.publish({
-        destination: "/public/request",
-        body: JSON.stringify(requestPayload),
-      });
-    } else {
-      console.error("The client is not connected.");
-    }
+    // if (client && client.connected) {
+    //   client.publish({
+    //     destination: "/public/request",
+    //     body: JSON.stringify(requestPayload),
+    //   });
+    // } else {
+    //   console.error("The client is not connected.");
+    // }
   }
 
   return (
@@ -76,8 +90,17 @@ function AddFriend({ isOpen, handleClose }) {
           onChange={handleNameChange}
           style={{ marginBottom: "20px" }}
         />
+        <List>
+          {userInfo.nickname && userInfo.email && (
+            <ListItem>
+              <ListItemText
+                primary={`닉네임: ${userInfo.nickname}`}
+                secondary={`이메일: ${userInfo.email}`}
+              />
+            </ListItem>
+          )}
+        </List>
         <Stack direction="row" spacing={2} justifyContent="center">
-          {/* 나중에 친구 목록 DB에서 가져와야돼 (친구가 있는지도 Check) */}
           <Button
             variant="contained"
             color="primary"
