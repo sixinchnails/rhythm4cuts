@@ -84,7 +84,7 @@ function GameList() {
   // 서버에서 방 리스트 가져오기
   const fetchRooms = async () => {
     try {
-      const response = await axios.get("/lobby/list", {
+      const response = await axios.get("https://i9b109.p.ssafy.io:8443/lobby/list", {
         headers: {
           Authorization: "Bearer " + getCookie("access"),
         },
@@ -111,7 +111,6 @@ function GameList() {
     setRooms(roomsData);
   };
 
-
   // 검색어에 따라 방 리스트 필터링
   let filteredRooms = rooms.filter(room => {
     switch (searchCategory) {
@@ -131,6 +130,7 @@ function GameList() {
         return true; // 검색 카테고리가 설정되지 않은 경우, 모든 방을 표시
     }
   });
+
   // 필터링된 방 리스트를 통해 페이지 수 계산
   const noOfPages = Math.ceil(filteredRooms.length / itemsPerPage);
   // 페이지 변경 이벤트 핸들러

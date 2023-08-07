@@ -83,7 +83,7 @@ function GameWait() {
     try {
       const access = getCookie("access");
       const response = await axios.get(
-        "/wait/info/" + gameSeq,
+        "https://i9b109.p.ssafy.io:8443/wait/info/" + gameSeq,
         {
           headers: {
             Authorization: "Bearer " + access,
