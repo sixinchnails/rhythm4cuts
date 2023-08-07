@@ -25,16 +25,20 @@ public class CrawlingTestController {
         try {
 
             // 1. 기존 DB에 저장된 데이터 초기화
+            System.out.println("clear 전");
             melonService.clearMelonChart();
+            System.out.println("clear 후");
 
             // 2. 현재 멜론 차트 데이터 크롤링 및 DB 저장
+            System.out.println("insert 전");
             List<SongRankDto> songRanks = melonService.scrapeAndSaveMelonChart();
+            System.out.println("insert 후");
 
             Map<String, Object> res = new HashMap<>();
             res.put("message", "Success");
             res.put("statusCode", 200);
             res.put("data", songRanks);
-
+            
             System.out.println("Melon Chart Crawling Success.");
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
