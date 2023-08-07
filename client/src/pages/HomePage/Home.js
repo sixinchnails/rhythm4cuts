@@ -1,30 +1,26 @@
 // Home.js
 /* eslint-disable */
-import "animate.css";
 import { React, useRef, useEffect, useState } from "react";
-import Header from "../../components/Home/Header";
+import { getCookie, setCookie } from "../../utils/cookie";
+import { renewAccessToken } from "../../apis/renewAccessToken";
+import { Grid, Pagination } from "@mui/material";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { userInfo } from "../../apis/userInfo";
 import LoginHeader from "../../components/Home/LoginHeader";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { useSelector } from "react-redux";
 import MusicRank from "../../components/Home/MusicRank";
 import UserRank from "../../components/Home/UserRank";
-import { Grid, Pagination } from "@mui/material";
-import "./Home.css";
+import Header from "../../components/Home/Header";
 import Dots from "../../components/Home/Dots";
-import { getCookie } from "../../utils/cookie";
-import { userInfo } from "../../apis/userInfo";
-//이모지 들고오는 import
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import { Client } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
-import { renewAccessToken } from "../../apis/renewAccessToken";
-import { setCookie } from "../../utils/cookie";
-import { width } from "@mui/system";
+import "react-datepicker/dist/react-datepicker.css";
+import "animate.css";
+import "./Home.css";
 
 const DIVIDER_HEIGHT = 5;
 
 function Home() {
+  const navigate = useNavigate();
   //로그인 상태 저장변수
   const [isLogin, setIsLogin] = useState(false);
 
@@ -209,24 +205,25 @@ function Home() {
     };
   }, []);
   return (
-    <div ref={outerDivRef} className="outer">
-      <Dots scrollIndex={scrollIndex} />
-      {/** Home 1 시작하는 곳 */}
-      <div className="Home1">
-        {isLogin ? <LoginHeader /> : <Header />}
-        {/* <Header /> */}
-        <div className="main1">
-          <div className="beatbox">
-            <div className="Logo">
-              <img
-                className="img"
-                alt="Home_Effect2"
-                src="images/Home_Effect2.png"
-              ></img>
+    <div className="background">
+      <div className="background-image"></div>
+      <div ref={outerDivRef} className="outer">
+        <Dots scrollIndex={scrollIndex} />
+        {/** Home 1 시작하는 곳 */}
+        <div className="Home1">
+          {isLogin ? <LoginHeader /> : <Header />}
+          {/* <Header /> */}
+          <div className="main1">
+            <div className="beatbox">
+              <div className="Logo">
+                <img
+                  className="img"
+                  alt="Home_Effect2"
+                  src="images/dddd.png"
+                ></img>
+              </div>
             </div>
-          </div>
-          <div>
-            <div className="playBtn">
+            {/* <div className="playBtn">
               <a href="/GameList">
                 <img
                   className="play"
@@ -234,61 +231,123 @@ function Home() {
                   src="images/Home_Play.png"
                 ></img>
               </a>
+            </div> */}
+          </div>
+        </div>
+        <div className="divider"></div>
+        {/** Home 2 시작하는 곳 */}
+        <div className="Home2">
+          <div className="title">
+            <span>Game Intro & Rules</span>
+          </div>
+          <div className="content">
+            <div className="intro"></div>
+            <div className="rules">
+              <img style={{ height: 560, width: 514 }} src="images/Rules.png" />
             </div>
           </div>
         </div>
-      </div>
-      <div className="divider"></div>
-      {/** Home 2 시작하는 곳 */}
-      <div className="Home2">
-        <div className="title">
-          <span>Game Intro & Rules</span>
-        </div>
-        <div className="content">
-          <div className="intro"></div>
-          <div className="rules">
-            <img style={{ height: 560, width: 514 }} src="images/Rules.png" />
-          </div>
-        </div>
-      </div>
-      <div className="divider"></div>
-      {/** Home 3 시작하는 곳 */}
-      <div className="Home3">
-        <div className="content">
-          <div className="rank1">
-            <h1>Music Rank</h1>
-            <div className="rt_sing_rank">
-              <div>
-                <div className="category">
-                  <Grid container textAlign="center">
-                    <Grid item xs={2}>
-                      순위
+        <div className="divider"></div>
+        {/** Home 3 시작하는 곳 */}
+        <div className="Home3">
+          <div className="content">
+            <div className="rank1">
+              <h1>Music Rank</h1>
+              <div className="rt_sing_rank">
+                <div>
+                  <div className="category">
+                    <Grid container textAlign="center">
+                      <Grid item xs={2}>
+                        순위
+                      </Grid>
+                      <Grid item xs={6}>
+                        제목
+                      </Grid>
+                      <Grid item xs={4}>
+                        가수
+                      </Grid>
                     </Grid>
-                    <Grid item xs={6}>
-                      제목
-                    </Grid>
-                    <Grid item xs={4}>
-                      가수
-                    </Grid>
-                  </Grid>
+                  </div>
                 </div>
+                <div className="music_rank">
+                  <div className="rank">
+                    {music_rank
+                      .slice(
+                        (musicPage - 1) * musicPerPage,
+                        musicPage * musicPerPage
+                      )
+                      .map((music, index) => (
+                        <MusicRank key={index} music={music} />
+                      ))}
+                  </div>
+                </div>
+                <Pagination
+                  count={noOfMusicPages}
+                  page={musicPage}
+                  onChange={handleMusicChange}
+                  color="primary"
+                  size="large"
+                  shape="rounded"
+                  sx={{
+                    padding: "3%",
+                    display: "flex",
+                    justifyContent: "center",
+                    "& .MuiPaginationItem-root": {
+                      color: "white", // 기본 아이템 색상을 흰색으로 설정
+                      backgroundColor: "rgba(0, 0, 0, 0.1)", // 기본 아이템의 배경색을 약간 투명한 검정색으로 설정
+                    },
+                    "& .MuiPaginationItem-page.Mui-selected": {
+                      backgroundColor: "#3f51b5", // 선택된 아이템의 배경색을 파란색으로 설정
+                      color: "white", // 선택된 아이템의 텍스트 색상을 흰색으로 설정
+                    },
+                    "& .MuiPaginationItem-page:hover": {
+                      backgroundColor: "#283593", // 마우스 호버 시 아이템의 배경색을 진한 파란색으로 설정
+                    },
+                  }}
+                />
               </div>
-              <div className="music_rank">
-                <div className="rank">
-                  {music_rank
-                    .slice(
-                      (musicPage - 1) * musicPerPage,
-                      musicPage * musicPerPage
-                    )
-                    .map((music, index) => (
-                      <MusicRank key={index} music={music} />
-                    ))}
+            </div>
+            <div className="rank2">
+              <h1>Total Rank</h1>
+              <div className="total_rank"></div>
+              <div className="nickname">
+                <span>{user_rank[0].nickName}</span>
+                <span>{user_rank[1].nickName}</span>
+                <span>{user_rank[2].nickName}</span>
+              </div>
+              <div className="top100">
+                <div style={{ height: "20%" }}>
+                  <div className="category">
+                    <Grid container textAlign="center">
+                      <Grid item xs={3.25}>
+                        순위
+                      </Grid>
+                      <Grid item xs={5.5}>
+                        닉네임
+                      </Grid>
+                      <Grid item xs={3.25}>
+                        점수
+                      </Grid>
+                    </Grid>
+                  </div>
+                </div>
+                <div className="user_rank">
+                  <div className="rank">
+                    {user_rank
+                      .slice(
+                        (userPage - 1) * userPerPage,
+                        userPage * userPerPage
+                      )
+                      .map((user, index) => (
+                        <UserRank key={index} user={user} />
+                      ))}
+                  </div>
                 </div>
               </div>
               <Pagination
-                count={noOfMusicPages}
-                page={musicPage}
-                onChange={handleMusicChange}
+                count={noOfUserPages}
+                page={userPage}
+                onChange={handleUserChange}
                 color="primary"
                 size="large"
                 shape="rounded"
@@ -311,109 +370,42 @@ function Home() {
               />
             </div>
           </div>
-          <div className="rank2">
-            <h1>Total Rank</h1>
-            <div className="total_rank"></div>
-            <div className="nickname">
-              <span>{user_rank[0].nickName}</span>
-              <span>{user_rank[1].nickName}</span>
-              <span>{user_rank[2].nickName}</span>
-            </div>
-            <div className="top100">
-              <div style={{ height: "20%" }}>
-                <div className="category">
-                  <Grid container textAlign="center">
-                    <Grid item xs={3.25}>
-                      순위
-                    </Grid>
-                    <Grid item xs={5.5}>
-                      닉네임
-                    </Grid>
-                    <Grid item xs={3.25}>
-                      점수
-                    </Grid>
-                  </Grid>
-                </div>
-              </div>
-              <div className="user_rank">
-                <div className="rank">
-                  {user_rank
-                    .slice((userPage - 1) * userPerPage, userPage * userPerPage)
-                    .map((user, index) => (
-                      <UserRank key={index} user={user} />
-                    ))}
-                </div>
-              </div>
-            </div>
-            <Pagination
-              count={noOfUserPages}
-              page={userPage}
-              onChange={handleUserChange}
-              color="primary"
-              size="large"
-              shape="rounded"
-              sx={{
-                padding: "3%",
-                display: "flex",
-                justifyContent: "center",
-                "& .MuiPaginationItem-root": {
-                  color: "white", // 기본 아이템 색상을 흰색으로 설정
-                  backgroundColor: "rgba(0, 0, 0, 0.1)", // 기본 아이템의 배경색을 약간 투명한 검정색으로 설정
-                },
-                "& .MuiPaginationItem-page.Mui-selected": {
-                  backgroundColor: "#3f51b5", // 선택된 아이템의 배경색을 파란색으로 설정
-                  color: "white", // 선택된 아이템의 텍스트 색상을 흰색으로 설정
-                },
-                "& .MuiPaginationItem-page:hover": {
-                  backgroundColor: "#283593", // 마우스 호버 시 아이템의 배경색을 진한 파란색으로 설정
-                },
-              }}
-            />
-          </div>
         </div>
-      </div>
-      <div className="divider"></div>
-      {/** Home 4 시작하는 곳 */}
-      <div className="Home4">
-        <div className="sideBar">
-          <div className="title">
-            <span>Today 방명록</span>
+        <div className="divider"></div>
+        {/** Home 4 시작하는 곳 */}
+        <div className="Home4">
+          <div className="sideBar">
+            <div className="title">
+              <span>Today 방명록</span>
+            </div>
+            <div className="calender">
+              <DatePicker
+                className="datePicker"
+                dateFormat="yyyy.MM.dd" // 날짜 형태
+                shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+              />
+            </div>
           </div>
-          <div className="calender">
-            <DatePicker
-              className="datePicker"
-              dateFormat="yyyy.MM.dd" // 날짜 형태
-              shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-            />
-          </div>
-        </div>
-        <div className="content">
-          <div className="line1">
-            <div className="picture"></div>
-            <div className="picture"></div>
-            <div className="picture"></div>
-            <div className="picture"></div>
-          </div>
-          <div className="line2">
-            <div className="picture"></div>
-            <div className="picture"></div>
-            <div className="picture"></div>
-            <div className="picture"></div>
+          <div className="content">
+            <div className="line1">
+              <div className="picture"></div>
+              <div className="picture"></div>
+              <div className="picture"></div>
+              <div className="picture"></div>
+            </div>
+            <div className="line2">
+              <div className="picture"></div>
+              <div className="picture"></div>
+              <div className="picture"></div>
+              <div className="picture"></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
-
-// const picture = () => {
-//   return(
-//     <div>
-
-//     </div>
-//   )
-// };
 
 export default Home;

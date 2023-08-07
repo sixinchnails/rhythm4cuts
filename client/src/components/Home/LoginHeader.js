@@ -1,5 +1,5 @@
 /* eslint-disable */
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import NotificationsIcon from "@mui/icons-material/NotificationsNone";
 import Badge from "@mui/material/Badge";
 import "./LoginHeader.css";
 import { Link } from "react-router-dom";
@@ -49,12 +49,15 @@ const LoginHeader = () => {
   });
 
   return (
-    <div className="Header_outer1">
+    <div className="Header_outer1" style={{ color: "white" }}>
       <div className="Header_logo1">
         <img src="images/Home_Logo.png"></img>
       </div>
       <div>
-        {nickName}님 반갑습니다. {point}point
+        <span style={{ color: "white", marginRight: 20 }}>
+          {nickName}님 반갑습니다.
+        </span>
+        <span style={{ color: "white", marginRight: 20 }}>{point}point</span>
         <Badge color="error" variant="dot" style={{ marginRight: "20px" }}>
           <NotificationsIcon />
         </Badge>
