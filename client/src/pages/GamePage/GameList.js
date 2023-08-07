@@ -26,6 +26,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 function GameList() {
+
   const navigate = useNavigate();
   const [isCreateRoomModalOpen, setCreateRoomModalOpen] = useState(false); //  '방 만들기' 모달의 상태를 관리
   const [searchCategory, setSearchCategory] = useState("gameSeq"); //  검색 카테고리 상태 (기본값을 'gameSeq'로 설정)
@@ -153,7 +154,6 @@ function GameList() {
       }}
     >
       <Header />
-
       <Grid container >
         {/* Left */}
         <Grid item xs={9} padding={"20px"}>
@@ -191,7 +191,6 @@ function GameList() {
                     backgroundColor: "#333", // 드롭다운 메뉴 배경색 변경
                     color: "#ffffff", // 드롭다운 메뉴 텍스트 색상 변경
                     border: "1px solid #ffffff", // 드롭다운 메뉴 테두리 색상을 흰색으로 설정
-
                   },
                 },
               }}
@@ -251,6 +250,7 @@ function GameList() {
 
           {/* Left : Middle */}
           <Grid container spacing={2} >
+
             {filteredRooms
               .slice((page - 1) * itemsPerPage, page * itemsPerPage)
               .map((room, gameSeq) => (
@@ -298,7 +298,6 @@ function GameList() {
             </Paper>
           </Grid>
         </Grid>
-
 
         {/* Right */}
         <Grid item xs={3} padding={"15px"}>

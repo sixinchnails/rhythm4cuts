@@ -26,8 +26,6 @@ function RoomList({ room }) {
         }}
       >
         <Grid container >
-
-          {/* 왼쪽 : 노래 사진 */}
           <Grid
             item
             xs={4}

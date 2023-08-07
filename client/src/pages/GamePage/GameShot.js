@@ -119,7 +119,6 @@ const GameShot = () => {
           }
           user1Ref.current.appendChild(img);
         }
-
         setCaptured(true);
         // copyCapture(copyRef.current); // 이건 4개 묶음 사진
       }
