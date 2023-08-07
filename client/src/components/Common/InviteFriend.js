@@ -45,7 +45,9 @@ function CreateRoom({ isOpen, handleClose }) {
             justifyContent: "center",
             height: "100vh",
             overflow: "auto",
+            
           }}>
+            
           <CustomCard>
             {/* 친구추가 모달연결 */}
             <CardActions sx={{ justifyContent: "center" }}>

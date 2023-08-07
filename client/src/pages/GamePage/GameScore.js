@@ -14,7 +14,6 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import Header from "../../components/Game/Header_dark";
 import Next from "../../components/Game/NextToShot";
 import { useSelector } from "react-redux";
 import Podium from "../../components/Game/Podium";

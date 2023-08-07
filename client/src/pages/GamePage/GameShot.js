@@ -3,14 +3,14 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Box, Button, Card, Grid, Typography, Container } from "@mui/material";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import Header from "../../components/Game/Header_dark";
 import { createSession } from "../../openvidu/sessionInitialization";
 import { createConnection } from "../../openvidu/connectionInitialization";
-import Webcam from "../../components/Game/Webcam";
+// import Webcam from "../../components/Game/Webcam";
 import html2canvas from "html2canvas";
 import domtoimage from "dom-to-image";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
+import UserVideo from '../../components/Game/UserVideo';
 
 //close test
 import { closeSession } from "../../store";
