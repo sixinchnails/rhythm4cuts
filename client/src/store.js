@@ -128,7 +128,9 @@ let GameList_Friend = createSlice({
     { name: "Friend 가", isOnline: false },
     { name: "Friend 나", isOnline: true },
     { name: "Friend 다", isOnline: false },
-
+    { name: "Friend 라", isOnline: false },
+    { name: "Friend 마", isOnline: true },
+    { name: "Friend 바", isOnline: false },
     // More friends here...
   ],
 });

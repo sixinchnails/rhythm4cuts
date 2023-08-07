@@ -16,7 +16,7 @@ module.exports = function (app) {
     createProxyMiddleware({
       target: "http://i9b109.p.ssafy.io:8080", // 백엔드 서버의 주소를 입력합니다.
       changeOrigin: true,
-      secure: false, // 이 부분이 추가된 부분입니다. https를 http로 변환합니다.
+      // secure: false, // 이 부분이 추가된 부분입니다. https를 http로 변환합니다.
     })
   );
 };

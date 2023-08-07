@@ -7,7 +7,7 @@ import { Grid, Pagination } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
-import LoginHeader from "../../components/Home/LoginHeader";
+import LoginHeader from "../../components/Home/WhiteHeader";
 import DatePicker from "react-datepicker";
 import MusicRank from "../../components/Home/MusicRank";
 import UserRank from "../../components/Home/UserRank";
@@ -216,22 +216,17 @@ function Home() {
           <div className="main1">
             <div className="beatbox">
               <div className="Logo">
-                <img
-                  className="img"
-                  alt="Home_Effect2"
-                  src="images/dddd.png"
-                ></img>
+                <a href="/GameList">
+                  <img
+                    className="img"
+                    alt="Home_Effect2"
+                    src="images/dddd.png"
+                  ></img>
+                </a>
               </div>
             </div>
-            {/* <div className="playBtn">
-              <a href="/GameList">
-                <img
-                  className="play"
-                  alt="Home_Play"
-                  src="images/play_button.png"
-                ></img>
-              </a>
-            </div> */}
+
+
           </div>
         </div>
         <div className="divider"></div>
