@@ -13,7 +13,6 @@ const Join = () => {
   const [profileImgSeq, setProfileImgSeq] = useState(1); // profile_img_seq를 상태로 관리
 
   const handleImageSelect = useCallback(index => {
-    console.log("Selected Image Index:", index);
     setProfileImgSeq(index);
   }, []);
 
