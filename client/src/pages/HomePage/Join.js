@@ -48,7 +48,7 @@ const Join = () => {
     } else {
       try {
         const response = await axios.post(
-          "/member/register",
+          "https://i9b109.p.ssafy.io:8443/member/register",
           // "http://lo/calhost:8080/member/register",
           joinInfo
         );

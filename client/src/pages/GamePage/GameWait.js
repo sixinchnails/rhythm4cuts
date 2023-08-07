@@ -33,6 +33,7 @@ function GameWait() {
 
 
   const session = useSelector(state => state.roomState.session);
+  const connection = useSelector(state => state.roomState.connection);
   const connectionToken = useSelector(state => state.roomState.connectionToken);
   // -----------------------------------------------------------------------------------------------------------------
 
@@ -113,6 +114,7 @@ function GameWait() {
 
   console.log("게임 시퀀스입니다 : " + gameSeq);
   console.log("세션입니다 : " + session);
+  console.log("연결 세션id입니다: " + connection);
   console.log("연결 토큰입니다 : " + connectionToken);
 
   const handleGameReady = () => {
@@ -221,28 +223,28 @@ function GameWait() {
 
           {/* Player 1 */}
           <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            <UserVideo roomSession={session} userToken={connectionToken} />
+          <UserVideo roomSession={session} connection={connection} userToken={connectionToken} />
           </Grid>
           <Grid item xs={1} style={{ height: '20vh' }}>
             <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>첫번째 선수</div>
           </Grid>
           {/* Player 2 */}
           <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            <UserVideo />
+            {/* <UserVideo /> */}
           </Grid>
           <Grid item xs={1} style={{ height: '20vh' }}>
             <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>두번째 선수</div>
           </Grid>
           {/* Player 3 */}
           <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            <UserVideo />
+            {/* <UserVideo /> */}
           </Grid>
           <Grid item xs={1} style={{ height: '20vh' }}>
             <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>세번째 선수</div>
           </Grid>
           {/* Player 4 */}
           <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            <UserVideo />
+            {/* <UserVideo /> */}
           </Grid>
           <Grid item xs={1} style={{ height: '20vh' }}>
             <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>네번째 선수</div>
