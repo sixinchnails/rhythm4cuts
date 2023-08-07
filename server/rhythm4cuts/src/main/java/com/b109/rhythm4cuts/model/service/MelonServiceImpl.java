@@ -45,6 +45,7 @@ public class MelonServiceImpl implements MelonService {
             String title = titleElements.get(i).text();
             String singer = singerElements.get(i).text();
             int rank = Integer.parseInt(rankElements.get(i).text());
+            System.out.println("text: " + title + " " + singer + " " + rank);
 
             SongRank songRank = new SongRank();
             songRank.setTitle(title);
