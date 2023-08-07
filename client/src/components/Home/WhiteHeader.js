@@ -14,7 +14,7 @@ const LoginHeader = () => {
   const checkLogin = async () => {
     try {
       const response = await axios.post(
-        "/member/logout",
+        "https://i9b109.p.ssafy.io:8443/member/logout",
         {
           email: getCookie("email"),
           accessToken: access,

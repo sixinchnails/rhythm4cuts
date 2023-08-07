@@ -30,7 +30,7 @@ const Header = () => {
 };
 
   // useEffect(() => {
-  //   const socket = new SockJS('http://i9b109.p.ssafy.io:8080/stomp/chat');
+  //   const socket = new SockJS('https://i9b109.p.ssafy.io:8443/stomp/chat');
   //   const stompClient = new Client({
   //       webSocketFactory: () => socket,
   //   });
