@@ -204,6 +204,8 @@ function Home() {
       outerDivRefCurrent.removeEventListener("wheel", wheelHandler);
     };
   }, []);
+
+
   return (
     <div className="background">
       <div className="background-image"></div>
@@ -226,8 +228,6 @@ function Home() {
                 </a>
               </div>
             </div>
-
-
           </div>
         </div>
         <div className="divider"></div>
