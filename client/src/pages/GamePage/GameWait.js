@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from '../../apis/userInfo';
-import { setSession } from "../../store";
+import { setSession, resetRoomState } from "../../store";
 import LoginAlert from '../../components/Common/LoginAlert';
 import UserVideo from '../../components/Game/UserVideo';
 import Header from "../../components/Game/HeaderPlay";
@@ -34,7 +34,6 @@ function GameWait() {
 
   const session = useSelector(state => state.roomState.session);
   const connectionToken = useSelector(state => state.roomState.connectionToken);
-
   // -----------------------------------------------------------------------------------------------------------------
 
   // 로그인 상태를 업데이트하는 함수
@@ -125,9 +124,14 @@ function GameWait() {
   };
 
   const handleExit = () => {
-    // "나가기" 버튼을 클릭했을 때 동작하는 로직을 여기에 구현합니다.
+    dispatch(resetRoomState());
+    navigate(`/GameList`);
   };
 
+  // 임시 게임플레이 페이지 이동
+  const handleGameStart = () => {
+    navigate(`/GamePlay/${gameSeq}`);
+  };
 
   return (
     <div
@@ -203,7 +207,6 @@ function GameWait() {
               <Typography style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", padding: "20px" }}>나가기</Typography>
             </StyledIconButton>
           </Grid>
-
         </Grid>
 
         {/* Bottom */}
@@ -211,7 +214,7 @@ function GameWait() {
 
           {/* Player 1 */}
           <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            <UserVideo roomSession={session} userToken={connectionToken}/>
+            <UserVideo roomSession={session} userToken={connectionToken} />
           </Grid>
           <Grid item xs={1} style={{ height: '20vh' }}>
             <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>첫번째 선수</div>
@@ -240,6 +243,11 @@ function GameWait() {
 
         </Grid>
 
+        {/* // "게임플레이 이동" 버튼 */}
+        <StyledIconButton onClick={handleGameStart} style={{ width: "200px" }}>
+          <PlayArrowIcon />
+          <Typography style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", padding: "20px" }}>To GamePlay</Typography>
+        </StyledIconButton>
 
       </Grid>
 
