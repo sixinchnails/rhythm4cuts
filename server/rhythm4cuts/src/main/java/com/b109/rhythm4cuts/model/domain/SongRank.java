@@ -23,7 +23,6 @@ public class SongRank {
     // 음원 랭킹 순위
     private int rank;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "song_rank_seq")
+    @OneToOne(mappedBy = "song_rank", cascade = CascadeType.ALL)
     private Song song;
 }
