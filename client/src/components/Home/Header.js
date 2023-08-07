@@ -48,11 +48,9 @@ const Header = () => {
 
   return (
     <div className="Header_outer1">
-      {/* <div className="Header_logo1"> */}
         <Link className="Header_logo1" to={"/"}>
         <img src="images/Home_Logo.png" />
         </Link>
-      {/* </div> */}
       <div>
       <Badge 
     color="secondary" 

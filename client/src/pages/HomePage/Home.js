@@ -7,10 +7,10 @@ import { Grid, Pagination } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
-import LoginHeader from "../../components/Home/WhiteHeader";
 import DatePicker from "react-datepicker";
 import MusicRank from "../../components/Home/MusicRank";
 import UserRank from "../../components/Home/UserRank";
+import LoginHeader from "../../components/Home/WhiteHeader";
 import Header from "../../components/Home/Header";
 import Dots from "../../components/Home/Dots";
 import "react-datepicker/dist/react-datepicker.css";
@@ -211,8 +211,8 @@ function Home() {
         <Dots scrollIndex={scrollIndex} />
         {/** Home 1 시작하는 곳 */}
         <div className="Home1">
+
           {isLogin ? <LoginHeader /> : <Header />}
-          {/* <Header /> */}
           <div className="main1">
             <div className="beatbox">
               <div className="Logo">
