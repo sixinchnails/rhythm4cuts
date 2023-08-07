@@ -16,11 +16,6 @@ public class Song {
     @Column(name = "song_seq")
     private int songSeq;
 
-    // 노래 순위 일련번호
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "song_rank_seq")
-    private SongRank songRank;
-
     //제목
     private String title;
 

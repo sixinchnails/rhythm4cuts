@@ -22,7 +22,4 @@ public class SongRank {
 
     // 음원 랭킹 순위
     private int rank;
-
-    @OneToOne(mappedBy = "songRank", cascade = CascadeType.ALL)
-    private Song song;
 }
