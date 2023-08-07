@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import SearchPassword from "../../components/Common/SearchPassword";
 import "./Login.css";
 import { Box } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../apis/login";
 import { setCookie } from "../../utils/cookie";
 
@@ -17,7 +16,6 @@ const Home = () => {
   }, []);
 
   let navigate = useNavigate();
-  let dispatch = useDispatch();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -31,17 +29,17 @@ const Home = () => {
 
   // id 파트
   const [id, setId] = useState("");
-  const onChangeId = e => {
+  const onChangeId = (e) => {
     setId(e.target.value);
   };
 
   // pw 파트
   const [pw, setPW] = useState("");
-  const onChangePW = e => {
+  const onChangePW = (e) => {
     setPW(e.target.value);
   };
 
-  const onKeyPress = e => {
+  const onKeyPress = (e) => {
     if (e.key === "Enter") {
       Login();
     }
