@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -26,7 +28,7 @@ public class MelonServiceImpl implements MelonService {
     }
 
     @Override
-    public void scrapeAndSaveMelonChart() throws SQLException, IOException {
+    public List<SongRank> scrapeAndSaveMelonChart() throws SQLException, IOException {
         // Melon Top 100을 크롤링해서, DB에 저장
         String url = "https://www.melon.com/chart/index.htm";                       // Melon Top 100 url
         Document doc = Jsoup.connect(url).get();
@@ -34,6 +36,8 @@ public class MelonServiceImpl implements MelonService {
         Elements titleElements = doc.select("div.ellipsis.rank01 span a");  // 제목
         Elements singerElements = doc.select("div.ellipsis.rank02 span a"); // 가수
         Elements rankElements = doc.select("span.rank");                    // 순위
+
+        List<SongRank> songRanks = new ArrayList<>();
 
         for (int i = 0; i < titleElements.size(); i++) {
             String title = titleElements.get(i).text();
@@ -45,7 +49,11 @@ public class MelonServiceImpl implements MelonService {
             songRank.setSinger(singer);
             songRank.setRank(rank);
 
+            songRanks.add(songRank);
+
             melonRepository.save(songRank);
         }
+
+        return songRanks;
     }
 }
