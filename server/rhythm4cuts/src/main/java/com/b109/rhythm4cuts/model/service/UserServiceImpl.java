@@ -8,11 +8,13 @@ import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import java.util.Optional;
@@ -23,6 +25,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.b109.rhythm4cuts.model.service.Utils.dtoSetter;
@@ -153,11 +156,27 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public void updatePassword(UpdateUserPasswordDto dto) {
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+
+        String newPassword = dto.getNewPassword();
+        String oldPassword = dto.getOldPassword();
+        String currentPassword = user.getPassword();
+
+        if (!bCryptPasswordEncoder.matches(oldPassword, currentPassword)) throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
+
+        user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+
+        userRepository.save(user);
+    }
+
     //비밀번호 변경 메서드
     public void updatePassword(String accessToken, UpdateUserPasswordDto dto) {
         if (!tokenProvider.validToken(accessToken)) throw new IllegalArgumentException();
 
-        String email = tokenProvider.getUserId(accessToken);
+        String email = tokenProvider.getSubject(accessToken);
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException());
@@ -193,7 +212,15 @@ public class UserServiceImpl implements UserService {
     }
 
     //로그아웃 메서드(상태 변환)
-    public void logout() {}
+    public void logout(LogoutDto logoutDto) {
+        User user = userRepository.findByEmail(logoutDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+
+        long expiryMilliSeconds = tokenProvider.getExpirationDateFromToken(logoutDto.getAccessToken()).getTime() - new Date().getTime();
+
+        //유효시간만큼 액세스 토큰을 블랙리스트 상에서 유지
+        if (expiryMilliSeconds > 0) redisTemplate.opsForValue().set(logoutDto.getAccessToken(), "access_token", expiryMilliSeconds, TimeUnit.MILLISECONDS);
+    }
 
     //포인트 결제 메서드
     public long payPoints(PayDto payDto) {
@@ -236,8 +263,8 @@ public class UserServiceImpl implements UserService {
         mailDto.setAddress(new String[] {email});
         mailDto.setTitle("Rhythm4Cuts 임시 비밀번호 발급 안내 메일입니다.");
         mailDto.setContent("안녕하세요. Rhythm4Cuts 로그인을 위한 임시 비밀번호 발급드립니다. 회원님의 임시 비밀번호는 " + tempPassword + "입니다.");
+        user.setPassword(bCryptPasswordEncoder.encode(tempPassword));
 
-        user.setPassword(tempPassword);
         userRepository.save(user);
 
         return mailDto;
@@ -247,11 +274,12 @@ public class UserServiceImpl implements UserService {
         String tempCertification = getRandomString(15);
 
         //비밀번호 저장 기능 필요
+        redisTemplate.opsForValue().set(email, tempCertification, Duration.ofMinutes(5).toMillis(), TimeUnit.MILLISECONDS);
 
         MailDto mailDto = new MailDto();
         mailDto.setAddress(new String[] {email});
         mailDto.setTitle("Rhythm4Cuts 인증번호 발급 안내 메일입니다.");
-        mailDto.setContent("안녕하세요. Rhythm4Cuts 인증번호를 발급드립니다. 회원님의 임시 인증번호는 " + tempCertification + "입니다.");
+        mailDto.setContent("안녕하세요. Rhythm4Cuts 인증번호를 발급드립니다. 회원님의 임시 인증번호는 " + tempCertification + "입니다. 임시 비밀번호의 유효기간은 5분입니다.");
 
         return mailDto;
     }
@@ -267,11 +295,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public boolean checkCertificate(CertificateDto certificateDto) {
-        User user = userRepository.findByEmail(certificateDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+        String redisCert = (String) redisTemplate.opsForValue().get(certificateDto.getEmail());
+        boolean res = (redisCert.equals(certificateDto.getCertificate()))? true:false;
 
-        return false;
-        //return (certificateDto.getCertificate().equals(user.getCertificate()))? true:false;
+        if (res) redisTemplate.delete(certificateDto.getCertificate());
+
+        return res;
     }
 
     public TokenResponse generateToken(UserDto userDto) {
@@ -287,23 +316,32 @@ public class UserServiceImpl implements UserService {
     }
 
     public ResponseEntity<?> reissueAuthenticationToken(TokenRequestDto tokenRequestDto) {
-        // 사용자로부터 받은 Refresh Token 유효성 검사
-        // Refresh Token 마저 만료되면 다시 로그인
-        if(tokenProvider.isTokenExpired(tokenRequestDto.getRefreshToken()) || !tokenProvider.validToken(tokenRequestDto.getRefreshToken())) {
+        // Refresh Token 블랙리스트, 만료, 유효성 체크
+        if(!tokenProvider.validToken(tokenRequestDto.getRefreshToken())) {
             throw new IllegalArgumentException("잘못된 요청입니다. 다시 로그인해주세요.");
         }
 
         // Access Token 에 기술된 사용자 이름 가져오기
-        //String email = tokenProvider.getUserId(tokenRequestDto.getAccessToken());
-        User user = userRepository.findByEmail(tokenRequestDto.getEmail()).orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+        //User user = userRepository.findByEmail(tokenRequestDto.getEmail()).orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+        User user = userRepository.findByEmail(tokenProvider.getSubject(tokenRequestDto.getRefreshToken())).orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+
         UserDto userDto = dtoSetter(user);
+        String redisATKKey = "RT:" + tokenRequestDto.getAccessToken();
 
         // Redis 에 저장된 Refresh Token 과 비교
-        String refreshToken = (String) redisTemplate.opsForValue().get("RT:" + tokenRequestDto.getAccessToken());
+        String refreshToken = (String) redisTemplate.opsForValue().get(redisATKKey);
 
+        //레디스에서 기존 액세스 토큰(키)과 리프레쉬 토큰(밸류)를 삭제
+        if (redisTemplate.hasKey(redisATKKey)) redisTemplate.delete(redisATKKey);
+        //해당 토큰을 키로 가진 매핑이 없는데요? 이미 리프레쉬 한번하는데 쓴 액세스 토큰을 다시 보냈을 때 발생.
+        else throw new JwtException("Invalid access token. Possible reason is the access token provided was previously used for refresh.");
+
+        //RefreshToken이 없을 때 실행
         if(ObjectUtils.isEmpty(refreshToken)) {
-            throw new IllegalArgumentException("잘못된 요청입니다. 다시 로그인해주세요.");
+            throw new IllegalArgumentException("액세스 토큰이 무효합니다. 다시 로그인해주세요.");
         }
+
+        //Redis 리프레쉬 토큰과 요청에 담긴 리프레쉬 토큰의 일치 여부 확인
         if(!refreshToken.equals(tokenRequestDto.getRefreshToken())) {
             throw new IllegalArgumentException("Refresh Token 정보가 일치하지 않습니다.");
         }
@@ -311,6 +349,13 @@ public class UserServiceImpl implements UserService {
         // 새로운 Access Token 발급
         final TokenResponse tokenResponse = tokenProvider.generateToken(userDto);
         tokenResponse.setRefreshToken(tokenRequestDto.getRefreshToken());
+
+        //기존 토큰 블랙 리스트 등록
+        long expiryMilliSeconds = tokenProvider.getExpirationDateFromToken(tokenRequestDto.getAccessToken()).getTime() - new Date().getTime();
+
+        redisTemplate.opsForValue().set("RT:" + tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), TokenProvider.refreshExpiredAt.toMillis(), TimeUnit.MILLISECONDS);
+        // 기존 액세스 토큰 블랙 리스트 추가
+        if (expiryMilliSeconds > 0) redisTemplate.opsForValue().set(tokenRequestDto.getAccessToken(), "access_token", expiryMilliSeconds, TimeUnit.MILLISECONDS);
 
         return ResponseEntity.ok().body(tokenResponse);
     }

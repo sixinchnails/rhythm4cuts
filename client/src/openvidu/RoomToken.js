@@ -1,11 +1,11 @@
-// RoomEnter.js
+// RoomToken.js
 import { createSession } from "./sessionInitialization";
 import { createConnection } from "./connectionInitialization";
 
-export const createRoom = async (roomId) => {
+export const createRoom = async (gameSeq) => {
   try {
     // 세션 초기화
-    const sessionResponse = await createSession(roomId);
+    const sessionResponse = await createSession(gameSeq);
 
     // 방에 입장하는 사용자의 연결 초기화
     const connectionResponse = await createConnection(sessionResponse.id);

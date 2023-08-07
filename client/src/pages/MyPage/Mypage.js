@@ -9,20 +9,35 @@ import MainContent from "../../components/My/My_MainContent"; // MainContent 컴
 import UserInfo from "../../components/My/My_UserInfo"; // UserInfo 컴포넌트를 import
 import Button from "@mui/material/Button";
 import { userInfo } from "../../apis/userInfo";
-import LoginMypageHeader from "../../components/Home/LoginMypageHeader";
+import LoginMypageHeader from "../../components/Home/BlackHeader";
+import CheckUserToModiInfo from "../../components/Common/CheckUserToModiInfo";
 
 const Mypage = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenSearchPasswordModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseSearchPasswordModal = () => {
+    setIsModalOpen(false);
+  };
+
   const navigate = useNavigate();
 
-  //로그인 상태 확인
-  const [isLogin, setIsLogin] = useState(false);
+  //이름
+  const [name, setName] = useState("");
 
+  //닉네임
+  const [nickName, setNickName] = useState("");
+
+  //로그인 상태 확인
   try {
     userInfo()
       .then((res) => {
         if (res.status === 200) {
-          console.log(res);
-          setIsLogin(true);
+          setNickName(res.data.nickname);
+          setName(res.data.name);
         }
       })
       .catch((error) => {
@@ -52,7 +67,7 @@ const Mypage = () => {
         <Sidebar></Sidebar>
         <div className="main-container">
           <MainContent></MainContent>
-          <UserInfo />
+          <UserInfo name={name} nickName={nickName} />
           {/* UserInfo 컴포넌트를 사용하여 사용자 정보를 표시합니다. */}
         </div>
         <div className="buttons">
@@ -61,9 +76,7 @@ const Mypage = () => {
             variant="contained"
             color="primary"
             className="edit-button"
-            onClick={() => {
-              navigate("/MyModify");
-            }}
+            onClick={handleOpenSearchPasswordModal}
             style={{
               backgroundColor: "#F2BED1",
               color: "#000000",
@@ -86,6 +99,11 @@ const Mypage = () => {
           </Button>
         </div>
       </div>
+
+      <CheckUserToModiInfo
+        isOpen={isModalOpen}
+        handleClose={handleCloseSearchPasswordModal}
+      />
     </>
   );
 };

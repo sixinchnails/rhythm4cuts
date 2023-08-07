@@ -5,7 +5,7 @@ import Sidebar from "../../components/My/My_SideBar";
 import MainContent from "../../components/My/My_MainContent";
 import "./MyFriend.css";
 import FriendInfo from "../../components/My/My_Friend"; // UserInfo 컴포넌트를 import
-import LoginMypageHeader from "../../components/Home/LoginMypageHeader";
+import LoginMypageHeader from "../../components/Home/BlackHeader";
 import { userInfo } from "../../apis/userInfo";
 import { useNavigate } from "react-router-dom";
 

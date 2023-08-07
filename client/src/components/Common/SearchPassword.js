@@ -1,16 +1,81 @@
 import { React, useState } from "react";
 import { Modal, Box, TextField, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function SearchPassword({ isOpen, handleClose }) {
-  const [userId, setuserId] = useState("");
-  const [userEmail, setuserEmail] = useState("");
-
-  const handleIdChange = (event) => {
-    setuserId(event.target.value); // 아이디 변경 이벤트 핸들러
-  };
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [emailCode, setEmailCode] = useState("");
+  const [emailCodeStatus, setEmailCodeStatus] = useState(false);
 
   const handleEmailChange = (event) => {
-    setuserEmail(event.target.value); // 이메일 변경 이벤트 핸들러
+    setEmail(event.target.value); // 아이디 변경 이벤트 핸들러
+  };
+
+  const handleEmailCodeChange = (event) => {
+    setEmailCode(event.target.value); // 이메일 변경 이벤트 핸들러
+  };
+
+  //이메일 코드 전송
+  const emailCheck = async () => {
+    try {
+      const response = await axios.post(
+        // `http://localhost:8080/member/mail?email=${email}`
+        `member/mail?email=${email}`
+      );
+      if (response.status === 200) {
+        setEmailCodeStatus(false);
+        window.confirm("인증번호가 발송되었습니다.");
+      }
+    } catch (error) {
+      console.log(error);
+      window.confirm("인증번호 발송을 실패하였습니다.");
+    }
+  };
+
+  //이메일 코드 인증
+  const emailCodeCheck = async () => {
+    try {
+      const response = await axios.post(
+        // "http://localhost:8080/member/mailcheck",
+        `member/mailcheck`,
+        {
+          email: email,
+          certificate: emailCode,
+        }
+      );
+      if (response.data.checked === true) {
+        setEmailCodeStatus(true);
+        window.confirm("인증되었습니다.");
+      } else {
+        setEmailCodeStatus(false);
+        window.confirm("인증을 실패하였습니다.");
+      }
+    } catch (error) {
+      console.log(error);
+      window.confirm("오류가 발생하였습니다.");
+    }
+  };
+
+  //비밀번호 재설정
+  const resetPW = async () => {
+    if (emailCodeStatus === true) {
+      try {
+        const response = await axios.post(`/member/pw?email=${email}`);
+        if (response.status === 200) {
+          window.confirm("임시 비밀번호가 전송되었습니다.");
+          navigate("/");
+        } else {
+          window.confirm("비밀번호 재설정에 실패했습니다.");
+        }
+      } catch (error) {
+        console.log(error);
+        window.confirm("이메일이 틀렸거나 존재하지 않습니다.");
+      }
+    } else {
+      window.confirm("인증번호를 확인해주세요.");
+    }
   };
 
   return (
@@ -34,28 +99,38 @@ function SearchPassword({ isOpen, handleClose }) {
           label="이메일 입력"
           variant="outlined"
           fullWidth
-          value={userId}
-          onChange={handleIdChange}
+          value={email}
+          onChange={handleEmailChange}
           sx={{ width: 3 / 4 }}
           style={{ marginBottom: "20px" }}
         />
-        <Button variant="contained" color="primary" sx={{ mx: 2, my: 1 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mx: 2, my: 1 }}
+          onClick={emailCheck}
+        >
           인증
         </Button>
         <TextField
           label="인증번호 입력"
           variant="outlined"
           fullWidth
-          value={userEmail}
-          onChange={handleEmailChange}
+          value={emailCode}
+          onChange={handleEmailCodeChange}
           sx={{ width: 3 / 4 }}
           style={{ marginBottom: "20px" }}
         />
-        <Button variant="contained" color="primary" sx={{ mx: 2, my: 1 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mx: 2, my: 1 }}
+          onClick={emailCodeCheck}
+        >
           확인
         </Button>
-        <Button variant="contained" color="primary" onClick={handleClose}>
-          비밀번호 찾기
+        <Button variant="contained" color="primary" onClick={resetPW}>
+          비밀번호 재설정
         </Button>
       </Box>
     </Modal>

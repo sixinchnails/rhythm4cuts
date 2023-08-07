@@ -2,6 +2,7 @@ package com.b109.rhythm4cuts.controller;
 
 import com.b109.rhythm4cuts.model.dto.LobbyDto;
 import com.b109.rhythm4cuts.model.dto.SongDto;
+import com.b109.rhythm4cuts.model.dto.UserDto;
 import com.b109.rhythm4cuts.model.service.LobbyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,7 +35,7 @@ public class LobbyController {
     }
 
     // API 2. 대기방 검색 (방 번호)
-    @GetMapping("/{gameSeq}")
+    @GetMapping("/gameSeq")
     public ResponseEntity<?> getSeqLobby(@PathVariable("gameSeq") int gameSeq) throws SQLException {
         LobbyDto lobbyDto = lobbyService.getSeqLobby(gameSeq);
 
@@ -62,11 +63,12 @@ public class LobbyController {
     // API 4. 방 만들기
     @PostMapping("/room")
     public ResponseEntity<?> addGameroom(@RequestBody LobbyDto lobbyDto) throws SQLException {
-        lobbyService.addGameRoom(lobbyDto);
+        int gameSeq = lobbyService.addGameRoom(lobbyDto);
 
         Map<String, Object> res = new HashMap<>();
         res.put("message", "Success");
         res.put("statusCode", 200);
+        res.put("data", gameSeq);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
@@ -93,6 +95,18 @@ public class LobbyController {
         res.put("message", "Success");
         res.put("statusCode", 200);
         res.put("data", pw);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    // API 7. 방 입장
+    @PutMapping("/enter")
+    public ResponseEntity<?> updateConnectionId(@RequestBody UserDto userDto) throws SQLException {
+        lobbyService.updateConnectionId(userDto);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("message", "Success");
+        res.put("statusCode", 200);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }

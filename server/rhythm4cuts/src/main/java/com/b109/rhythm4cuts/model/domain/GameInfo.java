@@ -17,7 +17,7 @@ import java.util.List;
 public class GameInfo {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "game_seq")
-    private Integer gameSeq;
+    private int gameSeq;
 
     //게임방 제목
     private String title;
@@ -59,10 +59,6 @@ public class GameInfo {
     @Column(name = "session_id")
     private String sessionId;
 
-    // OpenVidu 커넥션 아이디
-    @Column(name = "connection_id")
-    private String connectionId;
-
     public GameInfo() {
         this.headCount = 1;
         this.isSecret = false;
@@ -75,13 +71,12 @@ public class GameInfo {
 
         lobbyDto.setGameSeq(this.getGameSeq());
         lobbyDto.setTitle(this.getTitle());
-        lobbyDto.setSongSeq(this.getSong().getSongSeq());
+//        lobbyDto.setSongSeq(this.getSong().getSongSeq());
         lobbyDto.setHeadcount(this.getHeadCount());
         lobbyDto.setIsSecret(this.getIsSecret() ? 1 : 0);
         lobbyDto.setPassword(this.getPassword());
 //        lobbyDto.setStatus(this.getRoomStatus());
         lobbyDto.setSessionId(this.getSessionId());
-        lobbyDto.setConnectionId(this.getConnectionId());
 
         return lobbyDto;
     }

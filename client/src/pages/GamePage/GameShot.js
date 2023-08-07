@@ -3,17 +3,17 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Box, Button, Card, Grid, Typography, Container } from "@mui/material";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import Header from "../../components/Game/Header_dark";
 import { createSession } from "../../openvidu/sessionInitialization";
 import { createConnection } from "../../openvidu/connectionInitialization";
-import Webcam from "../../components/Game/Webcam";
+// import Webcam from "../../components/Game/Webcam";
 import html2canvas from "html2canvas";
 import domtoimage from "dom-to-image";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
+import UserVideo from '../../components/Game/UserVideo';
 
 //close test
-import { closeSession } from '../../store';
+import { closeSession } from "../../store";
 
 const GameShot = () => {
   const dispatch = useDispatch();
@@ -31,21 +31,20 @@ const GameShot = () => {
       await dispatch(closeSession({ sessionId, connectionId }));
 
       // 세션/연결 종료 후 상태 확인
-      console.log('세션 종료 후 상태:', sessionData);
-      console.log('세션 종료 후 상태:', connectionData);
+      console.log("세션 종료 후 상태:", sessionData);
+      console.log("세션 종료 후 상태:", connectionData);
 
       // 세션 종료 후 5초 후에 상태를 다시 확인
       setTimeout(async () => {
         const newSessionData = await createSession();
         const newSessionId = newSessionData.id;
         const newConnectionData = await createConnection(newSessionId);
-        console.log('5초 후 세션 데이터:', newSessionData);
-        console.log('5초 후 연결 데이터:', newConnectionData);
+        console.log("5초 후 세션 데이터:", newSessionData);
+        console.log("5초 후 연결 데이터:", newConnectionData);
       }, 5000);
-
     } catch (error) {
       // closeSession 액션이 실패한 경우 에러 처리
-      console.error('세션 종료 실패:', error);
+      console.error("세션 종료 실패:", error);
     }
   };
 
@@ -120,7 +119,6 @@ const GameShot = () => {
           }
           user1Ref.current.appendChild(img);
         }
-
         setCaptured(true);
         // copyCapture(copyRef.current); // 이건 4개 묶음 사진
       }
@@ -273,7 +271,7 @@ const GameShot = () => {
                   display: "flex",
                   flexDirection: "column",
                   borderRadius: "borderRadius",
-                  backgroundImage: `url(${frameImage[imageIndex]})`
+                  backgroundImage: `url(${frameImage[imageIndex]})`,
                 }}
               >
                 {/* 유저 이미지를 표시하는 Card */}
@@ -332,6 +330,7 @@ const GameShot = () => {
                 >
                   확인
                 </Button>
+
                 <Button variant="outlined" color="primary" onClick={handleNext}>
                   <FaArrowRight />
                 </Button>

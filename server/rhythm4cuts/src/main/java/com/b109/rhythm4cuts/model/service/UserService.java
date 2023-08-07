@@ -28,10 +28,10 @@ public interface UserService {
 
     void updateNickname(UpdateUserNicknameDto dto);
 
-    void updatePassword(String accessToken, UpdateUserPasswordDto dto);
+    void updatePassword(UpdateUserPasswordDto dto);
 
     //상태 변환만 할 예정
-    void logout();
+    void logout(LogoutDto logoutDto);
 
     UserDto login(LoginDto loginDto);
 

@@ -1,24 +1,30 @@
 import React from "react";
 import "./My_UserInfo.css"; // 이 CSS 파일은 UserInfo 컴포넌트에 적용할 스타일을 정의하는 파일입니다.
-import { useSelector } from "react-redux/es/hooks/useSelector";
+import { getCookie } from "../../utils/cookie";
 
-function UserInfo() {
-  const Info = useSelector(state => state.MyPage_MyInfo);
-  const image = Info.find(item => item.name === "프로필 사진").value;
-
+function UserInfo(props) {
+  const email = getCookie("email");
   return (
     <div className="user-info-container">
       <div className="user-info">
-        {Info.filter(
-          item => item.name !== "프로필 사진" && item.name !== "비밀번호"
-        ).map((item, index) => (
-          <div className="info-item" key={index}>
-            <span className="info-name">{item.name}</span>
-            <span className="info-value">{item.value}</span>
-          </div>
-        ))}
+        <div className="info-item" key={0}>
+          <span className="info-name">이름</span>
+          <span className="info-value">{props.name}</span>
+        </div>
+        <div className="info-item" key={1}>
+          <span className="info-name">닉네임</span>
+          <span className="info-value">{props.nickName}</span>
+        </div>
+        <div className="info-item" key={2}>
+          <span className="info-name">이메일</span>
+          <span className="info-value">{email}</span>
+        </div>
+        <div className="info-item" key={3}>
+          <span className="info-name">성별</span>
+          <span className="info-value">남자</span>
+        </div>
       </div>
-      <img className="profile-picture" src={image} alt="Profile" />
+      <img className="profile-picture" alt="Profile" />
     </div>
   );
 }
