@@ -11,7 +11,6 @@ import axios from "axios";
 // 액세스토큰을 헤더와 바디에 바디에는 email 도
 const LoginHeader = () => {
   const access = getCookie("access");
-
   const checkLogin = async () => {
     try {
       const response = await axios.post(
