@@ -20,6 +20,7 @@ import { getCookie } from "../../utils/cookie";
 import React, { useState } from "react";
 import axios from "axios";
 
+
 function CreateRoom({ isOpen, handleClose }) {
   const dispatch = useDispatch(); // Redux
   const navigate = useNavigate(); // 페이지 이동
@@ -44,7 +45,6 @@ function CreateRoom({ isOpen, handleClose }) {
     try {
       const sessionResponse = await createSession(); // 세션 id 만들기
       if (sessionResponse != null) {
-
         // 방 정보를 서버로 전송하는 Axios 요청
         const response = await axios.post(
           "/lobby/room",
@@ -53,7 +53,7 @@ function CreateRoom({ isOpen, handleClose }) {
             songSeq: songSeq, // 노래제목 (일련번호 : 검색 예정)
             isSecret: isSecret === "비밀 방" ? 1 : 0, // 방 모드 (일반 vs 비밀)
             password: password, // 비밀번호
-            sessionId: sessionResponse.id,  // 세션 아이디
+            sessionId: sessionResponse.id, // 세션 아이디
           },
           {
             headers: {

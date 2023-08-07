@@ -130,7 +130,7 @@ public class User implements UserDetails {
         userDto.setScoreSum(this.getScoreSum());
         userDto.setBirthDate(this.birthDate);
         userDto.setConnectionId(this.getConnectionId());
-
+        userDto.setBirthDate(this.getBirthDate());
         return userDto;
     }
 }
