@@ -211,7 +211,7 @@ function GameWait() {
 
           {/* Player 1 */}
           <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            <UserVideo />
+            <UserVideo roomSession={session} userToken={connectionToken}/>
           </Grid>
           <Grid item xs={1} style={{ height: '20vh' }}>
             <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>첫번째 선수</div>
