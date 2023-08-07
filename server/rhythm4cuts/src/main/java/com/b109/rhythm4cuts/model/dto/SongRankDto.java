@@ -9,5 +9,5 @@ public class SongRankDto {
     private int songRankSeq;
     private String title;
     private String singer;
-    private int rank;
+    private int ranking;
 }

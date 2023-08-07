@@ -48,7 +48,7 @@ public class MelonServiceImpl implements MelonService {
             SongRank songRank = new SongRank();
             songRank.setTitle(title);
             songRank.setSinger(singer);
-            songRank.setRank(rank);
+            songRank.setRanking(rank);
 
             res.add(songRank.getSongRankDto());
 
