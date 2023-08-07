@@ -41,6 +41,10 @@ public class CrawlingTestController {
             System.err.println(e.getMessage());
         }
 
-        return null;
+        Map<String, Object> res = new HashMap<>();
+        res.put("message", "Fail");
+        res.put("statusCode", 500);
+
+        return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
     }
 }
