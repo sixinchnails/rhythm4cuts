@@ -57,7 +57,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             //토큰 검증에서 제외할 url 리스트
             boolean isExcludedUrl = excludedUrlPatterns.stream().anyMatch(path::startsWith);
 
-            if (!isExcludedUrl || (httpMethod.equals("PATCH"))) {
+            //가져온 토큰이 유요한지 확인하고, 유효한 때는 인증 정보 설정
+            if (!isExcludedUrl || (httpMethod.equals("PATCH")) || (httpMethod.equals("POST") && path.equals("/member/pw"))) {
                 //요청 헤더의 Authorization(Bearer 액세스 토큰의 키 값) 키의 값 조회
                 String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
                 //가져온 값에서 접두사("Bearer ") 제거
@@ -72,7 +73,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 }
                 //유효 체크(분기 진입 시 유효한 토큰)
                 else if (StringUtils.hasText(token) && isTokenValid) {
-                    String email = tokenProvider.getUserId(token);
+                    String email = tokenProvider.getSubject(token);
                     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, null);
@@ -89,16 +90,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             }
 
             filterChain.doFilter(request, response);
-        } catch (JwtException e) {//oauth2.jwtexception
+        } catch (Exception e) {//oauth2.jwtexception
             //에러 메세지 생성 및 응답
             Map<String, Object> errorDetails = new HashMap<>();
 
             errorDetails.put("message", e.getMessage());
 
-            //401
-            if (e.getMessage().equals("Invalid token")) response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            //403
-            else response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
