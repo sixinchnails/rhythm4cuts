@@ -16,6 +16,10 @@ public class Song {
     @Column(name = "song_seq")
     private int songSeq;
 
+    // 노래 순위 일련번호
+    @OneToOne(mappedBy = "song_rank", cascade = CascadeType.ALL)
+    private SongRank songRankSeq;
+
     //제목
     private String title;
 
@@ -25,10 +29,6 @@ public class Song {
 
     //가수
     private String singer;
-
-    //크롤링해서 가져올 음원 랭킹 순위
-    @Column(name = "song_rank")
-    private Integer songRank;
 
     //노래 플레이 횟수
     @Column(name = "play_count")
@@ -47,13 +47,11 @@ public class Song {
 
     public Song() {
         this.playCount = 0;
-        this.songRank = 0;
     }
 
     public SongDto getSongDto() {
         SongDto songDto = new SongDto();
         songDto.setSongSeq(this.getSongSeq());
-        songDto.setSongRank(this.getSongRank());
         songDto.setTitle(this.getTitle());
         songDto.setUrl(this.getUrl());
         songDto.setSinger(this.getSinger());
