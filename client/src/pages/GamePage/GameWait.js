@@ -157,9 +157,12 @@ function GameWait() {
             zIndex: 1, // z-index를 1로 설정하여 비디오 위에 텍스트가 나타나도록
           }}
         >
-          <Typography variant="h4" style={{ fontFamily: 'Pretendard-Regular', fontWeight: "bold", fontSize: "px", color: "red", marginBottom: "10px" }}>
-            전원 준비가 되면 게임이 시작합니다 악!
-          </Typography>
+          <StyledIconButton onClick={handleGameStart}>
+            <Typography variant="h4" style={{ fontFamily: 'Pretendard-Regular', fontWeight: "bold", fontSize: "px", color: "red", marginBottom: "10px" }}>
+              전원 준비가 되면 게임이 시작합니다 악!
+            </Typography>
+          </StyledIconButton>
+
         </Grid>
 
         {/* Top */}
@@ -186,6 +189,8 @@ function GameWait() {
                 }}
               />
             </Card>
+          
+
           </Grid>
 
           <Grid item xs={2} container direction="column" alignItems="center" justifyContent="center" style={{ paddingTop: "50px" }}>
@@ -206,6 +211,8 @@ function GameWait() {
               <ExitToAppIcon />
               <Typography style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", padding: "20px" }}>나가기</Typography>
             </StyledIconButton>
+
+
           </Grid>
         </Grid>
 
@@ -243,11 +250,6 @@ function GameWait() {
 
         </Grid>
 
-        {/* // "게임플레이 이동" 버튼 */}
-        <StyledIconButton onClick={handleGameStart} style={{ width: "200px" }}>
-          <PlayArrowIcon />
-          <Typography style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", padding: "20px" }}>To GamePlay</Typography>
-        </StyledIconButton>
 
       </Grid>
 
