@@ -22,14 +22,14 @@ public class SongRank {
     private String singer;
 
     // 음원 랭킹 순위
-    private int rank;
+    private int ranking;
 
     public SongRankDto getSongRankDto() {
         SongRankDto songRankDto = new SongRankDto();
 
         songRankDto.setTitle(this.getTitle());
         songRankDto.setSinger(this.getSinger());
-        songRankDto.setRank(this.getRank());
+        songRankDto.setRanking(this.getRanking());
 
         return songRankDto;
     }
