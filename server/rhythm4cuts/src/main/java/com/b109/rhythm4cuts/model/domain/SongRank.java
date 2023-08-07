@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.model.domain;
 
+import com.b109.rhythm4cuts.model.dto.SongRankDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,4 +23,14 @@ public class SongRank {
 
     // 음원 랭킹 순위
     private int rank;
+
+    public SongRankDto getSongRankDto() {
+        SongRankDto songRankDto = new SongRankDto();
+
+        songRankDto.setTitle(this.getTitle());
+        songRankDto.setSinger(this.getSinger());
+        songRankDto.setRank(this.getRank());
+
+        return songRankDto;
+    }
 }

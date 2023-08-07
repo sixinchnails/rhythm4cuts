@@ -1,6 +1,7 @@
 package com.b109.rhythm4cuts.model.service;
 
 import com.b109.rhythm4cuts.model.domain.SongRank;
+import com.b109.rhythm4cuts.model.dto.SongRankDto;
 import com.b109.rhythm4cuts.model.repository.MelonRepository;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
@@ -28,7 +29,7 @@ public class MelonServiceImpl implements MelonService {
     }
 
     @Override
-    public List<SongRank> scrapeAndSaveMelonChart() throws SQLException, IOException {
+    public List<SongRankDto> scrapeAndSaveMelonChart() throws SQLException, IOException {
         // Melon Top 100을 크롤링해서, DB에 저장
         String url = "https://www.melon.com/chart/index.htm";                       // Melon Top 100 url
         Document doc = Jsoup.connect(url).get();
@@ -37,7 +38,7 @@ public class MelonServiceImpl implements MelonService {
         Elements singerElements = doc.select("div.ellipsis.rank02 span a"); // 가수
         Elements rankElements = doc.select("span.rank");                    // 순위
 
-        List<SongRank> songRanks = new ArrayList<>();
+        List<SongRankDto> res = new ArrayList<>();
 
         for (int i = 0; i < titleElements.size(); i++) {
             String title = titleElements.get(i).text();
@@ -49,11 +50,11 @@ public class MelonServiceImpl implements MelonService {
             songRank.setSinger(singer);
             songRank.setRank(rank);
 
-            songRanks.add(songRank);
+            res.add(songRank.getSongRankDto());
 
             melonRepository.save(songRank);
         }
 
-        return songRanks;
+        return res;
     }
 }
