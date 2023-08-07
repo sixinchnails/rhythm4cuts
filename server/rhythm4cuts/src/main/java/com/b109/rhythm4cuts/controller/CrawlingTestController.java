@@ -1,6 +1,6 @@
 package com.b109.rhythm4cuts.controller;
 
-import com.b109.rhythm4cuts.model.domain.SongRank;
+import com.b109.rhythm4cuts.model.dto.SongRankDto;
 import com.b109.rhythm4cuts.model.service.MelonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class CrawlingTestController {
             melonService.clearMelonChart();
 
             // 2. 현재 멜론 차트 데이터 크롤링 및 DB 저장
-            List<SongRank> songRanks = melonService.scrapeAndSaveMelonChart();
+            List<SongRankDto> songRanks = melonService.scrapeAndSaveMelonChart();
 
             Map<String, Object> res = new HashMap<>();
             res.put("message", "Success");
