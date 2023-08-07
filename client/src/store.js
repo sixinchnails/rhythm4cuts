@@ -16,17 +16,21 @@ const roomState = createSlice({
   name: "roomState",
   initialState,
   reducers: {
-
     setSession: (state, action) => {
       state.session = action.payload;
     },
     setConnectionToken: (state, action) => {
       state.connectionToken = action.payload;
     },
+    // 상태 초기화
+    resetRoomState: (state) => {
+      state.session = initialState.session;
+      state.connectionToken = initialState.connectionToken;
+    }
   },
 });
 
-export const { setSession, setConnectionToken } = roomState.actions;
+export const { setSession, setConnectionToken, resetRoomState } = roomState.actions;
 
 // Room 세션 ID를 설정하는 액션 함수
 export const setRoomSession = (sessionId) => (dispatch) => {

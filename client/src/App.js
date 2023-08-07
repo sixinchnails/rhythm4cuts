@@ -74,7 +74,7 @@ function App() {
 
         <Route path="/GameList" element={<GameList />} />
         <Route path="/GameWait/:gameSeq" element={<GameWait />} />
-        <Route path="/GamePlay" element={<GamePlay />} />
+        <Route path="/GamePlay/:gameSeq" element={<GamePlay />} />
         <Route path="/GameScore" element={<GameScore />} />
         <Route path="/GameShot" element={<GameShot />} />
 

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from '../../apis/userInfo';
-import { setSession } from "../../store";
+import { setSession, resetRoomState } from "../../store";
 import LoginAlert from '../../components/Common/LoginAlert';
 import UserVideo from '../../components/Game/UserVideo';
 import Header from "../../components/Game/HeaderPlay";
@@ -34,7 +34,6 @@ function GameWait() {
 
   const session = useSelector(state => state.roomState.session);
   const connectionToken = useSelector(state => state.roomState.connectionToken);
-
   // -----------------------------------------------------------------------------------------------------------------
 
   // 로그인 상태를 업데이트하는 함수
@@ -125,9 +124,14 @@ function GameWait() {
   };
 
   const handleExit = () => {
-    // "나가기" 버튼을 클릭했을 때 동작하는 로직을 여기에 구현합니다.
+    dispatch(resetRoomState());
+    navigate(`/GameList`);
   };
 
+  // 임시 게임플레이 페이지 이동
+  const handleGameStart = () => {
+    navigate(`/GamePlay/${gameSeq}`);
+  };
 
   return (
     <div
@@ -153,9 +157,12 @@ function GameWait() {
             zIndex: 1, // z-index를 1로 설정하여 비디오 위에 텍스트가 나타나도록
           }}
         >
-          <Typography variant="h4" style={{ fontFamily: 'Pretendard-Regular', fontWeight: "bold", fontSize: "px", color: "red", marginBottom: "10px" }}>
-            전원 준비가 되면 게임이 시작합니다 악!
-          </Typography>
+          <StyledIconButton onClick={handleGameStart}>
+            <Typography variant="h4" style={{ fontFamily: 'Pretendard-Regular', fontWeight: "bold", fontSize: "px", color: "red", marginBottom: "10px" }}>
+              전원 준비가 되면 게임이 시작합니다 악!
+            </Typography>
+          </StyledIconButton>
+
         </Grid>
 
         {/* Top */}
@@ -182,6 +189,8 @@ function GameWait() {
                 }}
               />
             </Card>
+          
+
           </Grid>
 
           <Grid item xs={2} container direction="column" alignItems="center" justifyContent="center" style={{ paddingTop: "50px" }}>
@@ -202,8 +211,9 @@ function GameWait() {
               <ExitToAppIcon />
               <Typography style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", padding: "20px" }}>나가기</Typography>
             </StyledIconButton>
-          </Grid>
 
+
+          </Grid>
         </Grid>
 
         {/* Bottom */}
@@ -211,7 +221,7 @@ function GameWait() {
 
           {/* Player 1 */}
           <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            <UserVideo roomSession={session} userToken={connectionToken}/>
+            <UserVideo roomSession={session} userToken={connectionToken} />
           </Grid>
           <Grid item xs={1} style={{ height: '20vh' }}>
             <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>첫번째 선수</div>

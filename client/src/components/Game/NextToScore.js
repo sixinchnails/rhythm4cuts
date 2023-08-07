@@ -4,7 +4,7 @@ import { Typography, Container, Grid } from "@mui/material";
 
 function NextToScore() {
   const navigate = useNavigate();
-  const [seconds, setSeconds] = useState(10);
+  const [seconds, setSeconds] = useState(1000);
 
   useEffect(() => {
     const countdown = setInterval(() => {
