@@ -213,6 +213,7 @@ function Home() {
         <div className="Home1">
 
           {isLogin ? <LoginHeader /> : <Header />}
+          
           <div className="main1">
             <div className="beatbox">
               <div className="Logo">
