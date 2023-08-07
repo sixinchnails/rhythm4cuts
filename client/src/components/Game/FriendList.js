@@ -1,5 +1,5 @@
 import React from "react";
-import { List, ListItem, ListItemText } from "@mui/material";
+import { List, ListItem, Typography } from "@mui/material";
 
 function FriendList({ friends }) {
   // 먼저 "온라인 상태"에 따라 정렬하고, 같은 "온라인 상태"를 가진 친구들 사이에서 "이름"에 따라 정렬합니다
@@ -20,8 +20,20 @@ function FriendList({ friends }) {
     <List>
       {sortedFriends.map((friend, index) => (
         <ListItem key={index}>
-          <ListItemText secondary={friend.isOnline ? "🟢" : "⚫"} />
-          <ListItemText primary={friend.name} />
+          <Typography
+            variant="body1"
+            style={{ color: "#ffffff" }}
+            component="span"
+          >
+            {friend.isOnline ? "🟢" : "⚫"}
+          </Typography>
+          <Typography
+            variant="body1"
+            style={{ color: "#ffffff", paddingLeft: "10px" , padding: "5px" }}
+            component="span"
+          >
+            {friend.name}
+          </Typography>
         </ListItem>
       ))}
     </List>

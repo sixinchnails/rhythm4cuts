@@ -2,6 +2,25 @@
   overflow: hidden;
 } */
 
+.background {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../../../public/images/Game_List.jpg");
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+
 body {
   margin: 0;
   overflow-y: hidden;
@@ -19,25 +38,24 @@ body {
 .divider {
   width: 100%;
   height: 5px;
-  background-color: gray;
+  background-color: balck;
 }
-
+.Home1 > .main1 {
+  height: 80vh;
+}
 .Home1 > .main1 > .beatbox {
-  width: 60%;
+  width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
 }
 
 .Logo {
-  background-image: url(../../../public/images/Home_Effect1.png);
-  background-size: cover;
-  background-position: center;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 50%;
-  height: 45vh;
+  height: 100%;
 }
 
 .img {
@@ -46,30 +64,31 @@ body {
 }
 
 .playBtn {
-  margin-left: 15%;
-  margin-top: -2%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .Home1 {
-  background-image: url(../../../public/images/HP.png);
+  /* background-image: url(../../../public/images/Game_List.jpg);
   background-size: cover;
-  background-position: center;
+  background-position: center; */
   width: 100vw;
   height: 100vh;
   position: relative;
 }
 
 .Home2 {
-  background-image: url(../../../public/images/Home_Page2.png);
+  /* background-image: url(../../../public/images/Game_List.png);
   background-size: cover;
-  background-position: center;
+  background-position: center; */
   width: 100vw;
   height: 100vh;
   position: relative;
 }
 
 .Home2 > .title {
-  color: aqua;
+  color: white;
   font-size: xx-large;
   font-weight: bold;
   text-align: center;
@@ -97,9 +116,9 @@ body {
 }
 
 .Home3 {
-  background-image: url(../../../public/images/Home_Page3.png);
+  /* background-image: url(../../../public/images/Game_List.png);
   background-size: cover;
-  background-position: center;
+  background-position: center; */
   width: 100vw;
   height: 108vh;
   position: relative;
@@ -111,12 +130,12 @@ body {
 
 .Home3 > .content > .rank1 > h1 {
   text-align: center;
-  color: aqua;
+  color: white;
 }
 
 .Home3 > .content > .rank2 > h1 {
   text-align: center;
-  color: aqua;
+  color: white;
 }
 
 .Home3 > .content {
@@ -212,9 +231,9 @@ body {
 }
 
 .Home4 {
-  background-image: url(../../../public/images/Home_Page4.png);
+  /* background-image: url(../../../public/images/Game_List.png);
   background-size: cover;
-  background-position: center;
+  background-position: center; */
   width: 100vw;
   height: 100vh;
   position: relative;

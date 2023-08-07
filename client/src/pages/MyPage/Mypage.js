@@ -9,7 +9,7 @@ import MainContent from "../../components/My/My_MainContent"; // MainContent 컴
 import UserInfo from "../../components/My/My_UserInfo"; // UserInfo 컴포넌트를 import
 import Button from "@mui/material/Button";
 import { userInfo } from "../../apis/userInfo";
-import LoginMypageHeader from "../../components/Home/LoginMypageHeader";
+import LoginMypageHeader from "../../components/Home/BlackHeader";
 import CheckUserToModiInfo from "../../components/Common/CheckUserToModiInfo";
 
 const Mypage = () => {

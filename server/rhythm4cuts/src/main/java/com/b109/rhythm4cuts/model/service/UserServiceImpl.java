@@ -8,6 +8,7 @@ import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.b109.rhythm4cuts.model.service.Utils.dtoSetter;
@@ -209,7 +211,17 @@ public class UserServiceImpl implements UserService {
     }
 
     //로그아웃 메서드(상태 변환)
-    public void logout() {}
+    public void logout(LogoutDto logoutDto) {
+        System.out.println(logoutDto.getEmail());
+
+        User user = userRepository.findByEmail(logoutDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+
+        long expiryMilliSeconds = tokenProvider.getExpirationDateFromToken(logoutDto.getAccessToken()).getTime() - new Date().getTime();
+
+        //유효시간만큼 액세스 토큰을 블랙리스트 상에서 유지
+        if (expiryMilliSeconds > 0) redisTemplate.opsForValue().set(logoutDto.getAccessToken(), "access_token", expiryMilliSeconds, TimeUnit.MILLISECONDS);
+    }
 
     //포인트 결제 메서드
     public long payPoints(PayDto payDto) {
@@ -305,14 +317,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public ResponseEntity<?> reissueAuthenticationToken(TokenRequestDto tokenRequestDto) {
-        // 사용자로부터 받은 Refresh Token 유효성 검사
-        // Refresh Token 마저 만료되면 다시 로그인
+        // Refresh Token 만료 여부와 유효성 검증
         if(tokenProvider.isTokenExpired(tokenRequestDto.getRefreshToken()) || !tokenProvider.validToken(tokenRequestDto.getRefreshToken())) {
             throw new IllegalArgumentException("잘못된 요청입니다. 다시 로그인해주세요.");
         }
 
         // Access Token 에 기술된 사용자 이름 가져오기
-        //String email = tokenProvider.getUserId(tokenRequestDto.getAccessToken());
         User user = userRepository.findByEmail(tokenRequestDto.getEmail()).orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
         UserDto userDto = dtoSetter(user);
 
@@ -322,6 +332,7 @@ public class UserServiceImpl implements UserService {
         if(ObjectUtils.isEmpty(refreshToken)) {
             throw new IllegalArgumentException("잘못된 요청입니다. 다시 로그인해주세요.");
         }
+
         if(!refreshToken.equals(tokenRequestDto.getRefreshToken())) {
             throw new IllegalArgumentException("Refresh Token 정보가 일치하지 않습니다.");
         }
@@ -329,6 +340,13 @@ public class UserServiceImpl implements UserService {
         // 새로운 Access Token 발급
         final TokenResponse tokenResponse = tokenProvider.generateToken(userDto);
         tokenResponse.setRefreshToken(tokenRequestDto.getRefreshToken());
+
+        //기존 토큰 블랙 리스트 등록
+        long expiryMilliSeconds = tokenProvider.getExpirationDateFromToken(tokenRequestDto.getAccessToken()).getTime() - new Date().getTime();
+
+        redisTemplate.opsForValue().set("RT:" + tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), TokenProvider.refreshExpiredAt.toMillis(), TimeUnit.MILLISECONDS);
+        // 기존 액세스 토큰 블랙 리스트 추가
+        if (expiryMilliSeconds > 0) redisTemplate.opsForValue().set(tokenRequestDto.getAccessToken(), "access_token", expiryMilliSeconds, TimeUnit.MILLISECONDS);
 
         return ResponseEntity.ok().body(tokenResponse);
     }

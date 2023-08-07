@@ -1,8 +1,14 @@
 package com.b109.rhythm4cuts.config;
 
 import com.b109.rhythm4cuts.config.jwt.TokenProvider;
+import java.util.*;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +33,7 @@ import java.util.List;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
     private final UserDetailsService userDetailsService;
+    private final ObjectMapper mapper;
     private final static String HEADER_AUTHORIZATION = "Authorization";
     private final static String TOKEN_PREFIX = "Bearer ";
     private final List<String> excludedUrlPatterns = Arrays.asList(
@@ -43,27 +50,29 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
+            //요청 경로 추출
             String path = request.getServletPath();
+            //HTTP 메소드 추출
             String httpMethod = request.getMethod();
+            //토큰 검증에서 제외할 url 리스트
             boolean isExcludedUrl = excludedUrlPatterns.stream().anyMatch(path::startsWith);
 
             //가져온 토큰이 유요한지 확인하고, 유효한 때는 인증 정보 설정
             if (!isExcludedUrl || (httpMethod.equals("PATCH")) || (httpMethod.equals("POST") && path.equals("/member/pw"))) {
                 //요청 헤더의 Authorization(Bearer 액세스 토큰의 키 값) 키의 값 조회
                 String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
-                //가져온 값에서 접두사 제거
+                //가져온 값에서 접두사("Bearer ") 제거
                 String token = getAccessToken(authorizationHeader);
 
-                System.out.println("만료일 : " + tokenProvider.getExpirationDateFromToken(token));
-                System.out.println(tokenProvider.isTokenExpired(token));
-
-                if (tokenProvider.isTokenExpired(token)) {
-                    throw new JwtException("access token is expired");
-                }
-
+                //유효한가? (만료 체크 X)
                 boolean isTokenValid = tokenProvider.validToken(token);
 
-                if (StringUtils.hasText(token) && isTokenValid) {
+                //만료 체크
+                if (tokenProvider.isTokenExpired(token)) {
+                    throw new JwtException("Expired token");
+                }
+                //유효 체크(분기 진입 시 유효한 토큰)
+                else if (StringUtils.hasText(token) && isTokenValid) {
                     String email = tokenProvider.getUserId(token);
                     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
@@ -74,12 +83,27 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
+                //유효 X, 만료 O인 경우 예외 던짐
+                else {
+                    throw new JwtException("Invalid token");
+                }
             }
 
             filterChain.doFilter(request, response);
         } catch (JwtException e) {//oauth2.jwtexception
-            e.printStackTrace();
-            System.out.println("만료됐네요");
+            //에러 메세지 생성 및 응답
+            Map<String, Object> errorDetails = new HashMap<>();
+
+            errorDetails.put("message", e.getMessage());
+
+            //401
+            if (e.getMessage().equals("Invalid token")) response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            //403
+            else response.setStatus(HttpStatus.FORBIDDEN.value());
+
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+            mapper.writeValue(response.getWriter(), errorDetails);
         }
     }
 
@@ -91,9 +115,4 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         return null;
     }
-//
-//    private void setAuthentication(String token) {
-//        Authentication authentication = tokenProvider.getAuthentication(token);
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//    }
 }
