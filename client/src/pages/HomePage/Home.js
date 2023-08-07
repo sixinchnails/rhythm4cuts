@@ -228,7 +228,7 @@ function Home() {
                 <img
                   className="play"
                   alt="Home_Play"
-                  src="images/Home_Play.png"
+                  src="images/play_button.png"
                 ></img>
               </a>
             </div> */}

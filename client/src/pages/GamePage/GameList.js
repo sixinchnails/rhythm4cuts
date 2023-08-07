@@ -24,8 +24,38 @@ import { userInfo } from "../../apis/userInfo";
 import { getCookie } from "../../utils/cookie";
 
 function GameList() {
+  // <<<<<<< HEAD
+  //   // let rooms = useSelector(state => state.GameList_Room); // 방 리스트
+  //   const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
 
+  //   // 검색 카테고리 상태 추가
+  //   const [searchCategory, setSearchCategory] = useState("gameSeq"); // 기본값을 'gameSeq'로 설정
 
+  //   // 방 리스트 가져오기
+  //   useEffect(() => {
+  //     axios
+  //       // <<<<<<< HEAD
+  //       //       .get("/lobby/list") // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
+  //       //       .then(response => {
+  //       // =======
+  //       .get("/lobby/list", {
+  //         headers: {
+  //           Authorization: "Bearer " + getCookie("access"),
+  //         },
+  //       }) // 서버로 GET 요청 보내기, "/api/getRooms"는 서버에서 방 리스트를 반환하는 API 경로입니다. 서버에 맞게 수정해야 합니다.
+  //       .then(response => {
+  //         console.log(response.data);
+  //         setRooms(response.data.data); // 서버 응답으로 받은 방 리스트를 상태로 업데이트합니다.
+  //       })
+  //       .catch(error => {
+  //         console.error("Failed to fetch room list.", error);
+  //       });
+  //   }, []); // 두 번째 매개변수인 빈 배열은 useEffect가 컴포넌트가 처음 렌더링될 때 한 번만 실행되도록 설정합니다.
+
+  //   let friends = useSelector(state => state.GameList_Friend); // 친구 리스트
+  // =======
+
+  // >>>>>>> 733f5f3d4973cc1340ce9c8f23943019e3a025d7
 
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
@@ -131,7 +161,62 @@ function GameList() {
     >
       <Header />
       <Grid container spacing="2%">
-        <Grid item xs={8} margin={"3%"}>
+        <Grid item xs={8} marginLeft={"3%"} marginTop={"-1.5%"}>
+          <Box display="flex" justifyContent="flex-end" marginBottom="1%">
+            <IconButton
+              onClick={() => {
+                // State상태 Update되도록 추후 추가예정
+              }}
+              sx={{ marginRight: 1 }}
+            >
+              <RefreshIcon style={{ color: "#ffffff" }} />
+            </IconButton>
+            {/* 검색 카테고리 추가 */}
+            <Select
+              value={searchCategory}
+              onChange={e => setSearchCategory(e.target.value)}
+              style={{
+                marginRight: "1em",
+                color: "#ffffff",
+                borderColor: "#ffffff",
+              }}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    backgroundColor: "white",
+                    color: "black",
+                  },
+                },
+              }}
+            >
+              <MenuItem value={"gameSeq"} style={{ color: "black" }}>
+                방 번호
+              </MenuItem>
+              <MenuItem value={"title"} style={{ color: "black" }}>
+                방 이름
+              </MenuItem>
+              <MenuItem value={"songSeq"} style={{ color: "black" }}>
+                노래 제목
+              </MenuItem>
+            </Select>
+            <TextField
+              label="검색"
+              variant="outlined"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              style={{
+                width: "33%",
+                borderColor: "#ffffff", // 테두리 색상 변경
+              }}
+              placeholder="방 번호 or 노래 제목"
+              InputProps={{
+                style: { color: "#ffffff", borderColor: "#ffffff" }, // 글자 색상 변경
+              }}
+              InputLabelProps={{
+                style: { color: "#ffffff" }, // 레이블 색상 변경
+              }}
+            />
+          </Box>
           <Grid container spacing={2}>
             {filteredRooms
               .slice((page - 1) * itemsPerPage, page * itemsPerPage)
@@ -179,39 +264,7 @@ function GameList() {
             />
           </Paper>
         </Grid>
-        <Grid item xs={3}>
-          <Box display="flex" justifyContent="flex-end" marginBottom="1%">
-
-            {/* 새로고침 아이콘 : 기능 추가예정 */}
-            <IconButton
-              onClick={() => {
-              }}
-              sx={{ marginRight: 1 }}
-            >
-              <RefreshIcon style={{ color: "#ffffff" }} />
-            </IconButton>
-
-            {/* 검색 카테고리 추가 */}
-            <Select
-              value={searchCategory}
-              onChange={e => setSearchCategory(e.target.value)}
-              style={{ marginRight: "1em" }}
-            >
-              <MenuItem value={"gameSeq"}>방 번호</MenuItem>
-              <MenuItem value={"title"}>방 이름</MenuItem>
-              <MenuItem value={"songSeq"}>노래 일련번호</MenuItem>
-            </Select>
-            <TextField
-              label="검색"
-              variant="outlined"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              style={{ width: "100%" }} // 검색창 스타일링
-              InputProps={{
-                style: { color: "#ffffff" },
-              }}
-            />
-          </Box>
+        <Grid item xs={3} marginTop={"3%"} marginLeft={"3%"}>
           <Paper elevation={10}>
             <Box p={5}>
               <Grid container direction="column">
