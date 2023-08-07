@@ -41,6 +41,7 @@ public class MelonServiceImpl implements MelonService {
         List<SongRankDto> res = new ArrayList<>();
 
         for (int i = 0; i < titleElements.size(); i++) {
+            System.out.println(i + "번째 insert 진행중");
             String title = titleElements.get(i).text();
             String singer = singerElements.get(i).text();
             int rank = Integer.parseInt(rankElements.get(i).text());
