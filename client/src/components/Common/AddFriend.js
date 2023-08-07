@@ -56,15 +56,15 @@ function AddFriend({ isOpen, handleClose }) {
       toUser: b,
     };
 
-  //   if (client && client.connected) {
-  //     client.publish({
-  //       destination: "/public/request",
-  //       body: JSON.stringify(requestPayload),
-  //     });
-  //   } else {
-  //     console.error("The client is not connected.");
-  //   }
-  // }
+    // if (client && client.connected) {
+    //   client.publish({
+    //     destination: "/public/request",
+    //     body: JSON.stringify(requestPayload),
+    //   });
+    // } else {
+    //   console.error("The client is not connected.");
+    // }
+  }
 
   return (
     <Modal open={isOpen} onClose={handleClose}>
