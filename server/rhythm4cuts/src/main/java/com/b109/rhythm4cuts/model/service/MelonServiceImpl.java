@@ -37,7 +37,7 @@ public class MelonServiceImpl implements MelonService {
 
             Elements titleElements = doc.select("div.ellipsis.rank01 span a");  // 제목
             Elements singerElements = doc.select("div.ellipsis.rank02 span a"); // 가수
-            Elements rankElements = doc.select("span.rank");                    // 순위
+            Elements rankElements = doc.select("span.rank ");                    // 순위
 
             List<SongRankDto> res = new ArrayList<>();
 
