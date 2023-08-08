@@ -5,27 +5,18 @@ export default class UserVideoComponent extends Component {
 
 
     getNicknameTag() {
-        if (this.props.streamManager && this.props.streamManager.connection && this.props.streamManager.connection.data) {
-            try {
-                return JSON.parse(this.props.streamManager.connection.data).clientData;
-            } catch (error) {
-                console.error('Error parsing connection data:', error);
-            }
-        }
-        return "Nickname Unavailable";
+        return JSON.parse(this.props.streamManager.stream.connection.data).clientData;
     }
 
     render() {
         return (
             <div>
-                {this.props.streamManager !== undefined ? (
-                    <div className="streamcomponent">
+                    <div className="streamcomponent" >
                         <OpenViduVideoComponent streamManager={this.props.streamManager} />
                         <div>
-                            <p>{this.getNicknameTag()}</p>
+                            {/* <p>{this.getNicknameTag()}</p> */}
                         </div>
                     </div>
-                ) : null}
             </div>
         );
     }

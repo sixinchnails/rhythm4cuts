@@ -1,376 +1,330 @@
-/* eslint-disable */
-import { styled, Button, Card, Container, Grid, Typography, IconButton } from "@mui/material";
-import { createConnection } from '../../openvidu/connectionInitialization';
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect, useState } from "react";
-import { getCookie } from "../../utils/cookie";
-import { userInfo } from '../../apis/userInfo';
-// import { setSession, resetRoomState } from "../../store";
-import LoginAlert from '../../components/Common/LoginAlert';
-import UserVideo from '../../components/Game/UserVideo';
-import Header from "../../components/Game/HeaderPlay";
-import Next from "../../components/Game/NextToPlay";
-import axios from "axios";
-import { Chat as ChatIcon, Check as CheckIcon, ExitToApp as ExitToAppIcon } from "@mui/icons-material";
-import UserVideoComponent from '../../components/Game/UserVideoComponent';
-import {
-  setSession as setSessionAction,
-  setConnection,
-  setConnectionToken,
-  resetRoomState,
-} from "../../store";
 import { OpenVidu } from 'openvidu-browser';
 
-// Styled 버튼
-const StyledIconButton = styled(IconButton)({
-  color: "white",
-  margin: "20px",
-  boxShadow: "10px 5px 5px rgba(0, 0, 0, 0.8)",
-  borderRadius: "10px",
-  "&:hover": {
-    backgroundColor: "#1976d2", // 마우스 오버 시 배경색 변경
-  },
-});
+import React, { Component } from 'react';
+import UserVideoComponent from '../../components/Game/UserVideoComponent';
 
-const userState = {
-  sessionId:'session_id',
-  userName:'name',
-  session: undefined,
-  mainStreammanager: undefined,
-  publisher: undefined,
-  subscribers: [],
+import { createConnection } from '../../openvidu/connectionInitialization';
+import { useParams } from "react-router-dom";
+import { getCookie } from "../../utils/cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { setSession, resetRoomState } from "../../store";
+
+import axios from "axios";
+
+function GetParam() {
+  return useParams();
 }
 
-const publisher = undefined;
+function GetDispatch() {
+  return useDispatch();
+}
 
-function GameWait() {
-  const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  let { gameSeq } = useParams(); // URL에서 가져와
+class GameWait extends Component {
+    constructor(props) {
+        super(props);
 
+        // These properties are in the state's component in order to re-render the HTML whenever their values change
+        this.state = {
+            mySessionId: 'SessionA',
+            myUserName: 'Participant' + Math.floor(Math.random() * 100),
+            session: undefined,
+            mainStreamManager: undefined,  // Main video of the page. Will be the 'publisher' or one of the 'subscribers'
+            publisher: undefined,
+            subscribers: [],
+        };
 
-  const session = useSelector(state => state.roomState.session);
-  const connection = useSelector(state => state.roomState.connection);
-  const connectionToken = useSelector(state => state.roomState.connectionToken);
-  // -----------------------------------------------------------------------------------------------------------------
+        this.joinSession = this.joinSession.bind(this);
+        this.leaveSession = this.leaveSession.bind(this);
+        this.switchCamera = this.switchCamera.bind(this);
+        this.handleChangeSessionId = this.handleChangeSessionId.bind(this);
+        this.handleChangeUserName = this.handleChangeUserName.bind(this);
+        this.handleMainVideoStream = this.handleMainVideoStream.bind(this);
+        this.onbeforeunload = this.onbeforeunload.bind(this);
 
-  // 로그인 상태를 업데이트하는 함수
-  const handleOpenLoginAlert = () => {
-    setLoginAlertOpen(true);
-  };
-  const handleCloseLoginAlert = () => {
-    setLoginAlertOpen(false);
-    navigate("/Login");
-  };
-
-  // 로그인 상태관리
-  useEffect(() => {
-    userInfo()
-      .then(res => {
-        if (res.status === 200) {
-        } else {
-          // 로그인 상태가 아니라면 알림.
-          handleOpenLoginAlert();
-        }
-      })
-      .catch(error => {
-        // 오류가 발생하면 로그인 알림.
-        handleOpenLoginAlert();
-      });
-  }, []);
-
-  useEffect(() => {
-    userInfo()
-      .then(res => {
-        if (res.status !== 200) {
-          window.alert("로그인을 해주세요!");
-          navigate("/");
-        }
-      })
-      .catch(error => {
-        console.error("유저 정보 불러오기 실패:", error);
-        window.alert("로그인을 해주세요!");
-        navigate("/");
-      });
-    fetchSession();
-  }, [gameSeq]);
-
-  // 방 세션 ID 가져오기
-  const fetchSession = async () => {
-    try {
-      const access = getCookie("access");
-      const response = await axios.get(
-        "https://i9b109.p.ssafy.io:8443/wait/info/" + gameSeq,
-        {
-          headers: {
-            Authorization: "Bearer " + access,
-          },
-        }
-      );
-      dispatch(setSessionAction(response.data.data.sessionId));
-
-    } catch (error) {
-      console.error("DB에서 세션 id 불러오기 실패:", error);
+        
     }
-  };
 
-  // 연결 유저 토큰 만들기 
-  const fetchConnectionToken = async () => {
-    try {
-      if (session) { // session이 생성된 상태인지 확인
-        const { connection, connectionToken } = await createConnection(session);
-        dispatch(setConnection(connection));
-        dispatch(setConnectionToken(connectionToken));
-        init(connectionToken);
-      }
-    } catch (error) {
-      console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
+    componentDidMount() {
+        window.addEventListener('beforeunload', this.onbeforeunload);
     }
-  };
 
-  useEffect(() => {
-    if (session) {
-      fetchConnectionToken();
+    componentWillUnmount() {
+        window.removeEventListener('beforeunload', this.onbeforeunload);
     }
-  }, [session])
 
-  function init(connectionToken) {
-    console.log("init:" + connectionToken)
-    console.log("use effect begin")
-    const OV = new OpenVidu;
-    userState.session = OV.initSession()
-    const mySession = userState.session;
-    mySession.on('streamCreated', (event) => {
-      // Subscribe to the Stream to receive it. Second parameter is undefined
-      // so OpenVidu doesn't create an HTML video by its own
-      let subscriber = mySession.subscribe(event.stream, undefined);
-      let subscribers = userState.subscribers;
-      subscribers.push(subscriber);
+    onbeforeunload(event) {
+        this.leaveSession();
+    }
 
-      // Update the state with the new subscribers
-      userState.subscribers = subscribers;
-    });
-    mySession.connect(connectionToken, {clientData: 'a'})
-    .then(async () => {
-      publisher = await OV.initPublisherAsync(undefined, {
-        audioSource: undefined, // The source of audio. If undefined default microphone
-        videoSource: undefined, // The source of video. If undefined default webcam
-        publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-        publishVideo: true, // Whether you want to start publishing with your video enabled or not
-        resolution: '640x480', // The resolution of your video
-        frameRate: 30, // The frame rate of your video
-        insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
-        mirror: false, // Whether to mirror your local video or not
-      });
-      console.log("publish success")
-      mySession.publish(publisher);
-  })
-  }
+    handleChangeSessionId(e) {
+        this.setState({
+            mySessionId: e.target.value,
+        });
+    }
 
-//   useEffect(()=>{
-//     console.log("use effect begin")
-//     const OV = new OpenVidu;
-//     userState.session = OV.initSession()
-//     const mySession = userState.session;
-//     mySession.on('streamCreated', (event) => {
-//       // Subscribe to the Stream to receive it. Second parameter is undefined
-//       // so OpenVidu doesn't create an HTML video by its own
-//       let subscriber = mySession.subscribe(event.stream, undefined);
-//       let subscribers = userState.subscribers;
-//       subscribers.push(subscriber);
+    handleChangeUserName(e) {
+        this.setState({
+            myUserName: e.target.value,
+        });
+    }
 
-//       // Update the state with the new subscribers
-//       userState.subscribers = subscribers;
-//     });
-//     mySession.connect(connectionToken, {clientData: 'a'})
-//     .then(async () => {
-//       publisher = await OV.initPublisherAsync(undefined, {
-//         audioSource: undefined, // The source of audio. If undefined default microphone
-//         videoSource: undefined, // The source of video. If undefined default webcam
-//         publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-//         publishVideo: true, // Whether you want to start publishing with your video enabled or not
-//         resolution: '640x480', // The resolution of your video
-//         frameRate: 30, // The frame rate of your video
-//         insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
-//         mirror: false, // Whether to mirror your local video or not
-//       });
-//       console.log("publish success")
-//       mySession.publish(publisher);
-//   })
-// })
+    handleMainVideoStream(stream) {
+        if (this.state.mainStreamManager !== stream) {
+            this.setState({
+                mainStreamManager: stream
+            });
+        }
+    }
 
-console.log("게임 시퀀스입니다 : " + gameSeq);
-  console.log("세션입니다 : " + session);
-  console.log("연결 세션id입니다: " + connection);
-  console.log("연결 토큰입니다 : " + connectionToken);
- 
+    deleteSubscriber(streamManager) {
+        let subscribers = this.state.subscribers;
+        let index = subscribers.indexOf(streamManager, 0);
+        if (index > -1) {
+            subscribers.splice(index, 1);
+            this.setState({
+                subscribers: subscribers,
+            });
+        }
+    }
 
-  const handleGameReady = () => {
-    // "게임 준비" 버튼을 클릭했을 때 동작하는 로직을 여기에 구현합니다.
-  };
+    joinSession() {
+        // --- 1) Get an OpenVidu object ---
 
-  const handleChat = () => {
-    // "채팅" 버튼을 클릭했을 때 동작하는 로직을 여기에 구현합니다.
-  };
+        this.OV = new OpenVidu();
 
-  const handleExit = () => {
-    dispatch(resetRoomState());
-    navigate(`/GameList`);
-  };
+        // --- 2) Init a session ---
 
-  // 임시 게임플레이 페이지 이동
-  const handleGameStart = () => {
-    navigate(`/GamePlay/${gameSeq}`);
-  };
+        this.setState(
+            {
+                session: this.OV.initSession(),
+            },
+            () => {
+                var mySession = this.state.session;
 
-  const getUserConnectionData = () => {
-    const nickname = gameSeq + "_" + connection;
-    return JSON.stringify({ clientData: nickname });
-  };
+                // --- 3) Specify the actions when events take place in the session ---
 
+                // On every new Stream received...
+                mySession.on('streamCreated', (event) => {
+                    // Subscribe to the Stream to receive it. Second parameter is undefined
+                    // so OpenVidu doesn't create an HTML video by its own
+                    var subscriber = mySession.subscribe(event.stream, undefined);
+                    var subscribers = this.state.subscribers;
+                    subscribers.push(subscriber);
 
+                    // Update the state with the new subscribers
+                    this.setState({
+                        subscribers: subscribers,
+                    });
+                });
 
-  return (
-    <div
-      style={{
-        width: "100%",
-        height: "100vh",
-        backgroundPosition: "center",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundImage: "url('/images/GameImage/GameList.jpg')",
-      }}
-    >
-      <Header />
+                // On every Stream destroyed...
+                mySession.on('streamDestroyed', (event) => {
 
-      <Grid container>
+                    // Remove the stream from 'subscribers' array
+                    this.deleteSubscriber(event.stream.streamManager);
+                });
 
-        {/* 멘트 */}
-        <Grid
-          container
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            zIndex: 1, // z-index를 1로 설정하여 비디오 위에 텍스트가 나타나도록
-          }}
-        >
-          <StyledIconButton onClick={handleGameStart}>
-            <Typography variant="h4" style={{ fontFamily: 'Pretendard-Regular', fontWeight: "bold", fontSize: "px", color: "red", marginBottom: "10px" }}>
-              전원 준비가 되면 게임이 시작합니다 악!
-            </Typography>
-          </StyledIconButton>
+                // On every asynchronous exception...
+                mySession.on('exception', (exception) => {
+                    console.warn(exception);
+                });
 
-        </Grid>
+                // --- 4) Connect to the session with a valid user token ---
 
-        {/* Top */}
-        <Grid container >
-          <Grid item xs={10} container alignItems="center" justifyContent="center" paddingLeft={"150px"}>
-            <Card
+                // Get a token from the OpenVidu deployment
+                this.getToken().then((token) => {
+                    // First param is the token got from the OpenVidu deployment. Second param can be retrieved by every user on event
+                    // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
+                    mySession.connect(token, { clientData: this.state.myUserName })
+                        .then(async () => {
+                            // --- 5) Get your own camera stream ---
 
-              style={{
-                width: "55vw",
-                height: "50vh",
-                background: "transparent",
-                borderRadius: "30px",
-              }}
-            >
-              {/* 대기중 비디오 */}
-              {/* <video
-                src="/images/GameImage/Dance.mp4"
-                autoPlay
-                loop
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              /> */}
-              
-                <UserVideoComponent
-              streamManager={publisher}
-              connectionData={getUserConnectionData()}
-            />
-            </Card>
+                            // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
+                            // element: we will manage it on our own) and with the desired properties
+                            let publisher = await this.OV.initPublisherAsync(undefined, {
+                                audioSource: undefined, // The source of audio. If undefined default microphone
+                                videoSource: undefined, // The source of video. If undefined default webcam
+                                publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+                                publishVideo: true, // Whether you want to start publishing with your video enabled or not
+                                resolution: '640x480', // The resolution of your video
+                                frameRate: 30, // The frame rate of your video
+                                insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
+                                mirror: false, // Whether to mirror your local video or not
+                            });
 
+                            // --- 6) Publish your stream ---
 
-          </Grid>
+                            mySession.publish(publisher);
 
-          <Grid item xs={2} container direction="column" alignItems="center" justifyContent="center" style={{ paddingTop: "50px" }}>
-            {/* "게임준비" 버튼 */}
-            <StyledIconButton onClick={handleGameReady} style={{ width: "200px" }}>
-              <CheckIcon />
-              <Typography style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", padding: "20px" }}>게임 준비</Typography>
-            </StyledIconButton>
+                            // Obtain the current video device in use
+                            var devices = await this.OV.getDevices();
+                            var videoDevices = devices.filter(device => device.kind === 'videoinput');
+                            var currentVideoDeviceId = publisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
+                            var currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
 
-            {/* "채팅" 버튼 */}
-            <StyledIconButton onClick={handleChat} style={{ width: "200px" }}>
-              <ChatIcon />
-              <Typography style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", padding: "20px" }}>채팅</Typography>
-            </StyledIconButton>
+                            // Set the main video in the page to display our webcam and store our Publisher
+                            this.setState({
+                                currentVideoDevice: currentVideoDevice,
+                                mainStreamManager: publisher,
+                                publisher: publisher,
+                            });
+                        })
+                        .catch((error) => {
+                            console.log('There was an error connecting to the session:', error.code, error.message);
+                        });
+                });
+            },
+        );
+    }
 
-            {/* "나가기" 버튼 */}
-            <StyledIconButton onClick={handleExit} style={{ width: "200px" }}>
-              <ExitToAppIcon />
-              <Typography style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", padding: "20px" }}>나가기</Typography>
-            </StyledIconButton>
+    leaveSession() {
 
+        // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
 
-          </Grid>
-        </Grid>
+        const mySession = this.state.session;
 
-        {/* Bottom */}
-        <Grid style={{ height: '20vh', display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: "50px" }}>
+        if (mySession) {
+            mySession.disconnect();
+        }
 
-          {/* Player 1 */}
-          <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-          {userState.subscribers.map((sub, i) => (
+        // Empty all properties...
+        this.OV = null;
+        this.setState({
+            session: undefined,
+            subscribers: [],
+            mySessionId: 'SessionA',
+            myUserName: 'Participant' + Math.floor(Math.random() * 100),
+            mainStreamManager: undefined,
+            publisher: undefined
+        });
+    }
+
+    async switchCamera() {
+        try {
+            const devices = await this.OV.getDevices()
+            var videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+            if (videoDevices && videoDevices.length > 1) {
+
+                var newVideoDevice = videoDevices.filter(device => device.deviceId !== this.state.currentVideoDevice.deviceId)
+
+                if (newVideoDevice.length > 0) {
+                    // Creating a new publisher with specific videoSource
+                    // In mobile devices the default and first camera is the front one
+                    var newPublisher = this.OV.initPublisher(undefined, {
+                        videoSource: newVideoDevice[0].deviceId,
+                        publishAudio: true,
+                        publishVideo: true,
+                        mirror: true
+                    });
+
+                    //newPublisher.once("accessAllowed", () => {
+                    await this.state.session.unpublish(this.state.mainStreamManager)
+
+                    await this.state.session.publish(newPublisher)
+                    this.setState({
+                        currentVideoDevice: newVideoDevice[0],
+                        mainStreamManager: newPublisher,
+                        publisher: newPublisher,
+                    });
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    render() {
+        const mySessionId = this.state.mySessionId;
+
+        return (
+            <div className="container">
+              {this.state.session === undefined ? (
+                  <div>
+                    <button onClick={this.joinSession}/>
+                  </div>
+              ) : null}
+              {this.state.session !== undefined ? (
+                    <div id="session">
+                        <div id="session-header">
+                            <h1 id="session-title">{mySessionId}</h1>
+                            <input
+                                className="btn btn-large btn-danger"
+                                type="button"
+                                id="buttonLeaveSession"
+                                onClick={this.leaveSession}
+                                value="Leave session"
+                            />
+                            <input
+                                className="btn btn-large btn-success"
+                                type="button"
+                                id="buttonSwitchCamera"
+                                onClick={this.switchCamera}
+                                value="Switch Camera"
+                            />
+                        </div>
+
+                        {this.state.mainStreamManager !== undefined ? (
+                            <div id="main-video" className="col-md-6">
+                                <UserVideoComponent streamManager={this.state.mainStreamManager} />
+
+                            </div>
+                        ) : null}
+                        <div id="video-container" className="col-md-6">
+                            {this.state.publisher !== undefined ? (
+                                <div className="stream-container col-md-6 col-xs-6" onClick={() => this.handleMainVideoStream(this.state.publisher)}>
+                                    <UserVideoComponent
+                                        streamManager={this.state.publisher} />
+                                </div>
+                            ) : null}
+                            {this.state.subscribers.map((sub, i) => (
                                 <div key={sub.id} className="stream-container col-md-6 col-xs-6" onClick={() => this.handleMainVideoStream(sub)}>
                                     <span>{sub.id}</span>
                                     <UserVideoComponent streamManager={sub} />
                                 </div>
                             ))}
-          </Grid>
-          <Grid item xs={1} style={{ height: '20vh' }}>
-            <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>첫번째 선수</div>
-          </Grid>
-          {/* Player 2 */}
-          <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            {/* <UserVideo /> */}
-          </Grid>
-          <Grid item xs={1} style={{ height: '20vh' }}>
-            <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>두번째 선수</div>
-          </Grid>
-          {/* Player 3 */}
-          <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            <UserVideoComponent
-              streamManager={{ session, connection, connectionToken }}
-              connectionData={getUserConnectionData()}
-            />
+                        </div>
+                    </div>
+              ) : null}      
+            </div>
+        );
+    }
+    async getToken() {
+        // return await this.fetchConnectionToken().connectionToken
+        return "wss://i9b109.p.ssafy.io?sessionId=ses_HPwWb9VESP&token=tok_AzPHG4syYV8WcWmc"
+    }
 
-          </Grid>
-          <Grid item xs={1} style={{ height: '20vh' }}>
-            <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>세번째 선수</div>
-          </Grid>
-          {/* Player 4 */}
-          <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            {/* <UserVideo /> */}
-          </Grid>
-          <Grid item xs={1} style={{ height: '20vh' }}>
-            <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>네번째 선수</div>
-          </Grid>
+    async fetchConnectionToken() {
+      return "wss://i9b109.p.ssafy.io?sessionId=ses_HPwWb9VESP&token=tok_AzPHG4syYV8WcWmc"
+      // try {
+      //   await this.fetchSession();
+      //   await createConnection();
+      // } catch(error) {
+      //   console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
+      // }
+    }
 
-        </Grid>
-
-
-      </Grid>
-
-      {/* '로그인 경고' 모달 */}
-      < LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
-
-    </div >
-  );
+    // async fetchSession() {
+    //   try {
+    //     console.log("----------------------fetchsession begin-----------------")
+    //     const access = getCookie("access");
+    //     // const gameSeq = GetParam(); //게임방 번호 가져오기 설정
+    //     const response = await axios.get(
+    //       "https://i9b109.p.ssafy.io:8443/wait/info/" + 16,
+    //       {
+    //         headers: {
+    //           Authorization: "Bearer " + access,
+    //         },
+    //       }
+    //     );
+    //     // const dispatch = GetDispatch(); //redux 설정 가져오기
+    //     console.log(response.data.data.sessionId)
+    //     dispatch(setSession(response.data.data.sessionId));
+    //   } catch(error) {
+    //     console.error("DB에서 세션 id 불러오기 실패:", error);
+    //   }  
+    // }
+    
 }
 
 export default GameWait;

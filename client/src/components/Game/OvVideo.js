@@ -6,43 +6,19 @@ export default class OpenViduVideoComponent extends Component {
         this.videoRef = React.createRef();
     }
 
-    async getMediaStream() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            this.videoRef.current.srcObject = stream;
-            if (this.props.streamManager.addStream) {
-                this.props.streamManager.addStream(stream);
-            } else {
-                console.error('Error: addStream method not found in streamManager');
-            }
-        } catch (error) {
-            console.error('Error accessing webcam:', error);
-        }
-    }
-
-    addStreamToManager() {
-        if (
-            this.props &&
-            !!this.videoRef &&
-            this.props.streamManager &&
-            this.props.streamManager.addVideoElement
-        ) {
+    componentDidUpdate(props) {
+        if (props && !!this.videoRef) {
             this.props.streamManager.addVideoElement(this.videoRef.current);
         }
     }
 
-    componentDidUpdate() {
-        this.addStreamToManager();
-    }
-
     componentDidMount() {
-        this.addStreamToManager();
-        this.getMediaStream();
+        if (this.props && !!this.videoRef) {
+            this.props.streamManager.addVideoElement(this.videoRef.current);
+        }
     }
-
-
 
     render() {
-        return <video autoPlay={true} ref={this.videoRef} />;
+        return <video autoPlay={true} ref={this.videoRef}/>;
     }
 }
