@@ -31,22 +31,22 @@ const Mypage = () => {
   //닉네임
   const [nickName, setNickName] = useState("");
 
-  //로그인 상태 확인
-  // try {
-  //   userInfo()
-  //     .then(res => {
-  //       if (res.status === 200) {
-  //         setNickName(res.data.nickname);
-  //         setName(res.data.name);
-  //       }
-  //     })
-  //     .catch(error => {
-  //       navigate("/");
-  //       window.alert("로그인을 해주세요!");
-  //     });
-  // } catch (error) {
-  //   console.log(error);
-  // }
+  // 로그인 상태 확인
+  try {
+    userInfo()
+      .then(res => {
+        if (res.status === 200) {
+          setNickName(res.data.nickname);
+          setName(res.data.name);
+        }
+      })
+      .catch(error => {
+        navigate("/");
+        window.alert("로그인을 해주세요!");
+      });
+  } catch (error) {
+    console.log(error);
+  }
 
   return (
     <div

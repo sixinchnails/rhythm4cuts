@@ -1,7 +1,7 @@
 // sessionInitialization.js
 import axios from "axios";
 
-const OPENVIDU_SERVER_URL = "https://i9b109.p.ssafy.io:8443";
+const OPENVIDU_SERVER_URL = "https://i9b109.p.ssafy.io";
 const OPENVIDU_SERVER_SECRET = "zlwhsalsrnrWid1234";
 
 export const createSession = async gameSeq => {
