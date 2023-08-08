@@ -39,7 +39,7 @@ function SearchPassword({ isOpen, handleClose }) {
     try {
       const response = await axios.post(
         // "http://localhost:8080/member/mailcheck",
-        `member/mailcheck`,
+        `https://i9b109.p.ssafy.io:8443/member/mailcheck`,
         {
           email: email,
           certificate: emailCode,
@@ -62,7 +62,9 @@ function SearchPassword({ isOpen, handleClose }) {
   const resetPW = async () => {
     if (emailCodeStatus === true) {
       try {
-        const response = await axios.post(`/member/pw?email=${email}`);
+        const response = await axios.post(
+          `https://i9b109.p.ssafy.io:8443/member/pw?email=${email}`
+        );
         if (response.status === 200) {
           window.confirm("임시 비밀번호가 전송되었습니다.");
           navigate("/");

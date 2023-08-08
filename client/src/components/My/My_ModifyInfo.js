@@ -93,7 +93,7 @@ function UserInfo(props) {
       if (nickNameCheckStatus === true) {
         const response = await axios.patch(
           // "http://localhost:8080/member/nickname",
-          "member/nickname",
+          "https://i9b109.p.ssafy.io:8443/member/nickname",
           {
             email: getCookie("email"),
             nickname: nickname,
@@ -128,7 +128,7 @@ function UserInfo(props) {
     } else if (password === confirmPassword && isValidPassword === true) {
       try {
         const response = await axios.patch(
-          "member/pw",
+          "https://i9b109.p.ssafy.io:8443/member/pw",
           {
             email: getCookie("email"),
             oldPassword: oldPassWord,

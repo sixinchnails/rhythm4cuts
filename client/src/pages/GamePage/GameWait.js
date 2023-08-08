@@ -45,7 +45,6 @@ function GameWait() {
 
   const session = useSelector(state => state.roomState.session);
   const connectionToken = useSelector(state => state.roomState.connectionToken);
-
   // -----------------------------------------------------------------------------------------------------------------
 
   // 로그인 상태를 업데이트하는 함수

@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
-import Webcam from "./Webcam";
+// import Webcam from "./Webcam";
 
 function PlayPlayer() {
   return (
@@ -10,15 +10,17 @@ function PlayPlayer() {
           width: "15vw",
           height: "32vh",
           marginBottom: 2,
-        }}>
+        }}
+      >
         <CardContent>
           <Card
             sx={{
               height: "15vh",
               margin: 2,
-            }}>
+            }}
+          >
             {/* 사용자 카메라 */}
-            <Webcam />
+            {/* <Webcam /> */}
           </Card>
         </CardContent>
         <Box>
