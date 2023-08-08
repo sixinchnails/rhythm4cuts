@@ -13,47 +13,58 @@ const MyPoint = () => {
   //로그인 상태 확인
   const [isLogin, setIsLogin] = useState(false);
 
-  try {
-    userInfo()
-      .then((res) => {
-        if (res.status === 200) {
-          console.log(res);
-          setIsLogin(true);
-        }
-      })
-      .catch((error) => {
-        window.alert("로그인을 해주세요!");
-        navigate("/");
-      });
-  } catch (error) {
-    console.log(error);
-  }
+  // try {
+  //   userInfo()
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         console.log(res);
+  //         setIsLogin(true);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       window.alert("로그인을 해주세요!");
+  //       navigate("/");
+  //     });
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
-  useEffect(() => {
-    document.body.style.backgroundColor = "#F8E8EE";
-    return () => {
-      document.body.style.backgroundColor = null;
-    };
-  }, []);
   return (
-    <>
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        background:
+          "linear-gradient(to right, rgb(123,123,255), rgb(255,123,123))",
+      }}
+    >
       <LoginMypageHeader />
       <div className="page-container">
         <Sidebar></Sidebar>
         <div className="point-container">
           <span className="accumulate-point">누적 포인트</span>
           <span className="point">
-            <img src="/images/pointFont.png" alt="Font" className="pointFont" />{" "}
+            <img
+              src="/images/pointFont0.png"
+              alt="Font"
+              className="pointFont"
+            />{" "}
             2000포인트
           </span>
           <span className="accumulate-point">보유 포인트</span>
           <span className="point">
-            <img src="/images/pointFont.png" alt="Font" className="pointFont" />{" "}
+            <img
+              src="/images/pointFont0.png"
+              alt="Font"
+              className="pointFont"
+            />{" "}
             200포인트
           </span>
           <div className="table-container">
             <table className="table">
-              <thead>
+              <thead
+                style={{ fontFamily: "Pretendard-Regular", fontWeight: "bold" }}
+              >
                 <tr>
                   <th>번호</th>
                   <th>이용서비스</th>
@@ -62,7 +73,7 @@ const MyPoint = () => {
                   <th>적립/사용일</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody style={{ fontFamily: "Pretendard-Regular" }}>
                 <tr>
                   <td>1</td>
                   <td>게임 플레이</td>
@@ -96,7 +107,7 @@ const MyPoint = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

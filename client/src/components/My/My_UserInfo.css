@@ -11,10 +11,11 @@
 }
 
 .info-name {
-  font-weight: bold; /* 이름을 두껍게 표시 */
+  font-weight: bold;
   font-size: large;
-  position: relative; /* position 속성을 relative로 설정하여 .info-name 요소 내부에서 ::after 요소의 위치를 정의할 수 있게 합니다. */
-  width: 120px; /* 값과 세로선을 고정한 상태에서 이름과 간격 설정 */
+  position: relative;
+  width: 120px;
+  color: #ffffff;
 }
 
 .info-name::after {
@@ -24,13 +25,14 @@
   top: 0; /* 선을 .info-name 요소의 상단에 위치시킵니다. */
   bottom: 0; /* 선을 .info-name 요소의 하단에 위치시킵니다. */
   width: 1.5px; /* 선의 너비를 설정합니다. */
-  background-color: #f95e97; /* 선의 색상을 설정합니다. */
+  background-color: red;
 }
 
 .info-value {
   text-align: left;
   font-size: large;
   margin-left: 300px; /* 이름과 값 사이의 간격을 설정합니다. */
+  color: #ffffff;
 }
 
 .user-info-container {

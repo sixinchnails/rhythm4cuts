@@ -7,10 +7,9 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
-import { WifiPasswordTwoTone } from "@mui/icons-material";
 
 function UserInfo(props) {
-  const Info = useSelector((state) => state.MyPage_MyInfo);
+  const Info = useSelector(state => state.MyPage_MyInfo);
   const navigate = useNavigate();
 
   // 상태 변수 추가
@@ -51,7 +50,7 @@ function UserInfo(props) {
   };
 
   // 비밀번호 유효성 검사 함수
-  const checkPassword = (password) => {
+  const checkPassword = password => {
     const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     return regex.test(password);
   };
@@ -70,7 +69,9 @@ function UserInfo(props) {
       // const response = await axios.get(
       //   `http://localhost:8080/member/nickname?nickname=${nickname}`
       // );
-      const response = await axios.get(`member/nickname?nickname=${nickname}`);
+      const response = await axios.get(
+        `https://i9b109.p.ssafy.io:8443/member/nickname?nickname=${nickname}`
+      );
       if (response.data.duplicate === false) {
         setNickNameCheckStatus(true);
         window.confirm("사용 가능한 닉네임입니다.");
@@ -194,7 +195,7 @@ function UserInfo(props) {
                   className="modify-input"
                   value={nickname}
                   placeholder={props.nickName}
-                  onChange={(e) => {
+                  onChange={e => {
                     setNickname(e.target.value);
                     setNickNameCheckStatus(false);
                   }}
@@ -247,7 +248,7 @@ function UserInfo(props) {
                     className="modify-input"
                     placeholder="현재 비밀번호"
                     value={oldPassWord}
-                    onChange={(e) => setOldPassWord(e.target.value)}
+                    onChange={e => setOldPassWord(e.target.value)}
                   />
                 </div>
                 <div
@@ -266,7 +267,7 @@ function UserInfo(props) {
                     className="modify-input"
                     placeholder="영어,숫자,특수 기호 포함 8자리 이상"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={e => setPassword(e.target.value)}
                   />
                   {isValidPassword && password && (
                     <img
@@ -309,7 +310,7 @@ function UserInfo(props) {
                     className="modify-input"
                     placeholder="영어,숫자,특수 기호 포함 8자리 이상"
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={e => setConfirmPassword(e.target.value)}
                   />
                   <Button
                     color="warning"

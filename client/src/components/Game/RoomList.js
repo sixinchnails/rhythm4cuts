@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Grid,
-  Card,
-  CardMedia,
-  Typography,
-  Box,
-} from "@mui/material";
+import { Grid, Card, CardMedia, Typography, Box } from "@mui/material";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LockIcon from "@mui/icons-material/Lock";
 
@@ -14,7 +8,7 @@ function RoomList({ room }) {
   let isFull = room.currentOccupancy >= room.maxOccupancy;
 
   return (
-    <Grid item xs={6} sm={12} >
+    <Grid item xs={6} sm={12}>
       <Card
         style={{
           background: "rgba(0, 0, 0, 0.8)",
@@ -22,10 +16,9 @@ function RoomList({ room }) {
           border: "1px solid white", // 테두리를 흰색으로 설정
           height: "19vh",
           borderRadius: "20px",
-
         }}
       >
-        <Grid container >
+        <Grid container>
           <Grid
             item
             xs={4}
@@ -49,9 +42,11 @@ function RoomList({ room }) {
               }}
             />
           </Grid>
-
           {/* 오른쪽 : 방번호, 방이름, 노래제목, 방인원수, 모드(비밀방) */}
-          <Grid item xs={8} container
+          <Grid
+            item
+            xs={8}
+            container
             style={{
               padding: "10px",
               height: "20vh",
@@ -61,7 +56,8 @@ function RoomList({ room }) {
               <Typography
                 variant="subtitle1"
                 style={{
-                  fontFamily: 'Pretendard-Regular', fontWeight: "bold",
+                  fontFamily: "Pretendard-Regular",
+                  fontWeight: "bold",
                 }}
               >
                 Num : {room.gameSeq}
@@ -81,11 +77,7 @@ function RoomList({ room }) {
               </Typography>
             </Grid>
 
-            <Grid
-              container
-              justifyContent="space-between"
-              alignItems="center"
-            >
+            <Grid container justifyContent="space-between" alignItems="center">
               <Grid item>
                 <Box
                   style={{
@@ -102,7 +94,6 @@ function RoomList({ room }) {
                 {room.isSecret ? <LockIcon /> : <LockOpenIcon />}
               </Grid>
             </Grid>
-
           </Grid>
         </Grid>
       </Card>

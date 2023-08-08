@@ -1,52 +1,105 @@
-// 독립적인 사이드바 아이템들을 하나씩 모아 사이드바를 만듦
 import React from "react";
-import { useLocation } from "react-router-dom";
-import SidebarItem from "./My_SideBarItem";
+import { useLocation, Link } from "react-router-dom";
+import {
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  createTheme,
+  Divider,
+  ThemeProvider,
+} from "@mui/material";
+import { Info as InfoIcon, Photo as PhotoIcon } from "@mui/icons-material";
+
+const theme = createTheme({
+  components: {
+    MuiListItem: {
+      styleOverrides: {
+        root: {
+          "&.Mui-selected": {
+            backgroundColor: "#6496ed", // 선택된 항목의 배경색을 변경합니다.
+          },
+        },
+      },
+    },
+  },
+});
 
 function Sidebar() {
-  // URL의 path값을 받아올 수 있다.
   const pathName = useLocation().pathname;
 
   const menus = [
     {
       name: "My 회원 정보",
+      icon: <InfoIcon />,
       subMenu: [
         { name: "가입 정보", path: "/Mypage" },
         { name: "친구 정보", path: "/MyFriend" },
         { name: "Point 정보", path: "/MyPoint" },
       ],
     },
-    { name: "My Photo", path: "/MyPhoto" },
+    { name: "My Photo", path: "/MyPhoto", icon: <PhotoIcon /> },
   ];
 
   return (
-    <div className="sidebar">
-      {menus.map((menu, index) => {
-        const isTitle =
-          menu.name === "My 회원 정보" || menu.name === "My Photo";
-        // 'My 회원 정보' 또는 'My Photo'일 때 true
-        return (
+    <ThemeProvider theme={theme}>
+      <List style={{ marginTop: "10%" }}>
+        {menus.map((menu, index) => (
           <div key={index}>
-            <SidebarItem
-              menu={menu}
-              isActive={pathName === menu.path}
-              isTitle={isTitle}
-            />
+            <Divider sx={{ backgroundColor: "blue" }} />
+            <Link
+              to={menu.path}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <ListItem button selected={pathName === menu.path}>
+                {menu.icon && (
+                  <ListItemIcon
+                    style={{
+                      fontFamily: "Pretendard-Regular",
+                      fontWeight: "bold",
+                      color: "white",
+                    }}
+                  >
+                    {menu.icon}
+                  </ListItemIcon>
+                )}
+                <ListItemText
+                  primary={menu.name}
+                  primaryTypographyProps={{
+                    style: {
+                      fontFamily: "Pretendard-Regular",
+                      fontWeight: "bold",
+                      color: pathName === menu.path ? "black" : "white", // 현재 위치가 메뉴 항목의 경로와 일치하면 글자색을 검정색으로 설정합니다.
+                      fontSize: "larger",
+                    },
+                  }}
+                />
+              </ListItem>
+            </Link>
             {menu.subMenu &&
               menu.subMenu.map((subItem, subIndex) => (
-                <SidebarItem
-                  menu={subItem}
-                  isActive={pathName === subItem.path}
-                  isSub={true}
-                  //마지막 point 정보의 props를 전달
-                  lastSubItem={subIndex === menu.subMenu.length - 1}
-                  key={subIndex}
-                />
+                <Link
+                  to={subItem.path}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <ListItem
+                    button
+                    selected={pathName === subItem.path}
+                    key={subIndex}
+                    style={{
+                      color: pathName === subItem.path ? "black" : "white",
+                    }} // 현재 위치가 메뉴 항목의 경로와 일치하면 글자색을 검정색으로 설정합니다.
+                  >
+                    <ListItemText inset primary={subItem.name} />
+                  </ListItem>
+                </Link>
               ))}
+            <Divider sx={{ backgroundColor: "blue" }} />
           </div>
-        );
-      })}
-    </div>
+        ))}
+      </List>
+    </ThemeProvider>
   );
 }
+
 export default Sidebar;

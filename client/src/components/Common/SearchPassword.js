@@ -9,11 +9,11 @@ function SearchPassword({ isOpen, handleClose }) {
   const [emailCode, setEmailCode] = useState("");
   const [emailCodeStatus, setEmailCodeStatus] = useState(false);
 
-  const handleEmailChange = (event) => {
+  const handleEmailChange = event => {
     setEmail(event.target.value); // 아이디 변경 이벤트 핸들러
   };
 
-  const handleEmailCodeChange = (event) => {
+  const handleEmailCodeChange = event => {
     setEmailCode(event.target.value); // 이메일 변경 이벤트 핸들러
   };
 
@@ -22,7 +22,7 @@ function SearchPassword({ isOpen, handleClose }) {
     try {
       const response = await axios.post(
         // `http://localhost:8080/member/mail?email=${email}`
-        `member/mail?email=${email}`
+        `https://i9b109.p.ssafy.io:8443/member/mail?email=${email}`
       );
       if (response.status === 200) {
         setEmailCodeStatus(false);

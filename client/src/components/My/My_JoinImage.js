@@ -17,7 +17,6 @@ const JoinImage = ({ initialImages, onImageSelect }) => {
     <div style={{ display: "flex", flexDirection: "column", width: "60%" }}>
       <h1 className="Join-Content">회원 가입</h1>
       <div style={{ width: "100%", marginLeft: "80px" }}>
-        {/* 이 div를 추가하여 Carousel의 너비를 조정합니다. */}
         <Carousel showStatus={false} onChange={handleImageChange}>
           {initialImages.map((img, index) => (
             <div key={index}>

@@ -15,30 +15,31 @@ const MyFriend = () => {
   //로그인 상태 확인
   const [isLogin, setIsLogin] = useState(false);
 
-  try {
-    userInfo()
-      .then((res) => {
-        if (res.status === 200) {
-          console.log(res);
-          setIsLogin(true);
-        }
-      })
-      .catch((error) => {
-        window.alert("로그인을 해주세요!");
-        navigate("/");
-      });
-  } catch (error) {
-    console.log(error);
-  }
+  // try {
+  //   userInfo()
+  //     .then(res => {
+  //       if (res.status === 200) {
+  //         console.log(res);
+  //         setIsLogin(true);
+  //       }
+  //     })
+  //     .catch(error => {
+  //       window.alert("로그인을 해주세요!");
+  //       navigate("/");
+  //     });
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
-  useEffect(() => {
-    document.body.style.backgroundColor = "#F8E8EE";
-    return () => {
-      document.body.style.backgroundColor = null;
-    };
-  }, []);
   return (
-    <>
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        background:
+          "linear-gradient(to right, rgb(123,123,255), rgb(255,123,123))",
+      }}
+    >
       <LoginMypageHeader />
       <div className="page-container">
         <Sidebar></Sidebar>
@@ -47,7 +48,7 @@ const MyFriend = () => {
           <FriendInfo></FriendInfo>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

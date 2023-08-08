@@ -27,7 +27,7 @@ function Home() {
   //로그인 상태 확인 및 유저 정보 불러오는 부분
   try {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           console.log(res);
           setIsLogin(true);
@@ -37,7 +37,7 @@ function Home() {
           // 403은 access토큰이 만료된거
         } else if (res.status === 403) {
           console.log("accessToken이 만료되었습니다.");
-          renewAccessToken().then((res) => {
+          renewAccessToken().then(res => {
             if (res.status === 200) {
               setCookie("access", res.accessToken);
               console.log("accessToken 재발급 완료");
@@ -52,7 +52,7 @@ function Home() {
           });
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         setIsLogin(false);
       });
@@ -64,7 +64,7 @@ function Home() {
   const checkLogin = async () => {
     try {
       const response = await axios.post(
-        "/member/logout",
+        "https://i9b109.p.ssafy.io:8443/member/logout",
         {
           email: getCookie("email"),
           accessToken: access,
@@ -94,7 +94,7 @@ function Home() {
   const outerDivRef = useRef();
   const [scrollIndex, setScrollIndex] = useState(1);
   //음악 랭킹
-  let music_rank = useSelector((state) => {
+  let music_rank = useSelector(state => {
     return state.Music_Rank;
   });
 
@@ -111,7 +111,7 @@ function Home() {
   const noOfMusicPages = Math.ceil(music_rank.length / musicPerPage);
 
   //유저 랭킹
-  let user_rank = useSelector((state) => {
+  let user_rank = useSelector(state => {
     return state.User_Rank;
   });
 
@@ -128,7 +128,7 @@ function Home() {
   const noOfUserPages = Math.ceil(user_rank.length / userPerPage);
 
   useEffect(() => {
-    const wheelHandler = (e) => {
+    const wheelHandler = e => {
       e.preventDefault();
       const { deltaY } = e;
       const { scrollTop } = outerDivRef.current; // 스크롤 위쪽 끝부분 위치
@@ -225,8 +225,6 @@ function Home() {
                 </a>
               </div>
             </div>
-
-
           </div>
         </div>
         <div className="divider"></div>
@@ -379,7 +377,7 @@ function Home() {
                 dateFormat="yyyy.MM.dd" // 날짜 형태
                 shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
                 selected={startDate}
-                onChange={(date) => setStartDate(date)}
+                onChange={date => setStartDate(date)}
               />
             </div>
           </div>

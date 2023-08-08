@@ -16,13 +16,13 @@ const MyPhoto = () => {
 
   try {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           console.log(res);
           setIsLogin(true);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         window.alert("로그인을 해주세요!");
         navigate("/");
       });
@@ -56,7 +56,14 @@ const MyPhoto = () => {
     };
   }, []);
   return (
-    <>
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        background:
+          "linear-gradient(to right, rgb(123,123,255), rgb(255,123,123))",
+      }}
+    >
       <LoginMypageHeader />
       <div className="page-container">
         <Sidebar></Sidebar>
@@ -67,11 +74,15 @@ const MyPhoto = () => {
               month={data.month}
               year={data.year}
               images={data.images}
+              style={{
+                background:
+                  "linear-gradient(to right, rgb(163,163,255), rgb(255,163,163))",
+              }}
             />
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

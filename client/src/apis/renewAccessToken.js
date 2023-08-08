@@ -6,7 +6,7 @@ export const renewAccessToken = async () => {
     Authorization: "Bearer " + getCookie("access"),
   };
   const result = await axios.post(
-    "/member/reissue",
+    "https://i9b109.p.ssafy.io:8443/member/reissue",
     { headers },
     {
       email: getCookie("email"),
