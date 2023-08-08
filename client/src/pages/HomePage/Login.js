@@ -8,7 +8,7 @@ import { Box } from "@mui/material";
 import { login } from "../../apis/login";
 import { setCookie } from "../../utils/cookie";
 
-const Home = () => {
+const Login = () => {
   const emailRef = useRef();
 
   useEffect(() => {
@@ -72,7 +72,10 @@ const Home = () => {
       <div className="outer">
         <div className="logo">
           <a href="/">
-            <img src="images/Mypage_Logo.png"></img>
+            <img
+              src="images/Home_Logo.png"
+              style={{ marginLeft: "50px", marginTop: "25px" }}
+            ></img>
           </a>
         </div>
 
@@ -102,8 +105,10 @@ const Home = () => {
         </div>
         <div className="searchAndJoin">
           <button onClick={handleOpenSearchPasswordModal}>PW찾기</button>
-          <div>|</div>
-          <Link to="/Join">회원가입</Link>
+          <div style={{ color: "white" }}>|</div>
+          <Link to="/Join" style={{ color: "white" }}>
+            회원가입
+          </Link>
         </div>
         <div className="apiLogin">
           <div className="naver-logo"></div>
@@ -119,4 +124,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Login;

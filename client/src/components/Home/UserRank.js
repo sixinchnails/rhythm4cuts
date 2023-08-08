@@ -3,7 +3,7 @@ import React from "react";
 
 function UserRank({ user }) {
   return (
-    <Grid container textAlign="center">
+    <Grid container textAlign="center" marginTop={"3px"}>
       <Grid item xs={2.25}>
         <span>{user.rank}</span>
       </Grid>

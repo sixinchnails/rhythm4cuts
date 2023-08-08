@@ -58,12 +58,14 @@ function Home() {
 
   //로그아웃 관련 코드
   const checkLogin = async () => {
+    const access = getCookie("access");
+
     try {
       const response = await axios.post(
         "https://i9b109.p.ssafy.io:8443/member/logout",
         {
           email: getCookie("email"),
-          accessToken: access,
+          accessToken: getCookie("access"),
         },
         {
           headers: {
@@ -82,7 +84,6 @@ function Home() {
       }
     } catch (error) {
       console.log(error);
-      window.confirm("2오류가 발생했습니다.");
     }
   };
 
@@ -94,13 +95,9 @@ function Home() {
   const [musicData, setMusicData] = useState([]);
 
   const fetchMusicRank = async () => {
-    const headers = {
-      Authorization: "Bearer " + getCookie("access"),
-    };
     try {
       const response = await axios.get(
-        "https://i9b109.p.ssafy.io:8443/ranking/song",
-        { headers }
+        "https://i9b109.p.ssafy.io:8443/ranking/song"
       );
       console.log(response.data.data);
       setMusicData(response.data.data);
@@ -131,7 +128,7 @@ function Home() {
   });
 
   // 유저 개수 컨트롤러
-  const userPerPage = 8; // 한 페이지당 표시할 방 수
+  const userPerPage = 7; // 한 페이지당 표시할 방 수
   const [userPage, setUserPage] = useState(1); // 페이지 상태
 
   // 유저페이지 변경 이벤트 핸들러
@@ -220,7 +217,6 @@ function Home() {
     };
   }, []);
 
-
   return (
     <div className="background">
       <div className="background-image"></div>
@@ -228,9 +224,8 @@ function Home() {
         <Dots scrollIndex={scrollIndex} />
         {/** Home 1 시작하는 곳 */}
         <div className="Home1">
-
           {isLogin ? <WhiteHeader /> : <Header />}
-          
+
           <div className="main1">
             <div className="beatbox">
               <div className="Logo">
@@ -249,9 +244,10 @@ function Home() {
         {/** Home 2 시작하는 곳 */}
         <div className="Home2">
           <div className="title">
-            <span>
-              Game <span>Intro</span> & Rules
+            <span style={{ marginRight: "150px" }}>
+              Game Intro&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </span>
+            <span>Rules&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
           </div>
           <div className="content">
             <div className="intro">
