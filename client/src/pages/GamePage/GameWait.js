@@ -132,10 +132,11 @@ function GameWait() {
   useEffect(() => {
     if (session) {
       fetchConnectionToken();
+      init();
     }
   }, [session])
 
-  useEffect(()=>{
+  function init() {
     console.log("use effect begin")
     const OV = new OpenVidu;
     userState.session = OV.initSession()
@@ -165,7 +166,39 @@ function GameWait() {
       console.log("publish success")
       mySession.publish(publisher);
   })
-})
+  }
+
+//   useEffect(()=>{
+//     console.log("use effect begin")
+//     const OV = new OpenVidu;
+//     userState.session = OV.initSession()
+//     const mySession = userState.session;
+//     mySession.on('streamCreated', (event) => {
+//       // Subscribe to the Stream to receive it. Second parameter is undefined
+//       // so OpenVidu doesn't create an HTML video by its own
+//       let subscriber = mySession.subscribe(event.stream, undefined);
+//       let subscribers = userState.subscribers;
+//       subscribers.push(subscriber);
+
+//       // Update the state with the new subscribers
+//       userState.subscribers = subscribers;
+//     });
+//     mySession.connect(connectionToken, {clientData: 'a'})
+//     .then(async () => {
+//       publisher = await OV.initPublisherAsync(undefined, {
+//         audioSource: undefined, // The source of audio. If undefined default microphone
+//         videoSource: undefined, // The source of video. If undefined default webcam
+//         publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+//         publishVideo: true, // Whether you want to start publishing with your video enabled or not
+//         resolution: '640x480', // The resolution of your video
+//         frameRate: 30, // The frame rate of your video
+//         insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
+//         mirror: false, // Whether to mirror your local video or not
+//       });
+//       console.log("publish success")
+//       mySession.publish(publisher);
+//   })
+// })
 
 console.log("게임 시퀀스입니다 : " + gameSeq);
   console.log("세션입니다 : " + session);
