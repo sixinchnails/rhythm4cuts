@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 const Join = () => {
   const [profileImgSeq, setProfileImgSeq] = useState(1); // profile_img_seq를 상태로 관리
 
-  const handleImageSelect = useCallback(index => {
+  const handleImageSelect = useCallback((index) => {
     console.log("Selected Image Index:", index);
     setProfileImgSeq(index);
   }, []);
@@ -30,7 +30,7 @@ const Join = () => {
   // 회원가입 정보를 저장할 상태
   const [joinInfo, setJoinInfo] = useState({});
 
-  const handleJoinInfo = useCallback(data => {
+  const handleJoinInfo = useCallback((data) => {
     setJoinInfo(data); // JoinInfo 컴포넌트로부터 받은 데이터를 상태에 저장
   }, []);
 
@@ -48,7 +48,7 @@ const Join = () => {
     } else {
       try {
         const response = await axios.post(
-          "/member/register",
+          "https://i9b109.p.ssafy.io:8443/member/register",
           // "http://lo/calhost:8080/member/register",
           joinInfo
         );

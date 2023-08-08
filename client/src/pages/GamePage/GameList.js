@@ -9,14 +9,17 @@ import {
   IconButton,
   Select,
   MenuItem,
-  Dialog, DialogTitle, DialogContent, DialogActions,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from "../../apis/userInfo";
 import CreateRoom from "../../components/Common/CreateRoom";
-import LoginAlert from '../../components/Common/LoginAlert';
+import LoginAlert from "../../components/Common/LoginAlert";
 import FriendList from "../../components/Game/FriendList";
 import AddFriend from "../../components/Common/AddFriend";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -26,7 +29,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 function GameList() {
-
   const navigate = useNavigate();
   const [isCreateRoomModalOpen, setCreateRoomModalOpen] = useState(false); //  '방 만들기' 모달의 상태를 관리
   const [searchCategory, setSearchCategory] = useState("gameSeq"); //  검색 카테고리 상태 (기본값을 'gameSeq'로 설정)
@@ -34,7 +36,7 @@ function GameList() {
   const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
   const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
   const [page, setPage] = useState(1); // 페이지 상태
-  const friends = useSelector(state => state.GameList_Friend); // 친구 리스트
+  const friends = useSelector((state) => state.GameList_Friend); // 친구 리스트
   const itemsPerPage = 6; // 한 페이지당 표시할 방 수
 
   // 친구 추가
@@ -68,14 +70,15 @@ function GameList() {
   // 로그인 상태관리
   useEffect(() => {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
         } else {
           // 로그인 상태가 아니라면 알림.
           handleOpenLoginAlert();
         }
       })
-      .catch(error => {
+
+      .catch((error) => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -84,11 +87,14 @@ function GameList() {
   // 서버에서 방 리스트 가져오기
   const fetchRooms = async () => {
     try {
-      const response = await axios.get("/lobby/list", {
-        headers: {
-          Authorization: "Bearer " + getCookie("access"),
-        },
-      });
+      const response = await axios.get(
+        "https://i9b109.p.ssafy.io:8443/lobby/list",
+        {
+          headers: {
+            Authorization: "Bearer " + getCookie("access"),
+          },
+        }
+      );
       // console.log("오잉"+response.data.data);
       return response.data.data;
     } catch (error) {
@@ -111,9 +117,8 @@ function GameList() {
     setRooms(roomsData);
   };
 
-
   // 검색어에 따라 방 리스트 필터링
-  let filteredRooms = rooms.filter(room => {
+  let filteredRooms = rooms.filter((room) => {
     switch (searchCategory) {
       case "gameSeq":
         return room.gameSeq
@@ -138,7 +143,7 @@ function GameList() {
     setPage(value);
   };
   // 검색어 변경 이벤트 핸들러
-  const handleSearchChange = event => {
+  const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
@@ -154,12 +159,11 @@ function GameList() {
       }}
     >
       <Header />
-      <Grid container >
+      <Grid container>
         {/* Left */}
         <Grid item xs={9} padding={"20px"}>
           {/* Left : Top */}
-          <Box display="flex" justifyContent="flex-end" marginBottom="1%" >
-
+          <Box display="flex" justifyContent="flex-end" marginBottom="1%">
             {/* 새로고침 아이콘 : 기능 추가예정 */}
             <IconButton
               onClick={handleRefresh}
@@ -182,7 +186,6 @@ function GameList() {
                 color: "#ffffff",
                 borderColor: "#ffffff", // 테두리 색상을 흰색으로 설정
                 height: "7vh",
-
               }}
               // 검색 카테고리의 드롭다운 메뉴 스타일 변경
               MenuProps={{
@@ -212,8 +215,13 @@ function GameList() {
                 height: "7vh",
               }}
               InputProps={{
-                style: { color: "#ffffff", height: "7vh", fontFamily: 'Pretendard-Regular', fontSize: "20px" },
-                inputProps: { style: { color: "#ffffff", } },
+                style: {
+                  color: "#ffffff",
+                  height: "7vh",
+                  fontFamily: "Pretendard-Regular",
+                  fontSize: "20px",
+                },
+                inputProps: { style: { color: "#ffffff" } },
               }}
               InputLabelProps={{
                 style: {
@@ -228,7 +236,9 @@ function GameList() {
                 marginBottom: "0.5em",
                 marginRight: "0.5em",
                 backgroundColor: "rgba(0, 128, 255, 0.3)",
-                fontFamily: 'Pretendard-Regular', fontWeight: "bold", fontSize: "20px"
+                fontFamily: "Pretendard-Regular",
+                fontWeight: "bold",
+                fontSize: "20px",
               }}
               variant="contained"
               onClick={handleOpenCreateRoomModal}
@@ -242,15 +252,18 @@ function GameList() {
                 marginBottom: "0.5em",
                 marginRight: "0.5em",
                 backgroundColor: "rgba(0, 128, 255, 0.3)",
-                fontFamily: 'Pretendard-Regular', fontWeight: "bold", fontSize: "20px"
+                fontFamily: "Pretendard-Regular",
+                fontWeight: "bold",
+                fontSize: "20px",
               }}
               variant="contained"
-            >빠른 입장</Button>
+            >
+              빠른 입장
+            </Button>
           </Box>
 
           {/* Left : Middle */}
-          <Grid container spacing={2} >
-
+          <Grid container spacing={2}>
             {filteredRooms
               .slice((page - 1) * itemsPerPage, page * itemsPerPage)
               .map((room, gameSeq) => (
@@ -301,13 +314,24 @@ function GameList() {
 
         {/* Right */}
         <Grid item xs={3} padding={"15px"}>
-
-          <Paper elevation={10} style={{ backgroundColor: "rgba(0, 0, 0, 0.8)", height: "81vh" }}>
-            <Box padding={"20px"} >
-
+          <Paper
+            elevation={10}
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.8)", height: "81vh" }}
+          >
+            <Box padding={"20px"}>
               <Grid direction="column" container>
                 <Grid item xs={12}>
-                  <h2 style={{ color: "#ffffff", textAlign: "center", fontFamily: 'Pretendard-Regular', fontWeight: "bold", fontSize: "25px" }}>친구 목록</h2>
+                  <h2
+                    style={{
+                      color: "#ffffff",
+                      textAlign: "center",
+                      fontFamily: "Pretendard-Regular",
+                      fontWeight: "bold",
+                      fontSize: "25px",
+                    }}
+                  >
+                    친구 목록
+                  </h2>
 
                   <Box
                     style={{
@@ -316,18 +340,28 @@ function GameList() {
                       justifyContent: "center",
                       height: "50vh",
                       overflow: "auto",
-
                     }}
                   >
-                    <FriendList
-                      friends={friends} />
+                    <FriendList friends={friends} />
                   </Box>
 
-                  <Box display="flex" justifyContent="right" padding={"10px"} marginRight={"25px"} >
+                  <Box
+                    display="flex"
+                    justifyContent="right"
+                    padding={"10px"}
+                    marginRight={"25px"}
+                  >
                     <Button
                       variant="contained"
                       onClick={handleOpenAddFriendModal}
-                      style={{ borderRadius: "30px", backgroundColor: "rgba(0, 128, 255, 0.3)", width: "30%", height: "5vh", fontFamily: 'Pretendard-Regular', fontSize: "15px" }}
+                      style={{
+                        borderRadius: "30px",
+                        backgroundColor: "rgba(0, 128, 255, 0.3)",
+                        width: "30%",
+                        height: "5vh",
+                        fontFamily: "Pretendard-Regular",
+                        fontSize: "15px",
+                      }}
                     >
                       Add
                     </Button>
@@ -353,8 +387,7 @@ function GameList() {
 
       {/* '로그인 경고' 모달 */}
       <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
-
-    </div >
+    </div>
   );
 }
 

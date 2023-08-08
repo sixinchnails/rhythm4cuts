@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
@@ -6,7 +7,7 @@ import "./My_JoinImage.css";
 const JoinImage = ({ initialImages, onImageSelect }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0); // 선택된 이미지의 인덱스를 상태로 관리
 
-  const handleImageChange = index => {
+  const handleImageChange = (index) => {
     if (onImageSelect) {
       onImageSelect(index + 1); // 이미지가 선택될 때마다 부모 컴포넌트에게 선택된 이미지의 인덱스 + 1을 전달
     }

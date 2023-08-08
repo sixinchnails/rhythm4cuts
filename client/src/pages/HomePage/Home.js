@@ -1,5 +1,6 @@
 // Home.js
 /* eslint-disable */
+//데이터가 들어오면 만들어야하는 애들 : 소개 영상, 음악 랭킹, 유저 랭킹, 일자별 방명록
 import { React, useRef, useEffect, useState } from "react";
 import { getCookie, setCookie } from "../../utils/cookie";
 import { renewAccessToken } from "../../apis/renewAccessToken";
@@ -29,7 +30,7 @@ function Home() {
     userInfo()
       .then((res) => {
         if (res.status === 200) {
-          console.log(res);
+          console.log(res.data);
           setIsLogin(true);
           // 401은 access토큰이 틀린거
         } else if (res.status === 401) {
@@ -64,7 +65,7 @@ function Home() {
   const checkLogin = async () => {
     try {
       const response = await axios.post(
-        "/member/logout",
+        "https://i9b109.p.ssafy.io:8443/member/logout",
         {
           email: getCookie("email"),
           accessToken: access,
@@ -225,18 +226,28 @@ function Home() {
                 </a>
               </div>
             </div>
-
-
           </div>
         </div>
         <div className="divider"></div>
         {/** Home 2 시작하는 곳 */}
         <div className="Home2">
           <div className="title">
-            <span>Game Intro & Rules</span>
+            <span>
+              Game <span>Intro</span> & Rules
+            </span>
           </div>
           <div className="content">
-            <div className="intro"></div>
+            <div className="intro">
+              <iframe
+                width="672"
+                height="378"
+                src="https://www.youtube.com/embed/ZZlMB-qRQv0"
+                title="YouTube video player"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </div>
             <div className="rules">
               <img style={{ height: 560, width: 514 }} src="images/Rules.png" />
             </div>
@@ -292,11 +303,13 @@ function Home() {
                       backgroundColor: "rgba(0, 0, 0, 0.1)", // 기본 아이템의 배경색을 약간 투명한 검정색으로 설정
                     },
                     "& .MuiPaginationItem-page.Mui-selected": {
-                      backgroundColor: "#3f51b5", // 선택된 아이템의 배경색을 파란색으로 설정
+                      backgroundColor: "#14006d", // 선택된 아이템의 배경색을 파란색으로 설정
+                      opacity: 0.8,
+
                       color: "white", // 선택된 아이템의 텍스트 색상을 흰색으로 설정
                     },
                     "& .MuiPaginationItem-page:hover": {
-                      backgroundColor: "#283593", // 마우스 호버 시 아이템의 배경색을 진한 파란색으로 설정
+                      backgroundColor: "#7f62ff", // 마우스 호버 시 아이템의 배경색을 진한 파란색으로 설정
                     },
                   }}
                 />
@@ -355,11 +368,12 @@ function Home() {
                     backgroundColor: "rgba(0, 0, 0, 0.1)", // 기본 아이템의 배경색을 약간 투명한 검정색으로 설정
                   },
                   "& .MuiPaginationItem-page.Mui-selected": {
-                    backgroundColor: "#3f51b5", // 선택된 아이템의 배경색을 파란색으로 설정
+                    opacity: 0.8,
+                    backgroundColor: "#14006d", // 선택된 아이템의 배경색을 파란색으로 설정
                     color: "white", // 선택된 아이템의 텍스트 색상을 흰색으로 설정
                   },
                   "& .MuiPaginationItem-page:hover": {
-                    backgroundColor: "#283593", // 마우스 호버 시 아이템의 배경색을 진한 파란색으로 설정
+                    backgroundColor: "#7f62ff", // 마우스 호버 시 아이템의 배경색을 진한 파란색으로 설정
                   },
                 }}
               />
@@ -370,10 +384,10 @@ function Home() {
         {/** Home 4 시작하는 곳 */}
         <div className="Home4">
           <div className="sideBar">
-            <div className="title">
-              <span>Today 방명록</span>
-            </div>
             <div className="calender">
+              <div className="title">
+                <span>Today 방명록</span>
+              </div>
               <DatePicker
                 className="datePicker"
                 dateFormat="yyyy.MM.dd" // 날짜 형태

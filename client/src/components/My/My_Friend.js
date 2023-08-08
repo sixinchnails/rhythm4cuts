@@ -4,7 +4,7 @@ import "./My_Friend.css"; // 이 CSS 파일은 FriendInfo 컴포넌트에 적용
 import { useSelector } from "react-redux";
 // import { current } from '@reduxjs/toolkit';
 function FriendInfo() {
-  const Info = useSelector(state => state.MyPage_Friend);
+  const Info = useSelector((state) => state.MyPage_Friend);
 
   function getProfilePic(point) {
     if (point <= 2000) {
@@ -22,7 +22,7 @@ function FriendInfo() {
 
   function deleteFriend(params) {
     if (window.confirm("친구를 삭제하시겠습니까?")) {
-      window.alert("삭제되었습니다.")
+      window.alert("삭제되었습니다.");
     }
   }
 
@@ -53,7 +53,7 @@ function FriendInfo() {
               alt="Profile"
               className="deleteFriend"
               onClick={deleteFriend}
-              style={{cursor:"pointer"}}
+              style={{ cursor: "pointer" }}
             />
           </div>
         ))}

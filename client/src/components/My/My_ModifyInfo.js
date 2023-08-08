@@ -70,7 +70,9 @@ function UserInfo(props) {
       // const response = await axios.get(
       //   `http://localhost:8080/member/nickname?nickname=${nickname}`
       // );
-      const response = await axios.get(`member/nickname?nickname=${nickname}`);
+      const response = await axios.get(
+        `https://i9b109.p.ssafy.io:8443/member/nickname?nickname=${nickname}`
+      );
       if (response.data.duplicate === false) {
         setNickNameCheckStatus(true);
         window.confirm("사용 가능한 닉네임입니다.");
@@ -92,7 +94,7 @@ function UserInfo(props) {
       if (nickNameCheckStatus === true) {
         const response = await axios.patch(
           // "http://localhost:8080/member/nickname",
-          "member/nickname",
+          "https://i9b109.p.ssafy.io:8443/member/nickname",
           {
             email: getCookie("email"),
             nickname: nickname,
@@ -127,7 +129,7 @@ function UserInfo(props) {
     } else if (password === confirmPassword && isValidPassword === true) {
       try {
         const response = await axios.patch(
-          "member/pw",
+          "https://i9b109.p.ssafy.io:8443/member/pw",
           {
             email: getCookie("email"),
             oldPassword: oldPassWord,
