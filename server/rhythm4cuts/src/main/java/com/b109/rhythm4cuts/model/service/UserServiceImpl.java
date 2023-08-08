@@ -74,34 +74,35 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
-    public static LocalDate fn_getDateOfBirth(String str1, String str2){
-        int divisionCode = Integer.parseInt(str2.substring(0, 1));
-        String dateOfBirth = null;
-        if(divisionCode == 1 || divisionCode == 2 || divisionCode == 5 || divisionCode == 6){
-            // 한국인 1900~, 외국인 1900~
-            dateOfBirth = "19"+str1;
-        }else if(divisionCode == 3 || divisionCode == 4 || divisionCode == 7 || divisionCode == 8){
-            // 한국인 2000~, 외국인 2000~
-            dateOfBirth = "20"+str1;
-        }else if(divisionCode == 9 || divisionCode == 0){
-            // 한국인 1800~
-            dateOfBirth = "18"+str1;
-        }
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate birthDate = LocalDate.parse(dateOfBirth, formatter);
-
-        return birthDate;
-    }
+//    public static LocalDate fn_getDateOfBirth(String str1, String str2){
+//        int divisionCode = Integer.parseInt(str2.substring(0, 1));
+//        String dateOfBirth = null;
+//        if(divisionCode == 1 || divisionCode == 2 || divisionCode == 5 || divisionCode == 6){
+//            // 한국인 1900~, 외국인 1900~
+//            dateOfBirth = "19"+str1;
+//        }else if(divisionCode == 3 || divisionCode == 4 || divisionCode == 7 || divisionCode == 8){
+//            // 한국인 2000~, 외국인 2000~
+//            dateOfBirth = "20"+str1;
+//        }else if(divisionCode == 9 || divisionCode == 0){
+//            // 한국인 1800~
+//            dateOfBirth = "18"+str1;
+//        }
+//
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+//        LocalDate birthDate = LocalDate.parse(dateOfBirth, formatter);
+//
+//        return birthDate;
+//    }
 
     //회원가입 및 회원 객체 DB 저장 메서드
     public String save(AddUserRequest dto) {
         User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
-        //어떤 형식으로 들어올까?
-        String prefix = dto.getSsn().split("-")[0], postfix = dto.getSsn().split("-")[1];
-        user.setBirthDate(fn_getDateOfBirth(prefix, postfix));
+//        String prefix = dto.getSsn().split("-")[0], postfix = dto.getSsn().split("-")[1];
+//        user.setBirthDate(fn_getDateOfBirth(prefix, postfix));
+
+        user.setGender(dto.getGender());
         user.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         user.setNickname(dto.getNickname());
 

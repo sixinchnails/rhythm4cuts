@@ -41,8 +41,10 @@ public class User implements UserDetails {
     private String nickname;
 
     //유저 생년월일
-    @Column(name = "birth_date")
-    private LocalDate birthDate;
+//    @Column(name = "birth_date")
+//    private LocalDate birthDate;
+    @Column(name = "gender")
+    private String gender;
 
     // 게임을 하면서 유저가 모은 포인트이다.  찍은 사진을 다운로드할 때 사용한다. 게임 점수나 돈으로도 추가할 수 있다.
     private Integer point;
@@ -128,7 +130,8 @@ public class User implements UserDetails {
         userDto.setEmail(this.getEmail());
         userDto.setPoint(this.getPoint());
         userDto.setScoreSum(this.getScoreSum());
-        userDto.setBirthDate(this.birthDate);
+//        userDto.setBirthDate(this.birthDate);
+        userDto.setGender(gender);
         userDto.setConnectionId(this.getConnectionId());
 
         return userDto;
