@@ -3,23 +3,31 @@ package com.b109.rhythm4cuts.controller;
 import com.b109.rhythm4cuts.config.jwt.TokenProvider;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.*;
-
+import org.apache.commons.io.IOUtils;
 import com.b109.rhythm4cuts.model.service.UserService;
 import com.b109.rhythm4cuts.model.dto.TokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -192,7 +200,25 @@ public class MemberController {
     }
 
     @PostMapping(value = "/reissue")
-    public ResponseEntity<?> reissueAuthenticationToken(@RequestBody TokenRequestDto tokenRequestDto) {
-        return userService.reissueAuthenticationToken(tokenRequestDto);
+    public ResponseEntity<TokenResponse> reissueAuthenticationToken(@RequestBody TokenRequestDto tokenRequestDto) {
+        return ResponseEntity.status(200).body(userService.reissueAuthenticationToken(tokenRequestDto));
+    }
+
+//    @GetMapping(value = "/profileImage", produces = MediaType.IMAGE_JPEG_VALUE)
+//    public @ResponseBody ResponseEntity<List<ProfileImageDto>> getProfileImageWithMediaType(@RequestParam(required = false) List<String> imageIds) throws IOException {
+//        List<ProfileImageDto> res = userService.getProfileImage(imageIds);
+//    }
+
+    @GetMapping("/getProfileImage/{imageName}")
+    public ResponseEntity<Resource> getImage(@PathVariable(required = false) String imageName) throws IOException {
+        Resource imageResource = new ClassPathResource("profile/" + imageName);
+
+        if (imageResource.exists()) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_PNG) // Change the media type based on your image type
+                    .body(imageResource);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

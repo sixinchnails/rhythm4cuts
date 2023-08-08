@@ -17,15 +17,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import java.util.Optional;
+
+import java.util.*;
 
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.b109.rhythm4cuts.model.service.Utils.dtoSetter;
@@ -76,34 +74,35 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
-    public static LocalDate fn_getDateOfBirth(String str1, String str2){
-        int divisionCode = Integer.parseInt(str2.substring(0, 1));
-        String dateOfBirth = null;
-        if(divisionCode == 1 || divisionCode == 2 || divisionCode == 5 || divisionCode == 6){
-            // 한국인 1900~, 외국인 1900~
-            dateOfBirth = "19"+str1;
-        }else if(divisionCode == 3 || divisionCode == 4 || divisionCode == 7 || divisionCode == 8){
-            // 한국인 2000~, 외국인 2000~
-            dateOfBirth = "20"+str1;
-        }else if(divisionCode == 9 || divisionCode == 0){
-            // 한국인 1800~
-            dateOfBirth = "18"+str1;
-        }
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate birthDate = LocalDate.parse(dateOfBirth, formatter);
-
-        return birthDate;
-    }
+//    public static LocalDate fn_getDateOfBirth(String str1, String str2){
+//        int divisionCode = Integer.parseInt(str2.substring(0, 1));
+//        String dateOfBirth = null;
+//        if(divisionCode == 1 || divisionCode == 2 || divisionCode == 5 || divisionCode == 6){
+//            // 한국인 1900~, 외국인 1900~
+//            dateOfBirth = "19"+str1;
+//        }else if(divisionCode == 3 || divisionCode == 4 || divisionCode == 7 || divisionCode == 8){
+//            // 한국인 2000~, 외국인 2000~
+//            dateOfBirth = "20"+str1;
+//        }else if(divisionCode == 9 || divisionCode == 0){
+//            // 한국인 1800~
+//            dateOfBirth = "18"+str1;
+//        }
+//
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+//        LocalDate birthDate = LocalDate.parse(dateOfBirth, formatter);
+//
+//        return birthDate;
+//    }
 
     //회원가입 및 회원 객체 DB 저장 메서드
     public String save(AddUserRequest dto) {
         User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
-        //어떤 형식으로 들어올까?
-        String prefix = dto.getSsn().split("-")[0], postfix = dto.getSsn().split("-")[1];
-        user.setBirthDate(fn_getDateOfBirth(prefix, postfix));
+//        String prefix = dto.getSsn().split("-")[0], postfix = dto.getSsn().split("-")[1];
+//        user.setBirthDate(fn_getDateOfBirth(prefix, postfix));
+
+        user.setGender(dto.getGender());
         user.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         user.setNickname(dto.getNickname());
 
@@ -315,7 +314,7 @@ public class UserServiceImpl implements UserService {
         return tokenResponse;
     }
 
-    public ResponseEntity<?> reissueAuthenticationToken(TokenRequestDto tokenRequestDto) {
+    public TokenResponse reissueAuthenticationToken(TokenRequestDto tokenRequestDto) {
         // Refresh Token 블랙리스트, 만료, 유효성 체크
         if(!tokenProvider.validToken(tokenRequestDto.getRefreshToken())) {
             throw new IllegalArgumentException("잘못된 요청입니다. 다시 로그인해주세요.");
@@ -357,6 +356,28 @@ public class UserServiceImpl implements UserService {
         // 기존 액세스 토큰 블랙 리스트 추가
         if (expiryMilliSeconds > 0) redisTemplate.opsForValue().set(tokenRequestDto.getAccessToken(), "access_token", expiryMilliSeconds, TimeUnit.MILLISECONDS);
 
-        return ResponseEntity.ok().body(tokenResponse);
+        return tokenResponse;
+    }
+
+    public List<ProfileImageDto> getProfileImage(List<String> imageIds) {
+        String imageDirectory = "./profile/";
+        List<ProfileImageDto> profileImageDtos = new ArrayList<>();
+
+        if (imageIds == null || imageIds.size() == 0) {
+            for(int i = 1; i <= 4; i++){
+                imageIds.add(String.valueOf(i) + ".png");
+            }
+        }
+
+        //ProfileImageDto를 만들어서 응답 리스트에 담는 과정
+        for (String image : imageIds){
+            try {
+
+            } catch(Exception e) {
+
+            }
+        }
+
+        return null;
     }
 }

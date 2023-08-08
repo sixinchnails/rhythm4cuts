@@ -77,6 +77,7 @@ public class DummyDataInitializer {
         user.setNickname("ssafy");
         user.setEmail("ssafy@naver.com");
         user.setProfileImage(profileImage1);
+        user.setGender("M");
         user.setPassword(bCryptPasswordEncoder.encode("1234"));
 
         userRepository.save(user);
@@ -87,6 +88,7 @@ public class DummyDataInitializer {
         user2.setEmail("abc@gmail.com");
         user2.setProfileImage(profileImage1);
         user2.setPassword(bCryptPasswordEncoder.encode("1234"));
+        user2.setGender("F");
 
         userRepository.save(user2);
 
@@ -95,7 +97,8 @@ public class DummyDataInitializer {
         user3.setNickname("민국");
         user3.setEmail("acd4548@naver.com");
         user3.setProfileImage(profileImage1);
-        user3.setBirthDate(targetDate);
+//        user3.setBirthDate(targetDate);
+        user3.setGender("M");
         user3.setPassword(bCryptPasswordEncoder.encode("1234"));
         userRepository.save(user3);
 
@@ -104,7 +107,8 @@ public class DummyDataInitializer {
         user4.setNickname("현");
         user4.setEmail("a@naver.com");
         user4.setProfileImage(profileImage1);
-        user4.setBirthDate(targetDate);
+//        user4.setBirthDate(targetDate);
+        user4.setGender("F");
         user4.setPoint(1200);
         user4.setPassword(bCryptPasswordEncoder.encode("1234"));
         userRepository.save(user4);
@@ -114,7 +118,8 @@ public class DummyDataInitializer {
         user5.setNickname("홍유콩");
         user5.setEmail("ab@naver.com");
         user5.setProfileImage(profileImage2);
-        user5.setBirthDate(targetDate);
+//        user5.setBirthDate(targetDate);
+        user5.setGender("M");
         user5.setPoint(1000);
         user5.setPassword(bCryptPasswordEncoder.encode("1234"));
         userRepository.save(user5);
@@ -124,7 +129,8 @@ public class DummyDataInitializer {
         user6.setNickname("최재드래곤");
         user6.setEmail("b@naver.com");
         user6.setProfileImage(profileImage3);
-        user6.setBirthDate(targetDate);
+//        user6.setBirthDate(targetDate);
+        user6.setGender("M");
         user6.setPoint(800);
         user6.setPassword(bCryptPasswordEncoder.encode("1234"));
         userRepository.save(user6);
@@ -134,7 +140,8 @@ public class DummyDataInitializer {
         user7.setNickname("최고다한윤");
         user7.setEmail("bc@naver.com");
         user7.setProfileImage(profileImage3);
-        user7.setBirthDate(targetDate);
+//        user7.setBirthDate(targetDate);
+        user7.setGender("F");
         user7.setPoint(600);
         user7.setPassword(bCryptPasswordEncoder.encode("1234"));
         userRepository.save(user7);
@@ -144,7 +151,8 @@ public class DummyDataInitializer {
         user8.setNickname("현순");
         user8.setEmail("z@naver.com");
         user8.setProfileImage(profileImage1);
-        user8.setBirthDate(targetDate);
+//        user8.setBirthDate(targetDate);
+        user8.setGender("F");
         user8.setPoint(1100);
         user8.setPassword(bCryptPasswordEncoder.encode("1234"));
         userRepository.save(user8);
