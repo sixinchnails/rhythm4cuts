@@ -9,11 +9,11 @@ function SearchPassword({ isOpen, handleClose }) {
   const [emailCode, setEmailCode] = useState("");
   const [emailCodeStatus, setEmailCodeStatus] = useState(false);
 
-  const handleEmailChange = (event) => {
+  const handleEmailChange = event => {
     setEmail(event.target.value); // 아이디 변경 이벤트 핸들러
   };
 
-  const handleEmailCodeChange = (event) => {
+  const handleEmailCodeChange = event => {
     setEmailCode(event.target.value); // 이메일 변경 이벤트 핸들러
   };
 

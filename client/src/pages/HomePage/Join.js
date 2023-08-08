@@ -12,17 +12,9 @@ import { useNavigate } from "react-router-dom";
 const Join = () => {
   const [profileImgSeq, setProfileImgSeq] = useState(1); // profile_img_seq를 상태로 관리
 
-  const handleImageSelect = useCallback((index) => {
+  const handleImageSelect = useCallback(index => {
     console.log("Selected Image Index:", index);
     setProfileImgSeq(index);
-  }, []);
-
-  useEffect(() => {
-    document.body.style.backgroundColor = "#F8E8EE";
-    // 컴포넌트 unmount 시점에 원래의 배경색으로 되돌리기 위한 cleanup 함수
-    return () => {
-      document.body.style.backgroundColor = null;
-    };
   }, []);
 
   const navigate = useNavigate();
@@ -30,7 +22,7 @@ const Join = () => {
   // 회원가입 정보를 저장할 상태
   const [joinInfo, setJoinInfo] = useState({});
 
-  const handleJoinInfo = useCallback((data) => {
+  const handleJoinInfo = useCallback(data => {
     setJoinInfo(data); // JoinInfo 컴포넌트로부터 받은 데이터를 상태에 저장
   }, []);
 
@@ -63,7 +55,13 @@ const Join = () => {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        background: "#c1b3ff",
+      }}
+    >
       <Header></Header>
       <div style={{ display: "flex", width: "30%" }}>
         <JoinImage

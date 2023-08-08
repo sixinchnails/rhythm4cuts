@@ -43,11 +43,8 @@ function GameWait() {
   const navigate = useNavigate();
   let { gameSeq } = useParams(); // URL에서 가져와
 
-  const session = useSelector((state) => state.roomState.session);
-  const connectionToken = useSelector(
-    (state) => state.roomState.connectionToken
-  );
-
+  const session = useSelector(state => state.roomState.session);
+  const connectionToken = useSelector(state => state.roomState.connectionToken);
   // -----------------------------------------------------------------------------------------------------------------
 
   // 로그인 상태를 업데이트하는 함수
@@ -62,14 +59,14 @@ function GameWait() {
   // 로그인 상태관리
   useEffect(() => {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
         } else {
           // 로그인 상태가 아니라면 알림.
           handleOpenLoginAlert();
         }
       })
-      .catch((error) => {
+      .catch(error => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -77,13 +74,13 @@ function GameWait() {
 
   useEffect(() => {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status !== 200) {
           window.alert("로그인을 해주세요!");
           navigate("/");
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("유저 정보 불러오기 실패:", error);
         window.alert("로그인을 해주세요!");
         navigate("/");

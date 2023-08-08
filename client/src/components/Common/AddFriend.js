@@ -32,7 +32,7 @@ function AddFriend({ isOpen, handleClose }) {
             },
           }
         )
-        .then((response) => {
+        .then(response => {
           if (response.data.data.length > 0) {
             const { nickname, email } = response.data.data[0];
             setUserInfo({ nickname, email });
@@ -40,7 +40,7 @@ function AddFriend({ isOpen, handleClose }) {
             setUserInfo({ nickname: "", email: "" });
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error);
         });
     } else {
@@ -48,7 +48,7 @@ function AddFriend({ isOpen, handleClose }) {
     }
   }, [debouncedFriendNickname]);
 
-  const handleNameChange = async (event) => {
+  const handleNameChange = async event => {
     setfriendNickname(event.target.value);
   };
 
@@ -81,7 +81,7 @@ function AddFriend({ isOpen, handleClose }) {
           backgroundColor: "rgba(50, 50, 255, 0.9)",
           color: "#ffffff",
           padding: "50px",
-          width: "500px"
+          width: "500px",
         }}
       >
         <h2 style={{ textAlign: "center" }}>친구 추가</h2>
@@ -92,7 +92,7 @@ function AddFriend({ isOpen, handleClose }) {
           fullWidth
           value={friendNickname}
           onChange={handleNameChange}
-          style={{ marginBottom: "30px", }}
+          style={{ marginBottom: "30px" }}
           inputProps={{ style: { color: "#ffffff" } }}
           InputLabelProps={{ style: { color: "#ffffff" } }}
         />
@@ -108,7 +108,11 @@ function AddFriend({ isOpen, handleClose }) {
         </List>
         <Stack direction="row" spacing={2} justifyContent="center">
           <Button
-            variant="contained" style={{ backgroundColor: "rgba(0, 128, 255, 0.1)", width: "100px" }}
+            variant="contained"
+            style={{
+              backgroundColor: "rgba(0, 128, 255, 0.1)",
+              width: "100px",
+            }}
             onClick={() => {
               handleClose();
               requestFriend();
@@ -116,7 +120,14 @@ function AddFriend({ isOpen, handleClose }) {
           >
             요청
           </Button>
-          <Button variant="contained" style={{ backgroundColor: "rgba(0, 128, 255, 0.1)", width: "100px" }} onClick={handleClose} >
+          <Button
+            variant="contained"
+            style={{
+              backgroundColor: "rgba(0, 128, 255, 0.1)",
+              width: "100px",
+            }}
+            onClick={handleClose}
+          >
             취소
           </Button>
         </Stack>

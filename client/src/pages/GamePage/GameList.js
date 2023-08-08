@@ -178,7 +178,7 @@ function GameList() {
             {/* 검색 카테고리 추가 */}
             <Select
               value={searchCategory}
-              onChange={(e) => setSearchCategory(e.target.value)}
+              onChange={e => setSearchCategory(e.target.value)}
               style={{
                 backgroundColor: "rgba(0, 128, 255, 0.1)",
                 marginRight: "1em",

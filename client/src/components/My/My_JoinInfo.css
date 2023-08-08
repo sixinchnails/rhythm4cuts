@@ -2,8 +2,8 @@
   padding: 70px;
   margin-left: 100px; /* 왼쪽으로부터의 마진을 증가 */
   margin-top: 20px; /* 상단으로부터의 마진을 증가 */
+  height: 80%;
 }
-
 .Join-item {
   display: flex;
   align-items: center;
@@ -34,7 +34,7 @@
   top: 0; /* 선을 .Join-name 요소의 상단에 위치시킵니다. */
   bottom: 0; /* 선을 .Join-name 요소의 하단에 위치시킵니다. */
   width: 2px; /* 선의 너비를 설정합니다. */
-  background-color: #f2bed1; /* 선의 색상을 설정합니다. */
+  background-color: #a264ee; /* 선의 색상을 설정합니다. */
 }
 
 .Join-name-topline::before {
@@ -45,7 +45,7 @@
   ); /* 선을 .Join-name 요소의 왼쪽 끝에서 시작하도록 설정 */
   top: -70px;
   width: 70vw; /* 선의 너비를 화면 너비 전체로 설정 */
-  border-top: 2px solid #f2bed1;
+  border-top: 2px solid #a264ee;
 }
 
 .Join-value {
