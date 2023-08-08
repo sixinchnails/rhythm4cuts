@@ -14,6 +14,29 @@ export const createSession = async (gameSeq) => {
                     Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
                     "Content-Type": "application/json",
                 },
+                // body: {
+                //     "mediaMode": "ROUTED",
+                //     "recordingMode": "MANUAL",
+                //     // "customSessionId": session,
+                //     "forcedVideoCodec": "VP8",
+                //     "allowTranscoding": false,
+                //     "defaultRecordingProperties": {
+                //         "name": gameSeq,
+                //         "hasAudio": true,
+                //         "hasVideo": true,
+                //         "outputMode": "COMPOSED",
+                //         "recordingLayout": "BEST_FIT",
+                //         "resolution": "1280x720",
+                //         "frameRate": 25,
+                //         "shmSize": 536870912,
+                //         "mediaNode": {
+                //             "id": "media_i-0c58bcdd26l11d0sd"
+                //         }
+                //     },
+                //     "mediaNode": {
+                //         "id": "media_i-0c58bcdd26l11d0sd"
+                //     }
+                // }
             }
         );
         return response.data;

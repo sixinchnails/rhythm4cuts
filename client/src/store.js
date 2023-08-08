@@ -9,6 +9,7 @@ import { closeSessionAndConnection } from "./openvidu/closeSessionAndConnection"
 // 방 세션 관리
 const initialState = {
   session: null,
+  connection: null,
   connectionToken: null,
 };
 
@@ -16,21 +17,34 @@ const roomState = createSlice({
   name: "roomState",
   initialState,
   reducers: {
-
     setSession: (state, action) => {
       state.session = action.payload;
+    },
+    setConnection: (state, action) =>{
+      state.connection = action.payload;
     },
     setConnectionToken: (state, action) => {
       state.connectionToken = action.payload;
     },
+    // 상태 초기화
+    resetRoomState: (state) => {
+      state.session = initialState.session;
+      state.connection = initialState.connection;
+      state.connectionToken = initialState.connectionToken;
+    }
   },
 });
 
-export const { setSession, setConnectionToken } = roomState.actions;
+export const { setSession, setConnection, setConnectionToken, resetRoomState } = roomState.actions;
 
 // Room 세션 ID를 설정하는 액션 함수
 export const setRoomSession = (sessionId) => (dispatch) => {
   dispatch(setSession(sessionId));
+};
+
+// Room 세션 ID를 설정하는 액션 함수
+export const setUserConnection = (connectionId) => (dispatch) => {
+  dispatch(setConnection(connectionId));
 };
 
 // 유저 토큰을 설정하는 액션 함수

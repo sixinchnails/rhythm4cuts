@@ -8,10 +8,10 @@ import { Grid, Pagination } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
-import LoginHeader from "../../components/Home/WhiteHeader";
 import DatePicker from "react-datepicker";
 import MusicRank from "../../components/Home/MusicRank";
 import UserRank from "../../components/Home/UserRank";
+import WhiteHeader from "../../components/Home/WhiteHeader"; // 로그인 되어있을 때
 import Header from "../../components/Home/Header";
 import Dots from "../../components/Home/Dots";
 import axios from "axios";
@@ -219,6 +219,8 @@ function Home() {
       outerDivRefCurrent.removeEventListener("wheel", wheelHandler);
     };
   }, []);
+
+
   return (
     <div className="background">
       <div className="background-image"></div>
@@ -226,8 +228,9 @@ function Home() {
         <Dots scrollIndex={scrollIndex} />
         {/** Home 1 시작하는 곳 */}
         <div className="Home1">
-          {isLogin ? <LoginHeader /> : <Header />}
-          {/* <Header /> */}
+
+          {isLogin ? <WhiteHeader /> : <Header />}
+          
           <div className="main1">
             <div className="beatbox">
               <div className="Logo">

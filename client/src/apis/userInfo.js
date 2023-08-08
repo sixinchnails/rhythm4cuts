@@ -2,6 +2,7 @@ import axios from "axios";
 import { getCookie } from "../utils/cookie";
 
 export const userInfo = async () => {
+  console.log("안녕")
   const params = {
     email: getCookie("email"),
   };
@@ -12,5 +13,7 @@ export const userInfo = async () => {
     params,
     headers,
   });
+  console.log(result)
+  console.log(result.status);
   return result;
 };
