@@ -2,7 +2,6 @@ import React from "react";
 import {
   Grid,
   Card,
-  CardContent,
   CardMedia,
   Typography,
   Box,
@@ -11,79 +10,99 @@ import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LockIcon from "@mui/icons-material/Lock";
 
 function RoomList({ room }) {
+  // 방 인원수 파악
   let isFull = room.currentOccupancy >= room.maxOccupancy;
 
   return (
-    <Grid item xs={6} sm={12}>
-      <Card style={{ height: "100%" }}>
-        <Grid container>
+    <Grid item xs={6} sm={12} >
+      <Card
+        style={{
+          background: "rgba(0, 0, 0, 0.8)",
+          color: "white",
+          border: "1px solid white", // 테두리를 흰색으로 설정
+          height: "19vh",
+          borderRadius: "20px",
+
+        }}
+      >
+        <Grid container >
           <Grid
             item
             xs={4}
             style={{
+              height: "20vh",
               display: "flex",
-              justifyContent: "center",
               alignItems: "center",
+              padding: "15px",
             }}
           >
             <CardMedia
-              component="img"
-              image={room.image}
+              component="img" // 이미지를 보여주기 위해 img 태그 사용
+              // image={room.image}
+              image="/images/잔나비.jfif"
               style={{
-                height: "80%",
-                borderRadius: "10px",
+                padding: "5%",
                 objectFit: "cover",
-                padding: "3%",
+                width: "100%",
+                height: "100%",
+                borderRadius: "20px",
               }}
             />
           </Grid>
-          <Grid item xs={8}>
-            <CardContent>
-              <Grid container>
-                <Grid item xs={12}>
-                  <Typography
-                    variant="subtitle1"
-                    style={{ fontSize: "1.2rem", fontWeight: "bold" }}
-                  >
-                    방 번호: {room.gameSeq} / 방 이름: {room.title}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    variant="subtitle1"
-                    style={{
-                      textAlign: "center",
-                      fontWeight: "bold",
-                      padding: "2%",
-                    }}
-                  >
-                    🎵 {room.songSeq}
-                  </Typography>
-                </Grid>
-                <Grid
-                  container
-                  justifyContent="space-between"
-                  alignItems="center"
+
+          {/* 오른쪽 : 방번호, 방이름, 노래제목, 방인원수, 모드(비밀방) */}
+          <Grid item xs={8} container
+            style={{
+              padding: "10px",
+              height: "20vh",
+            }}
+          >
+            <Grid item xs={12}>
+              <Typography
+                variant="subtitle1"
+                style={{
+                  fontFamily: 'Pretendard-Regular', fontWeight: "bold",
+                }}
+              >
+                Num : {room.gameSeq}
+                <br />
+                Title : {room.title}
+              </Typography>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Typography
+                style={{
+                  textAlign: "center",
+                }}
+              >
+                {/* 나중에 음악 DB파일에서 가져와야합니다. */}
+                🎵 {room.songSeq}
+              </Typography>
+            </Grid>
+
+            <Grid
+              container
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Grid item>
+                <Box
+                  style={{
+                    border: "1px solid",
+                    color: isFull ? "red" : "green",
+                  }}
                 >
-                  <Grid item>
-                    <Box
-                      style={{
-                        border: "1px solid",
-                        padding: "5px",
-                        color: isFull ? "red" : "green",
-                      }}
-                    >
-                      <Typography variant="body2">
-                        방 인원수: {room.headcount} / 4
-                      </Typography>
-                    </Box>
-                  </Grid>
-                  <Grid item>
-                    {room.isSecret ? <LockIcon /> : <LockOpenIcon />}
-                  </Grid>
-                </Grid>
+                  <Typography variant="body2">
+                    방 인원수: {room.headcount} / 4
+                  </Typography>
+                </Box>
               </Grid>
-            </CardContent>
+              <Grid item>
+                {room.isSecret ? <LockIcon /> : <LockOpenIcon />}
+              </Grid>
+            </Grid>
+
           </Grid>
         </Grid>
       </Card>

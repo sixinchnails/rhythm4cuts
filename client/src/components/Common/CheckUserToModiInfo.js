@@ -77,3 +77,4 @@ function CheckUserToModiInfo({ isOpen, handleClose }) {
 }
 
 export default CheckUserToModiInfo;
+

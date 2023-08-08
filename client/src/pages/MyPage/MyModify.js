@@ -5,7 +5,7 @@ import Sidebar from "../../components/My/My_SideBar";
 import MainContent from "../../components/My/My_MainContent";
 import ModifyInfo from "../../components/My/My_ModifyInfo";
 import { userInfo } from "../../apis/userInfo";
-import LoginMypageHeader from "../../components/Home/LoginMypageHeader";
+import LoginMypageHeader from "../../components/Home/BlackHeader";
 import { useNavigate } from "react-router-dom";
 
 const MyModify = () => {

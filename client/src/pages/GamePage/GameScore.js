@@ -12,15 +12,14 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import { React, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { userInfo } from "../../apis/userInfo";
 import { styled } from "@mui/system";
-// import FlowerAnimation from "../../components/Game/FlowerAnimation";
-import Header from "../../components/Game/Header_light";
-import Podium from "../../components/Game/Podium";
 import Next from "../../components/Game/NextToShot";
+import { useSelector } from "react-redux";
+import Podium from "../../components/Game/Podium";
+import { useNavigate } from "react-router-dom";
+import { userInfo } from "../../apis/userInfo";
+// import FlowerAnimation from "../../components/Game/FlowerAnimation";
+import Header from "../../components/Game/HeaderPlay";
 import "./GameScore.css";
 
 const Root = styled("div")({

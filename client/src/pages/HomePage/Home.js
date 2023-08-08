@@ -8,7 +8,7 @@ import { Grid, Pagination } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
-import LoginHeader from "../../components/Home/LoginHeader";
+import LoginHeader from "../../components/Home/WhiteHeader";
 import DatePicker from "react-datepicker";
 import MusicRank from "../../components/Home/MusicRank";
 import UserRank from "../../components/Home/UserRank";

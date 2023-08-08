@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Box, Button, Card, Grid, Typography, Container } from "@mui/material";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import Header from "../../components/Game/Header_light";
+import Header from "../../components/Game/HeaderPlay";
 import { createSession } from "../../openvidu/sessionInitialization";
 import { createConnection } from "../../openvidu/connectionInitialization";
 // import Webcam from "../../components/Game/Webcam";
