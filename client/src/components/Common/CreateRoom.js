@@ -94,15 +94,15 @@ function CreateRoom({ isOpen, handleClose }) {
   const [isSecret, setIsSecret] = useState("일반 방"); // 모드
   const [password, setPassword] = useState(""); // 비밀방 암호
 
-  const handleSongChange = event => {
+  const handleSongChange = (event) => {
     setSongSeq(event.target.value);
   };
 
-  const handleModeChange = event => {
+  const handleModeChange = (event) => {
     setIsSecret(event.target.value);
   };
 
-  const handlePasswordChange = event => {
+  const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
@@ -112,7 +112,7 @@ function CreateRoom({ isOpen, handleClose }) {
       if (sessionResponse != null) {
         // 방 정보를 서버로 전송하는 Axios 요청
         const response = await axios.post(
-          "/lobby/room",
+          "https://i9b109.p.ssafy.io:8443/lobby/room",
           {
             title: title, // 방 제목
             songSeq: songSeq, // 노래제목 (일련번호 : 검색 예정)
@@ -170,7 +170,7 @@ function CreateRoom({ isOpen, handleClose }) {
           variant="outlined"
           fullWidth
           style={{ marginBottom: "20px" }}
-          onChange={event => setTitle(event.target.value)}
+          onChange={(event) => setTitle(event.target.value)}
         />
         <TextField
           label="노래 제목"

@@ -1,5 +1,4 @@
 /* eslint-disable */
-import React, { useState } from "react";
 import {
   Container,
   Grid,
@@ -13,14 +12,16 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import { styled } from "@mui/system";
-import Header from "../../components/Game/Header_dark";
-import Next from "../../components/Game/NextToShot";
-import { useSelector } from "react-redux";
-import Podium from "../../components/Game/Podium";
+import { React, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { userInfo } from "../../apis/userInfo";
-import FlowerAnimation from '../../components/Game/FlowerAnimation';
+import { styled } from "@mui/system";
+// import FlowerAnimation from "../../components/Game/FlowerAnimation";
+import Header from "../../components/Game/Header_light";
+import Podium from "../../components/Game/Podium";
+import Next from "../../components/Game/NextToShot";
+import "./GameScore.css";
 
 const Root = styled("div")({
   width: "100%",
@@ -48,36 +49,42 @@ function GameScore() {
   const navigate = useNavigate();
 
   //로그인 상태 확인
-  const [isLogin, setIsLogin] = useState(false);
+  // const [isLogin, setIsLogin] = useState(false);
 
-  try {
-    userInfo()
-      .then((res) => {
-        if (res.status === 200) {
-          console.log(res);
-          setIsLogin(true);
-        }
-      })
-      .catch((error) => {
-        window.alert("로그인을 해주세요!");
-        navigate("/");
-      });
-  } catch (error) {
-    console.log(error);
-  }
+  // try {
+  //   userInfo()
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         console.log(res);
+  //         setIsLogin(true);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       window.alert("로그인을 해주세요!");
+  //       navigate("/");
+  //     });
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
   let Result = useSelector((state) => state.GameScore_Result);
 
   return (
     <Root>
-      <FlowerAnimation /> {/* FlowerAnimation 컴포넌트를 Root 컴포넌트로 감싸줍니다 */}
+      <Header />
+      {/* <FlowerAnimation />{" "} */}
+      {/* FlowerAnimation 컴포넌트를 Root 컴포넌트로 감싸줍니다 */}
       <Container>
-        <Header />
-        <Title variant="h3" style={{ marginBottom: "3%" }}>
+        <Title
+          color={"white"}
+          fontWeight={"bolder"}
+          variant="h3"
+          style={{ marginBottom: "10%" }}
+        >
           Score Board
         </Title>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={5}>
             <PodiumContainer>
               <Podium
                 rank="Silver"
@@ -102,26 +109,35 @@ function GameScore() {
               />
             </PodiumContainer>
           </Grid>
+          <Grid xs={12} md={1}></Grid>
           <Grid item xs={12} md={6}>
             <TableContainer component={Paper}>
               <Table aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>순위</TableCell>
-                    <TableCell align="right">NickName</TableCell>
-                    <TableCell align="right">Score</TableCell>
-                    <TableCell align="right">Reward</TableCell>
+                    <TableCell style={{ fontWeight: "bold" }} align="center">
+                      순위
+                    </TableCell>
+                    <TableCell style={{ fontWeight: "bold" }} align="center">
+                      NickName
+                    </TableCell>
+                    <TableCell style={{ fontWeight: "bold" }} align="center">
+                      Score
+                    </TableCell>
+                    <TableCell style={{ fontWeight: "bold" }} align="center">
+                      Reward
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {Result.map((result) => (
                     <TableRow key={result.rank}>
-                      <TableCell component="th" scope="row">
+                      <TableCell align="center" component="th" scope="row">
                         {result.rank}
                       </TableCell>
-                      <TableCell align="right">{result.nickname}</TableCell>
-                      <TableCell align="right">{result.score}</TableCell>
-                      <TableCell align="right">{result.reward}</TableCell>
+                      <TableCell align="center">{result.nickname}</TableCell>
+                      <TableCell align="center">{result.score}</TableCell>
+                      <TableCell align="center">{result.reward}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

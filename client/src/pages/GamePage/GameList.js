@@ -60,7 +60,7 @@ function GameList() {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
   const [isCreateRoomModalOpen, setCreateRoomModalOpen] = useState(false); //  '방 만들기' 모달의 상태를 관리
-  let friends = useSelector(state => state.GameList_Friend); // 친구 리스트
+  let friends = useSelector((state) => state.GameList_Friend); // 친구 리스트
   const itemsPerPage = 6; // 한 페이지당 표시할 방 수
   const [page, setPage] = useState(1); // 페이지 상태
   const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
@@ -89,12 +89,12 @@ function GameList() {
   //로그인 상태 확인
   try {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           console.log(res);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         window.alert("로그인을 해주세요!");
         navigate("/");
       });
@@ -105,21 +105,21 @@ function GameList() {
   // 방 리스트 가져오기
   useEffect(() => {
     axios
-      .get("/lobby/list", {
+      .get("https://i9b109.p.ssafy.io:8443/lobby/list", {
         headers: {
           Authorization: "Bearer " + getCookie("access"),
         },
       })
-      .then(response => {
+      .then((response) => {
         setRooms(response.data.data); // 서버 응답으로 받은 방 리스트를 상태로 업데이트합니다.
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("방 리스트 가져오는데 실패 뽝! : ", error);
       });
   }, []);
 
   // 검색어에 따라 방 리스트 필터링
-  let filteredRooms = rooms.filter(room => {
+  let filteredRooms = rooms.filter((room) => {
     switch (searchCategory) {
       case "gameSeq":
         return room.gameSeq
@@ -144,7 +144,7 @@ function GameList() {
     setPage(value);
   };
   // 검색어 변경 이벤트 핸들러
-  const handleSearchChange = event => {
+  const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
@@ -174,7 +174,7 @@ function GameList() {
             {/* 검색 카테고리 추가 */}
             <Select
               value={searchCategory}
-              onChange={e => setSearchCategory(e.target.value)}
+              onChange={(e) => setSearchCategory(e.target.value)}
               style={{
                 marginRight: "1em",
                 color: "#ffffff",

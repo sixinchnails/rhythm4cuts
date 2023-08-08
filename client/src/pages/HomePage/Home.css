@@ -38,7 +38,6 @@ body {
 .divider {
   width: 100%;
   height: 5px;
-  background-color: balck;
 }
 .Home1 > .main1 {
   height: 80vh;
@@ -70,18 +69,12 @@ body {
 }
 
 .Home1 {
-  /* background-image: url(../../../public/images/Game_List.jpg);
-  background-size: cover;
-  background-position: center; */
   width: 100vw;
   height: 100vh;
   position: relative;
 }
 
 .Home2 {
-  /* background-image: url(../../../public/images/Game_List.png);
-  background-size: cover;
-  background-position: center; */
   width: 100vw;
   height: 100vh;
   position: relative;
@@ -106,19 +99,21 @@ body {
 .Home2 > .content > .intro {
   width: 40vw;
   height: 75vh;
-  background-color: #fed9e7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .Home2 > .content > .rules {
-  width: 40vw;
+  width: 37vw;
   height: 75vh;
-  background-color: #fed9e7;
+}
+
+.Home2 > .content > .rules > img {
+  border-radius: 10px;
 }
 
 .Home3 {
-  /* background-image: url(../../../public/images/Game_List.png);
-  background-size: cover;
-  background-position: center; */
   width: 100vw;
   height: 108vh;
   position: relative;
@@ -148,8 +143,9 @@ body {
   margin-top: 50px;
   height: 70vh;
   width: 35vw;
-  background-color: #eeccd9;
-  opacity: 0.8;
+  background-color: #c1b3ff;
+  opacity: 0.9;
+  border-radius: 10px;
 }
 
 .Home3 > .content > .rank1 > .rt_sing_rank > div {
@@ -166,15 +162,19 @@ body {
   align-items: center;
   width: 90%;
   height: 50%;
-  background-color: #f593b6;
+  background-color: #14006d;
+  border-radius: 10px;
   font-weight: bold;
+  color: white;
 }
 
 .Home3 > .content > .rank1 > .rt_sing_rank > .music_rank {
   width: 90%;
   height: 75%;
-  background-color: #f593b6;
+  background-color: #14006d;
+  border-radius: 10px;
   margin-left: 5%;
+  color: white;
 }
 
 .Home3 > .content > .rank1 > .rt_sing_rank > .music_rank > .rank {
@@ -190,8 +190,9 @@ body {
   margin-top: 50px;
   height: 28%;
   width: 35vw;
-  background-color: #eeccd9;
-  opacity: 0.8;
+  background-color: #c1b3ff;
+  border-radius: 10px;
+  opacity: 0.9;
 }
 
 .Home3 > .content > .rank2 > .nickname {
@@ -200,13 +201,16 @@ body {
   justify-content: space-around;
   align-items: center;
   margin: 1%;
+  color: white;
+  font-weight: bolder;
 }
 
 .Home3 > .content > .rank2 > .top100 {
   height: 38%;
   width: 35vw;
-  background-color: #eeccd9;
+  background-color: #c1b3ff;
   opacity: 0.8;
+  border-radius: 10px;
 }
 
 .Home3 > .content > .rank2 > .top100 > div {
@@ -222,18 +226,26 @@ body {
   align-items: center;
   width: 90%;
   height: 50%;
-  background-color: #f593b6;
+  background-color: #14006d;
+  border-radius: 10px;
   font-weight: bold;
+  color: white;
+}
+
+.Home3 > .content > .rank2 > .top100 > .user_rank {
+  background-color: #14006d;
+  border-radius: 10px;
+  width: 90%;
+  height: 75%;
+  margin-left: 5%;
 }
 
 .Home3 > .content > .rank2 > .top100 > .user_rank > .rank {
-  width: 100%;
+  width: 90%;
+  color: white;
 }
 
 .Home4 {
-  /* background-image: url(../../../public/images/Game_List.png);
-  background-size: cover;
-  background-position: center; */
   width: 100vw;
   height: 100vh;
   position: relative;
@@ -247,7 +259,7 @@ body {
   font-weight: bolder;
 }
 
-.Home4 > .sideBar > .title {
+.Home4 > .sideBar > .calender > .title {
   height: 10%;
   display: flex;
   justify-content: center;
@@ -257,15 +269,17 @@ body {
 
 .Home4 > .sideBar > .calender {
   height: 80%;
+  margin-top: 10vh;
   justify-content: center;
-  background-color: #eeccd9;
+  background-color: #c1b3ff;
+  border-radius: 10px;
 }
 
 .Home4 > .sideBar > .calender > .react-datepicker-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 5%;
+  margin-top: 15%;
 }
 
 .Home4
@@ -320,7 +334,8 @@ body {
 .Home4 > .content {
   width: 65%;
   height: 80%;
-  background-color: #f593b6;
+  background-color: #14006d;
+  border-radius: 10px;
   margin-top: 10vh;
   margin-left: 5%;
   margin-right: 5%;
@@ -338,6 +353,7 @@ body {
   width: 20%;
   height: 90%;
   background-color: #fed9e7;
+  border-radius: 10px;
   margin: 5%;
 }
 
@@ -353,5 +369,6 @@ body {
   width: 20%;
   height: 90%;
   background-color: #fed9e7;
+  border-radius: 10px;
   margin: 5%;
 }

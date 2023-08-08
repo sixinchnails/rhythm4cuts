@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Box, Button, Card, Grid, Typography, Container } from "@mui/material";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import Header from "../../components/Game/Header_dark";
+import Header from "../../components/Game/Header_light";
 import { createSession } from "../../openvidu/sessionInitialization";
 import { createConnection } from "../../openvidu/connectionInitialization";
 // import Webcam from "../../components/Game/Webcam";
@@ -11,7 +11,7 @@ import html2canvas from "html2canvas";
 import domtoimage from "dom-to-image";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
-import UserVideo from '../../components/Game/UserVideo';
+import UserVideo from "../../components/Game/UserVideo";
 
 //close test
 import { closeSession } from "../../store";
@@ -92,7 +92,7 @@ const GameShot = () => {
   const webcamRef = useRef(null);
 
   // Frame 이미지 배열을 리덕스 상태로부터 가져옵니다.
-  let frameImage = useSelector(state => state.GameShot_frameImage);
+  let frameImage = useSelector((state) => state.GameShot_frameImage);
 
   // Ref를 최상위 레벨로 이동하고, DOM 요소를 가리킬 수 있도록 설정합니다.
   const copyRef = useRef(null);
@@ -136,7 +136,7 @@ const GameShot = () => {
   // 5초 타이머를 설정하고 타이머가 끝나면 촬영 함수를 호출하거나 자동 촬영 함수를 호출합니다.
   useEffect(() => {
     const timerId = setInterval(() => {
-      setSeconds(prevSeconds => {
+      setSeconds((prevSeconds) => {
         if (prevSeconds === 1) {
           handleCapture();
           clearInterval(timerId); // 타이머를 종료합니다.
@@ -158,14 +158,14 @@ const GameShot = () => {
 
   // Frame 이미지 이전 버튼 핸들러
   const handlePrev = () => {
-    setImageIndex(prevIndex =>
+    setImageIndex((prevIndex) =>
       prevIndex === 0 ? frameImage.length - 1 : prevIndex - 1
     );
   };
 
   // Frame 이미지 다음 버튼 핸들러
   const handleNext = () => {
-    setImageIndex(prevIndex =>
+    setImageIndex((prevIndex) =>
       prevIndex === frameImage.length - 1 ? 0 : prevIndex + 1
     );
   };
@@ -173,7 +173,7 @@ const GameShot = () => {
     <Box
       sx={{
         width: "100%",
-        height: "100%",
+        height: "100vh",
         backgroundPosition: "center",
         backgroundSize: "cover",
         position: "relative",
@@ -190,23 +190,33 @@ const GameShot = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "100%",
+          height: "80%",
         }}
       >
         <Grid container spacing={10}>
           {/* Webcam 영역 */}
-          <Grid item xs={12} md={8}>
+          <Grid
+            item
+            xs={12}
+            md={8}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                height: "70%",
+                height: "90%",
                 width: "100%",
               }}
               ref={captureRef}
             >
               <Box
                 sx={{
+                  backgroundColor: "black",
                   flex: "1 1 auto",
                   display: "flex",
                   alignItems: "center",
@@ -229,7 +239,7 @@ const GameShot = () => {
                     left: 0,
                   }}
                 >
-                  <Webcam ref={webcamRef} />
+                  {/* <Webcam ref={webcamRef} /> */}
                 </Box>
               </Box>
               <Box
@@ -245,8 +255,8 @@ const GameShot = () => {
                     : `${seconds}초 남았습니다~`}
                 </Typography>
                 <Button
-                  variant={captured ? "contained" : "outlined"}
-                  color={captured ? "secondary" : "primary"}
+                  variant={captured ? "outlined" : "contained"}
+                  color={captured ? "secondary" : "warning"}
                   onClick={handleCapture}
                 >
                   {captured ? "촬영 완료" : "촬영"}
@@ -268,7 +278,7 @@ const GameShot = () => {
                 ref={copyRef}
                 sx={{
                   height: "80%",
-                  width: "70%",
+                  width: "60%",
                   display: "flex",
                   flexDirection: "column",
                   borderRadius: "borderRadius",
@@ -321,27 +331,27 @@ const GameShot = () => {
                 alignItems="center"
                 p={2}
               >
-                <Button variant="outlined" color="primary" onClick={handlePrev}>
+                <Button variant="outlined" color="warning" onClick={handlePrev}>
                   <FaArrowLeft />
                 </Button>
                 <Button
                   variant="contained"
-                  color="primary"
+                  color="warning"
                   onClick={() => copyCapture(copyRef.current)}
                 >
                   확인
                 </Button>
 
-                <Button variant="outlined" color="primary" onClick={handleNext}>
+                <Button variant="outlined" color="warning" onClick={handleNext}>
                   <FaArrowRight />
                 </Button>
               </Box>
             </Box>
           </Grid>
         </Grid>
-        <Button variant="contained" color="secondary" onClick={handleTestClose}>
+        {/* <Button variant="contained" color="secondary" onClick={handleTestClose}>
           Test Close
-        </Button>
+        </Button> */}
       </Container>
     </Box>
   );

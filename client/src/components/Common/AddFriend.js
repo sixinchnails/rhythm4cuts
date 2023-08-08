@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect } from "react";
 import {
   Modal,
@@ -23,12 +24,15 @@ function AddFriend({ isOpen, handleClose }) {
   useEffect(() => {
     if (debouncedFriendNickname) {
       axios
-        .get(`/friend/search/${debouncedFriendNickname}`, {
-          headers: {
-            Authorization: "Bearer " + getCookie("access"),
-          },
-        })
-        .then(response => {
+        .get(
+          `https://i9b109.p.ssafy.io:8443/friend/search/${debouncedFriendNickname}`,
+          {
+            headers: {
+              Authorization: "Bearer " + getCookie("access"),
+            },
+          }
+        )
+        .then((response) => {
           if (response.data.data.length > 0) {
             const { nickname, email } = response.data.data[0];
             setUserInfo({ nickname, email });
@@ -36,7 +40,7 @@ function AddFriend({ isOpen, handleClose }) {
             setUserInfo({ nickname: "", email: "" });
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
     } else {
@@ -44,7 +48,7 @@ function AddFriend({ isOpen, handleClose }) {
     }
   }, [debouncedFriendNickname]);
 
-  const handleNameChange = async event => {
+  const handleNameChange = async (event) => {
     setfriendNickname(event.target.value);
   };
 

@@ -5,39 +5,39 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleReady, setSession, setConnectionToken } from "../../store";
 import { getCookie } from "../../utils/cookie";
-import { userInfo } from '../../apis/userInfo';
+import { userInfo } from "../../apis/userInfo";
 import Header from "../../components/Game/Header_light";
 import Next from "../../components/Game/NextToPlay";
 import axios from "axios";
-import UserVideo from '../../components/Game/UserVideo';
-import { createConnection } from '../../openvidu/connectionInitialization';
-
+import UserVideo from "../../components/Game/UserVideo";
+import { createConnection } from "../../openvidu/connectionInitialization";
 
 function GameWait() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let { gameSeq } = useParams(); // URL에서 가져와
 
-  const session = useSelector(state => state.roomState.session);
-  const connectionToken = useSelector(state => state.roomState.connectionToken);
+  const session = useSelector((state) => state.roomState.session);
+  const connectionToken = useSelector(
+    (state) => state.roomState.connectionToken
+  );
 
   // -----------------------------------------------------------------------------------------------------------------
-  const handleToggleReady = playerId => {
-
+  const handleToggleReady = (playerId) => {
     dispatch(toggleReady(playerId)); // Redux의 toggleReady 액션을 호출하여 플레이어의 준비 상태를 변경합니다.
   };
-  const isReady = useSelector(state => state.GameWait_Ready); // Redux의 상태에서 플레이어의 준비 상태를 가져옵니다.
+  const isReady = useSelector((state) => state.GameWait_Ready); // Redux의 상태에서 플레이어의 준비 상태를 가져옵니다.
   // -----------------------------------------------------------------------------------------------------------------
 
   useEffect(() => {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status !== 200) {
           window.alert("로그인을 해주세요!");
           navigate("/");
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("유저 정보 불러오기 실패:", error);
         window.alert("로그인을 해주세요!");
         navigate("/");
@@ -50,7 +50,7 @@ function GameWait() {
     try {
       const access = getCookie("access");
       const response = await axios.get(
-        "/wait/info/" + gameSeq,
+        "https://i9b109.p.ssafy.io:8443/wait/info/" + gameSeq,
         {
           headers: {
             Authorization: "Bearer " + access,
@@ -63,11 +63,10 @@ function GameWait() {
     }
   };
 
-  // 연결 유저 토큰 만들기 
+  // 연결 유저 토큰 만들기
   const fetchConnectionToken = async () => {
     try {
       await createConnection();
-
     } catch (error) {
       console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
     }
@@ -140,29 +139,28 @@ function GameWait() {
                 </div>
               </Grid>
               {/* Bottom */}
-              <Grid container style={{ height: '100%' }}>
-                <Grid item xs={12} style={{ height: '25%' }}>
+              <Grid container style={{ height: "100%" }}>
+                <Grid item xs={12} style={{ height: "25%" }}>
                   <UserVideo />
                 </Grid>
 
-                <Grid item xs={12} style={{ height: '25%' }}>
+                <Grid item xs={12} style={{ height: "25%" }}>
                   {/* <UserVideo roomSession={token} streamId={player2_token} /> */}
                 </Grid>
 
-                <Grid item xs={12} style={{ height: '25%' }}>
+                <Grid item xs={12} style={{ height: "25%" }}>
                   {/* <UserVideo roomSession={token} streamId={player3_token} /> */}
                 </Grid>
 
-                <Grid item xs={12} style={{ height: '25%' }}>
+                <Grid item xs={12} style={{ height: "25%" }}>
                   {/* <UserVideo roomSession={token} streamId={player4_token} /> */}
                 </Grid>
               </Grid>
-
             </div>
           </Container>
         </Grid>
       </Grid>
-    </div >
+    </div>
   );
 }
 
