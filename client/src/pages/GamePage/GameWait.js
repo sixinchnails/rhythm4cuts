@@ -6,13 +6,21 @@ import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from '../../apis/userInfo';
-import { setSession, resetRoomState } from "../../store";
+// import { setSession, resetRoomState } from "../../store";
 import LoginAlert from '../../components/Common/LoginAlert';
 import UserVideo from '../../components/Game/UserVideo';
 import Header from "../../components/Game/HeaderPlay";
 import Next from "../../components/Game/NextToPlay";
 import axios from "axios";
 import { Chat as ChatIcon, Check as CheckIcon, ExitToApp as ExitToAppIcon } from "@mui/icons-material";
+import UserVideoComponent from '../../components/Game/UserVideoComponent';
+import {
+  setSession as setSessionAction,
+  setConnection,
+  setConnectionToken,
+  resetRoomState,
+} from "../../store";
+
 
 // Styled 버튼
 const StyledIconButton = styled(IconButton)({
@@ -90,7 +98,8 @@ function GameWait() {
           },
         }
       );
-      dispatch(setSession(response.data.data.sessionId));
+      dispatch(setSessionAction(response.data.data.sessionId));
+
     } catch (error) {
       console.error("DB에서 세션 id 불러오기 실패:", error);
     }
@@ -99,8 +108,11 @@ function GameWait() {
   // 연결 유저 토큰 만들기 
   const fetchConnectionToken = async () => {
     try {
-      await createConnection();
-
+      if (session) { // session이 생성된 상태인지 확인
+        const { connection, connectionToken } = await createConnection(session);
+        dispatch(setConnection(connection));
+        dispatch(setConnectionToken(connectionToken));
+      }
     } catch (error) {
       console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
     }
@@ -133,6 +145,11 @@ function GameWait() {
   // 임시 게임플레이 페이지 이동
   const handleGameStart = () => {
     navigate(`/GamePlay/${gameSeq}`);
+  };
+
+  const getUserConnectionData = () => {
+    const nickname = gameSeq + "_" + connection;
+    return JSON.stringify({ clientData: nickname });
   };
 
   return (
@@ -180,7 +197,7 @@ function GameWait() {
               }}
             >
               {/* 대기중 비디오 */}
-              <video
+              {/* <video
                 src="/images/GameImage/Dance.mp4"
                 autoPlay
                 loop
@@ -189,9 +206,14 @@ function GameWait() {
                   height: "100%",
                   objectFit: "cover",
                 }}
-              />
+              /> */}
+              
+                <UserVideoComponent
+              streamManager={{ session, connection, connectionToken }}
+              connectionData={getUserConnectionData()}
+            />
             </Card>
-          
+
 
           </Grid>
 
@@ -223,7 +245,7 @@ function GameWait() {
 
           {/* Player 1 */}
           <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-          <UserVideo roomSession={session} connection={connection} userToken={connectionToken} />
+            {/* <UserVideo roomSession={session} connection={connection} userToken={connectionToken} /> */}
           </Grid>
           <Grid item xs={1} style={{ height: '20vh' }}>
             <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>첫번째 선수</div>
@@ -237,7 +259,11 @@ function GameWait() {
           </Grid>
           {/* Player 3 */}
           <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            {/* <UserVideo /> */}
+            <UserVideoComponent
+              streamManager={{ session, connection, connectionToken }}
+              connectionData={getUserConnectionData()}
+            />
+
           </Grid>
           <Grid item xs={1} style={{ height: '20vh' }}>
             <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>세번째 선수</div>
