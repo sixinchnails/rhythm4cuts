@@ -20,7 +20,7 @@ import {
   setConnectionToken,
   resetRoomState,
 } from "../../store";
-
+import { OpenVidu } from 'openvidu-browser';
 
 // Styled 버튼
 const StyledIconButton = styled(IconButton)({
@@ -32,6 +32,17 @@ const StyledIconButton = styled(IconButton)({
     backgroundColor: "#1976d2", // 마우스 오버 시 배경색 변경
   },
 });
+
+const userState = {
+  sessionId:'session_id',
+  userName:'name',
+  session: undefined,
+  mainStreammanager: undefined,
+  publisher: undefined,
+  subscribers: [],
+}
+
+const publisher = undefined;
 
 function GameWait() {
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
@@ -122,12 +133,45 @@ function GameWait() {
     if (session) {
       fetchConnectionToken();
     }
-  }, [session]);
+  }, [session])
 
-  console.log("게임 시퀀스입니다 : " + gameSeq);
+  useEffect(()=>{
+    console.log("use effect begin")
+    const OV = new OpenVidu;
+    userState.session = OV.initSession()
+    const mySession = userState.session;
+    mySession.on('streamCreated', (event) => {
+      // Subscribe to the Stream to receive it. Second parameter is undefined
+      // so OpenVidu doesn't create an HTML video by its own
+      let subscriber = mySession.subscribe(event.stream, undefined);
+      let subscribers = userState.subscribers;
+      subscribers.push(subscriber);
+
+      // Update the state with the new subscribers
+      userState.subscribers = subscribers;
+    });
+    mySession.connect(connectionToken, {clientData: 'a'})
+    .then(async () => {
+      publisher = await OV.initPublisherAsync(undefined, {
+        audioSource: undefined, // The source of audio. If undefined default microphone
+        videoSource: undefined, // The source of video. If undefined default webcam
+        publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+        publishVideo: true, // Whether you want to start publishing with your video enabled or not
+        resolution: '640x480', // The resolution of your video
+        frameRate: 30, // The frame rate of your video
+        insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
+        mirror: false, // Whether to mirror your local video or not
+      });
+      console.log("publish success")
+      mySession.publish(publisher);
+  })
+})
+
+console.log("게임 시퀀스입니다 : " + gameSeq);
   console.log("세션입니다 : " + session);
   console.log("연결 세션id입니다: " + connection);
   console.log("연결 토큰입니다 : " + connectionToken);
+ 
 
   const handleGameReady = () => {
     // "게임 준비" 버튼을 클릭했을 때 동작하는 로직을 여기에 구현합니다.
@@ -151,6 +195,8 @@ function GameWait() {
     const nickname = gameSeq + "_" + connection;
     return JSON.stringify({ clientData: nickname });
   };
+
+
 
   return (
     <div
@@ -209,7 +255,7 @@ function GameWait() {
               /> */}
               
                 <UserVideoComponent
-              streamManager={{ session, connection, connectionToken }}
+              streamManager={publisher}
               connectionData={getUserConnectionData()}
             />
             </Card>
@@ -245,7 +291,12 @@ function GameWait() {
 
           {/* Player 1 */}
           <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            {/* <UserVideo roomSession={session} connection={connection} userToken={connectionToken} /> */}
+          {userState.subscribers.map((sub, i) => (
+                                <div key={sub.id} className="stream-container col-md-6 col-xs-6" onClick={() => this.handleMainVideoStream(sub)}>
+                                    <span>{sub.id}</span>
+                                    <UserVideoComponent streamManager={sub} />
+                                </div>
+                            ))}
           </Grid>
           <Grid item xs={1} style={{ height: '20vh' }}>
             <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>첫번째 선수</div>
