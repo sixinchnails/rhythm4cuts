@@ -14,6 +14,7 @@ import MusicRank from "../../components/Home/MusicRank";
 import UserRank from "../../components/Home/UserRank";
 import Header from "../../components/Home/Header";
 import Dots from "../../components/Home/Dots";
+import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import "animate.css";
 import "./Home.css";
@@ -29,33 +30,27 @@ function Home() {
   try {
     userInfo()
       .then((res) => {
-        if (res.status === 200) {
-          console.log(res.data);
-          setIsLogin(true);
-          // 401은 access토큰이 틀린거
-        } else if (res.status === 401) {
-          console.log("access토큰이 틀렸습니다.");
-          // 403은 access토큰이 만료된거
-        } else if (res.status === 403) {
-          console.log("accessToken이 만료되었습니다.");
-          renewAccessToken().then((res) => {
-            if (res.status === 200) {
-              setCookie("access", res.accessToken);
-              console.log("accessToken 재발급 완료");
-              window.location.reload();
-            } else if (res.status === 401) {
-              console.log("refresh토큰이 틀렸습니다.");
-            } else if (res.status === 403) {
-              checkLogin();
-              console.log("refresh토큰이 만료되었습니다.");
-              window.confirm("로그인 기간이 만료되었습니다.");
-            }
-          });
-        }
+        console.log(res.data);
+        setIsLogin(true);
       })
       .catch((error) => {
-        console.log(error);
         setIsLogin(false);
+        console.log(error);
+        if (error.response.status === 401) {
+          console.log("accessToken이 만료되었습니다.");
+          renewAccessToken()
+            .then((res) => {
+              setCookie("access", res.accessToken);
+              console.log(res);
+              console.log("accessToken 재발급 완료");
+              window.location.reload();
+            })
+            .catch((error) => {
+              console.log("refresh토큰이 에러");
+              console.log(error);
+              checkLogin();
+            });
+        }
       });
   } catch (error) {
     console.log(error);
@@ -94,13 +89,32 @@ function Home() {
   const [startDate, setStartDate] = useState(new Date());
   const outerDivRef = useRef();
   const [scrollIndex, setScrollIndex] = useState(1);
+
   //음악 랭킹
-  let music_rank = useSelector((state) => {
-    return state.Music_Rank;
-  });
+  const [musicData, setMusicData] = useState([]);
+
+  const fetchMusicRank = async () => {
+    const headers = {
+      Authorization: "Bearer " + getCookie("access"),
+    };
+    try {
+      const response = await axios.get(
+        "https://i9b109.p.ssafy.io:8443/ranking/song",
+        { headers }
+      );
+      console.log(response.data.data);
+      setMusicData(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMusicRank();
+  }, []);
 
   // 음악 개수 컨트롤러
-  const musicPerPage = 15; // 한 페이지당 표시할 방 수
+  const musicPerPage = 12; // 한 페이지당 표시할 방 수
   const [musicPage, setMusicPage] = useState(1); // 페이지 상태
 
   // 음악 페이지 변경 이벤트 핸들러
@@ -109,7 +123,7 @@ function Home() {
   };
 
   // 음악 페이지 수 계산
-  const noOfMusicPages = Math.ceil(music_rank.length / musicPerPage);
+  const noOfMusicPages = Math.ceil(musicData.length / musicPerPage);
 
   //유저 랭킹
   let user_rank = useSelector((state) => {
@@ -243,9 +257,9 @@ function Home() {
                 height="378"
                 src="https://www.youtube.com/embed/ZZlMB-qRQv0"
                 title="YouTube video player"
-                frameborder="0"
+                frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen
+                allowFullScreen
               ></iframe>
             </div>
             <div className="rules">
@@ -277,7 +291,7 @@ function Home() {
                 </div>
                 <div className="music_rank">
                   <div className="rank">
-                    {music_rank
+                    {musicData
                       .slice(
                         (musicPage - 1) * musicPerPage,
                         musicPage * musicPerPage
