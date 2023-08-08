@@ -133,6 +133,7 @@ public class User implements UserDetails {
 //        userDto.setBirthDate(this.birthDate);
         userDto.setGender(gender);
         userDto.setConnectionId(this.getConnectionId());
+        userDto.setProfileImageSeq(this.getProfileImage().getProfileImageSeq());
 //        userDto.setBirthDate(this.getBirthDate());
         userDto.setGender(this.getGender());
         return userDto;
