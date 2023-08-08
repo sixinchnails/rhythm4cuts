@@ -54,7 +54,8 @@ public class WebSecurityConfig {
             "/member/mail",
             "/member/mailcheck",
             "/stomp/**",
-            "/ranking/**"
+            "/ranking/song",
+            "/ranking/user"
     );
 
     @Bean
