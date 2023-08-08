@@ -5,11 +5,12 @@ import Sidebar from "../../components/My/My_SideBar";
 import MainContent from "../../components/My/My_MainContent";
 import ModifyInfo from "../../components/My/My_ModifyInfo";
 import { userInfo } from "../../apis/userInfo";
-import LoginMypageHeader from "../../components/Home/LoginMypageHeader";
+import LoginMypageHeader from "../../components/Home/BlackHeader";
 import { useNavigate } from "react-router-dom";
 
 const MyModify = () => {
   const navigate = useNavigate();
+  const checkstatus = localStorage.getItem("checkstatus");
 
   //닉네임
   const [nickName, setNickName] = useState("");
@@ -19,7 +20,6 @@ const MyModify = () => {
     userInfo()
       .then((res) => {
         if (res.status === 200) {
-          // console.log(res);
           setNickName(res.data.nickname);
         }
       })
@@ -29,6 +29,10 @@ const MyModify = () => {
       });
   } catch (error) {
     console.log(error);
+  } finally {
+    if (checkstatus === "false") {
+      navigate("/MyPage");
+    }
   }
 
   useEffect(() => {

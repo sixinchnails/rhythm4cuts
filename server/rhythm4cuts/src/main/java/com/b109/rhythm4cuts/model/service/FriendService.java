@@ -10,7 +10,6 @@ import java.util.List;
 @Service
 @Transactional
 public interface FriendService {
-
     public List<UserDto> getFriendList(int userSeq) throws Exception;
     public List<UserDto> userSearch(String searchStr) throws Exception;
     public List<UserDto> getRequestFriendList(int userSeq) throws Exception;

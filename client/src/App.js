@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom"; //Link,
 import { Provider } from "react-redux";
 import store from "./store";
 
+
 import Home from "./pages/HomePage/Home";
 import Join from "./pages/HomePage/Join";
 import Login from "./pages/HomePage/Login";
@@ -19,7 +20,9 @@ import MyPoint from "./pages/MyPage/MyPoint";
 import MyPhoto from "./pages/MyPage/MyPhoto";
 import MyModify from "./pages/MyPage/MyModify";
 
+
 function App() {
+
   return (
     <Provider store={store}>
       {/* <nav>
@@ -71,7 +74,7 @@ function App() {
 
         <Route path="/GameList" element={<GameList />} />
         <Route path="/GameWait/:gameSeq" element={<GameWait />} />
-        <Route path="/GamePlay" element={<GamePlay />} />
+        <Route path="/GamePlay/:gameSeq" element={<GamePlay />} />
         <Route path="/GameScore" element={<GameScore />} />
         <Route path="/GameShot" element={<GameShot />} />
 

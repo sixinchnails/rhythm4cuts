@@ -4,7 +4,7 @@ import { keyframes } from '@emotion/react';
 import { css } from "@mui/system";
 
 // Define the keyframes
-const move = keyframes`
+const move = keyframes`git
   0% { transform: translateX(0); }
   50% { transform: translateX(10px); }
   100% { transform: translateX(0); }
