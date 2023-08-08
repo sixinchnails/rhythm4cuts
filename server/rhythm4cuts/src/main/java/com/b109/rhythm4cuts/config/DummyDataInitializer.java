@@ -77,7 +77,6 @@ public class DummyDataInitializer {
         user.setNickname("ssafy");
         user.setEmail("ssafy@naver.com");
         user.setProfileImage(profileImage1);
-        user.setBirthDate(targetDate);
         user.setPassword(bCryptPasswordEncoder.encode("1234"));
 
         userRepository.save(user);
@@ -87,7 +86,6 @@ public class DummyDataInitializer {
         user2.setNickname("hyun");
         user2.setEmail("abc@gmail.com");
         user2.setProfileImage(profileImage1);
-        user2.setBirthDate(targetDate);
         user2.setPassword(bCryptPasswordEncoder.encode("1234"));
 
         userRepository.save(user2);
