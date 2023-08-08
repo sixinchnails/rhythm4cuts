@@ -30,33 +30,38 @@ public class MelonServiceImpl implements MelonService {
 
     @Override
     public List<SongRankDto> scrapeAndSaveMelonChart() throws SQLException, IOException {
-        // Melon Top 100을 크롤링해서, DB에 저장
-        String url = "https://www.melon.com/chart/index.htm";                       // Melon Top 100 url
-        Document doc = Jsoup.connect(url).get();
+        try {
+            // Melon Top 100을 크롤링해서, DB에 저장
+            String url = "https://www.melon.com/chart/index.htm";                       // Melon Top 100 url
+            Document doc = Jsoup.connect(url).get();
 
-        Elements titleElements = doc.select("div.ellipsis.rank01 span a");  // 제목
-        Elements singerElements = doc.select("div.ellipsis.rank02 span a"); // 가수
-        Elements rankElements = doc.select("span.rank");                    // 순위
+            Elements titleElements = doc.select("div.ellipsis.rank01 span a");  // 제목
+            Elements singerElements = doc.select("div.ellipsis.rank02 span a"); // 가수
+            Elements rankElements = doc.select("span.rank");                    // 순위
 
-        List<SongRankDto> res = new ArrayList<>();
+            List<SongRankDto> res = new ArrayList<>();
 
-        for (int i = 0; i < titleElements.size(); i++) {
-            System.out.println(i + "번째 insert 진행중");
-            String title = titleElements.get(i).text();
-            String singer = singerElements.get(i).text();
-            int rank = Integer.parseInt(rankElements.get(i).text());
-            System.out.println("text: " + title + " " + singer + " " + rank);
+            for (int i = 0; i < titleElements.size(); i++) {
+                System.out.println(i + "번째 insert 진행중");
+                String title = titleElements.get(i).text();
+                String singer = singerElements.get(i).text();
+                int rank = Integer.parseInt(rankElements.get(i).text());
+                System.out.println("text: " + title + " " + singer + " " + rank);
 
-            SongRank songRank = new SongRank();
-            songRank.setTitle(title);
-            songRank.setSinger(singer);
-            songRank.setRanking(rank);
+                SongRank songRank = new SongRank();
+                songRank.setTitle(title);
+                songRank.setSinger(singer);
+                songRank.setRanking(rank);
 
-            res.add(songRank.getSongRankDto());
+                res.add(songRank.getSongRankDto());
 
-            melonRepository.save(songRank);
+                melonRepository.save(songRank);
+            }
+
+            return res;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        return res;
+        return null;
     }
 }
