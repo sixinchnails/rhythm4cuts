@@ -44,7 +44,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             "/member/mailcheck",
             "/member/nickname",
             "/member/pw",
-            "/stomp/chat"
+            "/stomp/chat",
+            "/ranking"
     );
 
     @Override

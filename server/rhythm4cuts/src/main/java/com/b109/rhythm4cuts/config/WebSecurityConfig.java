@@ -53,7 +53,8 @@ public class WebSecurityConfig {
 //            "/**"
             "/member/mail",
             "/member/mailcheck",
-            "/stomp/**"
+            "/stomp/**",
+            "/ranking"
     );
 
     @Bean
