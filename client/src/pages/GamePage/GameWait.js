@@ -123,6 +123,7 @@ function GameWait() {
         const { connection, connectionToken } = await createConnection(session);
         dispatch(setConnection(connection));
         dispatch(setConnectionToken(connectionToken));
+        init(connectionToken);
       }
     } catch (error) {
       console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
@@ -132,11 +133,11 @@ function GameWait() {
   useEffect(() => {
     if (session) {
       fetchConnectionToken();
-      init();
     }
   }, [session])
 
-  function init() {
+  function init(connectionToken) {
+    console.log("init:" + connectionToken)
     console.log("use effect begin")
     const OV = new OpenVidu;
     userState.session = OV.initSession()
