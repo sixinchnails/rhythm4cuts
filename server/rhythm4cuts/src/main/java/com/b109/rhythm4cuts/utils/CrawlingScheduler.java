@@ -12,8 +12,7 @@ public class CrawlingScheduler {
     private final MelonService melonService;
 
     // 매일 오전 0시에 실행되는 Scheduler
-//    @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(cron = "0 0 0 * * *")
     public void runCrawlingJob() {
         try {
 
