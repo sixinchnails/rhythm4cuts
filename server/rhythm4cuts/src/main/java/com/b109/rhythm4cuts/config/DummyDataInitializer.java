@@ -12,6 +12,7 @@ import com.b109.rhythm4cuts.config.WebSecurityConfig.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
@@ -35,6 +36,13 @@ public class DummyDataInitializer {
     }
 
     @PostConstruct
+    public void begin() throws SQLException {
+        init();
+        User
+        makeFriend();
+    }
+
+    @Transactional
     public void init() throws SQLException {
         ProfileImage profileImage1 = new ProfileImage();
         profileImage1.setImageName("first profile image");
@@ -147,9 +155,7 @@ public class DummyDataInitializer {
         user8.setPassword(bCryptPasswordEncoder.encode("1234"));
         userRepository.save(user8);
 
-        friendRepository.updateRequestFriendToConfirm(user4.getUserSeq(), user5.getUserSeq());
-        friendRepository.updateRequestFriendToConfirm(user4.getUserSeq(), user6.getUserSeq());
-        friendRepository.updateRequestFriendToConfirm(user4.getUserSeq(), user7.getUserSeq());
-        friendRepository.updateRequestFriendToConfirm(user4.getUserSeq(), user8.getUserSeq());
     }
+
+  
 }

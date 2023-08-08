@@ -4,13 +4,16 @@ import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.FriendDto;
 import com.b109.rhythm4cuts.model.dto.UserDto;
 import com.b109.rhythm4cuts.model.repository.FriendRepository;
+import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -18,6 +21,8 @@ import java.util.List;
 public class FriendServiceImpl implements FriendService{
 
     private final FriendRepository friendRepository;
+    private final UserRepository userRepository;
+
 
 
 
