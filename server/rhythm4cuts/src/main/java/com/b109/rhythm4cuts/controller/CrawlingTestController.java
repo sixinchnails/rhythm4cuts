@@ -34,7 +34,7 @@ public class CrawlingTestController {
             res.put("message", "Success");
             res.put("statusCode", 200);
             res.put("data", songRanks);
-
+            
             System.out.println("Melon Chart Crawling Success.");
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {

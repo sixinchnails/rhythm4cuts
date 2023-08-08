@@ -13,7 +13,7 @@ public class SongRank {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "song_rank_seq")
-    private int songRankSeq;
+    private Long songRankSeq;
 
     // 노래 제목
     private String title;
@@ -27,6 +27,7 @@ public class SongRank {
     public SongRankDto getSongRankDto() {
         SongRankDto songRankDto = new SongRankDto();
 
+        songRankDto.setSongRankSeq(this.getSongRankSeq());
         songRankDto.setTitle(this.getTitle());
         songRankDto.setSinger(this.getSinger());
         songRankDto.setRanking(this.getRanking());
