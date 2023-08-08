@@ -160,7 +160,7 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 90%;
+  width: 95%;
   height: 50%;
   background-color: #14006d;
   border-radius: 10px;
@@ -169,11 +169,11 @@ body {
 }
 
 .Home3 > .content > .rank1 > .rt_sing_rank > .music_rank {
-  width: 90%;
+  width: 95%;
   height: 75%;
   background-color: #14006d;
   border-radius: 10px;
-  margin-left: 5%;
+  margin-left: 2.5%;
   color: white;
 }
 
