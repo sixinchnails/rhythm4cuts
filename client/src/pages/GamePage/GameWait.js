@@ -21,7 +21,6 @@ import {
   resetRoomState,
 } from "../../store";
 
-
 // Styled 버튼
 const StyledIconButton = styled(IconButton)({
   color: "white",
@@ -39,10 +38,10 @@ function GameWait() {
   const navigate = useNavigate();
   let { gameSeq } = useParams(); // URL에서 가져와
 
-
   const session = useSelector(state => state.roomState.session);
   const connection = useSelector(state => state.roomState.connection);
   const connectionToken = useSelector(state => state.roomState.connectionToken);
+
   // -----------------------------------------------------------------------------------------------------------------
 
   // 로그인 상태를 업데이트하는 함수
@@ -166,29 +165,40 @@ function GameWait() {
       <Header />
 
       <Grid container>
-
         {/* 멘트 */}
         <Grid
           container
           style={{
-            display: 'flex',
-            justifyContent: 'center',
+            display: "flex",
+            justifyContent: "center",
             zIndex: 1, // z-index를 1로 설정하여 비디오 위에 텍스트가 나타나도록
           }}
         >
-          <StyledIconButton onClick={handleGameStart}>
-            <Typography variant="h4" style={{ fontFamily: 'Pretendard-Regular', fontWeight: "bold", fontSize: "px", color: "red", marginBottom: "10px" }}>
-              전원 준비가 되면 게임이 시작합니다 악!
-            </Typography>
-          </StyledIconButton>
-
+          <Typography
+            variant="h4"
+            style={{
+              fontFamily: "Pretendard-Regular",
+              fontWeight: "bold",
+              fontSize: "px",
+              color: "red",
+              marginBottom: "10px",
+            }}
+          >
+            전원 준비가 되면 게임이 시작합니다 악!
+          </Typography>
         </Grid>
 
         {/* Top */}
-        <Grid container >
-          <Grid item xs={10} container alignItems="center" justifyContent="center" paddingLeft={"150px"}>
+        <Grid container>
+          <Grid
+            item
+            xs={10}
+            container
+            alignItems="center"
+            justifyContent="center"
+            paddingLeft={"150px"}
+          >
             <Card
-
               style={{
                 width: "55vw",
                 height: "50vh",
@@ -197,7 +207,7 @@ function GameWait() {
               }}
             >
               {/* 대기중 비디오 */}
-              {/* <video
+              <video
                 src="/images/GameImage/Dance.mp4"
                 autoPlay
                 loop
@@ -206,85 +216,204 @@ function GameWait() {
                   height: "100%",
                   objectFit: "cover",
                 }}
-              /> */}
-              
-                <UserVideoComponent
-              streamManager={{ session, connection, connectionToken }}
-              connectionData={getUserConnectionData()}
-            />
+              />
             </Card>
-
-
           </Grid>
 
-          <Grid item xs={2} container direction="column" alignItems="center" justifyContent="center" style={{ paddingTop: "50px" }}>
+          <Grid
+            item
+            xs={2}
+            container
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            style={{ paddingTop: "50px" }}
+          >
             {/* "게임준비" 버튼 */}
-            <StyledIconButton onClick={handleGameReady} style={{ width: "200px" }}>
+            <StyledIconButton
+              onClick={handleGameReady}
+              style={{ width: "200px" }}
+            >
               <CheckIcon />
-              <Typography style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", padding: "20px" }}>게임 준비</Typography>
+              <Typography
+                style={{
+                  fontFamily: "Pretendard-Regular",
+                  fontSize: "20px",
+                  padding: "20px",
+                }}
+              >
+                게임 준비
+              </Typography>
             </StyledIconButton>
 
             {/* "채팅" 버튼 */}
             <StyledIconButton onClick={handleChat} style={{ width: "200px" }}>
               <ChatIcon />
-              <Typography style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", padding: "20px" }}>채팅</Typography>
+              <Typography
+                style={{
+                  fontFamily: "Pretendard-Regular",
+                  fontSize: "20px",
+                  padding: "20px",
+                }}
+              >
+                채팅
+              </Typography>
             </StyledIconButton>
 
             {/* "나가기" 버튼 */}
             <StyledIconButton onClick={handleExit} style={{ width: "200px" }}>
               <ExitToAppIcon />
-              <Typography style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", padding: "20px" }}>나가기</Typography>
+              <Typography
+                style={{
+                  fontFamily: "Pretendard-Regular",
+                  fontSize: "20px",
+                  padding: "20px",
+                }}
+              >
+                나가기
+              </Typography>
             </StyledIconButton>
-
-
           </Grid>
         </Grid>
 
         {/* Bottom */}
-        <Grid style={{ height: '20vh', display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: "50px" }}>
-
+        <Grid
+          style={{
+            height: "20vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            margin: "50px",
+          }}
+        >
           {/* Player 1 */}
-          <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            {/* <UserVideo roomSession={session} connection={connection} userToken={connectionToken} /> */}
-          </Grid>
-          <Grid item xs={1} style={{ height: '20vh' }}>
-            <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>첫번째 선수</div>
-          </Grid>
-          {/* Player 2 */}
-          <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            {/* <UserVideo /> */}
-          </Grid>
-          <Grid item xs={1} style={{ height: '20vh' }}>
-            <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>두번째 선수</div>
-          </Grid>
-          {/* Player 3 */}
-          <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
+          <Grid
+            item
+            xs={2}
+            style={{
+              backgroundColor: "black",
+              height: "20vh",
+              border: "2px solid white",
+              padding: "2px",
+              margin: "5px",
+              borderRadius: "20px",
+            }}
+          >
             <UserVideoComponent
               streamManager={{ session, connection, connectionToken }}
               connectionData={getUserConnectionData()}
             />
-
           </Grid>
-          <Grid item xs={1} style={{ height: '20vh' }}>
-            <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>세번째 선수</div>
+
+          <Grid item xs={1} style={{ height: "20vh" }}>
+            <div
+              style={{
+                fontFamily: "Pretendard-Regular",
+                fontSize: "20px",
+                color: "white",
+                padding: "5px",
+              }}
+            >
+              첫번째 선수
+            </div>
+          </Grid>
+          {/* Player 2 */}
+          <Grid
+            item
+            xs={2}
+            style={{
+              backgroundColor: "black",
+              height: "20vh",
+              border: "2px solid white",
+              padding: "2px",
+              margin: "5px",
+              borderRadius: "20px",
+            }}
+          >
+            <UserVideoComponent
+              streamManager={{ session, connection, connectionToken }}
+              connectionData={getUserConnectionData()}
+            />
+          </Grid>
+          <Grid item xs={1} style={{ height: "20vh" }}>
+            <div
+              style={{
+                fontFamily: "Pretendard-Regular",
+                fontSize: "20px",
+                color: "white",
+                padding: "5px",
+              }}
+            >
+              두번째 선수
+            </div>
+          </Grid>
+
+          {/* Player 3 */}
+          <Grid
+            item
+            xs={2}
+            style={{
+              backgroundColor: "black",
+              height: "20vh",
+              border: "2px solid white",
+              padding: "2px",
+              margin: "5px",
+              borderRadius: "20px",
+            }}
+          >
+            <UserVideoComponent
+              streamManager={{ session, connection, connectionToken }}
+              connectionData={getUserConnectionData()}
+            />
+          </Grid>
+          <Grid item xs={1} style={{ height: "20vh" }}>
+            <div
+              style={{
+                fontFamily: "Pretendard-Regular",
+                fontSize: "20px",
+                color: "white",
+                padding: "5px",
+              }}
+            >
+              세번째 선수
+            </div>
           </Grid>
           {/* Player 4 */}
-          <Grid item xs={2} style={{ backgroundColor: "black", height: '20vh', border: '2px solid white', padding: '2px', margin: '5px', borderRadius: "20px" }}>
-            {/* <UserVideo /> */}
+          <Grid
+            item
+            xs={2}
+            style={{
+              backgroundColor: "black",
+              height: "20vh",
+              border: "2px solid white",
+              padding: "2px",
+              margin: "5px",
+              borderRadius: "20px",
+            }}
+          >
+            <UserVideoComponent
+              streamManager={{ session, connection, connectionToken }}
+              connectionData={getUserConnectionData()}
+            />
           </Grid>
-          <Grid item xs={1} style={{ height: '20vh' }}>
-            <div style={{ fontFamily: 'Pretendard-Regular', fontSize: "20px", color: "white", padding: "5px" }}>네번째 선수</div>
+          <Grid item xs={1} style={{ height: "20vh" }}>
+            <div
+              style={{
+                fontFamily: "Pretendard-Regular",
+                fontSize: "20px",
+                color: "white",
+                padding: "5px",
+              }}
+            >
+              네번째 선수
+            </div>
           </Grid>
-
         </Grid>
-
-
       </Grid>
 
       {/* '로그인 경고' 모달 */}
-      < LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
-
-    </div >
+      <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
+    </div>
   );
 }
 

@@ -20,30 +20,8 @@ export const createConnection = async () => { // sessionId 매개변수 삭제
           Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
           "Content-Type": "application/json",
         },
-        body: {
-          "type": "WEBRTC",
-          "data": "My Server Data",
-          "record": false,
-          "role": "SUBSCRIBER",
-          "kurentoOptions": {
-            "videoMaxRecvBandwidth": 1000,
-            "videoMinRecvBandwidth": 300,
-            "videoMaxSendBandwidth": 1000,
-            "videoMinSendBandwidth": 300,
-            "allowedFilters": ["GStreamerFilter", "ZBarFilter"]
-          },
-          "customIceServers": [
-            {
-              "url": "turn:turn-domain.com:443",
-              "username": "usertest",
-              "credential": "userpass"
-            }
-          ]
-        }
-
       }
     );
-
 
     // 정규식을 사용하여 토큰 부분을 추출합니다.
     // const tokenRegex = /token=([^&]+)/;
