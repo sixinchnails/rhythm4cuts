@@ -11,7 +11,6 @@ import axios from "axios";
 // 액세스토큰을 헤더와 바디에 바디에는 email 도
 const LoginHeader = () => {
   const access = getCookie("access");
-
   const checkLogin = async () => {
     try {
       const response = await axios.post(
@@ -37,7 +36,7 @@ const LoginHeader = () => {
       }
     } catch (error) {
       console.log(error);
-      window.confirm("2오류가 발생했습니다.");
+      window.confirm("로그아웃오류가 발생했습니다.");
     }
   };
 
@@ -54,10 +53,12 @@ const LoginHeader = () => {
         <img src="images/Home_Logo.png"></img>
       </div>
       <div>
-        <span style={{ color: "white", marginRight: 20 }}>
+        <span style={{ color: "white", marginRight: 20, fontWeight: "bold" }}>
           {nickName}님 반갑습니다.
         </span>
-        <span style={{ color: "white", marginRight: 20 }}>{point}point</span>
+        <span style={{ color: "white", marginRight: 20, fontWeight: "bold" }}>
+          {point}point
+        </span>
         <Badge color="error" variant="dot" style={{ marginRight: "20px" }}>
           <NotificationsIcon />
         </Badge>
