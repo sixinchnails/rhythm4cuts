@@ -35,13 +35,9 @@ public class DummyDataInitializer {
         this.friendRepository = friendRepository;
     }
 
-    @PostConstruct
-    public void begin() throws SQLException {
-        init();
-        User
-        makeFriend();
-    }
 
+
+    @PostConstruct
     @Transactional
     public void init() throws SQLException {
         ProfileImage profileImage1 = new ProfileImage();
@@ -157,5 +153,5 @@ public class DummyDataInitializer {
 
     }
 
-  
+
 }
