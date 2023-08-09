@@ -27,7 +27,7 @@ public class StompController {
 
     @MessageMapping(value = "/invite")
     public void inviteFriend(FriendDto friendDto) {
-        friendDto.setMessage(friendDto.getToUser() + "님이 " + friendDto.getToUser() + "님에게 친구 요청을 보냇습니다.");
+        friendDto.setMessage(friendDto.getFromUser() + "님이 " + friendDto.getToUser() + "님에게 친구 요청을 보냇습니다.");
         messagingTemplate.convertAndSend("/subscribe/friend/invite" + friendDto.getToUser(), friendDto);
     }
 }
