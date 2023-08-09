@@ -44,6 +44,10 @@ public class MemberController {
         res.put("nickname", userDto.getNickname());
         res.put("name", userDto.getName());
         res.put("user_seq", userDto.getUserSeq());
+        res.put("gender", userDto.getGender());
+        res.put("score_sum", userDto.getScoreSum());
+        res.put("profile_img_seq", userDto.getProfileImageSeq());
+        res.put("play_count", userDto.getPlayCount());
 
         return res;
     }
