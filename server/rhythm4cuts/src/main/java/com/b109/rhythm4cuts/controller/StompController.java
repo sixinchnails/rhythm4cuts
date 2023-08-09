@@ -14,6 +14,7 @@ public class StompController {
     private final SimpMessagingTemplate messagingTemplate;
     @MessageMapping(value = "/request")
     public void reqeustFriend(FriendDto friendDto) {
+        System.out.println(friendDto.getToUser() + "님이 " + friendDto.getToUser() + "님에게 요청을 보냈습니다.");
         friendDto.setMessage(friendDto.getToUser() + "님이 " + friendDto.getToUser() + "님에게 요청을 보냈습니다.");
         messagingTemplate.convertAndSend("/subscribe/friend/" + friendDto.getToUser(), friendDto);
     }
