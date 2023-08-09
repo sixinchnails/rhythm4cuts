@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { setSession as setSessionAction, setConnection, setConnectionToken, resetRoomState, setNickname, setPlayers } from "../../store";
+import { setSession as setSessionAction, setConnection, setConnectionToken, resetRoomState, setPlayers } from "../../store";
 import { Chat as ChatIcon, Check as CheckIcon, ExitToApp as ExitToAppIcon } from "@mui/icons-material";
 import { styled, Button, Card, Container, Grid, Typography, IconButton } from "@mui/material";
 import { createConnection } from '../../openvidu/connectionInitialization';
@@ -25,13 +25,15 @@ function GameWait() {
   const [mainStreamManager, setMainStreamManager] = useState(undefined); // 방장?
   const [publisher, setPublisher] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
+  const [userStreams, setUserStreams] = useState([]);  // 유저 스트림 목록을 저장할 상태 변수
 
-  // REDUX에서 가져오기
+  // REDUX에서 가져오기F
   var { gameSeq } = useParams(); // url에서 추출
   // const gameSeq = useSelector(state => state.roomState.gameseq); 
   const session = useSelector(state => state.roomState.session);
   const connection = useSelector(state => state.roomState.connection);
   const connectionToken = useSelector(state => state.roomState.connectionToken);
+  const nickname = useSelector(state => state.roomState.nickname);
 
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
@@ -54,24 +56,28 @@ function GameWait() {
   });
 
   // -----------------------------------------------------------------------------------------------------
-  // 유저 닉네임 가져오기
-  const nickname = async () => {
-    try {
-      const email = getCookie("email");
-      const access = getCookie("access");
-      const response = await axios.get(
-        "https://i9b109.p.ssafy.io:8443/member/info?email=" + email,
-        {
-          headers: {
-            Authorization: "Bearer " + access,
-          }
-        }
-      );
-      dispatch(setNickname(response.data.nickname));
-    } catch (error) {
-      console.error("DB에서 닉네임 불러오기 실패:", error);
-    }
-  }
+  // // 유저 닉네임 가져오기
+  // useEffect(() => {
+  //   const fetchNickname = async () => {
+  //     try {
+  //       const email = getCookie("email");
+  //       const access = getCookie("access");
+  //       const response = await axios.get(
+  //         "https://i9b109.p.ssafy.io:8443/member/info?email=" + email,
+  //         {
+  //           headers: {
+  //             Authorization: "Bearer " + access,
+  //           }
+  //         }
+  //       );
+  //       dispatch(setNickname(response.data.nickname));
+  //     } catch (error) {
+  //       console.error("DB에서 닉네임 불러오기 실패:", error);
+  //     }
+  //   };
+
+  //   fetchNickname();
+  // }, []);
 
   // 로그인 상태관리
   useEffect(() => {
@@ -119,16 +125,15 @@ function GameWait() {
   };
   // 세션 나가기
   const leaveSession = () => {
-    if (session) {
-      session.disconnect();
-    }
-
-    setSessionAction(undefined);
+    // if (session) {
+    // session.disconnect();
+    // }
+    setSessionAction(undefined); // 세션 초기화
     setSubscribers([]);
-    setMySessionId('SessionA');
-    setMyUserName('Participant' + Math.floor(Math.random() * 100));
     setMainStreamManager(undefined);
     setPublisher(undefined);
+    // setMySessionId('SessionA');
+    // setMyUserName('Participant' + Math.floor(Math.random() * 100));
   };
 
   const handleChangeSessionId = (e) => {
@@ -161,7 +166,9 @@ function GameWait() {
 
   // "나가기" 버튼 눌렀을 때 동작
   const handleExit = () => {
-    dispatch(resetRoomState());
+    // dispatch(resetRoomState());
+    onBeforeUnload();
+    console.log("방 나갈거야 ~")
     navigate(`/GameList`);
   };
 
@@ -171,27 +178,6 @@ function GameWait() {
   // };
 
 
-  // 연결 유저 토큰 만들기
-  // useEffect(() => {
-  //   if (session) {
-  //     fetchConnectionToken();
-  //   }
-  // }, [session]);
-
-  const fetchConnectionToken = async () => {
-    try {
-      await fetchSession();
-      // return await createConnection();
-      if (session) {
-        // session이 생성된 상태인지 확인
-        const { connection, connectionToken } = await createConnection(session);
-        dispatch(setConnection(connection));
-        dispatch(setConnectionToken(connectionToken));
-      }
-    } catch (error) {
-      console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
-    }
-  };
 
   // 방 세션 ID 가져오기
   const fetchSession = async () => {
@@ -212,6 +198,23 @@ function GameWait() {
     }
   };
 
+  // 토큰 만들기
+  const fetchConnectionToken = async () => {
+    try {
+      // await fetchSession();
+      // // return await createConnection();
+      // if (session) {
+      // session이 생성된 상태인지 확인
+      console.log("세션이야 : " + session);
+      const { connection, connectionToken } = await createConnection(session);
+      dispatch(setConnection(connection));
+      dispatch(setConnectionToken(connectionToken));
+      // }
+    } catch (error) {
+      console.error("연결 토큰을 가져오는데 실패 :", error);
+    }
+  };
+
   // openvidu 연결
   const joinSession = async () => {
     try {
@@ -221,7 +224,9 @@ function GameWait() {
 
       newSession.on('streamCreated', (event) => {
         const subscriber = newSession.subscribe(event.stream, undefined);
-        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+        // setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+        setUserStreams(prevStreams => [...prevStreams, subscriber]);
+
       });
 
       newSession.on('streamDestroyed', (event) => {
@@ -233,6 +238,7 @@ function GameWait() {
       });
 
       const strat_token = connectionToken; // Implement getToken function
+      console.log("닉네임~~~~~~~~~~~~~~" + nickname)
       newSession.connect(strat_token, { clientData: nickname })
         .then(async () => {
           const newPublisher = await ov.initPublisherAsync(undefined, {
@@ -269,8 +275,8 @@ function GameWait() {
   useEffect(() => {
     const final = async () => {
       try {
-        // await fetchSession(); // 세션 ID 가져오기
-        await fetchConnectionToken(); // 연결 토큰 생성 : 여기에 세션ID 가져오는거 들어있음
+        await fetchSession(); // 세션 ID 가져오기
+        await fetchConnectionToken(); // 연결 토큰 생성
         await joinSession(); // openvidu 연결
       } catch (error) {
         console.error("최종 연결을 실패했습니다 :", error);
@@ -411,8 +417,7 @@ function GameWait() {
         </Grid>
 
         {/* Bottom */}
-        <Grid container
-          direction="row"
+        <Grid
           style={{
             height: "20vh",
             display: "flex",
@@ -421,89 +426,122 @@ function GameWait() {
             margin: "50px",
           }}
         >
-
-          {/* 플레이어 1 : mainStreamManager */}
-          {mainStreamManager ? (
-            <Grid
-              key="mainStream"
-              item
-              xs={2}
-              style={{
-                backgroundColor: 'black',
-                height: '20vh',
-                border: '2px solid white',
-                padding: '2px',
-                margin: '5px',
-                borderRadius: '20px',
-              }}
-            >
-              <UserVideoComponent
-                streamManager={mainStreamManager}
-              />
-            </Grid>
-          ) : null}
-
-          {/* 플레이어 2 : publisher*/}
-          {publisher ? (
-            <Grid
-              key="publisher"
-              item
-              xs={2}
-              style={{
-                backgroundColor: 'black',
-                height: '20vh',
-                border: '2px solid white',
-                padding: '2px',
-                margin: '5px',
-                borderRadius: '20px',
-              }}
-            >
-              <UserVideoComponent
-                streamManager={publisher}
-              />
-            </Grid>
-          ) : null}
-
-          {/* 플레이어 3 */}
-          {subscribers.map((sub, index) => (
-            <Grid key={sub.id}
-              item
-              xs={2}
-              style={{
-                backgroundColor: 'black',
-                height: '20vh',
-                border: '2px solid white',
-                padding: '2px',
-                margin: '5px',
-                borderRadius: '20px',
-              }}
-            >
-              <UserVideoComponent
-                streamManager={sub}
-              />
-            </Grid>
-          ))}
-
-          {/* 플레이어 4
+          {/* Player 1 */}
           <Grid
-            key={index}
             item
             xs={2}
             style={{
-              backgroundColor: 'black',
-              height: '20vh',
-              border: '2px solid white',
-              padding: '2px',
-              margin: '5px',
-              borderRadius: '20px',
+              backgroundColor: "black",
+              height: "20vh",
+              border: "2px solid white",
+              padding: "2px",
+              margin: "5px",
+              borderRadius: "20px",
             }}
           >
             <UserVideoComponent
-              streamManager={player}
-              connectionData={{ nickname: player.nickname }}
+              streamManager={mainStreamManager}
             />
-          </Grid> */}
-
+          </Grid>
+          <Grid item xs={1} style={{ height: "20vh" }}>
+            <div
+              style={{
+                fontFamily: "Pretendard-Regular",
+                fontSize: "20px",
+                color: "white",
+                padding: "5px",
+              }}
+            >
+              첫번째 선수
+            </div>
+          </Grid>
+          {/* Player 2 */}
+          <Grid
+            item
+            xs={2}
+            style={{
+              backgroundColor: "black",
+              height: "20vh",
+              border: "2px solid white",
+              padding: "2px",
+              margin: "5px",
+              borderRadius: "20px",
+            }}
+          >
+            <UserVideoComponent
+              streamManager={userStreams[0]}
+            />
+          </Grid>
+          <Grid item xs={1} style={{ height: "20vh" }}>
+            <div
+              style={{
+                fontFamily: "Pretendard-Regular",
+                fontSize: "20px",
+                color: "white",
+                padding: "5px",
+              }}
+            >
+              두번째 선수
+            </div>
+          </Grid>
+          {/* Player 3 */}
+          <Grid
+            item
+            xs={2}
+            style={{
+              backgroundColor: "black",
+              height: "20vh",
+              border: "2px solid white",
+              padding: "2px",
+              margin: "5px",
+              borderRadius: "20px",
+            }}
+          >
+           <UserVideoComponent
+              streamManager={userStreams[1]}
+            />
+          </Grid>
+          <Grid item xs={1} style={{ height: "20vh" }}>
+            <div
+              style={{
+                fontFamily: "Pretendard-Regular",
+                fontSize: "20px",
+                color: "white",
+                padding: "5px",
+              }}
+            >
+              세번째 선수
+            </div>
+          </Grid>
+          {/* Player 4 */}
+          <Grid
+            item
+            xs={2}
+            style={{
+              backgroundColor: "black",
+              height: "20vh",
+              border: "2px solid white",
+              padding: "2px",
+              margin: "5px",
+              borderRadius: "20px",
+            }}
+          >
+            <UserVideoComponent
+              streamManager={userStreams[2]}
+            />
+          </Grid>
+          <Grid item xs={1} style={{ height: "20vh" }}>
+            <div
+              style={{
+                fontFamily: "Pretendard-Regular",
+                fontSize: "20px",
+                color: "white",
+                padding: "5px",
+              }}
+            >
+              네번째 선수
+            </div>
+          </Grid>
         </Grid>
 
       </Grid>
@@ -515,7 +553,3 @@ function GameWait() {
 }
 
 export default GameWait;
-
-
-
-

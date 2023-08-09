@@ -6,19 +6,22 @@ export default class OpenViduVideoComponent extends Component {
         this.videoRef = React.createRef();
     }
 
-    componentDidUpdate() {
-        if (this.props && !!this.videoRef) {
+    componentDidUpdate(prevProps) {
+        if (this.props.streamManager && this.props.streamManager !== prevProps.streamManager) {
             this.props.streamManager.addVideoElement(this.videoRef.current);
         }
     }
 
     componentDidMount() {
-        if (this.props && !!this.videoRef) {
+        if (this.props.streamManager && this.props.streamManager.addVideoElement) {
             this.props.streamManager.addVideoElement(this.videoRef.current);
+        } else {
+            console.error('Error: addVideoElement method not found in streamManager');
         }
     }
 
+
     render() {
-        return <video autoPlay={true} ref={this.videoRef}/>;
+        return <video autoPlay={true} ref={this.videoRef} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "20px" }} />;
     }
 }
