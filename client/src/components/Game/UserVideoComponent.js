@@ -12,27 +12,28 @@ export default class UserVideoComponent extends Component {
   // 컴포넌트가 처음 마운트될 때 호출되는 메서드
   async componentDidMount() {
     await this.getMediaStream(); // 웹캠 스트림 가져오기
-    this.addStreamToStreamManager()
+    await this.addStreamToStreamManager()
   }
 
   // 웹캠 스트림을 가져오는 메서드
   async getMediaStream() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      this.videoRef.current.srcObject = stream;
-      // if (this.props.streamManager.addStream) {
-      // this.props.streamManager.addStream(stream);
-      // } else {
-      // console.error('Error: addStream method not found in streamManager');
-      // }
+      if (this.videoRef.current) { // Check if videoRef is not null
+        this.videoRef.current.srcObject = stream;
+      } else {
+        console.error('Error: videoRef is null');
+      }
     } catch (error) {
       console.error('Error accessing webcam:', error);
     }
   }
 
+
   async addStreamToStreamManager() {
     const { streamManager } = this.props;
-    if (streamManager && streamManager.addStream) {
+    // if (streamManager && streamManager.addStream) {
+    if (streamManager && typeof streamManager.addStream === 'function') {
       streamManager.addStream(this.videoRef.current.srcObject);
     } else {
       console.error('Error: addStream method not found in streamManager');
