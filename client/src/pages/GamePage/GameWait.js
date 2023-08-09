@@ -206,9 +206,9 @@ function GameWait() {
       // if (session) {
       // session이 생성된 상태인지 확인
       console.log("세션이야 : " + session);
-      const { connection, connectionToken } = await createConnection(session);
-      dispatch(setConnection(connection));
-      dispatch(setConnectionToken(connectionToken));
+      await createConnection(session);
+      // dispatch(setConnection(connection));
+      // dispatch(setConnectionToken(connectionToken));
       // }
     } catch (error) {
       console.error("연결 토큰을 가져오는데 실패 :", error);
