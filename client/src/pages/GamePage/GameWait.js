@@ -105,6 +105,7 @@ class GameWait extends Component {
 
                 // On every new Stream received...
                 mySession.on('streamCreated', (event) => {
+                    console.log("-------------------event 발생------------")
                     // Subscribe to the Stream to receive it. Second parameter is undefined
                     // so OpenVidu doesn't create an HTML video by its own
                     var subscriber = mySession.subscribe(event.stream, undefined);
@@ -291,7 +292,7 @@ class GameWait extends Component {
     }
     async getToken() {
         // return await this.fetchConnectionToken().connectionToken
-        return "wss://i9b109.p.ssafy.io?sessionId=ses_HPwWb9VESP&token=tok_AzPHG4syYV8WcWmc"
+        return "wss://i9b109.p.ssafy.io?sessionId=ses_HOL0WYV5CX&token=tok_Vmz7faiqVdAmCbqn"
     }
 
     async fetchConnectionToken() {
