@@ -1,7 +1,9 @@
 .bg {
   width: 100vw;
   height: 100vh;
-  background-color: #f8e8ee;
+  background-image: url("../../../public/images/3.jpg");
+  background-size: cover;
+  background-position: center;
 }
 
 .bg > .outer {
@@ -33,7 +35,7 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  background-color: #f8e8ee;
+  background-color: white;
   border-radius: 10px;
 }
 
@@ -48,15 +50,15 @@
 .bg > .outer > .login > button {
   width: 35%;
   height: 70%;
-  background-color: black;
-  color: white;
+  background-color: white;
+  color: black;
   font-weight: bolder;
   font-size: larger;
   border-radius: 10px;
 }
 
 .bg > .outer > .login > button:hover {
-  background-color: #f2bed1;
+  background-color: #c1b3ff;
 }
 
 .bg > .outer > .searchAndJoin {
@@ -68,8 +70,14 @@
 }
 
 .bg > .outer > .searchAndJoin > button {
-  background-color: #f8e8ee;
+  background-color: transparent;
   border: none;
+  text-decoration: none;
+  padding: 0px !important;
+  margin-right: 6px;
+  margin-left: 15px;
+  color: white;
+  font-size: 15px;
 }
 
 .bg > .outer > .searchAndJoin > a {
@@ -103,6 +111,6 @@
   margin-left: 5%;
 }
 
-.login button{
+.login button {
   cursor: pointer;
 }

@@ -17,14 +17,6 @@ const Join = () => {
     setProfileImgSeq(index);
   }, []);
 
-  useEffect(() => {
-    document.body.style.backgroundColor = "#F8E8EE";
-    // 컴포넌트 unmount 시점에 원래의 배경색으로 되돌리기 위한 cleanup 함수
-    return () => {
-      document.body.style.backgroundColor = null;
-    };
-  }, []);
-
   const navigate = useNavigate();
 
   // 회원가입 정보를 저장할 상태
@@ -48,7 +40,7 @@ const Join = () => {
     } else {
       try {
         const response = await axios.post(
-          "/member/register",
+          "https://i9b109.p.ssafy.io:8443/member/register",
           // "http://lo/calhost:8080/member/register",
           joinInfo
         );
@@ -63,7 +55,13 @@ const Join = () => {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        background: "#c1b3ff",
+      }}
+    >
       <Header></Header>
       <div style={{ display: "flex", width: "30%" }}>
         <JoinImage

@@ -9,6 +9,7 @@ import { closeSessionAndConnection } from "./openvidu/closeSessionAndConnection"
 // 방 세션 관리
 const initialState = {
   session: null,
+  connection: null,
   connectionToken: null,
 };
 
@@ -19,26 +20,35 @@ const roomState = createSlice({
     setSession: (state, action) => {
       state.session = action.payload;
     },
+    setConnection: (state, action) =>{
+      state.connection = action.payload;
+    },
     setConnectionToken: (state, action) => {
       state.connectionToken = action.payload;
     },
     // 상태 초기화
     resetRoomState: (state) => {
       state.session = initialState.session;
+      state.connection = initialState.connection;
       state.connectionToken = initialState.connectionToken;
     }
   },
 });
 
-export const { setSession, setConnectionToken, resetRoomState } = roomState.actions;
+export const { setSession, setConnection, setConnectionToken, resetRoomState } = roomState.actions;
 
 // Room 세션 ID를 설정하는 액션 함수
-export const setRoomSession = (sessionId) => (dispatch) => {
+export const setRoomSession = sessionId => dispatch => {
   dispatch(setSession(sessionId));
 };
 
+// Room 세션 ID를 설정하는 액션 함수
+export const setUserConnection = (connectionId) => (dispatch) => {
+  dispatch(setConnection(connectionId));
+};
+
 // 유저 토큰을 설정하는 액션 함수
-export const setUserToken = (userToken) => (dispatch) => {
+export const setUserToken = userToken => dispatch => {
   dispatch(setConnectionToken(userToken));
 };
 
@@ -65,7 +75,6 @@ export const closeSession = createAsyncThunk(
 );
 // ----------------------------------------------------------------------------------------------------------------
 
-
 // 알림 상태를 저장하는 슬라이스
 const notificationSlice = createSlice({
   name: "notification",
@@ -87,8 +96,17 @@ const MyPage_Friend = createSlice({
     { id: 0, name: "유밍국", point: 10000, playing: "게임중" },
     { id: 1, name: "실버캐슬", point: 8000, playing: "온라인" },
     { id: 2, name: "유밍국", point: 6000, playing: "게임중" },
-    { id: 3, name: "유밍국", point: 4000, playing: "게임중" },
-    { id: 4, name: "유밍국", point: 2000, playing: "오프라인" },
+    { id: 3, name: "최고다 한윤", point: 4000, playing: "게임중" },
+    { id: 5, name: "최재드래곤", point: 2000, playing: "오프라인" },
+    { id: 6, name: "홍유콩", point: 2000, playing: "오프라인" },
+    { id: 7, name: "프젝", point: 2000, playing: "오프라인" },
+    { id: 8, name: "마치면", point: 2000, playing: "오프라인" },
+    { id: 9, name: "디져따", point: 2000, playing: "오프라인" },
+    { id: 9, name: "디져따", point: 2000, playing: "오프라인" },
+    { id: 9, name: "디져따", point: 2000, playing: "오프라인" },
+    { id: 9, name: "디져따", point: 2000, playing: "오프라인" },
+    { id: 9, name: "디져따", point: 2000, playing: "오프라인" },
+    { id: 9, name: "디져따", point: 2000, playing: "오프라인" },
   ],
   reducers: {},
 });
@@ -105,7 +123,7 @@ const MyPage_MyInfo = createSlice({
   reducers: {
     // 프로필 사진 수정 action
     updateProfilePic: (state, action) => {
-      const item = state.find((item) => item.name === "프로필 사진");
+      const item = state.find(item => item.name === "프로필 사진");
       if (item) {
         item.value = action.payload;
       }

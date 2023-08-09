@@ -18,12 +18,12 @@ const MyModify = () => {
   //로그인 상태 확인
   try {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           setNickName(res.data.nickname);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         window.alert("로그인을 해주세요!");
         navigate("/");
       });
@@ -35,17 +35,15 @@ const MyModify = () => {
     }
   }
 
-  useEffect(() => {
-    document.body.style.backgroundColor = "#F8E8EE";
-
-    // 컴포넌트 unmount 시점에 원래의 배경색으로 되돌리기 위한 cleanup 함수
-    return () => {
-      document.body.style.backgroundColor = null;
-    };
-  }, []);
-
   return (
-    <>
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        background:
+          "linear-gradient(to right, rgb(123,123,255), rgb(255,123,123))",
+      }}
+    >
       <LoginMypageHeader />
       {/* 사이드바와 메인 제목을 수평으로 배치하기 위해서는 Flexbox 또는 CSS Grid를 사용해야한다.
       그럴려면 사이드 바와 메인 제목을 감싸고 있는 부모 요소가 필요하다.
@@ -57,7 +55,7 @@ const MyModify = () => {
           <ModifyInfo nickName={nickName}></ModifyInfo>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

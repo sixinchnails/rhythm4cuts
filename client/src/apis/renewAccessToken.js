@@ -14,5 +14,6 @@ export const renewAccessToken = async () => {
       refreshToken: getCookie("refresh"),
     }
   );
+
   return result;
 };

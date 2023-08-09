@@ -3,21 +3,18 @@ import "./My_ModifyInfo.css";
 import Button from "@mui/material/Button";
 import { useState, useEffect } from "react";
 import React, { useRef } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
-import { WifiPasswordTwoTone } from "@mui/icons-material";
+import { userInfo } from "../../apis/userInfo";
+import SelectImageModal from "./My_ModifyPhoto";
 
 function UserInfo(props) {
-  const Info = useSelector((state) => state.MyPage_MyInfo);
   const navigate = useNavigate();
 
   // 상태 변수 추가
   const [nicknameEdit, setNicknameEdit] = useState(false);
   const [passwordEdit, setPasswordEdit] = useState(false);
-
-  // 값들 불러오기
 
   //이전 비밀번호
   const [oldPassWord, setOldPassWord] = useState("");
@@ -30,47 +27,48 @@ function UserInfo(props) {
   const [nickname, setNickname] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isMatchPassword, setIsMatchPassword] = useState(false);
-
+  const [photo, setPhoto] = useState("");
   const fileInput = useRef();
 
-  // const [selectedImage, setSelectedImage] = useState(profilePic);
+  const profileImagePath = `/images/${photo}.png`;
 
-  // const handleFileChange = (e) => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       setSelectedImage(reader.result);
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
+  // 모달의 상태를 관리하는 상태 변수
+  const [showModal, setShowModal] = useState(false);
 
+  // 이미지 선택 모달을 열기
   const handleFileOpen = () => {
-    fileInput.current.click();
+    setShowModal(true);
+  };
+
+  // 모달을 열기 위한 핸들러
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  // 모달을 닫기 위한 핸들러
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  // 이미지 선택 후의 동작을 정의한 핸들러
+  const handleImageSelect = selectedImage => {
+    setPhoto(selectedImage); // 선택한 이미지로 상태 업데이트
   };
 
   // 비밀번호 유효성 검사 함수
-  const checkPassword = (password) => {
+  const checkPassword = password => {
     const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     return regex.test(password);
   };
-
-  useEffect(() => {
-    // 비밀번호가 비어있지 않은 경우에만 유효성 검사 수행
-    setIsValidPassword(checkPassword(password));
-    setIsMatchPassword(password === confirmPassword);
-  }, [password, confirmPassword]);
 
   //닉네임 인증
   const [nickNameCheckStatus, setNickNameCheckStatus] = useState(false);
 
   const nickNameCheck = async () => {
     try {
-      // const response = await axios.get(
-      //   `http://localhost:8080/member/nickname?nickname=${nickname}`
-      // );
-      const response = await axios.get(`member/nickname?nickname=${nickname}`);
+      const response = await axios.get(
+        `https://i9b109.p.ssafy.io:8443/member/nickname?nickname=${nickname}`
+      );
       if (response.data.duplicate === false) {
         setNickNameCheckStatus(true);
         window.confirm("사용 가능한 닉네임입니다.");
@@ -92,7 +90,7 @@ function UserInfo(props) {
       if (nickNameCheckStatus === true) {
         const response = await axios.patch(
           // "http://localhost:8080/member/nickname",
-          "member/nickname",
+          "https://i9b109.p.ssafy.io:8443/member/nickname",
           {
             email: getCookie("email"),
             nickname: nickname,
@@ -127,7 +125,7 @@ function UserInfo(props) {
     } else if (password === confirmPassword && isValidPassword === true) {
       try {
         const response = await axios.patch(
-          "member/pw",
+          "https://i9b109.p.ssafy.io:8443/member/pw",
           {
             email: getCookie("email"),
             oldPassword: oldPassWord,
@@ -154,6 +152,49 @@ function UserInfo(props) {
       }
     }
   };
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const res = await userInfo();
+        if (res.status === 200) {
+          setPhoto(res.data.profile_img_seq);
+        }
+      } catch (error) {
+        window.alert("로그인을 해주세요!");
+        navigate("/");
+        console.log(error);
+      }
+    };
+    fetchUserInfo();
+  }, [navigate]);
+
+  useEffect(() => {
+    // 비밀번호가 비어있지 않은 경우에만 유효성 검사 수행
+    setIsValidPassword(checkPassword(password));
+    setIsMatchPassword(password === confirmPassword);
+  }, [password, confirmPassword]);
+
+  function ImageSelectModal({ onSelect, onClose }) {
+    const images = ["1.png", "2.png", "3.png", "4.png"];
+
+    return (
+      <div className="image-select-modal">
+        {images.map((image, index) => (
+          <img
+            key={index}
+            src={`/images/${image}`}
+            alt={`Option ${index}`}
+            onClick={() => {
+              onSelect(image);
+              onClose();
+            }}
+          />
+        ))}
+        <button onClick={onClose}>닫기</button>
+      </div>
+    );
+  }
 
   return (
     <div className="mainn-container">
@@ -194,7 +235,7 @@ function UserInfo(props) {
                   className="modify-input"
                   value={nickname}
                   placeholder={props.nickName}
-                  onChange={(e) => {
+                  onChange={e => {
                     setNickname(e.target.value);
                     setNickNameCheckStatus(false);
                   }}
@@ -247,7 +288,7 @@ function UserInfo(props) {
                     className="modify-input"
                     placeholder="현재 비밀번호"
                     value={oldPassWord}
-                    onChange={(e) => setOldPassWord(e.target.value)}
+                    onChange={e => setOldPassWord(e.target.value)}
                   />
                 </div>
                 <div
@@ -266,7 +307,7 @@ function UserInfo(props) {
                     className="modify-input"
                     placeholder="영어,숫자,특수 기호 포함 8자리 이상"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={e => setPassword(e.target.value)}
                   />
                   {isValidPassword && password && (
                     <img
@@ -309,7 +350,7 @@ function UserInfo(props) {
                     className="modify-input"
                     placeholder="영어,숫자,특수 기호 포함 8자리 이상"
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={e => setConfirmPassword(e.target.value)}
                   />
                   <Button
                     color="warning"
@@ -352,7 +393,11 @@ function UserInfo(props) {
           </div>
         </div>
         <div className="profile-container">
-          {/* <img className="profile-picture" src={selectedImage} alt="Profile" /> */}
+          <img
+            src={profileImagePath}
+            className="profile-picture"
+            alt="Profile"
+          />
           <div>
             <Button
               variant="contained"
@@ -388,6 +433,12 @@ function UserInfo(props) {
           </Button>
         </div>
       </div>
+
+      <SelectImageModal
+        isOpen={showModal}
+        handleClose={closeModal}
+        onSelect={handleImageSelect}
+      />
     </div>
   );
 }

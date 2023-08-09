@@ -3,6 +3,14 @@ import React, { useEffect, useRef, useState } from "react";
 import "./My_JoinInfo.css";
 import Button from "@mui/material/Button";
 import axios from "axios";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import {
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+} from "@mui/material";
 
 const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
   const [name, setName] = useState("");
@@ -30,7 +38,6 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
     if (onJoinInfo) {
       onJoinInfo({
         name,
-        ssn: birth + "-" + gender,
         nickname,
         email,
         password,
@@ -39,6 +46,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
         emailCodeStatus,
         isPasswordValid,
         nickNameStatus,
+        gender,
       });
     }
   }, [
@@ -46,7 +54,6 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
     email,
     password,
     passwordConfirm,
-    birth,
     gender,
     nickname,
     onJoinInfo,
@@ -80,7 +87,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
     try {
       const response = await axios.post(
         // `http://localhost:8080/member/mail?email=${email}`
-        `member/mail?email=${email}`
+        `https://i9b109.p.ssafy.io:8443/member/mail?email=${email}`
       );
       if (response.status === 200) {
         setEmailCodeStatus(false);
@@ -97,7 +104,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
     try {
       const response = await axios.post(
         // "http://localhost:8080/member/mailcheck",
-        `member/mailcheck`,
+        `https://i9b109.p.ssafy.io:8443/member/mailcheck`,
         {
           email: email,
           certificate: emailCode,
@@ -135,12 +142,11 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
   };
 
   //닉네임 인증
-
   const nickNameCheck = async () => {
     try {
       const response = await axios.get(
         // `http://localhost:8080/member/nickname?nickname=${nickname}`
-        `member/nickname?nickname=${nickname}`
+        `https://i9b109.p.ssafy.io:8443/member/nickname?nickname=${nickname}`
       );
       if (response.data.duplicate === false) {
         setNickNameStatus(true);
@@ -179,87 +185,168 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
       <div className="Join-info">
         <div className="Join-item">
           <span className="Join-name Join-name-topline">이름</span>
-          <input
-            type="text"
+          <TextField
+            fullWidth
             value={name}
             onChange={e => setName(e.target.value)}
-            className="Join-value"
+            variant="outlined"
+            style={{ marginLeft: "40%", height: "40px" }}
+            InputProps={{
+              style: {
+                height: "40px",
+              },
+            }}
+            InputLabelProps={{
+              shrink: true,
+              // 레이블이 항상 위로 올라가 있게 한다
+              style: {
+                fontSize: "0.8rem",
+                transform: "scale(1) translate(14px, 10px)",
+              },
+            }}
           />
         </div>
         <div className="Join-item">
-          <span className="Join-name">주민등록번호</span>
-          <input
-            type="text"
-            value={birth}
-            onChange={handleBirthChange} // 입력 값이 변경될 때마다 handleBirthChange 함수를 호출합니다.
-            className="Join-birth"
-            maxLength="6" // 입력 필드의 최대 길이를 6로 설정합니다.
-          />
-          <span>-</span>
-          <input
-            type="password"
+          <span className="Join-name">성별</span>
+          <RadioGroup
+            row
+            aria-label="gender"
+            name="gender"
             value={gender}
-            onChange={handleGenderChange}
-            className="Join-birth"
-            style={{ display: "flex", width: "30px", marginLeft: "1px" }}
-            ref={genderRef} // ref를 설정합니다.
-            maxLength="1"
-          />
-          <span>******</span>
+            onChange={e => setgender(e.target.value)}
+            style={{ marginLeft: "40%" }}
+          >
+            <FormControlLabel
+              value="M"
+              control={<Radio color="primary" />}
+              label="남자"
+            />
+            <FormControlLabel
+              value="F"
+              control={<Radio color="primary" />}
+              label="여자"
+            />
+          </RadioGroup>
         </div>
         <div className="Join-item">
           <span className="Join-name">닉네임</span>
-          <input
-            type="text"
+          <TextField
+            fullWidth
             value={nickname}
             onChange={e => {
               setnickname(e.target.value);
               setNickNameStatus(false);
             }}
-            className="Join-value"
-            ref={nicknameRef}
+            variant="outlined"
+            style={{ marginLeft: "40%", height: "40px" }}
+            InputProps={{
+              style: {
+                height: "40px",
+                padding: "10px 14px",
+              },
+            }}
+            InputLabelProps={{
+              shrink: true,
+              style: {
+                fontSize: "0.8rem",
+                transform: "scale(1) translate(14px, 10px)",
+              },
+            }}
           />
-          <Button color="primary" onClick={nickNameCheck}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={nickNameCheck}
+            style={{ width: "45%" }}
+          >
             중복 확인
           </Button>
           {showNickNameImage()}
         </div>
         <div className="Join-item">
           <span className="Join-name">이메일</span>
-          <input
-            type="text"
+          <TextField
+            fullWidth
             value={email}
             onChange={e => setEmail(e.target.value)}
-            className="Join-value"
+            variant="outlined"
+            style={{ marginLeft: "40%", height: "40px" }}
+            InputProps={{
+              style: {
+                height: "40px",
+                padding: "10px 14px",
+              },
+            }}
+            InputLabelProps={{
+              shrink: true,
+              style: {
+                fontSize: "0.8rem",
+                transform: "scale(1) translate(14px, 10px)",
+              },
+            }}
           />
-          <Button color="primary" onClick={emailCheck}>
+          <Button variant="contained" color="primary" onClick={emailCheck}>
             인증
           </Button>
         </div>
         <div className="Join-item">
           <span className="Join-name">이메일 인증</span>
-          <input
-            type="text"
-            className="Join-value"
+          <TextField
+            fullWidth
             value={emailCode}
             onChange={e => {
               setEmailCode(e.target.value);
               setEmailCodeStatus(false);
             }}
+            variant="outlined"
+            style={{ marginLeft: "40%", height: "40px" }}
+            InputProps={{
+              style: {
+                height: "40px",
+                padding: "10px 14px",
+              },
+            }}
+            InputLabelProps={{
+              shrink: true,
+              style: {
+                fontSize: "0.8rem",
+                transform: "scale(1) translate(14px, 10px)",
+              },
+            }}
           />
-          <Button color="primary" onClick={emailCodeCheck}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={emailCodeCheck}
+            style={{ width: "45%" }}
+          >
             인증 확인
           </Button>
           {showEmailImage()}
         </div>
         <div className="Join-item">
           <span className="Join-name">비밀 번호</span>
-          <input
+          <TextField
+            fullWidth
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            className="Join-value"
-            placeholder="영어,숫자,특수 기호 포함 8자리 이상"
+            variant="outlined"
+            helperText="영어, 숫자, 특수기호 포함 8자리 이상"
+            style={{ marginLeft: "40%", height: "40px" }}
+            InputProps={{
+              style: {
+                height: "40px",
+                padding: "10px 14px",
+              },
+            }}
+            InputLabelProps={{
+              shrink: true,
+              style: {
+                fontSize: "0.8rem",
+                transform: "scale(1) translate(14px, 10px)",
+              },
+            }}
           />
           {isPasswordValid && password && (
             <img
@@ -288,7 +375,29 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
             value={passwordConfirm}
             onChange={e => setPasswordConfirm(e.target.value)}
           />
-          {/* 비밀번호와 일치하는지 가르쳐줌 */}
+          {/* 밑에로 수정하고 싶은데 밑에걸로 하자마자 원래 ui가 다 뭉그러짐..왤까.. */}
+          {/* <TextField
+            fullWidth
+            label="비밀번호 확인"
+            type="password"
+            value={passwordConfirm}
+            onChange={e => setPasswordConfirm(e.target.value)}
+            variant="outlined"
+            style={{ flexBasis: "70%", marginLeft: "10%", height: "40px" }}
+            InputProps={{
+              style: {
+                height: "40px",
+                padding: "10px 14px",
+              },
+            }}
+            InputLabelProps={{
+              shrink: true,
+              style: {
+                fontSize: "0.8rem",
+                transform: "scale(1) translate(14px, 10px)",
+              },
+            }}
+          />
           {password === passwordConfirm && passwordConfirm && (
             <img
               src={"/images/체크.png"}
@@ -296,7 +405,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               className="Join-check"
               style={{ width: "40px", height: "40px" }}
             />
-          )}
+          )} */}
           {password !== passwordConfirm && passwordConfirm && (
             <img
               src={"/images/오답.png"}

@@ -22,7 +22,7 @@
   left: -20px; /* 선을 왼쪽으로 50px 이동시킵니다. */
   bottom: 0; /* 선을 h1 요소의 하단에 위치시킵니다. */
   width: 1150px; /* 선의 길이 설정 */
-  border-bottom: 2px solid #f2bed1; /* 선을 추가합니다. */
+  border-bottom: 2px solid blue; /* 선을 추가합니다. */
 }
 
 .my-friend-page {

@@ -5,7 +5,7 @@ import { getCookie } from "../../utils/cookie";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/NotificationsNone";
-import LogoutAlert from '../Common/LogoutAlert';
+import LogoutAlert from "../Common/LogoutAlert";
 import Badge from "@mui/material/Badge";
 import axios from "axios";
 
@@ -19,7 +19,7 @@ const HeaderWait = () => {
   const checkLogin = async () => {
     try {
       const response = await axios.post(
-        "/member/logout",
+        "https://i9b109.p.ssafy.io:8443/member/logout",
         {
           email: getCookie("email"),
           accessToken: access,
@@ -78,9 +78,19 @@ const HeaderWait = () => {
   return (
     <div style={headerStyle}>
       <div style={logoStyle} onClick={GoMain}>
-        <img src="images/GameImage/HeaderLogo.png" style={imgStyle} alt="Logo"></img>
+        <img
+          src="images/GameImage/HeaderLogo.png"
+          style={imgStyle}
+          alt="Logo"
+        ></img>
       </div>
-      <div style={{ fontFamily: 'Pretendard-Regular', fontWeight: "bold", fontSize: "20px" }}>
+      <div
+        style={{
+          fontFamily: "Pretendard-Regular",
+          fontWeight: "bold",
+          fontSize: "20px",
+        }}
+      >
         <Badge color="error" variant="dot" style={{ marginRight: "30px" }}>
           <NotificationsIcon />
         </Badge>
