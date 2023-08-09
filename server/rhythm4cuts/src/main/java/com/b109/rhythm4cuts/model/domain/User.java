@@ -131,7 +131,7 @@ public class User implements UserDetails {
         userDto.setPoint(this.getPoint());
         userDto.setScoreSum(this.getScoreSum());
 //        userDto.setBirthDate(this.birthDate);
-        userDto.setGender(gender);
+        userDto.setGender(this.getGender());
         userDto.setConnectionId(this.getConnectionId());
         userDto.setProfileImageSeq(this.getProfileImage().getProfileImageSeq());
 //        userDto.setBirthDate(this.getBirthDate());
