@@ -29,7 +29,7 @@ function GameWait() {
 
   // REDUX에서 가져오기
   var { gameSeq } = useParams(); // url에서 추출
-  
+
   dispatch(setGameseq(gameSeq));
   // const gameSeq = useSelector(state => state.roomState.gameseq); 
   const session = useSelector(state => state.roomState.session);
@@ -128,7 +128,7 @@ function GameWait() {
   // 세션 나가기
   const leaveSession = () => {
     // if (session) {
-    // session.disconnect();
+    connection.disconnect();
     // }
     setSessionAction(undefined); // 세션 초기화
     setSubscribers([]);
@@ -221,8 +221,8 @@ function GameWait() {
     try {
       const ov = new OpenVidu();
       const newSession = ov.initSession();
-      setSessionAction(newSession);
-
+      // setSessionAction(newSession);
+      setConnection(newSession);
       newSession.on('streamCreated', (event) => {
         const subscriber = newSession.subscribe(event.stream, undefined);
         // setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
