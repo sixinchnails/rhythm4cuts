@@ -1,331 +1,219 @@
 import { OpenVidu } from 'openvidu-browser';
 
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import UserVideoComponent from '../../components/Game/UserVideoComponent';
 
 import { createConnection } from '../../openvidu/connectionInitialization';
-import { useParams } from "react-router-dom";
-import { getCookie } from "../../utils/cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setSession, resetRoomState } from "../../store";
+import { useParams } from "react-router-dom";
+import { getCookie } from "../../utils/cookie";
+
 
 import axios from "axios";
 
-function GetParam() {
-  return useParams();
-}
 
-function GetDispatch() {
-  return useDispatch();
-}
 
-class GameWait extends Component {
-    constructor(props) {
-        super(props);
+function GameWait() {
+    var { gameSeq } = useParams();
+    var dispatch = useDispatch();
 
-        // These properties are in the state's component in order to re-render the HTML whenever their values change
-        this.state = {
-            mySessionId: 'SessionA',
-            myUserName: 'Participant' + Math.floor(Math.random() * 100),
-            session: undefined,
-            mainStreamManager: undefined,  // Main video of the page. Will be the 'publisher' or one of the 'subscribers'
-            publisher: undefined,
-            subscribers: [],
+    const session = useSelector(state => state.roomState.session);
+    const token_ub = useSelector(state => state.roomState.connectionToken);
+    
+    const [mySessionId, setMySessionId] = useState('SessionA');
+    const [myUserName, setMyUserName] = useState('Participant' + Math.floor(Math.random() * 100));
+    const [mainStreamManager, setMainStreamManager] = useState(undefined);
+    const [publisher, setPublisher] = useState(undefined);
+    const [subscribers, setSubscribers] = useState([]);
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', onBeforeUnload);
+        return () => {
+            window.removeEventListener('beforeunload', onBeforeUnload);
         };
+    }, []);
 
-        this.joinSession = this.joinSession.bind(this);
-        this.leaveSession = this.leaveSession.bind(this);
-        this.switchCamera = this.switchCamera.bind(this);
-        this.handleChangeSessionId = this.handleChangeSessionId.bind(this);
-        this.handleChangeUserName = this.handleChangeUserName.bind(this);
-        this.handleMainVideoStream = this.handleMainVideoStream.bind(this);
-        this.onbeforeunload = this.onbeforeunload.bind(this);
+    const onBeforeUnload = () => {
+        leaveSession();
+    };
 
-        
-    }
+    const handleChangeSessionId = (e) => {
+        setMySessionId(e.target.value);
+    };
 
-    componentDidMount() {
-        window.addEventListener('beforeunload', this.onbeforeunload);
-    }
+    const handleChangeUserName = (e) => {
+        setMyUserName(e.target.value);
+    };
 
-    componentWillUnmount() {
-        window.removeEventListener('beforeunload', this.onbeforeunload);
-    }
-
-    onbeforeunload(event) {
-        this.leaveSession();
-    }
-
-    handleChangeSessionId(e) {
-        this.setState({
-            mySessionId: e.target.value,
-        });
-    }
-
-    handleChangeUserName(e) {
-        this.setState({
-            myUserName: e.target.value,
-        });
-    }
-
-    handleMainVideoStream(stream) {
-        if (this.state.mainStreamManager !== stream) {
-            this.setState({
-                mainStreamManager: stream
-            });
+    const handleMainVideoStream = (stream) => {
+        if (mainStreamManager !== stream) {
+            setMainStreamManager(stream);
         }
-    }
+    };
 
-    deleteSubscriber(streamManager) {
-        let subscribers = this.state.subscribers;
-        let index = subscribers.indexOf(streamManager, 0);
-        if (index > -1) {
-            subscribers.splice(index, 1);
-            this.setState({
-                subscribers: subscribers,
-            });
-        }
-    }
+    const deleteSubscriber = (streamManager) => {
+        const newSubscribers = subscribers.filter(sub => sub !== streamManager);
+        setSubscribers(newSubscribers);
+    };
 
-    joinSession() {
-        // --- 1) Get an OpenVidu object ---
-
-        this.OV = new OpenVidu();
-
-        // --- 2) Init a session ---
-
-        this.setState(
-            {
-                session: this.OV.initSession(),
-            },
-            () => {
-                var mySession = this.state.session;
-
-                // --- 3) Specify the actions when events take place in the session ---
-
-                // On every new Stream received...
-                mySession.on('streamCreated', (event) => {
-                    console.log("-------------------event 발생------------")
-                    // Subscribe to the Stream to receive it. Second parameter is undefined
-                    // so OpenVidu doesn't create an HTML video by its own
-                    var subscriber = mySession.subscribe(event.stream, undefined);
-                    var subscribers = this.state.subscribers;
-                    subscribers.push(subscriber);
-
-                    // Update the state with the new subscribers
-                    this.setState({
-                        subscribers: subscribers,
-                    });
-                });
-
-                // On every Stream destroyed...
-                mySession.on('streamDestroyed', (event) => {
-
-                    // Remove the stream from 'subscribers' array
-                    this.deleteSubscriber(event.stream.streamManager);
-                });
-
-                // On every asynchronous exception...
-                mySession.on('exception', (exception) => {
-                    console.warn(exception);
-                });
-
-                // --- 4) Connect to the session with a valid user token ---
-
-                // Get a token from the OpenVidu deployment
-                this.getToken().then((token) => {
-                    // First param is the token got from the OpenVidu deployment. Second param can be retrieved by every user on event
-                    // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-                    mySession.connect(token, { clientData: this.state.myUserName })
-                        .then(async () => {
-                            // --- 5) Get your own camera stream ---
-
-                            // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
-                            // element: we will manage it on our own) and with the desired properties
-                            let publisher = await this.OV.initPublisherAsync(undefined, {
-                                audioSource: undefined, // The source of audio. If undefined default microphone
-                                videoSource: undefined, // The source of video. If undefined default webcam
-                                publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-                                publishVideo: true, // Whether you want to start publishing with your video enabled or not
-                                resolution: '640x480', // The resolution of your video
-                                frameRate: 30, // The frame rate of your video
-                                insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
-                                mirror: false, // Whether to mirror your local video or not
-                            });
-
-                            // --- 6) Publish your stream ---
-
-                            mySession.publish(publisher);
-
-                            // Obtain the current video device in use
-                            var devices = await this.OV.getDevices();
-                            var videoDevices = devices.filter(device => device.kind === 'videoinput');
-                            var currentVideoDeviceId = publisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
-                            var currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
-
-                            // Set the main video in the page to display our webcam and store our Publisher
-                            this.setState({
-                                currentVideoDevice: currentVideoDevice,
-                                mainStreamManager: publisher,
-                                publisher: publisher,
-                            });
-                        })
-                        .catch((error) => {
-                            console.log('There was an error connecting to the session:', error.code, error.message);
-                        });
-                });
-            },
-        );
-    }
-
-    leaveSession() {
-
-        // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
-
-        const mySession = this.state.session;
-
-        if (mySession) {
-            mySession.disconnect();
-        }
-
-        // Empty all properties...
-        this.OV = null;
-        this.setState({
-            session: undefined,
-            subscribers: [],
-            mySessionId: 'SessionA',
-            myUserName: 'Participant' + Math.floor(Math.random() * 100),
-            mainStreamManager: undefined,
-            publisher: undefined
-        });
-    }
-
-    async switchCamera() {
+    const joinSession = async () => {
         try {
-            const devices = await this.OV.getDevices()
-            var videoDevices = devices.filter(device => device.kind === 'videoinput');
+            const ov = new OpenVidu();
+            const newSession = ov.initSession();
+            setSession(newSession);
 
-            if (videoDevices && videoDevices.length > 1) {
+            newSession.on('streamCreated', (event) => {
+                const subscriber = newSession.subscribe(event.stream, undefined);
+                setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+            });
 
-                var newVideoDevice = videoDevices.filter(device => device.deviceId !== this.state.currentVideoDevice.deviceId)
+            newSession.on('streamDestroyed', (event) => {
+                deleteSubscriber(event.stream.streamManager);
+            });
 
-                if (newVideoDevice.length > 0) {
-                    // Creating a new publisher with specific videoSource
-                    // In mobile devices the default and first camera is the front one
-                    var newPublisher = this.OV.initPublisher(undefined, {
-                        videoSource: newVideoDevice[0].deviceId,
+            newSession.on('exception', (exception) => {
+                console.warn(exception);
+            });
+
+            const token = await getToken(); // Implement getToken function
+
+            console.log("-----------------token : " + token);
+            newSession.connect(token, { clientData: myUserName })
+                .then(async () => {
+                    const newPublisher = await ov.initPublisherAsync(undefined, {
+                        audioSource: undefined,
+                        videoSource: undefined,
                         publishAudio: true,
                         publishVideo: true,
-                        mirror: true
+                        resolution: '640x480',
+                        frameRate: 30,
+                        insertMode: 'APPEND',
+                        mirror: false,
                     });
 
-                    //newPublisher.once("accessAllowed", () => {
-                    await this.state.session.unpublish(this.state.mainStreamManager)
+                    newSession.publish(newPublisher);
 
-                    await this.state.session.publish(newPublisher)
-                    this.setState({
-                        currentVideoDevice: newVideoDevice[0],
-                        mainStreamManager: newPublisher,
-                        publisher: newPublisher,
-                    });
-                }
-            }
-        } catch (e) {
-            console.error(e);
+                    const devices = await ov.getDevices();
+                    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                    const currentVideoDeviceId = newPublisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
+                    const currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
+
+                    setMainStreamManager(newPublisher);
+                    setPublisher(newPublisher);
+                })
+                .catch((error) => {
+                    console.log('There was an error connecting to the session:', error.code, error.message);
+                });
+        } catch (error) {
+            console.error('Error joining session:', error);
+        }
+    };
+
+    async function getToken() {
+        let res = await fetchConnectionToken()
+        console.log(res);
+        console.log(res["connectionToken"])
+        return res["connectionToken"]
+    }
+
+    async function fetchConnectionToken() {
+        try {
+            await fetchSession();
+
+            return await createConnection();
+        } catch(error) {
+            console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
         }
     }
 
-    render() {
-        const mySessionId = this.state.mySessionId;
+    async function fetchSession() {
+        try {
+            const access = getCookie("access");
+            
+            const response = await axios.get(
+                `https://i9b109.p.ssafy.io:8443/wait/info/${gameSeq}`,
+                {
+                    headers: {
+                        Authorization: "Bearer " + access,
+                    },
+                }
+            )
+            console.log("-----------------"+response.data.data.sessionId);
+            dispatch(setSession(response.data.data.sessionId));
+        } catch(error) {
+            console.error("DB에서 세션 id 불러오기 실패:", error);
+        }
+    }
 
-        return (
-            <div className="container">
-              {this.state.session === undefined ? (
-                  <div>
-                    <button onClick={this.joinSession}/>
-                  </div>
-              ) : null}
-              {this.state.session !== undefined ? (
-                    <div id="session">
-                        <div id="session-header">
-                            <h1 id="session-title">{mySessionId}</h1>
-                            <input
-                                className="btn btn-large btn-danger"
-                                type="button"
-                                id="buttonLeaveSession"
-                                onClick={this.leaveSession}
-                                value="Leave session"
-                            />
-                            <input
-                                className="btn btn-large btn-success"
-                                type="button"
-                                id="buttonSwitchCamera"
-                                onClick={this.switchCamera}
-                                value="Switch Camera"
-                            />
+    const leaveSession = () => {
+        if (session) {
+            session.disconnect();
+        }
+
+        setSession(undefined);
+        setSubscribers([]);
+        setMySessionId('SessionA');
+        setMyUserName('Participant' + Math.floor(Math.random() * 100));
+        setMainStreamManager(undefined);
+        setPublisher(undefined);
+    };
+
+    return (
+        <div className="container">
+            {!session ? (
+                <div>
+                    <button onClick={joinSession}>Join Session</button>
+                </div>
+            ) : null}
+            {session ? (
+                <div id="session">
+                    <div id="session-header">
+                        <h1 id="session-title">{mySessionId}</h1>
+                        <input
+                            className="btn btn-large btn-danger"
+                            type="button"
+                            id="buttonLeaveSession"
+                            onClick={leaveSession}
+                            value="Leave session"
+                        />
+                        {/* <input
+                            className="btn btn-large btn-success"
+                            type="button"
+                            id="buttonSwitchCamera"
+                            onClick={switchCamera}
+                            value="Switch Camera"
+                        /> */}
+                    </div>
+
+                    {mainStreamManager ? (
+                        <div id="main-video" className="col-md-6">
+                            <UserVideoComponent streamManager={mainStreamManager} />
                         </div>
-
-                        {this.state.mainStreamManager !== undefined ? (
-                            <div id="main-video" className="col-md-6">
-                                <UserVideoComponent streamManager={this.state.mainStreamManager} />
-
+                    ) : null}
+                    <div id="video-container" className="col-md-6">
+                        {publisher ? (
+                            <div className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(publisher)}>
+                                <UserVideoComponent streamManager={publisher} />
                             </div>
                         ) : null}
-                        <div id="video-container" className="col-md-6">
-                            {this.state.publisher !== undefined ? (
-                                <div className="stream-container col-md-6 col-xs-6" onClick={() => this.handleMainVideoStream(this.state.publisher)}>
-                                    <UserVideoComponent
-                                        streamManager={this.state.publisher} />
-                                </div>
-                            ) : null}
-                            {this.state.subscribers.map((sub, i) => (
-                                <div key={sub.id} className="stream-container col-md-6 col-xs-6" onClick={() => this.handleMainVideoStream(sub)}>
-                                    <span>{sub.id}</span>
-                                    <UserVideoComponent streamManager={sub} />
-                                </div>
-                            ))}
-                        </div>
+                        {subscribers.map((sub, i) => (
+                            <div key={sub.id} className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(sub)}>
+                                <span>{sub.id}</span>
+                                <UserVideoComponent streamManager={sub} />
+                            </div>
+                        ))}
                     </div>
-              ) : null}      
-            </div>
-        );
-    }
-    async getToken() {
-        // return await this.fetchConnectionToken().connectionToken
-        return "wss://i9b109.p.ssafy.io?sessionId=ses_HOL0WYV5CX&token=tok_Vmz7faiqVdAmCbqn"
-    }
-
-    async fetchConnectionToken() {
-      return "wss://i9b109.p.ssafy.io?sessionId=ses_HPwWb9VESP&token=tok_AzPHG4syYV8WcWmc"
-      // try {
-      //   await this.fetchSession();
-      //   await createConnection();
-      // } catch(error) {
-      //   console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
-      // }
-    }
-
-    // async fetchSession() {
-    //   try {
-    //     console.log("----------------------fetchsession begin-----------------")
-    //     const access = getCookie("access");
-    //     // const gameSeq = GetParam(); //게임방 번호 가져오기 설정
-    //     const response = await axios.get(
-    //       "https://i9b109.p.ssafy.io:8443/wait/info/" + 16,
-    //       {
-    //         headers: {
-    //           Authorization: "Bearer " + access,
-    //         },
-    //       }
-    //     );
-    //     // const dispatch = GetDispatch(); //redux 설정 가져오기
-    //     console.log(response.data.data.sessionId)
-    //     dispatch(setSession(response.data.data.sessionId));
-    //   } catch(error) {
-    //     console.error("DB에서 세션 id 불러오기 실패:", error);
-    //   }  
-    // }
-    
+                </div>
+            ) : null}
+        </div>
+    );
 }
 
 export default GameWait;
+
+
+
+
+
+
