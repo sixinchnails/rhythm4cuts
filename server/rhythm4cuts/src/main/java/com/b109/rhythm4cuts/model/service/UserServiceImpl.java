@@ -349,12 +349,13 @@ public class UserServiceImpl implements UserService {
         final TokenResponse tokenResponse = tokenProvider.generateToken(userDto);
         tokenResponse.setRefreshToken(tokenRequestDto.getRefreshToken());
 
-        //기존 토큰 블랙 리스트 등록
-        long expiryMilliSeconds = tokenProvider.getExpirationDateFromToken(tokenRequestDto.getAccessToken()).getTime() - new Date().getTime();
+        try {
+            //기존 토큰 블랙 리스트 등록
+            long expiryMilliSeconds = tokenProvider.getExpirationDateFromToken(tokenRequestDto.getAccessToken()).getTime() - new Date().getTime();
+            redisTemplate.opsForValue().set(tokenRequestDto.getAccessToken(), "access_token", expiryMilliSeconds, TimeUnit.MILLISECONDS);
+        }catch (Exception e) {}
 
         redisTemplate.opsForValue().set("RT:" + tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), TokenProvider.refreshExpiredAt.toMillis(), TimeUnit.MILLISECONDS);
-        // 기존 액세스 토큰 블랙 리스트 추가
-        if (expiryMilliSeconds > 0) redisTemplate.opsForValue().set(tokenRequestDto.getAccessToken(), "access_token", expiryMilliSeconds, TimeUnit.MILLISECONDS);
 
         return tokenResponse;
     }
