@@ -12,6 +12,7 @@ const initialState = {
   connection: null,
   connectionToken: null,
   nickname: null,
+  gameseq: null,
 };
 
 const roomState = createSlice({
@@ -30,17 +31,21 @@ const roomState = createSlice({
     setNickname: (state, action) => {
       state.nickname = action.payload;
     },
+    setGameseq: (state, action) => {
+      state.gameseq = action.payload;
+    },
     // 상태 초기화
     resetRoomState: (state) => {
       state.session = initialState.session;
       state.connection = initialState.connection;
       state.connectionToken = initialState.connectionToken;
       state.nickname = initialState.nickname;
+      state.gameseq = initialState.gameseq;
     }
   },
 });
 
-export const { setSession, setConnection, setConnectionToken, setNickname, resetRoomState } = roomState.actions;
+export const { setSession, setConnection, setConnectionToken, setNickname, setGameseq, resetRoomState } = roomState.actions;
 
 // Room 세션 ID를 설정하는 액션 함수
 export const setRoomSession = (sessionId) => (dispatch) => {

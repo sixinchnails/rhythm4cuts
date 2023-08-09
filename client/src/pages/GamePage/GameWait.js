@@ -33,7 +33,27 @@ function GameWait() {
   const connection = useSelector(state => state.roomState.connection);
   const connectionToken = useSelector(state => state.roomState.connectionToken);
 
+  // 로그인 상태를 업데이트하는 함수
+  const handleOpenLoginAlert = () => {
+    setLoginAlertOpen(true);
+  };
+  const handleCloseLoginAlert = () => {
+    setLoginAlertOpen(false);
+    navigate("/Login");
+  };
 
+  // Styled 버튼 ( css )
+  const StyledIconButton = styled(IconButton)({
+    color: "white",
+    margin: "20px",
+    boxShadow: "10px 5px 5px rgba(0, 0, 0, 0.8)",
+    borderRadius: "10px",
+    "&:hover": {
+      backgroundColor: "#1976d2", // 마우스 오버 시 배경색 변경
+    },
+  });
+
+  // -----------------------------------------------------------------------------------------------------
   // 유저 닉네임 가져오기
   const nickname = async () => {
     try {
@@ -52,15 +72,6 @@ function GameWait() {
       console.error("DB에서 닉네임 불러오기 실패:", error);
     }
   }
-
-  // 로그인 상태를 업데이트하는 함수
-  const handleOpenLoginAlert = () => {
-    setLoginAlertOpen(true);
-  };
-  const handleCloseLoginAlert = () => {
-    setLoginAlertOpen(false);
-    navigate("/Login");
-  };
 
   // 로그인 상태관리
   useEffect(() => {
@@ -94,7 +105,7 @@ function GameWait() {
     fetchSession();
   }, [gameSeq]);
 
-  // 페이지 이동하고 떠날때
+  // 페이지 떠날 때 이벤트 리스너 등록 및 해제
   useEffect(() => {
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => {
@@ -102,19 +113,11 @@ function GameWait() {
     };
   }, []);
 
-
-  // Styled 버튼 ( css )
-  const StyledIconButton = styled(IconButton)({
-    color: "white",
-    margin: "20px",
-    boxShadow: "10px 5px 5px rgba(0, 0, 0, 0.8)",
-    borderRadius: "10px",
-    "&:hover": {
-      backgroundColor: "#1976d2", // 마우스 오버 시 배경색 변경
-    },
-  });
-
-  // 방 떠나기
+  // 페이지 나갈 때 세션 나가기 함수 호출
+  const onBeforeUnload = () => {
+    leaveSession();
+  };
+  // 세션 나가기
   const leaveSession = () => {
     if (session) {
       session.disconnect();
@@ -126,10 +129,6 @@ function GameWait() {
     setMyUserName('Participant' + Math.floor(Math.random() * 100));
     setMainStreamManager(undefined);
     setPublisher(undefined);
-  };
-
-  const onBeforeUnload = () => {
-    leaveSession();
   };
 
   const handleChangeSessionId = (e) => {
@@ -146,17 +145,38 @@ function GameWait() {
     }
   };
 
+  // "게임 준비" 버튼을 클릭했을 때 동작
+  const handleGameReady = () => {
+    dispatch(setSessionAction(session));
+    dispatch(setConnection(connection));
+    dispatch(setConnectionToken(connectionToken));
+
+    // 게임플레이 페이지로 이동하고 gameSeq 매개변수를 전달.
+    navigate(`/GamePlay/${gameSeq}`);
+  };
+
+  // "채팅" 버튼을 클릭했을 때 동작
+  const handleChat = () => {
+  };
+
+  // "나가기" 버튼 눌렀을 때 동작
+  const handleExit = () => {
+    dispatch(resetRoomState());
+    navigate(`/GameList`);
+  };
+
   // const deleteSubscriber = (streamManager) => {
   //     const newSubscribers = subscribers.filter(sub => sub !== streamManager);
   //     setSubscribers(newSubscribers);
   // };
 
+
   // 연결 유저 토큰 만들기
-  useEffect(() => {
-    if (session) {
-      fetchConnectionToken();
-    }
-  }, [session]);
+  // useEffect(() => {
+  //   if (session) {
+  //     fetchConnectionToken();
+  //   }
+  // }, [session]);
 
   const fetchConnectionToken = async () => {
     try {
@@ -192,85 +212,78 @@ function GameWait() {
     }
   };
 
-  // "게임 준비" 버튼을 클릭했을 때 동작
-  const handleGameReady = () => {
-    dispatch(setSessionAction(session));
-    dispatch(setConnection(connection));
-    dispatch(setConnectionToken(connectionToken));
+  // openvidu 연결
+  const joinSession = async () => {
+    try {
+      const ov = new OpenVidu();
+      const newSession = ov.initSession();
+      setSessionAction(newSession);
 
-    // 게임플레이 페이지로 이동하고 gameSeq 매개변수를 전달.
-    navigate(`/GamePlay/${gameSeq}`);
-  };
+      newSession.on('streamCreated', (event) => {
+        const subscriber = newSession.subscribe(event.stream, undefined);
+        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+      });
 
-  // "채팅" 버튼을 클릭했을 때 동작
-  const handleChat = () => {
-  };
+      newSession.on('streamDestroyed', (event) => {
+        deleteSubscriber(event.stream.streamManager);
+      });
 
-  // "나가기" 버튼 눌렀을 때 동작
-  const handleExit = () => {
-    dispatch(resetRoomState());
-    navigate(`/GameList`);
-  };
+      newSession.on('exception', (exception) => {
+        console.warn(exception);
+      });
 
-  // -----------------------------------------------------------------------------------------
-  // 세션이 있다면 바로 실행되게 바꾸자
-  useEffect(() => {
-    const joinSession = async () => {
-      try {
-        const ov = new OpenVidu();
-        const newSession = ov.initSession();
-        setSessionAction(newSession);
-
-        newSession.on('streamCreated', (event) => {
-          const subscriber = newSession.subscribe(event.stream, undefined);
-          setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
-        });
-
-        newSession.on('streamDestroyed', (event) => {
-          deleteSubscriber(event.stream.streamManager);
-        });
-
-        newSession.on('exception', (exception) => {
-          console.warn(exception);
-        });
-
-        const strat_token = connectionToken; // Implement getToken function
-        newSession.connect(strat_token, { clientData: nickname })
-          .then(async () => {
-            const newPublisher = await ov.initPublisherAsync(undefined, {
-              audioSource: undefined,
-              videoSource: undefined,
-              publishAudio: true,
-              publishVideo: true,
-              resolution: '640x480',
-              frameRate: 30,
-              insertMode: 'APPEND',
-              mirror: false,
-            });
-
-            newSession.publish(newPublisher);
-
-            const devices = await ov.getDevices();
-            const videoDevices = devices.filter(device => device.kind === 'videoinput');
-            const currentVideoDeviceId = newPublisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
-            const currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
-
-            setMainStreamManager(newPublisher);
-            setPublisher(newPublisher);
-          })
-          .catch((error) => {
-            console.log('There was an error connecting to the session:', error.code, error.message);
+      const strat_token = connectionToken; // Implement getToken function
+      newSession.connect(strat_token, { clientData: nickname })
+        .then(async () => {
+          const newPublisher = await ov.initPublisherAsync(undefined, {
+            audioSource: undefined,
+            videoSource: undefined,
+            publishAudio: true,
+            publishVideo: true,
+            resolution: '640x480',
+            frameRate: 30,
+            insertMode: 'APPEND',
+            mirror: false,
           });
+
+          newSession.publish(newPublisher);
+
+          const devices = await ov.getDevices();
+          const videoDevices = devices.filter(device => device.kind === 'videoinput');
+          const currentVideoDeviceId = newPublisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
+          const currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
+
+          setMainStreamManager(newPublisher);
+          setPublisher(newPublisher);
+        })
+        .catch((error) => {
+          console.log('There was an error connecting to the session:', error.code, error.message);
+        });
+    } catch (error) {
+      console.error('Error joining session:', error);
+    }
+  };
+
+
+  // 최종 순서대로!
+  useEffect(() => {
+    const final = async () => {
+      try {
+        // await fetchSession(); // 세션 ID 가져오기
+        await fetchConnectionToken(); // 연결 토큰 생성 : 여기에 세션ID 가져오는거 들어있음
+        await joinSession(); // openvidu 연결
       } catch (error) {
-        console.error('Error joining session:', error);
+        console.error("최종 연결을 실패했습니다 :", error);
       }
     };
-    joinSession();
+
+    // 게임 대기 페이지 진입 시 세션 ID와 연결 토큰을 가져오는 로직 호출
+    final();
   }, []);
 
   console.log("게임 시퀀스입니다 : " + gameSeq);
-  console.log("세션입니다 : " + session);
-  console.log("연결 세션id입니다: " + connection);
+  console.log("방 세션입니다 : " + session);
+  console.log("연결 세션입니다: " + connection);
   console.log("연결 토큰입니다 : " + connectionToken);
 
   return (
