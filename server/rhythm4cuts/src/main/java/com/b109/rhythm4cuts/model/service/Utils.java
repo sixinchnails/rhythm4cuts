@@ -20,6 +20,7 @@ public class Utils {
         userDto.setGender(user.getGender());
         userDto.setPlayCount(user.getPlayCount());
         userDto.setScoreSum(user.getScoreSum());
+        userDto.setProfileImageSeq(user.getProfileImage().getProfileImageSeq());
 
         return userDto;
     }
