@@ -45,6 +45,3 @@ export const createSession = async (gameSeq) => {
         return null;
     }
 };
-
-// 흐름을 일시적으로 중단시킬 가능성 있으니 조심.
-console.log(atob(btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)))
