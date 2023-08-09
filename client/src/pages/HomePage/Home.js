@@ -80,10 +80,7 @@ function Home() {
       } else {
         window.confirm("1오류가 발생했습니다.");
       }
-    } catch (error) {
-      console.log(error);
-      window.confirm("2오류가 발생했습니다.");
-    }
+    } catch (error) {}
   };
 
   const [startDate, setStartDate] = useState(new Date());

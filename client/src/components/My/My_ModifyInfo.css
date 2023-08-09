@@ -23,6 +23,7 @@
   text-align: right; /* 추가 */
   height: 40px;
   line-height: 40px;
+  color: white;
 }
 
 .modify-nickName-name {
@@ -30,6 +31,7 @@
   position: absolute;
   left: 110px;
   font-weight: bold;
+  color: white;
 }
 
 .modify-password-name {
@@ -37,6 +39,7 @@
   position: absolute;
   left: 110px;
   font-weight: bold;
+  color: white;
 }
 
 .modify-name::after {
@@ -46,7 +49,7 @@
   top: 50%;
   transform: translateY(-50%);
   width: 1.5px;
-  background-color: #f95e97;
+  background-color: blue;
   height: 30px;
 }
 
@@ -57,7 +60,7 @@
   top: 50%;
   transform: translateY(-50%);
   width: 1.5px;
-  background-color: #f95e97;
+  background-color: blue;
   height: 30px;
 }
 
@@ -67,8 +70,8 @@
   right: -118px; /* 수정 */
   top: 50%;
   transform: translateY(-50%);
-  width: 1.5px;
-  background-color: #f95e97;
+  width: 2px;
+  background-color: blue;
   height: 30px;
 }
 
@@ -78,6 +81,7 @@
   font-size: large;
   margin-left: 200px;
   width: 400px;
+  color: white;
 }
 
 .modify-info-container {

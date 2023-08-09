@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { useState, useEffect } from "react";
 import {
   Modal,
@@ -13,13 +12,46 @@ import {
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import axios from "axios";
+import { Stomp } from "@stomp/stompjs";
 import { useDebounce } from "use-debounce";
 import { getCookie } from "../../utils/cookie";
+import { to } from "react-spring";
+import { Navigate } from "react-router-dom";
+import { userInfo } from "../../apis/userInfo";
+
+var sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
+var stomp = Stomp.over(sock);
 
 function AddFriend({ isOpen, handleClose }) {
   const [friendNickname, setfriendNickname] = useState("");
-  const [userInfo, setUserInfo] = useState({ nickname: "", email: "" });
+  const [UserInfo, setUserInfo] = useState({ nickname: "", email: "" });
   const [debouncedFriendNickname] = useDebounce(friendNickname, 300);
+  // const [client, setClient] = useState(null);
+  const [fromUser, setFromUser] = useState("");
+  const [toUser, setToUser] = useState("");
+  try {
+    userInfo()
+      .then(res => {
+        if (res.status === 200) {
+          setFromUser(res.data.user_seq);
+        }
+      })
+      .catch(error => {
+        Navigate("/");
+        window.alert("로그인을 해주세요!");
+      });
+  } catch (error) {
+    console.log(error);
+  }
+
+  useEffect(() => {
+    stomp.connect({}, () => {
+      console.log("connected");
+      stomp.subscribe(`/subscribe/friend/${fromUser}`, () => {
+        alert("친구 요청 옴");
+      });
+    });
+  }, []);
 
   useEffect(() => {
     if (debouncedFriendNickname) {
@@ -34,10 +66,12 @@ function AddFriend({ isOpen, handleClose }) {
         )
         .then(response => {
           if (response.data.data.length > 0) {
-            const { nickname, email } = response.data.data[0];
+            const { nickname, email, userSeq } = response.data.data[0];
             setUserInfo({ nickname, email });
+            setToUser(userSeq);
           } else {
             setUserInfo({ nickname: "", email: "" });
+            setToUser("");
           }
         })
         .catch(error => {
@@ -45,6 +79,7 @@ function AddFriend({ isOpen, handleClose }) {
         });
     } else {
       setUserInfo({ nickname: "", email: "" });
+      setToUser("");
     }
   }, [debouncedFriendNickname]);
 
@@ -52,22 +87,17 @@ function AddFriend({ isOpen, handleClose }) {
     setfriendNickname(event.target.value);
   };
 
-  function requestFriend(a, b) {
-    a = 1;
-    b = 2;
-    const requestPayload = {
-      fromUser: a,
-      toUser: b,
+  function requestFriend() {
+    console.log(fromUser);
+    console.log(toUser);
+    var request = {
+      fromUser: fromUser,
+      toUser: toUser,
     };
-
-    // if (client && client.connected) {
-    //   client.publish({
-    //     destination: "/public/request",
-    //     body: JSON.stringify(requestPayload),
-    //   });
-    // } else {
-    //   console.error("The client is not connected.");
-    // }
+    if (stomp.connected) {
+      stomp.send("/public/request", {}, JSON.stringify(request));
+    }
+    // stomp.send("/public/request", {}, JSON.stringify(requestPayload))
   }
 
   return (
@@ -97,11 +127,11 @@ function AddFriend({ isOpen, handleClose }) {
           InputLabelProps={{ style: { color: "#ffffff" } }}
         />
         <List>
-          {userInfo.nickname && userInfo.email && (
+          {UserInfo.nickname && UserInfo.email && (
             <ListItem>
               <ListItemText
-                primary={`닉네임: ${userInfo.nickname}`}
-                secondary={`이메일: ${userInfo.email}`}
+                primary={`닉네임: ${UserInfo.nickname}`}
+                secondary={`이메일: ${UserInfo.email}`}
               />
             </ListItem>
           )}
@@ -115,7 +145,7 @@ function AddFriend({ isOpen, handleClose }) {
             }}
             onClick={() => {
               handleClose();
-              requestFriend();
+              requestFriend(fromUser, toUser);
             }}
           >
             요청
