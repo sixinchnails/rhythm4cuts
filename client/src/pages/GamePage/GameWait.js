@@ -170,8 +170,8 @@ function GameWait() {
   const handleExit = () => {
     // dispatch(resetRoomState());
     onBeforeUnload();
-    console.log("방 나갈거야 ~")
     navigate(`/GameList`);
+    console.log("방 나갈거야 ~")
   };
 
   // const deleteSubscriber = (streamManager) => {
