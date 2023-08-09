@@ -68,14 +68,14 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
 
   const genderRef = useRef(); // ref를 생성합니다.
   const nicknameRef = useRef(); // ref를 생성합니다.
-  const handleBirthChange = e => {
+  const handleBirthChange = (e) => {
     setbirth(e.target.value);
     if (e.target.value.length >= 6) {
       // 입력 값의 길이가 6 이상이면
       genderRef.current.focus(); // gender 입력 필드로 초점을 이동합니다.
     }
   };
-  const handleGenderChange = e => {
+  const handleGenderChange = (e) => {
     setgender(e.target.value);
     if (e.target.value.length >= 1) {
       // 입력 값의 길이가 6 이상이면
@@ -183,13 +183,13 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
 
   return (
     <div className="Join-info-container">
-      <div className="Join-info">
+      <div className="Join-info" style={{ width: "60vw" }}>
         <div className="Join-item">
           <span className="Join-name Join-name-topline">이름</span>
           <TextField
             fullWidth
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             variant="outlined"
             style={{ marginLeft: "40%", height: "40px" }}
             InputProps={{
@@ -214,7 +214,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
             aria-label="gender"
             name="gender"
             value={gender}
-            onChange={e => setgender(e.target.value)}
+            onChange={(e) => setgender(e.target.value)}
             style={{ marginLeft: "40%" }}
           >
             <FormControlLabel
@@ -234,7 +234,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
           <TextField
             fullWidth
             value={nickname}
-            onChange={e => {
+            onChange={(e) => {
               setnickname(e.target.value);
               setNickNameStatus(false);
             }}
@@ -269,7 +269,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
           <TextField
             fullWidth
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             variant="outlined"
             style={{ marginLeft: "40%", height: "40px" }}
             InputProps={{
@@ -295,7 +295,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
           <TextField
             fullWidth
             value={emailCode}
-            onChange={e => {
+            onChange={(e) => {
               setEmailCode(e.target.value);
               setEmailCodeStatus(false);
             }}
@@ -331,7 +331,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
             fullWidth
             type="password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             variant="outlined"
             helperText="영어, 숫자, 특수기호 포함 8자리 이상"
             style={{ marginLeft: "40%", height: "40px" }}
@@ -370,21 +370,13 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
         </div>
         <div className="Join-item">
           <span className="Join-name">비밀 번호 확인</span>
-          <input
-            type="password"
-            className="Join-value"
-            value={passwordConfirm}
-            onChange={e => setPasswordConfirm(e.target.value)}
-          />
-          {/* 밑에로 수정하고 싶은데 밑에걸로 하자마자 원래 ui가 다 뭉그러짐..왤까.. */}
-          {/* <TextField
+          <TextField
             fullWidth
-            label="비밀번호 확인"
             type="password"
             value={passwordConfirm}
-            onChange={e => setPasswordConfirm(e.target.value)}
+            onChange={(e) => setPasswordConfirm(e.target.value)}
             variant="outlined"
-            style={{ flexBasis: "70%", marginLeft: "10%", height: "40px" }}
+            style={{ flexBasis: "40%", height: "40px" }}
             InputProps={{
               style: {
                 height: "40px",
@@ -406,7 +398,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               className="Join-check"
               style={{ width: "40px", height: "40px" }}
             />
-          )} */}
+          )}
           {password !== passwordConfirm && passwordConfirm && (
             <img
               src={"/images/오답.png"}

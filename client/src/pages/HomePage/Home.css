@@ -195,20 +195,26 @@ body {
 }
 .Home3 > .content > .rank2 > .total_rank {
   margin-top: 50px;
-  height: 28%;
+  height: 38%;
   width: 35vw;
-  background-color: #c1b3ff;
+  background-image: url("../../../public/images/b.png");
+  background-size: cover;
+  background-position: center;
   border-radius: 10px;
   opacity: 0.9;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
 }
 
-.Home3 > .content > .rank2 > .nickname {
+.Home3 > .content > .rank2 > .total_rank > .nickname {
   height: 5%;
+  width: 79%;
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  align-items: flex-end;
   margin: 1%;
   color: white;
+  justify-content: space-between;
   font-weight: bolder;
 }
 
@@ -272,7 +278,7 @@ body {
   height: 25%;
   display: flex;
   justify-content: center;
-  align-items: end;
+  align-items: flex-end;
   color: white;
 }
 
