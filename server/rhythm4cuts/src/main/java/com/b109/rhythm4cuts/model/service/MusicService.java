@@ -66,7 +66,7 @@ public class MusicService {
             String[] Content = AfterTitle.split("-|/");
 
             song.setTitle(Content[0]);                      // 제목 입력
-            song.setSinger(Content[1].substring(1));        // 가수 입력
+            song.setSinger(Content[1].substring(1, Content[1].length() - 1));        // 가수 입력
             song.setUrl(id);                                // 유튜브 동영상 ID값 입력
 
             musicRepository.save(song);
