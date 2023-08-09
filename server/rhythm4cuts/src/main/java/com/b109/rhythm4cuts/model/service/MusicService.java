@@ -65,9 +65,9 @@ public class MusicService {
             String AfterTitle = BeforeTitle.substring(8); // "[TJ노래방] "을 제외한 가공 후 제목
             String[] Content = AfterTitle.split("-|/");
 
-            song.setTitle(Content[0]);      // 제목 입력
-            song.setSinger(Content[1]);     // 가수 입력
-            song.setUrl(id);                // 유튜브 동영상 ID값 입력
+            song.setTitle(Content[0]);                      // 제목 입력
+            song.setSinger(Content[1].substring(1));        // 가수 입력
+            song.setUrl(id);                                // 유튜브 동영상 ID값 입력
 
             musicRepository.save(song);
         }
