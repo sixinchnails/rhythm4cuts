@@ -47,11 +47,14 @@ function AddFriend({ isOpen, handleClose }) {
   useEffect(() => {
     stomp.connect({}, () => {
       console.log("connected");
-      stomp.subscribe(`/subscribe/friend/${fromUser}`, () => {
-        alert("친구 요청 옴");
-      });
+      if (fromUser) {
+        console.log("Subscribing to user:", fromUser);
+        stomp.subscribe(`/subscribe/friend/${fromUser}`, () => {
+          alert("친구 요청 옴");
+        });
+      }
     });
-  }, []);
+  }, [fromUser]);
 
   useEffect(() => {
     if (debouncedFriendNickname) {
