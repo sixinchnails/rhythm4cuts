@@ -36,7 +36,7 @@ function Home() {
       .catch((error) => {
         setIsLogin(false);
         console.log(error);
-        if (error.response.status === 401) {
+        if (error.response.status !== 200) {
           console.log("accessToken이 만료되었습니다.");
           renewAccessToken()
             .then((res) => {
