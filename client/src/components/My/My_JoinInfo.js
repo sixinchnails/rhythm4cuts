@@ -38,7 +38,6 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
     if (onJoinInfo) {
       onJoinInfo({
         name,
-        ssn: birth + "-" + gender,
         nickname,
         email,
         password,
@@ -47,6 +46,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
         emailCodeStatus,
         isPasswordValid,
         nickNameStatus,
+        gender,
       });
     }
   }, [
@@ -54,7 +54,6 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
     email,
     password,
     passwordConfirm,
-    birth,
     gender,
     nickname,
     onJoinInfo,
@@ -218,12 +217,12 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
             style={{ marginLeft: "40%" }}
           >
             <FormControlLabel
-              value="남자"
+              value="M"
               control={<Radio color="primary" />}
               label="남자"
             />
             <FormControlLabel
-              value="여자"
+              value="F"
               control={<Radio color="primary" />}
               label="여자"
             />

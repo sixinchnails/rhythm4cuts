@@ -3,7 +3,7 @@ import "./My_Image.css";
 
 // ImageByMonth component
 // ImageByMonth component
-const ImageByMonth = ({ month, year, images }) => {
+const ImageByMonth = ({ month, year, images, onDownloadClick }) => {
   return (
     <div className="image-container">
       <h2>
@@ -14,7 +14,14 @@ const ImageByMonth = ({ month, year, images }) => {
           <div key={index} className="image-block">
             {/* image-block : 이미지와 다운로드 버튼을 하나의 블록으로 묶는다. */}
             <img src={image.src} alt={image.alt} className="image-size" />
-            <a href={image.src} download className="download-btn">
+            <a
+              href="#"
+              onClick={e => {
+                e.preventDefault();
+                onDownloadClick(image.src);
+              }}
+              className="download-btn"
+            >
               download
             </a>
           </div>
