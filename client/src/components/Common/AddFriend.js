@@ -29,11 +29,13 @@ function AddFriend({ isOpen, handleClose }) {
   // const [client, setClient] = useState(null);
   const [fromUser, setFromUser] = useState("");
   const [toUser, setToUser] = useState("");
+  
   try {
     userInfo()
       .then(res => {
         if (res.status === 200) {
           setFromUser(res.data.user_seq);
+          console.log(res.data.user_seq)
         }
       })
       .catch(error => {
@@ -44,15 +46,27 @@ function AddFriend({ isOpen, handleClose }) {
     console.log(error);
   }
 
+  // useEffect(() => {
+  //   stomp.connect({}, () => {
+  //     console.log("connected");
+  //     console.log("--------------------" + fromUser);
+  //     stomp.subscribe(`/subscribe/friend/${{fromUser}}`, () => {
+  //       alert("친구 요청 옴");
+  //     });
+  //   });
+  // }, []);
+
   useEffect(() => {
     stomp.connect({}, () => {
       console.log("connected");
-      console.log("--------------------" + fromUser);
-      stomp.subscribe(`/subscribe/friend/${fromUser}`, () => {
-        alert("친구 요청 옴");
-      });
+      if (fromUser) {
+        console.log("Subscribing to user:", fromUser);
+        stomp.subscribe(`/subscribe/friend/${fromUser}`, () => {
+          alert("친구 요청 옴");
+        });
+      }
     });
-  }, []);
+}, [fromUser]);
 
   useEffect(() => {
     if (debouncedFriendNickname) {
