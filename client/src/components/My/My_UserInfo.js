@@ -4,6 +4,9 @@ import { getCookie } from "../../utils/cookie";
 
 function UserInfo(props) {
   const email = getCookie("email");
+  // profile_img_seq 값에 따른 이미지 경로를 생성
+  const profileImagePath = `/images/${props.photo}.png`;
+
   return (
     <div className="user-info-container">
       <div className="user-info">
@@ -21,10 +24,12 @@ function UserInfo(props) {
         </div>
         <div className="info-item" key={3}>
           <span className="info-name">성별</span>
-          <span className="info-value">남자</span>
+          <span className="info-value">
+            {props.gender === "M" ? "남자" : "여자"}
+          </span>
         </div>
       </div>
-      <img className="profile-picture" alt="Profile" />
+      <img src={profileImagePath} className="profile-picture" alt="Profile" />
     </div>
   );
 }

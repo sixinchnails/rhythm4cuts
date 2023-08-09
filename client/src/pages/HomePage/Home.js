@@ -82,9 +82,7 @@ function Home() {
       } else {
         window.confirm("1오류가 발생했습니다.");
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const [startDate, setStartDate] = useState(new Date());

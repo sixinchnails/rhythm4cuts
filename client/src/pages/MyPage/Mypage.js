@@ -31,6 +31,12 @@ const Mypage = () => {
   //닉네임
   const [nickName, setNickName] = useState("");
 
+  //성별
+  const [gender, setGender] = useState("");
+
+  //사진 seq 번호
+  const [photo, setPhoto] = useState("");
+
   // 로그인 상태 확인
   try {
     userInfo()
@@ -38,6 +44,8 @@ const Mypage = () => {
         if (res.status === 200) {
           setNickName(res.data.nickname);
           setName(res.data.name);
+          setGender(res.data.gender);
+          setPhoto(res.data.profile_img_seq);
         }
       })
       .catch(error => {
@@ -65,7 +73,12 @@ const Mypage = () => {
         <Sidebar></Sidebar>
         <div className="main-container">
           <MainContent></MainContent>
-          <UserInfo name={name} nickName={nickName} />
+          <UserInfo
+            name={name}
+            nickName={nickName}
+            gender={gender}
+            photo={photo}
+          />
           {/* UserInfo 컴포넌트를 사용하여 사용자 정보를 표시합니다. */}
         </div>
         <div className="buttons">
