@@ -2,6 +2,9 @@ import axios from "axios";
 import { getCookie } from "../utils/cookie";
 
 export const renewAccessToken = async () => {
+  const email = getCookie("email");
+  const accessToken = getCookie("access");
+  const refreshToken = getCookie("refresh");
   const headers = {
     Authorization: "Bearer " + getCookie("access"),
   };
@@ -9,10 +12,11 @@ export const renewAccessToken = async () => {
     "https://i9b109.p.ssafy.io:8443/member/reissue",
     { headers },
     {
-      email: getCookie("email"),
-      accessToken: getCookie("access"),
-      refreshToken: getCookie("refresh"),
+      email,
+      accessToken,
+      refreshToken,
     }
   );
+
   return result;
 };

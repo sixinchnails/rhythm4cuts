@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { setSession as setSessionAction, setConnection, setConnectionToken, resetRoomState, setPlayers } from "../../store";
+import { setSession as setSessionAction, setConnection, setConnectionToken, resetRoomState, setPlayers, setGameseq } from "../../store";
 import { Chat as ChatIcon, Check as CheckIcon, ExitToApp as ExitToAppIcon } from "@mui/icons-material";
 import { styled, Button, Card, Container, Grid, Typography, IconButton } from "@mui/material";
 import { createConnection } from '../../openvidu/connectionInitialization';
@@ -27,8 +27,10 @@ function GameWait() {
   const [subscribers, setSubscribers] = useState([]);
   const [userStreams, setUserStreams] = useState([]);  // 유저 스트림 목록을 저장할 상태 변수
 
-  // REDUX에서 가져오기F
+  // REDUX에서 가져오기
   var { gameSeq } = useParams(); // url에서 추출
+  
+  dispatch(setGameseq(gameSeq));
   // const gameSeq = useSelector(state => state.roomState.gameseq); 
   const session = useSelector(state => state.roomState.session);
   const connection = useSelector(state => state.roomState.connection);
@@ -192,7 +194,6 @@ function GameWait() {
         }
       );
       dispatch(setSessionAction(response.data.data.sessionId));
-
     } catch (error) {
       console.error("DB에서 세션 id 불러오기 실패:", error);
     }
@@ -497,7 +498,7 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-           <UserVideoComponent
+            <UserVideoComponent
               streamManager={userStreams[1]}
             />
           </Grid>
@@ -543,12 +544,11 @@ function GameWait() {
             </div>
           </Grid>
         </Grid>
-
       </Grid>
 
       {/* '로그인 경고' 모달 */}
       <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
-    </div >
+    </div>
   );
 }
 

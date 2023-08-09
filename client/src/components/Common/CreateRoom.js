@@ -12,14 +12,13 @@ import {
   Radio,
 } from "@mui/material";
 import { createSession } from "../../openvidu/sessionInitialization";
-import { setSession, setGameseq } from '../../store';
+import { setSession, setGameseq } from "../../store";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 import { getCookie } from "../../utils/cookie";
 import React, { useState } from "react";
 import axios from "axios";
-
 
 function CreateRoom({ isOpen, handleClose }) {
   const dispatch = useDispatch(); // Redux
@@ -62,9 +61,9 @@ function CreateRoom({ isOpen, handleClose }) {
           }
         );
         console.log("방 만들어졌습니다~ 세션아이디 : " + sessionResponse.id);
-        console.log("방 만들어졌습니다~ gameSeq : ", response.data.data);
+        console.log("방 만들어졌습니다~ gameseq : ", response.data.data);
         dispatch(setSession(sessionResponse.id)); // 방 session 정보를 넘기기위해
-        dispatch(setGameseq(response.data.data)); // 방 gameSeq 정보를 넘기기위해
+        dispatch(setGameseq(response.data.data)); // 방 gameseq 정보를 넘기기위해
 
         // 방 생성 후 해당 방으로 이동
         navigate(`/GameWait/${response.data.data}`);
@@ -76,7 +75,6 @@ function CreateRoom({ isOpen, handleClose }) {
 
   return (
     <Modal open={isOpen} onClose={handleClose}>
-
       <Box
         sx={{
           position: "absolute",
@@ -103,24 +101,34 @@ function CreateRoom({ isOpen, handleClose }) {
           label="방 제목"
           variant="outlined"
           fullWidth
-          style={{ marginBottom: "20px", backgroundColor: "rgba(0, 128, 255, 0.1)" }}
+          style={{
+            marginBottom: "20px",
+            backgroundColor: "rgba(0, 128, 255, 0.1)",
+          }}
           onChange={event => setTitle(event.target.value)}
           inputProps={{ style: { color: "#ffffff" } }}
           InputLabelProps={{ style: { color: "#ffffff" } }}
-
         />
         <TextField
           label="노래 제목"
           variant="outlined"
           fullWidth
-          style={{ marginBottom: "20px", backgroundColor: "rgba(0, 128, 255, 0.1)" }}
+          style={{
+            marginBottom: "20px",
+            backgroundColor: "rgba(0, 128, 255, 0.1)",
+          }}
           value={songSeq}
           onChange={handleSongChange}
           inputProps={{ style: { color: "#ffffff" } }}
           InputLabelProps={{ style: { color: "#ffffff" } }}
         />
-        <FormControl component="fieldset" style={{ marginBottom: "20px", marginLeft: "10px" }}>
-          <FormLabel component="legend" style={{ color: "#ffffff" }}>모드</FormLabel>
+        <FormControl
+          component="fieldset"
+          style={{ marginBottom: "20px", marginLeft: "10px" }}
+        >
+          <FormLabel component="legend" style={{ color: "#ffffff" }}>
+            모드
+          </FormLabel>
           <RadioGroup
             row
             aria-label="isSecret"
@@ -130,12 +138,12 @@ function CreateRoom({ isOpen, handleClose }) {
           >
             <FormControlLabel
               value="일반 방"
-              control={<Radio  style={{ color: "#ffffff" }}/>}
+              control={<Radio style={{ color: "#ffffff" }} />}
               label="일반 방"
             />
             <FormControlLabel
               value="비밀 방"
-              control={<Radio  style={{ color: "#ffffff" }} />}
+              control={<Radio style={{ color: "#ffffff" }} />}
               label="비밀 방"
             />
           </RadioGroup>
@@ -151,10 +159,9 @@ function CreateRoom({ isOpen, handleClose }) {
             style={{ marginBottom: "20px" }}
             inputProps={{ style: { color: "#ffffff" } }} // 입력 텍스트의 색상을 흰색으로 설정
             InputLabelProps={{ style: { color: "#ffffff" } }} // 라벨 텍스트의 색상을 흰색으로 설정
-
           />
         )}
-        <Stack direction="row" spacing={2} justifyContent="center" >
+        <Stack direction="row" spacing={2} justifyContent="center">
           <Button
             variant="contained"
             onClick={handleCreateRoom}
@@ -162,7 +169,11 @@ function CreateRoom({ isOpen, handleClose }) {
           >
             방 만들기
           </Button>
-          <Button variant="contained" onClick={handleClose} style={{ backgroundColor: "rgba(0, 128, 255, 0.1)" }}>
+          <Button
+            variant="contained"
+            onClick={handleClose}
+            style={{ backgroundColor: "rgba(0, 128, 255, 0.1)" }}
+          >
             취소
           </Button>
         </Stack>

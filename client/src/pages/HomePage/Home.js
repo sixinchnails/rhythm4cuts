@@ -1,5 +1,6 @@
 // Home.js
 /* eslint-disable */
+//데이터가 들어오면 만들어야하는 애들 : 소개 영상, 음악 랭킹, 유저 랭킹, 일자별 방명록
 import { React, useRef, useEffect, useState } from "react";
 import { getCookie, setCookie } from "../../utils/cookie";
 import { renewAccessToken } from "../../apis/renewAccessToken";
@@ -13,6 +14,7 @@ import UserRank from "../../components/Home/UserRank";
 import WhiteHeader from "../../components/Home/WhiteHeader"; // 로그인 되어있을 때
 import Header from "../../components/Home/Header";
 import Dots from "../../components/Home/Dots";
+import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import "animate.css";
 import "./Home.css";
@@ -28,33 +30,27 @@ function Home() {
   try {
     userInfo()
       .then((res) => {
-        if (res.status === 200) {
-          console.log(res);
-          setIsLogin(true);
-          // 401은 access토큰이 틀린거
-        } else if (res.status === 401) {
-          console.log("access토큰이 틀렸습니다.");
-          // 403은 access토큰이 만료된거
-        } else if (res.status === 403) {
-          console.log("accessToken이 만료되었습니다.");
-          renewAccessToken().then((res) => {
-            if (res.status === 200) {
-              setCookie("access", res.accessToken);
-              console.log("accessToken 재발급 완료");
-              window.location.reload();
-            } else if (res.status === 401) {
-              console.log("refresh토큰이 틀렸습니다.");
-            } else if (res.status === 403) {
-              checkLogin();
-              console.log("refresh토큰이 만료되었습니다.");
-              window.confirm("로그인 기간이 만료되었습니다.");
-            }
-          });
-        }
+        console.log(res.data);
+        setIsLogin(true);
       })
       .catch((error) => {
-        console.log(error);
         setIsLogin(false);
+        console.log(error);
+        if (error.response.status !== 200) {
+          console.log("accessToken이 만료되었습니다.");
+          renewAccessToken()
+            .then((res) => {
+              setCookie("access", res.accessToken);
+              console.log(res);
+              console.log("accessToken 재발급 완료");
+              window.location.reload();
+            })
+            .catch((error) => {
+              console.log("refresh토큰이 에러");
+              console.log(error);
+              checkLogin();
+            });
+        }
       });
   } catch (error) {
     console.log(error);
@@ -62,12 +58,14 @@ function Home() {
 
   //로그아웃 관련 코드
   const checkLogin = async () => {
+    const access = getCookie("access");
+
     try {
       const response = await axios.post(
-        "/member/logout",
+        "https://i9b109.p.ssafy.io:8443/member/logout",
         {
           email: getCookie("email"),
-          accessToken: access,
+          accessToken: getCookie("access"),
         },
         {
           headers: {
@@ -84,22 +82,34 @@ function Home() {
       } else {
         window.confirm("1오류가 발생했습니다.");
       }
-    } catch (error) {
-      console.log(error);
-      window.confirm("2오류가 발생했습니다.");
-    }
+    } catch (error) {}
   };
 
   const [startDate, setStartDate] = useState(new Date());
   const outerDivRef = useRef();
   const [scrollIndex, setScrollIndex] = useState(1);
+
   //음악 랭킹
-  let music_rank = useSelector((state) => {
-    return state.Music_Rank;
-  });
+  const [musicData, setMusicData] = useState([]);
+
+  const fetchMusicRank = async () => {
+    try {
+      const response = await axios.get(
+        "https://i9b109.p.ssafy.io:8443/ranking/song"
+      );
+      console.log(response.data.data);
+      setMusicData(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMusicRank();
+  }, []);
 
   // 음악 개수 컨트롤러
-  const musicPerPage = 15; // 한 페이지당 표시할 방 수
+  const musicPerPage = 12; // 한 페이지당 표시할 방 수
   const [musicPage, setMusicPage] = useState(1); // 페이지 상태
 
   // 음악 페이지 변경 이벤트 핸들러
@@ -108,15 +118,29 @@ function Home() {
   };
 
   // 음악 페이지 수 계산
-  const noOfMusicPages = Math.ceil(music_rank.length / musicPerPage);
+  const noOfMusicPages = Math.ceil(musicData.length / musicPerPage);
 
   //유저 랭킹
-  let user_rank = useSelector((state) => {
-    return state.User_Rank;
-  });
+  const [userData, setUserData] = useState([]);
+
+  const fetchUserRank = async () => {
+    try {
+      const response = await axios.get(
+        "https://i9b109.p.ssafy.io:8443/ranking/user"
+      );
+      console.log(response.data.data);
+      setUserData(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserRank();
+  }, []);
 
   // 유저 개수 컨트롤러
-  const userPerPage = 8; // 한 페이지당 표시할 방 수
+  const userPerPage = 7; // 한 페이지당 표시할 방 수
   const [userPage, setUserPage] = useState(1); // 페이지 상태
 
   // 유저페이지 변경 이벤트 핸들러
@@ -124,8 +148,8 @@ function Home() {
     setUserPage(value);
   };
 
-  // 음악 페이지 수 계산
-  const noOfUserPages = Math.ceil(user_rank.length / userPerPage);
+  // 유저 페이지 수 계산
+  const noOfUserPages = Math.ceil(userData.length / userPerPage);
 
   useEffect(() => {
     const wheelHandler = (e) => {
@@ -205,7 +229,6 @@ function Home() {
     };
   }, []);
 
-
   return (
     <div className="background">
       <div className="background-image"></div>
@@ -213,9 +236,8 @@ function Home() {
         <Dots scrollIndex={scrollIndex} />
         {/** Home 1 시작하는 곳 */}
         <div className="Home1">
-
           {isLogin ? <WhiteHeader /> : <Header />}
-          
+
           <div className="main1">
             <div className="beatbox">
               <div className="Logo">
@@ -234,10 +256,23 @@ function Home() {
         {/** Home 2 시작하는 곳 */}
         <div className="Home2">
           <div className="title">
-            <span>Game Intro & Rules</span>
+            <span style={{ marginRight: "150px" }}>
+              Game Intro&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>
+            <span>Rules&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
           </div>
           <div className="content">
-            <div className="intro"></div>
+            <div className="intro">
+              <iframe
+                width="672"
+                height="378"
+                src="https://www.youtube.com/embed/ZZlMB-qRQv0"
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              ></iframe>
+            </div>
             <div className="rules">
               <img style={{ height: 560, width: 514 }} src="images/Rules.png" />
             </div>
@@ -267,7 +302,7 @@ function Home() {
                 </div>
                 <div className="music_rank">
                   <div className="rank">
-                    {music_rank
+                    {musicData
                       .slice(
                         (musicPage - 1) * musicPerPage,
                         musicPage * musicPerPage
@@ -293,11 +328,13 @@ function Home() {
                       backgroundColor: "rgba(0, 0, 0, 0.1)", // 기본 아이템의 배경색을 약간 투명한 검정색으로 설정
                     },
                     "& .MuiPaginationItem-page.Mui-selected": {
-                      backgroundColor: "#3f51b5", // 선택된 아이템의 배경색을 파란색으로 설정
+                      backgroundColor: "#14006d", // 선택된 아이템의 배경색을 파란색으로 설정
+                      opacity: 0.8,
+
                       color: "white", // 선택된 아이템의 텍스트 색상을 흰색으로 설정
                     },
                     "& .MuiPaginationItem-page:hover": {
-                      backgroundColor: "#283593", // 마우스 호버 시 아이템의 배경색을 진한 파란색으로 설정
+                      backgroundColor: "#7f62ff", // 마우스 호버 시 아이템의 배경색을 진한 파란색으로 설정
                     },
                   }}
                 />
@@ -305,11 +342,12 @@ function Home() {
             </div>
             <div className="rank2">
               <h1>Total Rank</h1>
-              <div className="total_rank"></div>
-              <div className="nickname">
-                <span>{user_rank[0].nickName}</span>
-                <span>{user_rank[1].nickName}</span>
-                <span>{user_rank[2].nickName}</span>
+              <div className="total_rank">
+                <div className="nickname">
+                  <span>{userData.nickname}</span>
+                  <span>{userData.nickname}</span>
+                  <span>{userData.nickname}</span>
+                </div>
               </div>
               <div className="top100">
                 <div style={{ height: "20%" }}>
@@ -329,13 +367,13 @@ function Home() {
                 </div>
                 <div className="user_rank">
                   <div className="rank">
-                    {user_rank
+                    {userData
                       .slice(
                         (userPage - 1) * userPerPage,
                         userPage * userPerPage
                       )
                       .map((user, index) => (
-                        <UserRank key={index} user={user} />
+                        <UserRank key={index} user={user} index={index} />
                       ))}
                   </div>
                 </div>
@@ -356,11 +394,12 @@ function Home() {
                     backgroundColor: "rgba(0, 0, 0, 0.1)", // 기본 아이템의 배경색을 약간 투명한 검정색으로 설정
                   },
                   "& .MuiPaginationItem-page.Mui-selected": {
-                    backgroundColor: "#3f51b5", // 선택된 아이템의 배경색을 파란색으로 설정
+                    opacity: 0.8,
+                    backgroundColor: "#14006d", // 선택된 아이템의 배경색을 파란색으로 설정
                     color: "white", // 선택된 아이템의 텍스트 색상을 흰색으로 설정
                   },
                   "& .MuiPaginationItem-page:hover": {
-                    backgroundColor: "#283593", // 마우스 호버 시 아이템의 배경색을 진한 파란색으로 설정
+                    backgroundColor: "#7f62ff", // 마우스 호버 시 아이템의 배경색을 진한 파란색으로 설정
                   },
                 }}
               />
@@ -371,10 +410,10 @@ function Home() {
         {/** Home 4 시작하는 곳 */}
         <div className="Home4">
           <div className="sideBar">
-            <div className="title">
-              <span>Today 방명록</span>
-            </div>
             <div className="calender">
+              <div className="title">
+                <span>Today 방명록</span>
+              </div>
               <DatePicker
                 className="datePicker"
                 dateFormat="yyyy.MM.dd" // 날짜 형태

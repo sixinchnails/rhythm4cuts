@@ -8,7 +8,7 @@ import { Box } from "@mui/material";
 import { login } from "../../apis/login";
 import { setCookie } from "../../utils/cookie";
 
-const Home = () => {
+const Login = () => {
   const emailRef = useRef();
 
   useEffect(() => {
@@ -59,7 +59,6 @@ const Home = () => {
         window.alert("로그인에 실패하였습니다!");
       }
     } catch (error) {
-      console.log(error);
       if (error.response && error.response.status === 400) {
         window.alert("잘못된 이메일 또는 비밀번호입니다!");
       } else {
@@ -72,7 +71,12 @@ const Home = () => {
     <div className="bg">
       <div className="outer">
         <div className="logo">
-          <img src="images/Mypage_Logo.png"></img>
+          <a href="/">
+            <img
+              src="images/Home_Logo.png"
+              style={{ marginLeft: "50px", marginTop: "25px" }}
+            ></img>
+          </a>
         </div>
 
         <div className="input">
@@ -101,18 +105,10 @@ const Home = () => {
         </div>
         <div className="searchAndJoin">
           <button onClick={handleOpenSearchPasswordModal}>PW찾기</button>
-          <Box
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "50vh",
-              overflow: "auto",
-            }}
-          ></Box>
-          <div>|</div>
-          <Link to="/Join">회원가입</Link>
+          <div style={{ color: "white" }}>|</div>
+          <Link to="/Join" style={{ color: "white" }}>
+            회원가입
+          </Link>
         </div>
         <div className="apiLogin">
           <div className="naver-logo"></div>
@@ -128,4 +124,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Login;

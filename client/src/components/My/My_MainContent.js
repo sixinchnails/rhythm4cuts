@@ -2,22 +2,22 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import "./My_MainContent.css";
-import { useState } from 'react';
-import AddFriend from '../Common/AddFriend';
+import { useState } from "react";
+import AddFriend from "../Common/AddFriend";
 
 function MainContent() {
   const location = useLocation();
 
-    // 친구 추가
-    const [isAddFriendModalOpen, setAddFriendModalOpen] = useState(false); // '친구 추가' 모달의 상태를 관리
-    // '친구 추가' 모달 상태를 업데이트하는 함수
-    const handleOpenAddFriendModal = () => {
-      setAddFriendModalOpen(true);
-    };
+  // 친구 추가
+  const [isAddFriendModalOpen, setAddFriendModalOpen] = useState(false); // '친구 추가' 모달의 상태를 관리
+  // '친구 추가' 모달 상태를 업데이트하는 함수
+  const handleOpenAddFriendModal = () => {
+    setAddFriendModalOpen(true);
+  };
 
-    const handleCloseAddFriendModal = () => {
-      setAddFriendModalOpen(false);
-    };
+  const handleCloseAddFriendModal = () => {
+    setAddFriendModalOpen(false);
+  };
   // 페이지 제목 설정
   const pageTitles = {
     "/Mypage": "가입 정보",
@@ -36,9 +36,29 @@ function MainContent() {
         isMyFriendPage ? "main-content my-friend-page" : "main-content"
       }
     >
-      <h1>{title}</h1>
+      <h1
+        style={{
+          fontFamily: "Pretendard-Regular",
+          fontWeight: "bold",
+          color: "white",
+        }}
+      >
+        {title}
+      </h1>
       {isMyFriendPage && (
-        <span className="add-friend" onClick={handleOpenAddFriendModal} style={{cursor:"pointer"}}>친구 추가</span>
+        <span
+          className="add-friend"
+          onClick={handleOpenAddFriendModal}
+          style={{
+            fontFamily: "Pretendard-Regular",
+            fontWeight: "bold",
+            cursor: "pointer",
+            color: "white",
+            marginRight: "10%",
+          }}
+        >
+          친구 추가
+        </span>
       )}
 
       {/* '친구 추가' 모달 */}
