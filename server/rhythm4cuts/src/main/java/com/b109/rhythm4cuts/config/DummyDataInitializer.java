@@ -31,7 +31,7 @@ public class DummyDataInitializer {
 
     public DummyDataInitializer(UserRepository userRepository, ProfileImageRepository profileImageRepository,
                                 BCryptPasswordEncoder bCryptPasswordEncoder
-    , FriendRepository friendRepository, MelonService melonService, MusicService musicService) {
+            , FriendRepository friendRepository, MelonService melonService, MusicService musicService) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
