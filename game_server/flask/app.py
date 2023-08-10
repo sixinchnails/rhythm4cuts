@@ -1,12 +1,12 @@
 from flask import Flask, jsonify, request
-from score import getScore
+from score import getLyricsScore
 app = Flask(__name__)
 
 @app.route('/')
 def index():
     return "Hello, World!"
 
-@app.route('/upload', methods=['POST'])
+@app.route('/score', methods=['POST'])
 def upload():
     try:
         # 녹음 파일을 받아서 처리하는 로직을 여기에 작성합니다.
@@ -14,7 +14,10 @@ def upload():
         # 처리된 결과를 리턴하거나 저장하거나 원하는 작업을 수행합니다.
         # 이 예제에서는 단순히 성공 메시지를 리턴합니다.
         file = request.files['file']
-        result = getScore(file)
+
+        file.save('./' + file.filename)
+        audio_file = open('./'+file.filename, 'rb')
+        result = getLyricsScore(audio_file)
         return jsonify(result)
     except Exception as e:
         return str(e), 500
