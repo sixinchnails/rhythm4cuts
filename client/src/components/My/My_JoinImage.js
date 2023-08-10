@@ -1,13 +1,13 @@
-/* eslint-disable */
-import React, { useState } from "react";
+import { React, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./My_JoinImage.css";
 
 const JoinImage = ({ initialImages, onImageSelect }) => {
+  // eslint-disable-next-line
   const [selectedImageIndex, setSelectedImageIndex] = useState(0); // 선택된 이미지의 인덱스를 상태로 관리
 
-  const handleImageChange = index => {
+  const handleImageChange = (index) => {
     setSelectedImageIndex(index);
     if (onImageSelect) {
       onImageSelect(index + 1);

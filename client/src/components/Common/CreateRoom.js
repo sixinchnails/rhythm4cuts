@@ -1,4 +1,3 @@
-/* eslint-disable */
 import {
   Modal,
   Box,
@@ -11,32 +10,29 @@ import {
   FormControlLabel,
   Radio,
 } from "@mui/material";
+import { React, useState } from "react";
 import { createSession } from "../../openvidu/sessionInitialization";
-import { setSession, setGameSeq } from "../../store";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { getCookie } from "../../utils/cookie";
-import React, { useState } from "react";
 import axios from "axios";
 
 function CreateRoom({ isOpen, handleClose }) {
-  const dispatch = useDispatch(); // Redux
   const navigate = useNavigate(); // 페이지 이동
   const [isSecret, setIsSecret] = useState("일반 방"); // 모드
   const [password, setPassword] = useState(""); // 비밀방 암호
   const [title, setTitle] = useState(uuidv4()); // 방 제목
   const [songSeq, setSongSeq] = useState(""); // 노래 번호 (Integer)
 
-  const handleSongChange = event => {
+  const handleSongChange = (event) => {
     setSongSeq(event.target.value);
   };
 
-  const handleModeChange = event => {
+  const handleModeChange = (event) => {
     setIsSecret(event.target.value);
   };
 
-  const handlePasswordChange = event => {
+  const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
@@ -105,7 +101,7 @@ function CreateRoom({ isOpen, handleClose }) {
             marginBottom: "20px",
             backgroundColor: "rgba(0, 128, 255, 0.1)",
           }}
-          onChange={event => setTitle(event.target.value)}
+          onChange={(event) => setTitle(event.target.value)}
           inputProps={{ style: { color: "#ffffff" } }}
           InputLabelProps={{ style: { color: "#ffffff" } }}
         />

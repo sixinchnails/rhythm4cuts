@@ -1,12 +1,9 @@
 // Home.js
-/* eslint-disable */
 //데이터가 들어오면 만들어야하는 애들 : 소개 영상, 음악 랭킹, 유저 랭킹, 일자별 방명록
 import { React, useRef, useEffect, useState } from "react";
-import { getCookie, setCookie } from "../../utils/cookie";
+import { getCookie, setCookie, removeCookie } from "../../utils/cookie";
 import { renewAccessToken } from "../../apis/renewAccessToken";
 import { Grid, Pagination } from "@mui/material";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
 import DatePicker from "react-datepicker";
 import MusicRank from "../../components/Home/MusicRank";
@@ -22,7 +19,6 @@ import "./Home.css";
 const DIVIDER_HEIGHT = 5;
 
 function Home() {
-  const navigate = useNavigate();
   //로그인 상태 저장변수
   const [isLogin, setIsLogin] = useState(false);
 
@@ -82,7 +78,9 @@ function Home() {
       } else {
         window.confirm("1오류가 발생했습니다.");
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const [startDate, setStartDate] = useState(new Date());
@@ -106,6 +104,7 @@ function Home() {
 
   useEffect(() => {
     fetchMusicRank();
+    fetchUserRank();
   }, []);
 
   // 음악 개수 컨트롤러
@@ -128,16 +127,12 @@ function Home() {
       const response = await axios.get(
         "https://i9b109.p.ssafy.io:8443/ranking/user"
       );
-      console.log(response.data.data);
       setUserData(response.data.data);
+      console.log(response.data.data);
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    fetchUserRank();
-  }, []);
 
   // 유저 개수 컨트롤러
   const userPerPage = 7; // 한 페이지당 표시할 방 수
@@ -274,7 +269,11 @@ function Home() {
               ></iframe>
             </div>
             <div className="rules">
-              <img style={{ height: 560, width: 514 }} src="images/Rules.png" />
+              <img
+                alt="게임 규칙 이미지"
+                style={{ height: 420, width: 450 }}
+                src="images/removeRules.png"
+              />
             </div>
           </div>
         </div>
@@ -344,6 +343,9 @@ function Home() {
               <h1>Total Rank</h1>
               <div className="total_rank">
                 <div className="nickname">
+                  {/* <span>{userData[1].nickname}</span>
+                  <span>{userData[0].nickname}</span>
+                  <span>{userData[2].nickname}</span> */}
                   <span>{userData.nickname}</span>
                   <span>{userData.nickname}</span>
                   <span>{userData.nickname}</span>

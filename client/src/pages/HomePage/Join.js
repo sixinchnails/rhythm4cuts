@@ -1,18 +1,17 @@
 // Join.js
-/* eslint-disable */
-import React, { useCallback, useEffect, useState } from "react";
-import "./Join.css";
+import { React, useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import JoinImage from "../../components/My/My_JoinImage";
 import JoinInfo from "../../components/My/My_JoinInfo";
 import Button from "@mui/material/Button";
 import Header from "../../components/Home/Header";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import "./Join.css";
 
 const Join = () => {
   const [profileImgSeq, setProfileImgSeq] = useState(1); // profile_img_seq를 상태로 관리
 
-  const handleImageSelect = useCallback(index => {
+  const handleImageSelect = useCallback((index) => {
     console.log("Selected Image Index:", index);
     setProfileImgSeq(index);
   }, []);
@@ -22,7 +21,7 @@ const Join = () => {
   // 회원가입 정보를 저장할 상태
   const [joinInfo, setJoinInfo] = useState({});
 
-  const handleJoinInfo = useCallback(data => {
+  const handleJoinInfo = useCallback((data) => {
     setJoinInfo(data); // JoinInfo 컴포넌트로부터 받은 데이터를 상태에 저장
   }, []);
 
@@ -39,6 +38,7 @@ const Join = () => {
       window.confirm("비밀번호 확인하세요.");
     } else {
       try {
+        //eslint-disable-next-line
         const response = await axios.post(
           "https://i9b109.p.ssafy.io:8443/member/register",
           // "http://lo/calhost:8080/member/register",

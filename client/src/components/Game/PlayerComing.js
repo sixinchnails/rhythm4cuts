@@ -1,5 +1,11 @@
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  CircularProgress,
+} from "@mui/material";
 import React from "react";
-import { Card, CardContent, Typography, Box, CircularProgress } from "@mui/material";
 
 function PlayerComing() {
   return (
@@ -9,7 +15,8 @@ function PlayerComing() {
           width: "15vw",
           height: "32vh",
           position: "relative", // 추가: 로딩 스피너를 정확한 위치에 표시하기 위해 필요
-        }}>
+        }}
+      >
         <CardContent>
           <img
             src="/images/꼬북이.jfif"
@@ -22,7 +29,8 @@ function PlayerComing() {
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)", // 로딩 스피너를 가운데 정렬
-            }}>
+            }}
+          >
             <CircularProgress color="primary" />
           </Box>
         </CardContent>

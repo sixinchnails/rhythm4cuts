@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import "./My_Image.css";
 
@@ -16,7 +17,7 @@ const ImageByMonth = ({ month, year, images, onDownloadClick }) => {
             <img src={image.src} alt={image.alt} className="image-size" />
             <a
               href="#"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 onDownloadClick(image.src);
               }}

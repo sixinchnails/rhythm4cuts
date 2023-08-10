@@ -1,4 +1,3 @@
-/* eslint-disable */
 import NotificationsIcon from "@mui/icons-material/NotificationsNone";
 import Badge from "@mui/material/Badge";
 import "./WhiteHeader.css";
@@ -42,7 +41,7 @@ const LoginHeader = () => {
 
   const [nickName, setNickName] = useState("");
   const [point, setPoint] = useState(0);
-  userInfo().then(res => {
+  userInfo().then((res) => {
     setNickName(res.data.nickname);
     setPoint(res.data.point);
   });
@@ -50,7 +49,7 @@ const LoginHeader = () => {
   return (
     <div className="Header_outer1" style={{ color: "white" }}>
       <div className="Header_logo1">
-        <img src="images/Home_Logo.png"></img>
+        <img src="images/Home_Logo.png" alt="헤더 로고"></img>
       </div>
       <div>
         <span style={{ color: "white", marginRight: 20, fontWeight: "bold" }}>

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button, Typography, Container, Grid } from "@mui/material";
+import { React, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function NextToShot() {
   const navigate = useNavigate();

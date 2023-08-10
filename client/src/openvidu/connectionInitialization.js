@@ -1,8 +1,8 @@
 // connectionInitialization.js
 
+import { setConnectionToken, setConnection } from "../store";
 import axios from "axios";
 import store from "../store"; // 리덕스 훅을 이용하여 상태 가져오기
-import { setConnectionToken, setConnection } from "../store";
 const OPENVIDU_SERVER_URL = "https://i9b109.p.ssafy.io";
 const OPENVIDU_SERVER_SECRET = "zlwhsalsrnrWid1234";
 

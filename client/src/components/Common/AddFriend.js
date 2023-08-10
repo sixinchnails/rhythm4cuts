@@ -9,15 +9,13 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
-import { Client } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
-import axios from "axios";
-import { Stomp } from "@stomp/stompjs";
 import { useDebounce } from "use-debounce";
 import { getCookie } from "../../utils/cookie";
-import { to } from "react-spring";
 import { Navigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
+import { Stomp } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import axios from "axios";
 
 var sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
 var stomp = Stomp.over(sock);
@@ -29,16 +27,16 @@ function AddFriend({ isOpen, handleClose }) {
   // const [client, setClient] = useState(null);
   const [fromUser, setFromUser] = useState("");
   const [toUser, setToUser] = useState("");
-  
+
   try {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           setFromUser(res.data.user_seq);
-          console.log(res.data.user_seq)
+          console.log(res.data.user_seq);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         Navigate("/");
         window.alert("로그인을 해주세요!");
       });
@@ -66,7 +64,7 @@ function AddFriend({ isOpen, handleClose }) {
         });
       }
     });
-}, [fromUser]);
+  }, [fromUser]);
 
   useEffect(() => {
     if (debouncedFriendNickname) {
@@ -79,7 +77,7 @@ function AddFriend({ isOpen, handleClose }) {
             },
           }
         )
-        .then(response => {
+        .then((response) => {
           if (response.data.data.length > 0) {
             const { nickname, email, userSeq } = response.data.data[0];
             setUserInfo({ nickname, email });
@@ -89,7 +87,7 @@ function AddFriend({ isOpen, handleClose }) {
             setToUser("");
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
     } else {
@@ -98,7 +96,7 @@ function AddFriend({ isOpen, handleClose }) {
     }
   }, [debouncedFriendNickname]);
 
-  const handleNameChange = async event => {
+  const handleNameChange = async (event) => {
     setfriendNickname(event.target.value);
   };
 

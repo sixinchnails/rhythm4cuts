@@ -1,12 +1,11 @@
-/* eslint-disable */
 import { removeCookie } from "../../utils/cookie";
-import "./BlackHeader.css";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "../../utils/cookie";
+import { Link } from "react-router-dom";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import axios from "axios";
 import Badge from "@mui/material/Badge";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import "./BlackHeader.css";
 
 const LoginMypageHeader = () => {
   const navigate = useNavigate();
@@ -48,7 +47,7 @@ const LoginMypageHeader = () => {
   return (
     <div className="Header_outer2">
       <div className="Header_logo2" onClick={GoMain}>
-        <img src="images/Mypage_Logo.png"></img>
+        <img src="images/Mypage_Logo.png" alt="헤더 로고"></img>
       </div>
       <div>
         <Badge color="error" variant="dot" style={{ marginRight: "20px" }}>

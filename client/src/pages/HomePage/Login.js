@@ -1,12 +1,10 @@
 // Login.js
-/* eslint-disable */
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { setCookie } from "../../utils/cookie";
+import { login } from "../../apis/login";
 import SearchPassword from "../../components/Common/SearchPassword";
 import "./Login.css";
-import { Box } from "@mui/material";
-import { login } from "../../apis/login";
-import { setCookie } from "../../utils/cookie";
 
 const Login = () => {
   const emailRef = useRef();
@@ -73,6 +71,7 @@ const Login = () => {
         <div className="logo">
           <a href="/">
             <img
+              alt="홈 로고 이미지"
               src="images/Home_Logo.png"
               style={{ marginLeft: "50px", marginTop: "25px" }}
             ></img>

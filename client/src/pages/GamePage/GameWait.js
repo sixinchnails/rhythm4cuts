@@ -1,37 +1,26 @@
-/* eslint-disable */
-import {
-  styled,
-  Button,
-  Card,
-  Container,
-  Grid,
-  Typography,
-  IconButton,
-} from "@mui/material";
-import { createConnection } from "../../openvidu/connectionInitialization";
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect, useState } from "react";
-import { getCookie } from "../../utils/cookie";
-import { userInfo } from "../../apis/userInfo";
-// import { setSession, resetRoomState } from "../../store";
-import LoginAlert from "../../components/Common/LoginAlert";
-import UserVideo from "../../components/Game/UserVideo";
-import Header from "../../components/Game/HeaderPlay";
-import Next from "../../components/Game/NextToPlay";
-import axios from "axios";
-import {
-  Chat as ChatIcon,
-  Check as CheckIcon,
-  ExitToApp as ExitToAppIcon,
-} from "@mui/icons-material";
-import UserVideoComponent from "../../components/Game/UserVideoComponent";
 import {
   setSession as setSessionAction,
   setConnection,
   setConnectionToken,
   resetRoomState,
 } from "../../store";
+import {
+  Chat as ChatIcon,
+  Check as CheckIcon,
+  ExitToApp as ExitToAppIcon,
+} from "@mui/icons-material";
+import { styled, Card, Grid, Typography, IconButton } from "@mui/material";
+import { React, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { createConnection } from "../../openvidu/connectionInitialization";
+import { getCookie } from "../../utils/cookie";
+import { userInfo } from "../../apis/userInfo";
+// import { setSession, resetRoomState } from "../../store";
+import UserVideoComponent from "../../components/Game/UserVideoComponent";
+import LoginAlert from "../../components/Common/LoginAlert";
+import Header from "../../components/Game/HeaderPlay";
+import axios from "axios";
 
 // Styled 버튼
 const StyledIconButton = styled(IconButton)({
@@ -83,21 +72,21 @@ function GameWait() {
       });
   }, []);
 
-  useEffect(() => {
-    userInfo()
-      .then((res) => {
-        if (res.status !== 200) {
-          window.alert("로그인을 해주세요!");
-          navigate("/");
-        }
-      })
-      .catch((error) => {
-        console.error("유저 정보 불러오기 실패:", error);
-        window.alert("로그인을 해주세요!");
-        navigate("/");
-      });
-    fetchSession();
-  }, [gameSeq]);
+  // useEffect(() => {
+  //   userInfo()
+  //     .then((res) => {
+  //       if (res.status !== 200) {
+  //         window.alert("로그인을 해주세요!");
+  //         navigate("/");
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error("유저 정보 불러오기 실패:", error);
+  //       window.alert("로그인을 해주세요!");
+  //       navigate("/");
+  //     });
+  //     fetchSession();
+  //   }, [gameSeq]);
 
   // 방 세션 ID 가져오기
   const fetchSession = async () => {

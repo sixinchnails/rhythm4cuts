@@ -1,7 +1,7 @@
-import React from "react";
 import { AppBar, Toolbar, IconButton } from "@mui/material";
-import { keyframes } from '@emotion/react';
+import { keyframes } from "@emotion/react";
 import { css } from "@mui/system";
+import React from "react";
 
 // Define the keyframes
 const move = keyframes`git
@@ -36,4 +36,4 @@ function Header() {
   );
 }
 
-export default Header; 
+export default Header;
