@@ -86,6 +86,10 @@ body {
   font-weight: bold;
   text-align: center;
   padding-top: 50px;
+  -webkit-text-stroke-width: 0.5px;
+  -webkit-text-stroke-color: black;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .Home2 > .content {
@@ -143,7 +147,9 @@ body {
   margin-top: 50px;
   height: 70vh;
   width: 35vw;
-  background-color: #c1b3ff;
+  background-image: url("../../../public/images/1.jpg");
+  background-size: cover;
+  background-position: center;
   opacity: 0.9;
   border-radius: 10px;
 }
@@ -156,13 +162,13 @@ body {
 }
 
 .Home3 > .content > .rank1 > .rt_sing_rank > div > .category {
-  margin-top: 15px;
+  margin-top: 25px;
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 95%;
   height: 50%;
-  background-color: #14006d;
+  /* background-color: #14006d; */
   border-radius: 10px;
   font-weight: bold;
   color: white;
@@ -171,7 +177,8 @@ body {
 .Home3 > .content > .rank1 > .rt_sing_rank > .music_rank {
   width: 95%;
   height: 75%;
-  background-color: #14006d;
+  margin-top: 10px;
+  /* background-color: #14006d; */
   border-radius: 10px;
   margin-left: 2.5%;
   color: white;
@@ -206,9 +213,11 @@ body {
 }
 
 .Home3 > .content > .rank2 > .top100 {
-  height: 38%;
+  height: 40%;
   width: 35vw;
-  background-color: #c1b3ff;
+  background-image: url("../../../public/images/6.jpg");
+  background-size: cover;
+  background-position: center;
   opacity: 0.8;
   border-radius: 10px;
 }
@@ -226,14 +235,14 @@ body {
   align-items: center;
   width: 90%;
   height: 50%;
-  background-color: #14006d;
+  /* background-color: #14006d; */
   border-radius: 10px;
   font-weight: bold;
   color: white;
 }
 
 .Home3 > .content > .rank2 > .top100 > .user_rank {
-  background-color: #14006d;
+  /* background-color: #14006d; */
   border-radius: 10px;
   width: 90%;
   height: 75%;
@@ -260,10 +269,10 @@ body {
 }
 
 .Home4 > .sideBar > .calender > .title {
-  height: 10%;
+  height: 25%;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: end;
   color: white;
 }
 
@@ -271,7 +280,9 @@ body {
   height: 80%;
   margin-top: 10vh;
   justify-content: center;
-  background-color: #c1b3ff;
+  background-image: url("../../../public/images/2.jpg");
+  background-size: cover;
+  background-position: center;
   border-radius: 10px;
 }
 
@@ -279,7 +290,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 15%;
+  margin-top: 12%;
 }
 
 .Home4
@@ -334,7 +345,9 @@ body {
 .Home4 > .content {
   width: 65%;
   height: 80%;
-  background-color: #14006d;
+  background-image: url("../../../public/images/5.jpg");
+  background-size: cover;
+  background-position: center;
   border-radius: 10px;
   margin-top: 10vh;
   margin-left: 5%;
@@ -355,6 +368,7 @@ body {
   background-color: #fed9e7;
   border-radius: 10px;
   margin: 5%;
+  opacity: 0.3;
 }
 
 .Home4 > .content > .line2 {
@@ -371,4 +385,5 @@ body {
   background-color: #fed9e7;
   border-radius: 10px;
   margin: 5%;
+  opacity: 0.3;
 }

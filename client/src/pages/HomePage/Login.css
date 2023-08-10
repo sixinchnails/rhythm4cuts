@@ -1,7 +1,9 @@
 .bg {
   width: 100vw;
   height: 100vh;
-  background-color: #c1b3ff;
+  background-image: url("../../../public/images/3.jpg");
+  background-size: cover;
+  background-position: center;
 }
 
 .bg > .outer {
@@ -56,8 +58,7 @@
 }
 
 .bg > .outer > .login > button:hover {
-  background-color: #14006d;
-  color: white;
+  background-color: #c1b3ff;
 }
 
 .bg > .outer > .searchAndJoin {
@@ -69,12 +70,14 @@
 }
 
 .bg > .outer > .searchAndJoin > button {
-  background-color: #c1b3ff;
+  background-color: transparent;
   border: none;
   text-decoration: none;
   padding: 0px !important;
   margin-right: 6px;
   margin-left: 15px;
+  color: white;
+  font-size: 15px;
 }
 
 .bg > .outer > .searchAndJoin > a {

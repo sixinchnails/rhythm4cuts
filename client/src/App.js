@@ -2,6 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom"; //Link,
 import { Provider } from "react-redux";
 import store from "./store";
+import { WebSocketProvider } from "./utils/WebSocket/CreateFriend";
 
 import Home from "./pages/HomePage/Home";
 import Join from "./pages/HomePage/Join";
@@ -21,25 +22,27 @@ import MyModify from "./pages/MyPage/MyModify";
 
 function App() {
   return (
-    <Provider store={store}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/Login" element={<Login />} />
-        <Route path="/Join" element={<Join />} />
+    <WebSocketProvider>
+      <Provider store={store}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Join" element={<Join />} />
 
-        <Route path="/GameList" element={<GameList />} />
-        <Route path="/GameWait/:gameSeq" element={<GameWait />} />
-        <Route path="/GamePlay" element={<GamePlay />} />
-        <Route path="/GameScore" element={<GameScore />} />
-        <Route path="/GameShot" element={<GameShot />} />
+          <Route path="/GameList" element={<GameList />} />
+          <Route path="/GameWait/:gameSeq" element={<GameWait />} />
+          <Route path="/GamePlay/:gameSeq" element={<GamePlay />} />
+          <Route path="/GameScore" element={<GameScore />} />
+          <Route path="/GameShot" element={<GameShot />} />
 
-        <Route path="/MyPage" element={<MyPage />} />
-        <Route path="/MyFriend" element={<MyFriend />} />
-        <Route path="/MyPoint" element={<MyPoint />} />
-        <Route path="/MyPhoto" element={<MyPhoto />} />
-        <Route path="/MyModify" element={<MyModify />} />
-      </Routes>
-    </Provider>
+          <Route path="/MyPage" element={<MyPage />} />
+          <Route path="/MyFriend" element={<MyFriend />} />
+          <Route path="/MyPoint" element={<MyPoint />} />
+          <Route path="/MyPhoto" element={<MyPhoto />} />
+          <Route path="/MyModify" element={<MyModify />} />
+        </Routes>
+      </Provider>
+    </WebSocketProvider>
   );
 }
 
