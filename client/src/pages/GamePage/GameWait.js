@@ -280,94 +280,296 @@ function GameWait() {
   };
 
   return (
-    <div id="video-wrap">
-      {/* {!connectSession ? (
-        <button onClick={joinSession}>입장</button>
-      ) : null} */}
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundImage: "url('/images/GameImage/GameList.jpg')",
+      }}
+    >
 
-      {/* {connectSession ? ( */}
-      
-      <div
-        style={{
-          width: "100%",
-          height: "100vh",
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundImage: "url('/images/GameImage/GameList.jpg')",
-        }}
-      >
+      <Header />
 
-        <Header />
-        <div id="video-container" className="col-md-6">
-          {publisher ? (
-            <div className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(publisher)}>
-              <UserVideoComponent streamManager={publisher} />
+      <Grid container>
+        {/* 멘트 */}
+        <Grid
+          container
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            zIndex: 1, // z-index를 1로 설정하여 비디오 위에 텍스트가 나타나도록
+          }}
+        >
+          <Typography
+            variant="h4"
+            style={{
+              fontFamily: "Pretendard-Regular",
+              fontWeight: "bold",
+              fontSize: "10px",
+              color: "red",
+            }}
+          >
+            전원 준비가 되면 게임이 시작합니다 악!
+          </Typography>
+        </Grid>
+
+        {/* Top */}
+        <Grid container>
+          <Grid
+            item
+            xs={10}
+            container
+            alignItems="center"
+            justifyContent="center"
+            paddingLeft={"150px"}
+          >
+            <Card
+              style={{
+                width: "55vw",
+                height: "40vh",
+                background: "transparent",
+                borderRadius: "30px",
+              }}
+            >
+              {/* 대기중 비디오 */}
+              <video
+                src="/images/GameImage/Dance.mp4"
+                autoPlay
+                loop
+                style={{
+                  width: "100%",
+                  height: "40vh",
+                  objectFit: "cover",
+                }}
+              />
+            </Card>
+          </Grid>
+
+          <Grid
+            item
+            xs={2}
+            container
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            style={{ paddingTop: "40px" }}
+          >
+            {/* "게임준비" 버튼 */}
+            <StyledIconButton
+              onClick={handleGameReady}
+              style={{ width: "70%" }}
+            >
+              <CheckIcon />
+              <Typography
+                style={{
+                  fontFamily: "Pretendard-Regular",
+                  fontSize: "20px",
+                  padding: "15px",
+                }}
+              >
+                게임 준비
+              </Typography>
+            </StyledIconButton>
+
+            {/* "채팅" 버튼 */}
+            <StyledIconButton onClick={handleChat} style={{ width: "70%" }}>
+              <ChatIcon />
+              <Typography
+                style={{
+                  fontFamily: "Pretendard-Regular",
+                  fontSize: "20px",
+                  padding: "15px",
+                }}
+              >
+                채팅
+              </Typography>
+            </StyledIconButton>
+
+            {/* "나가기" 버튼 */}
+            <StyledIconButton onClick={handleExit} style={{ width: "70%" }}>
+              <ExitToAppIcon />
+              <Typography
+                style={{
+                  fontFamily: "Pretendard-Regular",
+                  fontSize: "20px",
+                  padding: "15px",
+                }}
+              >
+                나가기
+              </Typography>
+            </StyledIconButton>
+          </Grid>
+        </Grid>
+
+        {/* Bottom */}
+        <Grid
+          style={{
+            height: "20vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            margin: "50px",
+          }}
+        >
+          {/* Player 1 */}
+          <Grid
+            item
+            xs={2}
+            style={{
+              backgroundColor: "black",
+              height: "20vh",
+              border: "2px solid white",
+              padding: "2px",
+              margin: "5px",
+              borderRadius: "20px",
+            }}
+          >
+            <UserVideoComponent
+              streamManager={subscribers[0]}
+            />
+          </Grid>
+          <Grid item xs={1} style={{ height: "20vh" }}>
+            <div
+              style={{
+                fontFamily: "Pretendard-Regular",
+                fontSize: "20px",
+                color: "white",
+                padding: "5px",
+              }}
+            >
+              첫번째 선수
             </div>
-          ) : null}
-          {subscribers.map((sub, i) => (
-            <div key={sub.id} className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(sub)}>
-              <span>{sub.id}</span>
-              <UserVideoComponent streamManager={sub} />
+          </Grid>
+          {/* Player 2 */}
+          <Grid
+            item
+            xs={2}
+            style={{
+              backgroundColor: "black",
+              height: "20vh",
+              border: "2px solid white",
+              padding: "2px",
+              margin: "5px",
+              borderRadius: "20px",
+            }}
+          >
+            <UserVideoComponent
+              streamManager={subscribers[0]}
+            />
+          </Grid>
+          <Grid item xs={1} style={{ height: "20vh" }}>
+            <div
+              style={{
+                fontFamily: "Pretendard-Regular",
+                fontSize: "20px",
+                color: "white",
+                padding: "5px",
+              }}
+            >
+              두번째 선수
             </div>
-          ))}
-        </div>
-        {/* '로그인 경고' 모달 */}
-        <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
-      </div>
-      {/* ) : null} */}
+          </Grid>
+          {/* Player 3 */}
+          <Grid
+            item
+            xs={2}
+            style={{
+              backgroundColor: "black",
+              height: "20vh",
+              border: "2px solid white",
+              padding: "2px",
+              margin: "5px",
+              borderRadius: "20px",
+            }}
+          >
+            <UserVideoComponent
+              streamManager={subscribers[0]}
+            />
+          </Grid>
+          <Grid item xs={1} style={{ height: "20vh" }}>
+            <div
+              style={{
+                fontFamily: "Pretendard-Regular",
+                fontSize: "20px",
+                color: "white",
+                padding: "5px",
+              }}
+            >
+              세번째 선수
+            </div>
+          </Grid>
+          {/* Player 4 */}
+          <Grid
+            item
+            xs={2}
+            style={{
+              backgroundColor: "black",
+              height: "20vh",
+              border: "2px solid white",
+              padding: "2px",
+              margin: "5px",
+              borderRadius: "20px",
+            }}
+          >
+            <UserVideoComponent
+              streamManager={subscribers[0]}
+            />
+          </Grid>
+          <Grid item xs={1} style={{ height: "20vh" }}>
+            <div
+              style={{
+                fontFamily: "Pretendard-Regular",
+                fontSize: "20px",
+                color: "white",
+                padding: "5px",
+              }}
+            >
+              네번째 선수
+            </div>
+          </Grid>
+        </Grid>
+      </Grid>
+
+      {/* '로그인 경고' 모달 */}
+      <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
     </div>
-
-
-
-    // <div className="container">
-    //         {!session ? (
-    //             <div>
-    //                 <button onClick={joinSession}>Join Session</button>
-    //             </div>
-    //         ) : null}
-    //         {session ? (
-    //             <div id="session">
-    //                 <div id="session-header">
-    //                     <h1 id="session-title">{mySessionId}</h1>
-    //                     <input
-    //                         className="btn btn-large btn-danger"
-    //                         type="button"
-    //                         id="buttonLeaveSession"
-    //                         onClick={leaveSession}
-    //                         value="Leave session"
-    //                     />
-    //                     {/* <input
-    //                         className="btn btn-large btn-success"
-    //                         type="button"
-    //                         id="buttonSwitchCamera"
-    //                         onClick={switchCamera}
-    //                         value="Switch Camera"
-    //                     /> */}
-    //                 </div>
-
-    //                 {mainStreamManager ? (
-    //                     <div id="main-video" className="col-md-6">
-    //                         <UserVideoComponent streamManager={mainStreamManager} />
-    //                     </div>
-    //                 ) : null}
-    //                 <div id="video-container" className="col-md-6">
-    //                     {publisher ? (
-    //                         <div className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(publisher)}>
-    //                             <UserVideoComponent streamManager={publisher} />
-    //                         </div>
-    //                     ) : null}
-    //                     {subscribers.map((sub, i) => (
-    //                         <div key={sub.id} className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(sub)}>
-    //                             <span>{sub.id}</span>
-    //                             <UserVideoComponent streamManager={sub} />
-    //                         </div>
-    //                     ))}
-    //                 </div>
-    //             </div>
-    //         ) : null}
-    //     </div>
   );
 }
 
 export default GameWait;
+
+
+// <div id="video-wrap">
+
+// <div
+//   style={{
+//     width: "100%",
+//     height: "100vh",
+//     backgroundPosition: "center",
+//     backgroundSize: "cover",
+//     backgroundRepeat: "no-repeat",
+//     backgroundImage: "url('/images/GameImage/GameList.jpg')",
+//   }}
+// >
+
+//   <Header />
+//   <div id="video-container" className="col-md-6">
+//     {publisher ? (
+//       <div className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(publisher)}>
+//         <UserVideoComponent streamManager={publisher} />
+//       </div>
+//     ) : null}
+//     {subscribers.map((sub, i) => (
+//       <div key={sub.id} className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(sub)}>
+//         <span>{sub.id}</span>
+//         <UserVideoComponent streamManager={sub} />
+//       </div>
+//     ))}
+//   </div>
+//   {/* '로그인 경고' 모달 */}
+//   <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
+// </div>
+// </div>
