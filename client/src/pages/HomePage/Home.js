@@ -1,7 +1,7 @@
 // Home.js
 //데이터가 들어오면 만들어야하는 애들 : 소개 영상, 음악 랭킹, 유저 랭킹, 일자별 방명록
 import { React, useRef, useEffect, useState } from "react";
-import { getCookie, setCookie, removeCookie } from "../../utils/cookie";
+import { getCookie, removeCookie, setCookie } from "../../utils/cookie";
 import { renewAccessToken } from "../../apis/renewAccessToken";
 import { Grid, Pagination } from "@mui/material";
 import { userInfo } from "../../apis/userInfo";
@@ -271,9 +271,9 @@ function Home() {
             </div>
             <div className="rules">
               <img
-                style={{ height: 560, width: 514 }}
-                alt="규칙 사진"
-                src="images/Rules.png"
+                alt="게임 규칙 이미지"
+                style={{ height: 420, width: 450 }}
+                src="images/removeRules.png"
               />
             </div>
           </div>
@@ -344,9 +344,13 @@ function Home() {
               <h1>Total Rank</h1>
               <div className="total_rank">
                 <div className="nickname">
-                  <span>{userData.nickname}</span>
-                  <span>{userData.nickname}</span>
-                  <span>{userData.nickname}</span>
+                  {userData.length > 0 ? (
+                    <div>
+                      <span>{userData[1].nickname}</span>
+                      <span>{userData[0].nickname}</span>
+                      <span>{userData[2].nickname}</span>
+                    </div>
+                  ) : null}
                 </div>
               </div>
               <div className="top100">
