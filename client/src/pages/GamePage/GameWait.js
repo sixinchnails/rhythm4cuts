@@ -21,20 +21,21 @@ function GameWait() {
   const navigate = useNavigate(); // 페이지 이동
   const [nickname, setNickname] = useState(undefined);
 
-
-  const [mySessionId, setMySessionId] = useState('SessionA');
-  const [myUserName, setMyUserName] = useState('Participant' + Math.floor(Math.random() * 100));
-  const [connectSession, setConnectSession] = useState(undefined);
-  const [mainStreamManager, setMainStreamManager] = useState(undefined); // 방장?
-  const [publisher, setPublisher] = useState(undefined);
-  const [subscribers, setSubscribers] = useState([]);
-
   // REDUX에서 가져오기
   var { gameSeq } = useParams(); // url에서 추출
 
   dispatch(setGameseq(gameSeq));
   // const gameSeq = useSelector(state => state.roomState.gameseq); 
+
   const session = useSelector(state => state.roomState.session);
+
+  const [mySessionId, setMySessionId] = useState('SessionA');
+    const [myUserName, setMyUserName] = useState('Participant' + Math.floor(Math.random() * 100));
+    const [connectSession, setConnectSession] = useState(undefined)
+    const [mainStreamManager, setMainStreamManager] = useState(undefined);
+    const [publisher, setPublisher] = useState(undefined);
+    const [subscribers, setSubscribers] = useState([]);
+  
 
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
@@ -91,43 +92,78 @@ function GameWait() {
   useEffect(() => {
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => {
-      window.removeEventListener('beforeunload', onBeforeUnload);
+        window.removeEventListener('beforeunload', onBeforeUnload);
     };
   }, []);
 
-  // 페이지 나갈 때 세션 나가기 함수 호출
   const onBeforeUnload = () => {
     leaveSession();
-  };
-  
-  // 세션 나가기
-  const leaveSession = () => {
-    // if (session) {
-      connectSession.disconnect();
-    // 리덕스 초기화
-    resetRoomState();
-    // }
-    setConnectSession(undefined);
-        setSubscribers([]);
-        setMySessionId('SessionA');
-        setMyUserName('Participant' + Math.floor(Math.random() * 100));
-        setMainStreamManager(undefined);
-        setPublisher(undefined);
-  };
+};
 
-  const handleChangeSessionId = (e) => {
-    setMySessionId(e.target.value);
-  };
-
-  const handleChangeUserName = (e) => {
-    setMyUserName(e.target.value);
-  };
-
-  function handleMainVideoStream(stream) {
+const handleMainVideoStream = (stream) => {
     if (mainStreamManager !== stream) {
-      setMainStreamManager(stream);
+        setMainStreamManager(stream);
     }
-  };
+};
+
+const deleteSubscriber = (streamManager) => {
+  const newSubscribers = subscribers.filter(sub => sub !== streamManager);
+  setSubscribers(newSubscribers);
+};
+
+const joinSession = async () => {
+  try {
+      const ov = new OpenVidu();
+      const newSession = ov.initSession();
+      setConnectSession(newSession);
+
+      newSession.on('streamCreated', (event) => {
+          const subscriber = newSession.subscribe(event.stream, undefined);
+          setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+      });
+
+      newSession.on('streamDestroyed', (event) => {
+          deleteSubscriber(event.stream.streamManager);
+      });
+
+      newSession.on('exception', (exception) => {
+          console.warn(exception);
+      });
+
+      const token = await getToken(); // Implement getToken function
+
+      console.log("-----------------token : " + token);
+      newSession.connect(token, { clientData: myUserName })
+          .then(async () => {
+              const newPublisher = await ov.initPublisherAsync(undefined, {
+                  audioSource: undefined,
+                  videoSource: undefined,
+                  publishAudio: true,
+                  publishVideo: true,
+                  resolution: '640x480',
+                  frameRate: 30,
+                  insertMode: 'APPEND',
+                  mirror: false,
+              });
+
+              newSession.publish(newPublisher);
+
+              const devices = await ov.getDevices();
+              const videoDevices = devices.filter(device => device.kind === 'videoinput');
+              const currentVideoDeviceId = newPublisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
+              const currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
+
+              setMainStreamManager(newPublisher);
+              setPublisher(newPublisher);
+          })
+          .catch((error) => {
+              console.log('There was an error connecting to the session:', error.code, error.message);
+          });
+  } catch (error) {
+      console.error('Error joining session:', error);
+  }
+};
+
 
 
   // "게임 준비" 버튼을 클릭했을 때 동작
@@ -151,93 +187,7 @@ function GameWait() {
     navigate(`/GameList`);
   };
 
-  // const deleteSubscriber = (streamManager) => {
-  //     const newSubscribers = subscribers.filter(sub => sub !== streamManager);
-  //     setSubscribers(newSubscribers);
-  // };
-
-
-  // 페이지 떠날 때 이벤트 리스너 등록 및 해제
-  // useEffect(() => {
-  //   joinSession()
-  // }, []);
-
-
-
-  // openvidu 연결
-  const joinSession = async () => {
-    try {
-      const ov = new OpenVidu();
-      const newSession = ov.initSession();
-      // userSession(newSession);
-      // setConnection(newSession);
-      setConnectSession(newSession);
-      newSession.on('streamCreated', (event) => {
-        const subscriber = newSession.subscribe(event.stream, undefined);
-        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
-
-      });
-
-      newSession.on('streamDestroyed', (event) => {
-        deleteSubscriber(event.stream.streamManager);
-      });
-
-      newSession.on('exception', (exception) => {
-        console.warn(exception);
-      });
-
-      const strat_token = await getToken(); // Implement getToken function  
-      const nickname = await fetchNickname();
-      console.log("null이면 안된다 2 : " + strat_token)
-
-      console.log("닉네임~~~~~~~~~~~~~~" + nickname)
-      newSession.connect(strat_token, { clientData: "abc" })
-        .then(async () => {
-          const newPublisher = await ov.initPublisherAsync(undefined, {
-            audioSource: undefined,
-            videoSource: undefined,
-            publishAudio: true,
-            publishVideo: true,
-            resolution: '640x480',
-            frameRate: 30,
-            insertMode: 'APPEND',
-            mirror: false,
-          });
-
-          newSession.publish(newPublisher);
-
-          const devices = await ov.getDevices();
-          const videoDevices = devices.filter(device => device.kind === 'videoinput');
-          const currentVideoDeviceId = newPublisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
-          const currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
-
-          setMainStreamManager(newPublisher);
-          setPublisher(newPublisher);
-        })
-        .catch((error) => {
-          console.log('There was an error connecting to the session:', error.code, error.message);
-        });
-    } catch (error) {
-      console.error('Error joining session:', error);
-    }
-  };
-
-
-  // // 최종 순서대로! (동기)
-  // useEffect(() => {
-  //   fetchNickname()
-  //     .then(() => fetchSession()) // 방 세션 발급
-  //     .then(() => fetchConnectionToken()) // 유저 토큰 발급
-  //     .then(() => {
-  //       joinSession(); // openvidu 연결
-  //       setMainStreamManager(publisher);
-  //     })
-  //     .catch((error) => {
-  //       console.error("최종 연결을 실패했습니다 :", error);
-  //     });
-  // }, []);
-
-  // --------------------------------------------------------------------------------------
+  
 
   // 유저 닉네임 가져오기 : 리덕스 저장 => 나중에 로그인 페이지에서 처리
   async function fetchNickname() {
@@ -297,16 +247,30 @@ function GameWait() {
     }
   }
 
-  // --------------------------------------------------------------------------------------
-  // console.log("게임 시퀀스입니다 : " + gameSeq);
-  // console.log("방 세션입니다 : " + session);
-  // console.log("연결 세션입니다: " + connection);
-  // console.log("연결 토큰입니다 : " + connectionToken);
+  const leaveSession = () => {
+    console.log('--------------------leave session')
+    if (connectSession) {
+        connectSession.disconnect();
+    }
+
+    setConnectSession(undefined);
+    setSubscribers([]);
+    setMySessionId('SessionA');
+    setMyUserName('Participant' + Math.floor(Math.random() * 100));
+    setMainStreamManager(undefined);
+    setPublisher(undefined);
+
+    useEffect(() => {
+      if (!connectSession) {
+        joinSession();
+      }
+    }, [connectSession]);
+};
 
   return (
-    <div id="video-container">
+    <div id="video-wrap">
       {!connectSession ? (
-        <button onClick={joinSession}>Join Session</button>
+          <button onClick={joinSession}>입장</button>
       ) : null}
 
       {connectSession ? (
@@ -322,18 +286,71 @@ function GameWait() {
         >
 
           <Header />
-          {subscribers.map((sub, i) => (
-                            <div key={i} className="stream-container col-md-6 col-xs-6" >
-                                <span>{i}</span>
-                                <UserVideoComponent streamManager={sub} />
+          <div id="video-container" className="col-md-6">
+          {publisher ? (
+                            <div className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(publisher)}>
+                                <UserVideoComponent streamManager={publisher} />
                             </div>
+                        ) : null}
+          {subscribers.map((sub, i) => (
+                            <div key={sub.id} className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(sub)}>
+                            <span>{sub.id}</span>
+                            <UserVideoComponent streamManager={sub} />
+                        </div>
                         ))}
-          
+          </div>
           {/* '로그인 경고' 모달 */}
           <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
         </div>
       ) : null}
     </div>
+    // <div className="container">
+    //         {!session ? (
+    //             <div>
+    //                 <button onClick={joinSession}>Join Session</button>
+    //             </div>
+    //         ) : null}
+    //         {session ? (
+    //             <div id="session">
+    //                 <div id="session-header">
+    //                     <h1 id="session-title">{mySessionId}</h1>
+    //                     <input
+    //                         className="btn btn-large btn-danger"
+    //                         type="button"
+    //                         id="buttonLeaveSession"
+    //                         onClick={leaveSession}
+    //                         value="Leave session"
+    //                     />
+    //                     {/* <input
+    //                         className="btn btn-large btn-success"
+    //                         type="button"
+    //                         id="buttonSwitchCamera"
+    //                         onClick={switchCamera}
+    //                         value="Switch Camera"
+    //                     /> */}
+    //                 </div>
+
+    //                 {mainStreamManager ? (
+    //                     <div id="main-video" className="col-md-6">
+    //                         <UserVideoComponent streamManager={mainStreamManager} />
+    //                     </div>
+    //                 ) : null}
+    //                 <div id="video-container" className="col-md-6">
+    //                     {publisher ? (
+    //                         <div className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(publisher)}>
+    //                             <UserVideoComponent streamManager={publisher} />
+    //                         </div>
+    //                     ) : null}
+    //                     {subscribers.map((sub, i) => (
+    //                         <div key={sub.id} className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(sub)}>
+    //                             <span>{sub.id}</span>
+    //                             <UserVideoComponent streamManager={sub} />
+    //                         </div>
+    //                     ))}
+    //                 </div>
+    //             </div>
+    //         ) : null}
+    //     </div>
   );
 }
 
