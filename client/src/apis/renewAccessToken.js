@@ -1,5 +1,5 @@
-import axios from "axios";
 import { getCookie } from "../utils/cookie";
+import axios from "axios";
 
 export const renewAccessToken = async () => {
   const email = getCookie("email");

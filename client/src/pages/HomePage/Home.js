@@ -1,12 +1,9 @@
 // Home.js
-/* eslint-disable */
 //데이터가 들어오면 만들어야하는 애들 : 소개 영상, 음악 랭킹, 유저 랭킹, 일자별 방명록
 import { React, useRef, useEffect, useState } from "react";
-import { getCookie, setCookie } from "../../utils/cookie";
+import { getCookie, setCookie, removeCookie } from "../../utils/cookie";
 import { renewAccessToken } from "../../apis/renewAccessToken";
 import { Grid, Pagination } from "@mui/material";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
 import DatePicker from "react-datepicker";
 import MusicRank from "../../components/Home/MusicRank";
@@ -22,7 +19,6 @@ import "./Home.css";
 const DIVIDER_HEIGHT = 5;
 
 function Home() {
-  const navigate = useNavigate();
   //로그인 상태 저장변수
   const [isLogin, setIsLogin] = useState(false);
 
@@ -274,7 +270,11 @@ function Home() {
               ></iframe>
             </div>
             <div className="rules">
-              <img style={{ height: 560, width: 514 }} src="images/Rules.png" />
+              <img
+                style={{ height: 560, width: 514 }}
+                alt="규칙 사진"
+                src="images/Rules.png"
+              />
             </div>
           </div>
         </div>

@@ -1,5 +1,3 @@
-import React from "react";
-import { useLocation, Link } from "react-router-dom";
 import {
   List,
   ListItem,
@@ -10,6 +8,8 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import { Info as InfoIcon, Photo as PhotoIcon } from "@mui/icons-material";
+import { useLocation, Link } from "react-router-dom";
+import React from "react";
 
 const theme = createTheme({
   components: {
