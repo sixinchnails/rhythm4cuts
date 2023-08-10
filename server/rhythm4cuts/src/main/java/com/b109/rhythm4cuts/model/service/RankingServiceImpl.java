@@ -1,8 +1,8 @@
 package com.b109.rhythm4cuts.model.service;
 
-import com.b109.rhythm4cuts.model.domain.Song;
+import com.b109.rhythm4cuts.model.domain.SongRank;
 import com.b109.rhythm4cuts.model.domain.User;
-import com.b109.rhythm4cuts.model.dto.SongDto;
+import com.b109.rhythm4cuts.model.dto.SongRankDto;
 import com.b109.rhythm4cuts.model.dto.UserDto;
 import com.b109.rhythm4cuts.model.repository.RankingRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +17,11 @@ public class RankingServiceImpl implements RankingService{
     private final RankingRepository rankingRepository;
 
     @Override
-    public List<SongDto> getSongRank() {
-        List<Song> songRanking = rankingRepository.selectSongOrderBYRank();
-        List<SongDto> songs = new ArrayList<>();
+    public List<SongRankDto> getSongRank() {
+        List<SongRank> songRanking = rankingRepository.selectSongOrderBYRank();
+        List<SongRankDto> songs = new ArrayList<>();
         songRanking.forEach(song -> {
-            songs.add(song.getSongDto());
+            songs.add(song.getSongRankDto());
         });
         return songs;
     }

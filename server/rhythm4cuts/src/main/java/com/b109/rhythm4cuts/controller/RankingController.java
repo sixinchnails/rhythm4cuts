@@ -1,6 +1,6 @@
 package com.b109.rhythm4cuts.controller;
 
-import com.b109.rhythm4cuts.model.dto.SongDto;
+import com.b109.rhythm4cuts.model.dto.SongRankDto;
 import com.b109.rhythm4cuts.model.dto.UserDto;
 import com.b109.rhythm4cuts.model.service.RankingService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class RankingController {
     //노래 종합 랭킹
     @GetMapping("song")
     public ResponseEntity<?> getSongRanking(){
-        List<SongDto> songRanking = rankingService.getSongRank();
+        List<SongRankDto> songRanking = rankingService.getSongRank();
 
         Map<String, Object> res = new HashMap<>();
 

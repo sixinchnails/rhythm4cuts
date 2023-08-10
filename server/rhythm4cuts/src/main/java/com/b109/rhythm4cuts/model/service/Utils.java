@@ -16,9 +16,11 @@ public class Utils {
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
         userDto.setPoint(user.getPoint());
-        userDto.setBirthDate(user.getBirthDate());
+//        userDto.setBirthDate(user.getBirthDate());
+        userDto.setGender(user.getGender());
         userDto.setPlayCount(user.getPlayCount());
         userDto.setScoreSum(user.getScoreSum());
+        userDto.setProfileImageSeq(user.getProfileImage().getProfileImageSeq());
 
         return userDto;
     }

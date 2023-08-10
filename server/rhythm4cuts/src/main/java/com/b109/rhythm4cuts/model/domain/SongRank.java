@@ -27,6 +27,7 @@ public class SongRank {
     public SongRankDto getSongRankDto() {
         SongRankDto songRankDto = new SongRankDto();
 
+        songRankDto.setSongRankSeq(this.getSongRankSeq());
         songRankDto.setTitle(this.getTitle());
         songRankDto.setSinger(this.getSinger());
         songRankDto.setRanking(this.getRanking());

@@ -12,7 +12,8 @@ public class UserDto {
     private String password;
     private String name;
     private String nickname;
-    private LocalDate birthDate;
+//    private LocalDate birthDate;
+    private String gender;
     private int point;
     private int playCount;
     private int scoreSum;
