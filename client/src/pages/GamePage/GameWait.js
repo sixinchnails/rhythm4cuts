@@ -15,6 +15,7 @@ import { OpenVidu } from 'openvidu-browser';
 import axios from "axios";
 
 function GameWait() {
+  const MAX_USERS = 4; // 최대 인원
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
   const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate(); // 페이지 이동
@@ -26,7 +27,7 @@ function GameWait() {
   const [subscribers, setSubscribers] = useState([]);  // 현재 연결된 다른 사용자들의 스트림을 관리
   const [userStreams, setUserStreams] = useState([]);  // 모든 사용자 스트림을 관리, subscribers 배열에 있는 스트림들을 모두 여기에 저장
 
-  let { gameSeq } = useParams(); // url에서 추출
+  let { gameSeq } = useParams(); // url에서 추출   
   dispatch(setGameseq(gameSeq)); // REDUX에 저장
   // 리덕스에서 데이터를 가져온다.
   const roomSession = useSelector(state => state.roomState.session);
@@ -34,8 +35,8 @@ function GameWait() {
   const connectionToken = useSelector(state => state.roomState.connectionToken);
   const myUserName = useSelector(state => state.roomState.nickname); // 닉네임 
 
-  console.log("리덕스에서 부르자마자 roomSession : " + roomSession);
-  console.log("리덕스에서 부르자마자 userConnection : " + userConnection);
+  console.log("리덕스에서 부르자마자 roomSession : " + roomSession); 
+  console.log("리덕스에서 부르자마자 userConnection : " + userConnection); 
   console.log("리덕스에서 부르자마자 connectionToken : " + connectionToken);
   console.log("리덕스에서 부르자마자 myUserName : " + myUserName);
 
@@ -84,18 +85,17 @@ function GameWait() {
   // }, []);
 
   // 페이지 나갈 때 세션 나가기 함수 호출
-  const onBeforeUnload = () => {
+  const onBeforeUnload = () => {  
     leaveSession();
   };
   // 세션 나가기
   const leaveSession = () => {
-    userConnection.disconnect();
+    // userConnection.disconnect(); // 사용자의 연결을 끊습니다.
     setRoomSession(undefined); // 세션 초기화
-    setSubscribers([]);
-    setMainStreamManager(undefined);
-    setPublisher(undefined);
-    // setMySessionId('SessionA');
-    // setMyUserName('Participant' + Math.floor(Math.random() * 100));
+    setSubscribers([]);  // 구독자 목록을 초기화합니다.
+    setMainStreamManager(undefined); // 방장 스트림 관리자를 초기화합니다.
+    setPublisher(undefined); // 현재 사용자의 스트림 관리자를 초기화합니다.
+    
   };
 
   // 방 세션 ID를 변경하는 역할
@@ -140,9 +140,9 @@ function GameWait() {
     onBeforeUnload();
     navigate(`/GameList`);
     console.log("방 나갈거야 ~")
-  };
+  };  
 
-
+   
   // 방 세션 ID 가져오기
   const fetchSession = async () => {
     try {
@@ -182,9 +182,11 @@ function GameWait() {
 
       // 새로운 스트림이 생성되었을 때의 이벤트 리스너를 등록
       newSession.on('streamCreated', (event) => {
-        const subscriber = newSession.subscribe(event.stream, undefined);
-        // setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
-        setUserStreams(prevStreams => [...prevStreams, subscriber]);
+        if (userStreams.length < MAX_USERS) {
+          const subscriber = newSession.subscribe(event.stream, undefined);
+          // setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+          setUserStreams(prevStreams => [...prevStreams, subscriber]);
+        }
       });
 
       // 스트림이 파괴되었을 때의 이벤트 리스너를 등록
@@ -219,7 +221,7 @@ function GameWait() {
           const currentVideoDeviceId = newPublisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
           const currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
 
-          setMainStreamManager(newPublisher);
+          // setMainStreamManager(newPublisher);
           setPublisher(newPublisher);
         })
         .catch((error) => {
@@ -236,12 +238,13 @@ function GameWait() {
     fetchSession() // 방 세션 발급
       .then(() => fetchConnectionToken()) // 유저 토큰 발급
       .then(() => {
-        joinSession()
+        joinSession() // openvidu 연결
         console.log("동기 게임 시퀀스입니다 : " + gameSeq);
         console.log("동기 방 세션입니다 : " + roomSession);
         console.log("동기 연결 세션입니다: " + userConnection);
         console.log("동기 연결 토큰입니다 : " + connectionToken);
-      }) // openvidu 연결
+        setMainStreamManager(publisher);
+      })
       .catch((error) => {
         console.error("최종 연결을 실패했습니다 :", error);
       });
@@ -394,8 +397,11 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
+            {/* <UserVideoComponent
+              streamManager={mainStreamManager}
+            /> */}
             <UserVideoComponent
-              streamManager={userStreams[3]}
+              streamManager={userStreams[0]}
             />
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
@@ -424,7 +430,7 @@ function GameWait() {
             }}
           >
             <UserVideoComponent
-              streamManager={userStreams[0]}
+              streamManager={userStreams[1]}
             />
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
@@ -438,7 +444,7 @@ function GameWait() {
             >
               두번째 선수
             </div>
-          </Grid>
+          </Grid> 
           {/* Player 3 */}
           <Grid
             item
@@ -451,9 +457,9 @@ function GameWait() {
               margin: "5px",
               borderRadius: "20px",
             }}
-          >
+          >  
             <UserVideoComponent
-              streamManager={userStreams[1]}
+              streamManager={userStreams[2]}
             />
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
@@ -482,7 +488,7 @@ function GameWait() {
             }}
           >
             <UserVideoComponent
-              streamManager={userStreams[2]}
+              streamManager={userStreams[3]}
             />
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>

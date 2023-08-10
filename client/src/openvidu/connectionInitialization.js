@@ -29,13 +29,13 @@ export const createConnection = async () => {
     // 연결 세션&토큰을 리덕스 스토어에 저장합니다.
     store.dispatch(setConnection(response.data.id));
     store.dispatch(setConnectionToken(response.data.token));
-    // return response.data.id;
+
     return {
       connection: response.data.id,
       connectionToken: response.data.token,
     };
   } catch (error) {
     console.error("연결할때 에러:" + error);
-    return null;
+    return null;  
   }
 };
