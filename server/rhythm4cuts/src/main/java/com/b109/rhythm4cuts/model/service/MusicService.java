@@ -1,6 +1,7 @@
 package com.b109.rhythm4cuts.model.service;
 
 import com.b109.rhythm4cuts.model.domain.Song;
+import com.b109.rhythm4cuts.model.dto.SongDto;
 import com.b109.rhythm4cuts.model.dto.YoutubeResponseDto;
 import com.b109.rhythm4cuts.model.repository.MusicRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import javax.transaction.Transactional;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -71,5 +73,18 @@ public class MusicService {
 
             musicRepository.save(song);
         }
+    }
+
+    public SongDto selectSong(int songSeq) {
+
+        Song song = musicRepository.findBySongSeq(songSeq).orElse(null);
+
+        SongDto res = new SongDto();
+        res.setSongSeq(songSeq);
+        res.setTitle(song.getTitle());
+        res.setSinger(song.getSinger());
+        res.setUrl(song.getUrl());
+
+        return res;
     }
 }
