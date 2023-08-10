@@ -45,43 +45,43 @@ public class DummyDataInitializer {
     @PostConstruct
     @Transactional
     public void init() throws SQLException {
-//        ProfileImage profileImage1 = new ProfileImage();
-//        profileImage1.setImageName("first profile image");
-//        profileImage1.setDescription("first image");
-//        profileImage1.setFileName("first file name");
-//        profileImageRepository.save(profileImage1);
-//
-//        ProfileImage profileImage2 = new ProfileImage();
-//        profileImage2.setImageName("2 profile image");
-//        profileImage2.setDescription("2 images");
-//        profileImage2.setFileName("2 file name");
-//        profileImageRepository.save(profileImage2);
-//
-//        ProfileImage profileImage3 = new ProfileImage();
-//        profileImage3.setImageName("3 profile image");
-//        profileImage3.setDescription("3 image");
-//        profileImage3.setFileName("3 file name");
-//        profileImageRepository.save(profileImage3);
-//
-//        ProfileImage profileImage4 = new ProfileImage();
-//        profileImage4.setImageName("4 profile image");
-//        profileImage4.setDescription("4 image");
-//        profileImage4.setFileName("4 file name");
-//        profileImageRepository.save(profileImage4);
-//
-//        ProfileImage profileImage5 = new ProfileImage();
-//        profileImage5.setImageName("5 profile image");
-//        profileImage5.setDescription("5 image");
-//        profileImage5.setFileName("5 file name");
-//        profileImageRepository.save(profileImage5);
+        ProfileImage profileImage1 = new ProfileImage();
+        profileImage1.setImageName("first profile image");
+        profileImage1.setDescription("first image");
+        profileImage1.setFileName("first file name");
+        profileImageRepository.save(profileImage1);
 
-//        LocalDate targetDate = LocalDate.of(2019,11,12);
+        ProfileImage profileImage2 = new ProfileImage();
+        profileImage2.setImageName("2 profile image");
+        profileImage2.setDescription("2 images");
+        profileImage2.setFileName("2 file name");
+        profileImageRepository.save(profileImage2);
+
+        ProfileImage profileImage3 = new ProfileImage();
+        profileImage3.setImageName("3 profile image");
+        profileImage3.setDescription("3 image");
+        profileImage3.setFileName("3 file name");
+        profileImageRepository.save(profileImage3);
+
+        ProfileImage profileImage4 = new ProfileImage();
+        profileImage4.setImageName("4 profile image");
+        profileImage4.setDescription("4 image");
+        profileImage4.setFileName("4 file name");
+        profileImageRepository.save(profileImage4);
+
+        ProfileImage profileImage5 = new ProfileImage();
+        profileImage5.setImageName("5 profile image");
+        profileImage5.setDescription("5 image");
+        profileImage5.setFileName("5 file name");
+        profileImageRepository.save(profileImage5);
+
+        LocalDate targetDate = LocalDate.of(2019,11,12);
         // 더미 데이터 추가
         User user = new User();
         user.setName("Han");
         user.setNickname("ssafy");
         user.setEmail("ssafy@naver.com");
-//        user.setProfileImage(profileImage1);
+        user.setProfileImage(profileImage1);
         user.setGender("M");
         user.setPassword(bCryptPasswordEncoder.encode("1234"));
 
@@ -91,7 +91,7 @@ public class DummyDataInitializer {
         user2.setName("hyun");
         user2.setNickname("hyun");
         user2.setEmail("abc@gmail.com");
-//        user2.setProfileImage(profileImage1);
+        user2.setProfileImage(profileImage1);
         user2.setPassword(bCryptPasswordEncoder.encode("1234"));
         user2.setGender("F");
 
@@ -101,7 +101,7 @@ public class DummyDataInitializer {
         user3.setName("민국");
         user3.setNickname("민국");
         user3.setEmail("acd4548@naver.com");
-//        user3.setProfileImage(profileImage1);
+        user3.setProfileImage(profileImage1);
 //        user3.setBirthDate(targetDate);
         user3.setGender("M");
         user3.setPassword(bCryptPasswordEncoder.encode("1234"));
@@ -111,7 +111,7 @@ public class DummyDataInitializer {
         user4.setName("강현");
         user4.setNickname("현");
         user4.setEmail("a@naver.com");
-//        user4.setProfileImage(profileImage1);
+        user4.setProfileImage(profileImage1);
 //        user4.setBirthDate(targetDate);
         user4.setGender("F");
         user4.setPoint(1200);
@@ -122,7 +122,7 @@ public class DummyDataInitializer {
         user5.setName("홍유빈");
         user5.setNickname("홍유콩");
         user5.setEmail("ab@naver.com");
-//        user5.setProfileImage(profileImage2);
+        user5.setProfileImage(profileImage2);
 //        user5.setBirthDate(targetDate);
         user5.setGender("M");
         user5.setPoint(1000);
@@ -133,7 +133,7 @@ public class DummyDataInitializer {
         user6.setName("최재용");
         user6.setNickname("최재드래곤");
         user6.setEmail("b@naver.com");
-//        user6.setProfileImage(profileImage3);
+        user6.setProfileImage(profileImage3);
 //        user6.setBirthDate(targetDate);
         user6.setGender("M");
         user6.setPoint(800);
@@ -144,7 +144,7 @@ public class DummyDataInitializer {
         user7.setName("최한윤");
         user7.setNickname("최고다한윤");
         user7.setEmail("bc@naver.com");
-//        user7.setProfileImage(profileImage3);
+        user7.setProfileImage(profileImage3);
 //        user7.setBirthDate(targetDate);
         user7.setGender("F");
         user7.setPoint(600);
@@ -155,7 +155,7 @@ public class DummyDataInitializer {
         user8.setName("강현");
         user8.setNickname("현순");
         user8.setEmail("z@naver.com");
-//        user8.setProfileImage(profileImage1);
+        user8.setProfileImage(profileImage1);
 //        user8.setBirthDate(targetDate);
         user8.setGender("F");
         user8.setPoint(1100);
