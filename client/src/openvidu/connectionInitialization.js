@@ -6,11 +6,12 @@ import { setConnectionToken, setConnection } from "../store";
 const OPENVIDU_SERVER_URL = "https://i9b109.p.ssafy.io";
 const OPENVIDU_SERVER_SECRET = "zlwhsalsrnrWid1234";
 
-export const createConnection = async (connection) => {
+export const createConnection = async () => {
   // sessionId 매개변수 삭제
   try {
     // 리덕스 스토어에서 세션 정보를 가져옵니다.
     const session = store.getState().roomState.session;
+    console.log("연결 세션 : " + session);
 
     const response = await axios.post(
       `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${session}/connection`, // session 변수로 변경
@@ -27,15 +28,10 @@ export const createConnection = async (connection) => {
 
 
     // 연결 세션&토큰을 리덕스 스토어에 저장합니다.
-    if (connection == null) {
-      console.log("커넥션이 null 이네!!!")
-      store.dispatch(setConnection(response.data.id));
-      store.dispatch(setConnectionToken(response.data.token));
+    // store.dispatch(setConnection(response.data.id));
+    // store.dispatch(setConnectionToken(response.data.token));
+    console.log("커넥션 Token 이네!!!" + response.data.token)
 
-    } else{
-      console.log("커넥션이 null 이 아니네!")
-    }
-    // return response.data.id;
     return {
       connection: response.data.id,
       connectionToken: response.data.token,

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { setSession as setSessionAction, setConnection, setConnectionToken, resetRoomState, setPlayers, setGameseq } from "../../store";
+import { setSession as userSession, setConnection, setConnectionToken, resetRoomState, setPlayers, setGameseq } from "../../store";
 import { Chat as ChatIcon, Check as CheckIcon, ExitToApp as ExitToAppIcon } from "@mui/icons-material";
 import { styled, Button, Card, Container, Grid, Typography, IconButton } from "@mui/material";
 import { createConnection } from '../../openvidu/connectionInitialization';
@@ -19,13 +19,13 @@ function GameWait() {
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
   const dispatch = useDispatch(); // 리덕스 업데이트 
   const navigate = useNavigate(); // 페이지 이동
+  const [nickname, setNickname] = useState(undefined);
 
   // const [mySessionId, setMySessionId] = useState('SessionA');
   // const [myUserName, setMyUserName] = useState('Participant' + Math.floor(Math.random() * 100));
   const [mainStreamManager, setMainStreamManager] = useState(undefined); // 방장?
   const [publisher, setPublisher] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
-  const [userStreams, setUserStreams] = useState([]);  // 유저 스트림 목록을 저장할 상태 변수
 
   // REDUX에서 가져오기
   var { gameSeq } = useParams(); // url에서 추출
@@ -35,16 +35,16 @@ function GameWait() {
   const session = useSelector(state => state.roomState.session);
   const connection = useSelector(state => state.roomState.connection);
   const connectionToken = useSelector(state => state.roomState.connectionToken);
-  const nickname = useSelector(state => state.roomState.nickname);
-  
+
+
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
     setLoginAlertOpen(true);
   };
-  const handleCloseLoginAlert = () => { 
+  const handleCloseLoginAlert = () => {
     setLoginAlertOpen(false);
     navigate("/Login");
-  }; 
+  };
 
   // Styled 버튼 ( css )
   const StyledIconButton = styled(IconButton)({
@@ -130,9 +130,10 @@ function GameWait() {
     }
   };
 
+
   // "게임 준비" 버튼을 클릭했을 때 동작
   function handleGameReady() {
-    dispatch(setSessionAction(session));
+    dispatch(userSession(session));
     dispatch(setConnection(connection));
     dispatch(setConnectionToken(connectionToken));
 
@@ -157,46 +158,24 @@ function GameWait() {
   //     setSubscribers(newSubscribers);
   // };
 
-  // 방 세션 ID 가져오기
-  const fetchSession = async () => {
-    try {
-      const access = getCookie("access");
-      const response = await axios.get(
-        "https://i9b109.p.ssafy.io:8443/wait/info/" + gameSeq,
-        {
-          headers: {
-            Authorization: "Bearer " + access,
-          },
-        }
-      );
-      dispatch(setSessionAction(response.data.data.sessionId));
-    } catch (error) {
-      console.error("DB에서 세션 id 불러오기 실패:", error);
-    }
-  };
 
-  // 토큰 만들기
-  const fetchConnectionToken = async (connection) => {
-    try {
-      // console.log("세션이야 : " + session);
-      await createConnection(connection);
+  // 페이지 떠날 때 이벤트 리스너 등록 및 해제
+  useEffect(() => {
+    joinSession()
+  }, []);
 
-    } catch (error) {
-      console.error("연결 토큰을 가져오는데 실패 :", error);
-    }
-  };
+
 
   // openvidu 연결
   const joinSession = async () => {
     try {
       const ov = new OpenVidu();
       const newSession = ov.initSession();
-      // setSessionAction(newSession);
+      // userSession(newSession);
       setConnection(newSession);
       newSession.on('streamCreated', (event) => {
         const subscriber = newSession.subscribe(event.stream, undefined);
-        // setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
-        setUserStreams(prevStreams => [...prevStreams, subscriber]);
+        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
 
       });
 
@@ -209,8 +188,8 @@ function GameWait() {
       });
 
       console.log("null이면 안된다 1 : " + connectionToken)
-      const strat_token = connectionToken; // Implement getToken function  
-      console.log("null이면 안된다 2 : " + connectionToken)
+      const strat_token = await getToken(); // Implement getToken function  
+      console.log("null이면 안된다 2 : " + strat_token)
 
       console.log("닉네임~~~~~~~~~~~~~~" + nickname)
       newSession.connect(strat_token, { clientData: nickname })
@@ -245,295 +224,350 @@ function GameWait() {
   };
 
 
-  // // 최종 순서대로! (비동기)
+  // // 최종 순서대로! (동기)
   // useEffect(() => {
-  //   const final = async () => {
-  //     try {
-  //       await fetchSession(); // 세션 ID 가져오기
-  //       await fetchConnectionToken(); // 연결 토큰 생성
-  //       await joinSession(); // openvidu 연결
-  //     } catch (error) {
+  //   fetchNickname()
+  //     .then(() => fetchSession()) // 방 세션 발급
+  //     .then(() => fetchConnectionToken()) // 유저 토큰 발급
+  //     .then(() => {
+  //       joinSession(); // openvidu 연결
+  //       setMainStreamManager(publisher);
+  //     })
+  //     .catch((error) => {
   //       console.error("최종 연결을 실패했습니다 :", error);
-  //     }
-  //   };
-
-  //   // 게임 대기 페이지 진입 시 세션 ID와 연결 토큰을 가져오는 로직 호출
-  //   final();
+  //     });
   // }, []);
 
-  // 최종 순서대로! (동기)
-  useEffect(() => {
-    fetchSession() // 방 세션 발급
-      .then(() => fetchConnectionToken()) // 유저 토큰 발급
-      .then(() => {
-        joinSession(); // openvidu 연결
-        setMainStreamManager(publisher);
-      })
-      .catch((error) => {
-        console.error("최종 연결을 실패했습니다 :", error);
-      });
-  }, []);
+  // --------------------------------------------------------------------------------------
 
-  console.log("게임 시퀀스입니다 : " + gameSeq);
-  console.log("방 세션입니다 : " + session);
-  console.log("연결 세션입니다: " + connection);
-  console.log("연결 토큰입니다 : " + connectionToken);
+  // 유저 닉네임 가져오기 : 리덕스 저장 => 나중에 로그인 페이지에서 처리
+  async function fetchNickname() {
+    try {
+      const email = getCookie("email");
+      const access = getCookie("access");
+      const response = await axios.get(
+        "https://i9b109.p.ssafy.io:8443/member/info?email=" + email,
+        {
+          headers: {
+            Authorization: "Bearer " + access,
+          }
+        }
+      );
+      setNickname(response.data.nickname);
+    } catch (error) {
+      console.log("유저 닉네임 불러오기 실패")
+    }
+  };
+
+  // 방 세션 발급
+  async function getToken() {
+    let res = await fetchConnectionToken()
+    return res["connectionToken"]
+  }
+
+  // 유저 토큰 발급
+  async function fetchConnectionToken() {
+    try {
+      await fetchSession();
+
+      return await createConnection();
+    } catch (error) {
+      console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
+    }
+  }
+
+  // 유저 커넥션 발급
+  async function fetchSession() {
+    try {
+      const access = getCookie("access");
+
+      const response = await axios.get(
+        `https://i9b109.p.ssafy.io:8443/wait/info/${gameSeq}`,
+        {
+          headers: {
+            Authorization: "Bearer " + access,
+          },
+        }
+      )
+      console.log("-----------------" + response.data.data.sessionId);
+      dispatch(userSession(response.data.data.sessionId));
+
+    } catch (error) {
+
+      console.error("DB에서 세션 id 불러오기 실패:", error);
+    }
+  }
+
+  // --------------------------------------------------------------------------------------
+  // console.log("게임 시퀀스입니다 : " + gameSeq);
+  // console.log("방 세션입니다 : " + session);
+  // console.log("연결 세션입니다: " + connection);
+  // console.log("연결 토큰입니다 : " + connectionToken);
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100vh",
-        backgroundPosition: "center",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundImage: "url('/images/GameImage/GameList.jpg')",
-      }}
-    >
-      <Header />
+    <div id="video-container">
+      {!connection ? (
+        <div onLoad={joinSession}></div>
+      ) : null}
 
-      <Grid container>
-        {/* 멘트 */}
-        <Grid
-          container
+      {connection ? (
+        <div
           style={{
-            display: "flex",
-            justifyContent: "center",
-            zIndex: 1, // z-index를 1로 설정하여 비디오 위에 텍스트가 나타나도록
+            width: "100%",
+            height: "100vh",
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundImage: "url('/images/GameImage/GameList.jpg')",
           }}
         >
-          <Typography
-            variant="h4"
-            style={{
-              fontFamily: "Pretendard-Regular",
-              fontWeight: "bold",
-              fontSize: "10px",
-              color: "red",
-            }}
-          >
-            전원 준비가 되면 게임이 시작합니다 악!
-          </Typography>
-        </Grid>
 
-        {/* Top */}
-        <Grid container>
-          <Grid
-            item
-            xs={10}
-            container
-            alignItems="center"
-            justifyContent="center"
-            paddingLeft={"150px"}
-          >
-            <Card
+          <Header />
+
+          <Grid container>
+            {/* 멘트 */}
+            <Grid
+              container
               style={{
-                width: "55vw",
-                height: "40vh",
-                background: "transparent",
-                borderRadius: "30px",
+                display: "flex",
+                justifyContent: "center",
+                zIndex: 1, // z-index를 1로 설정하여 비디오 위에 텍스트가 나타나도록
               }}
             >
-              {/* 대기중 비디오 */}
-              <video
-                src="/images/GameImage/Dance.mp4"
-                autoPlay
-                loop
-                style={{
-                  width: "100%",
-                  height: "40vh",
-                  objectFit: "cover",
-                }}
-              />
-            </Card>
-          </Grid>
-
-          <Grid
-            item
-            xs={2}
-            container
-            direction="column"
-            alignItems="center"
-            justifyContent="center"
-            style={{ paddingTop: "40px" }}
-          >
-            {/* "게임준비" 버튼 */}
-            <StyledIconButton
-              onClick={handleGameReady}
-              style={{ width: "70%" }}
-            >
-              <CheckIcon />
               <Typography
+                variant="h4"
                 style={{
                   fontFamily: "Pretendard-Regular",
-                  fontSize: "20px",
-                  padding: "15px",
+                  fontWeight: "bold",
+                  fontSize: "10px",
+                  color: "red",
                 }}
               >
-                게임 준비
+                전원 준비가 되면 게임이 시작합니다 악!
               </Typography>
-            </StyledIconButton>
+            </Grid>
 
-            {/* "채팅" 버튼 */}
-            <StyledIconButton onClick={handleChat} style={{ width: "70%" }}>
-              <ChatIcon />
-              <Typography
+            {/* Top */}
+            <Grid container>
+              <Grid
+                item
+                xs={10}
+                container
+                alignItems="center"
+                justifyContent="center"
+                paddingLeft={"150px"}
+              >
+                <Card
+                  style={{
+                    width: "55vw",
+                    height: "40vh",
+                    background: "transparent",
+                    borderRadius: "30px",
+                  }}
+                >
+                  {/* 대기중 비디오 */}
+                  <video
+                    src="/images/GameImage/Dance.mp4"
+                    autoPlay
+                    loop
+                    style={{
+                      width: "100%",
+                      height: "40vh",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Card>
+              </Grid>
+
+              <Grid
+                item
+                xs={2}
+                container
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+                style={{ paddingTop: "40px" }}
+              >
+                {/* "게임준비" 버튼 */}
+                <StyledIconButton
+                  onClick={handleGameReady}
+                  style={{ width: "70%" }}
+                >
+                  <CheckIcon />
+                  <Typography
+                    style={{
+                      fontFamily: "Pretendard-Regular",
+                      fontSize: "20px",
+                      padding: "15px",
+                    }}
+                  >
+                    게임 준비
+                  </Typography>
+                </StyledIconButton>
+
+                {/* "채팅" 버튼 */}
+                <StyledIconButton onClick={handleChat} style={{ width: "70%" }}>
+                  <ChatIcon />
+                  <Typography
+                    style={{
+                      fontFamily: "Pretendard-Regular",
+                      fontSize: "20px",
+                      padding: "15px",
+                    }}
+                  >
+                    채팅
+                  </Typography>
+                </StyledIconButton>
+
+                {/* "나가기" 버튼 */}
+                <StyledIconButton onClick={handleExit} style={{ width: "70%" }}>
+                  <ExitToAppIcon />
+                  <Typography
+                    style={{
+                      fontFamily: "Pretendard-Regular",
+                      fontSize: "20px",
+                      padding: "15px",
+                    }}
+                  >
+                    나가기
+                  </Typography>
+                </StyledIconButton>
+              </Grid>
+            </Grid>
+
+            {/* Bottom */}
+            <Grid
+              style={{
+                height: "20vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                margin: "50px",
+              }}
+            >
+              {/* Player 1 */}
+              <Grid
+                item
+                xs={2}
                 style={{
-                  fontFamily: "Pretendard-Regular",
-                  fontSize: "20px",
-                  padding: "15px",
+                  backgroundColor: "black",
+                  height: "20vh",
+                  border: "2px solid white",
+                  padding: "2px",
+                  margin: "5px",
+                  borderRadius: "20px",
                 }}
               >
-                채팅
-              </Typography>
-            </StyledIconButton>
-
-            {/* "나가기" 버튼 */}
-            <StyledIconButton onClick={handleExit} style={{ width: "70%" }}>
-              <ExitToAppIcon />
-              <Typography
+                <UserVideoComponent
+                  streamManager={subscribers[0]}
+                />
+              </Grid>
+              <Grid item xs={1} style={{ height: "20vh" }}>
+                <div
+                  style={{
+                    fontFamily: "Pretendard-Regular",
+                    fontSize: "20px",
+                    color: "white",
+                    padding: "5px",
+                  }}
+                >
+                  첫번째 선수
+                </div>
+              </Grid>
+              {/* Player 2 */}
+              <Grid
+                item
+                xs={2}
                 style={{
-                  fontFamily: "Pretendard-Regular",
-                  fontSize: "20px",
-                  padding: "15px",
+                  backgroundColor: "black",
+                  height: "20vh",
+                  border: "2px solid white",
+                  padding: "2px",
+                  margin: "5px",
+                  borderRadius: "20px",
                 }}
               >
-                나가기
-              </Typography>
-            </StyledIconButton>
+                <UserVideoComponent
+                  streamManager={subscribers[0]}
+                />
+              </Grid>
+              <Grid item xs={1} style={{ height: "20vh" }}>
+                <div
+                  style={{
+                    fontFamily: "Pretendard-Regular",
+                    fontSize: "20px",
+                    color: "white",
+                    padding: "5px",
+                  }}
+                >
+                  두번째 선수
+                </div>
+              </Grid>
+              {/* Player 3 */}
+              <Grid
+                item
+                xs={2}
+                style={{
+                  backgroundColor: "black",
+                  height: "20vh",
+                  border: "2px solid white",
+                  padding: "2px",
+                  margin: "5px",
+                  borderRadius: "20px",
+                }}
+              >
+                <UserVideoComponent
+                  streamManager={subscribers[0]}
+                />
+              </Grid>
+              <Grid item xs={1} style={{ height: "20vh" }}>
+                <div
+                  style={{
+                    fontFamily: "Pretendard-Regular",
+                    fontSize: "20px",
+                    color: "white",
+                    padding: "5px",
+                  }}
+                >
+                  세번째 선수
+                </div>
+              </Grid>
+              {/* Player 4 */}
+              <Grid
+                item
+                xs={2}
+                style={{
+                  backgroundColor: "black",
+                  height: "20vh",
+                  border: "2px solid white",
+                  padding: "2px",
+                  margin: "5px",
+                  borderRadius: "20px",
+                }}
+              >
+                <UserVideoComponent
+                  streamManager={subscribers[0]}
+                />
+              </Grid>
+              <Grid item xs={1} style={{ height: "20vh" }}>
+                <div
+                  style={{
+                    fontFamily: "Pretendard-Regular",
+                    fontSize: "20px",
+                    color: "white",
+                    padding: "5px",
+                  }}
+                >
+                  네번째 선수
+                </div>
+              </Grid>
+            </Grid>
           </Grid>
-        </Grid>
 
-        {/* Bottom */}
-        <Grid
-          style={{
-            height: "20vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            margin: "50px",
-          }}
-        >
-          {/* Player 1 */}
-          <Grid
-            item
-            xs={2}
-            style={{
-              backgroundColor: "black",
-              height: "20vh",
-              border: "2px solid white",
-              padding: "2px",
-              margin: "5px",
-              borderRadius: "20px",
-            }}
-          >
-            <UserVideoComponent
-              streamManager={userStreams[0]}
-            />
-          </Grid>
-          <Grid item xs={1} style={{ height: "20vh" }}>
-            <div
-              style={{
-                fontFamily: "Pretendard-Regular",
-                fontSize: "20px",
-                color: "white",
-                padding: "5px",
-              }}
-            >
-              첫번째 선수
-            </div>
-          </Grid>
-          {/* Player 2 */}
-          <Grid
-            item
-            xs={2}
-            style={{
-              backgroundColor: "black",
-              height: "20vh",
-              border: "2px solid white",
-              padding: "2px",
-              margin: "5px",
-              borderRadius: "20px",
-            }}
-          >
-            <UserVideoComponent
-              streamManager={userStreams[1]}
-            />
-          </Grid>
-          <Grid item xs={1} style={{ height: "20vh" }}>
-            <div
-              style={{
-                fontFamily: "Pretendard-Regular",
-                fontSize: "20px",
-                color: "white",
-                padding: "5px",
-              }}
-            >
-              두번째 선수
-            </div>
-          </Grid>
-          {/* Player 3 */}
-          <Grid
-            item
-            xs={2}
-            style={{
-              backgroundColor: "black",
-              height: "20vh",
-              border: "2px solid white",
-              padding: "2px",
-              margin: "5px",
-              borderRadius: "20px",
-            }}
-          >
-            <UserVideoComponent
-              streamManager={userStreams[2]}
-            />
-          </Grid>
-          <Grid item xs={1} style={{ height: "20vh" }}>
-            <div
-              style={{
-                fontFamily: "Pretendard-Regular",
-                fontSize: "20px",
-                color: "white",
-                padding: "5px",
-              }}
-            >
-              세번째 선수
-            </div>
-          </Grid>
-          {/* Player 4 */}
-          <Grid
-            item
-            xs={2}
-            style={{
-              backgroundColor: "black",
-              height: "20vh",
-              border: "2px solid white",
-              padding: "2px",
-              margin: "5px",
-              borderRadius: "20px",
-            }}
-          >
-            <UserVideoComponent
-              streamManager={userStreams[3]}
-            />
-          </Grid>
-          <Grid item xs={1} style={{ height: "20vh" }}>
-            <div
-              style={{
-                fontFamily: "Pretendard-Regular",
-                fontSize: "20px",
-                color: "white",
-                padding: "5px",
-              }}
-            >
-              네번째 선수
-            </div>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      {/* '로그인 경고' 모달 */}
-      <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
+          {/* '로그인 경고' 모달 */}
+          <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
+        </div>
+      ) : null}
     </div>
   );
 }
