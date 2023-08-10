@@ -66,7 +66,7 @@ function AddFriend({ isOpen, handleClose }) {
         });
       }
     });
-}, [fromUser]);
+  }, [fromUser]);
 
   useEffect(() => {
     if (debouncedFriendNickname) {
