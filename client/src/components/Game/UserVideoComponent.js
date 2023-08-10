@@ -10,7 +10,7 @@ export default class UserVideoComponent extends Component {
   // 컴포넌트가 처음 마운트될 때 호출되는 메서드
   async componentDidMount() {
     await this.getMediaStream(); // 웹캠 스트림 가져오기
-    await this.addStreamToStreamManager();
+    // await this.addStreamToStreamManager()
   }
 
   // 웹캠 스트림을 가져오는 메서드
@@ -23,6 +23,8 @@ export default class UserVideoComponent extends Component {
       if (this.videoRef.current) {
         // Check if videoRef is not null
         this.videoRef.current.srcObject = stream;
+
+        await this.addStreamToStreamManager();
       } else {
         console.error("Error: videoRef is null");
       }

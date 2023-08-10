@@ -1,4 +1,4 @@
-/* eslint-disable */
+/*eslint-disable*/
 import {
   Grid,
   Pagination,
@@ -9,13 +9,11 @@ import {
   IconButton,
   Select,
   MenuItem,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
 } from "@mui/material";
-import { useNavigate, Link } from "react-router-dom";
+import { React, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { setNickname } from "../../store";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from "../../apis/userInfo";
 import CreateRoom from "../../components/Common/CreateRoom";
@@ -25,9 +23,7 @@ import AddFriend from "../../components/Common/AddFriend";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import RoomList from "../../components/Game/RoomList";
 import Header from "../../components/Game/HeaderWait";
-import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { setNickname } from "../../store";
 
 function GameList() {
   const dispatch = useDispatch(); // 리덕스 업데이트
@@ -164,7 +160,9 @@ function GameList() {
           }
         );
         dispatch(setNickname(response.data.nickname));
-      } catch (error) {}
+      } catch (error) {
+        console.log("닉네임 가져오는데 오류가 발생했어요~");
+      }
     };
     fetchNickname();
   }, []);

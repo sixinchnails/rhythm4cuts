@@ -1,41 +1,58 @@
-/* eslint-disable */
-import { setSession as setSessionAction, setConnection, setConnectionToken, resetRoomState, setPlayers, setGameseq } from "../../store";
-import { Chat as ChatIcon, Check as CheckIcon, ExitToApp as ExitToAppIcon } from "@mui/icons-material";
-import { styled, Button, Card, Container, Grid, Typography, IconButton } from "@mui/material";
-import { createConnection } from '../../openvidu/connectionInitialization';
-import UserVideoComponent from '../../components/Game/UserVideoComponent';
-import React, { Component, useState, useEffect } from 'react';
-import LoginAlert from '../../components/Common/LoginAlert';
-import { useNavigate, useParams } from "react-router-dom";
+/*eslint-disable*/
+import {
+  setSession as setRoomSession,
+  setConnection as setUserConnection,
+  setConnectionToken,
+  resetRoomState,
+  setGameseq,
+} from "../../store";
+import {
+  Chat as ChatIcon,
+  Check as CheckIcon,
+  ExitToApp as ExitToAppIcon,
+} from "@mui/icons-material";
+import { styled, Card, Grid, Typography, IconButton } from "@mui/material";
+import { React, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Header from "../../components/Game/HeaderPlay";
-import Next from "../../components/Game/NextToPlay";
+import { useNavigate, useParams } from "react-router-dom";
+import { createConnection } from "../../openvidu/connectionInitialization";
 import { getCookie } from "../../utils/cookie";
-import { userInfo } from '../../apis/userInfo';
-import { OpenVidu } from 'openvidu-browser';
+import { userInfo } from "../../apis/userInfo";
+import { OpenVidu } from "openvidu-browser";
+import UserVideoComponent from "../../components/Game/UserVideoComponent";
+import LoginAlert from "../../components/Common/LoginAlert";
+import Header from "../../components/Game/HeaderPlay";
 import axios from "axios";
 
 function GameWait() {
+  const MAX_USERS = 4; // 최대 인원
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
   const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate(); // 페이지 이동
 
   // const [mySessionId, setMySessionId] = useState('SessionA');
   // const [myUserName, setMyUserName] = useState('Participant' + Math.floor(Math.random() * 100));
+  //eslint-disable-next-line
   const [mainStreamManager, setMainStreamManager] = useState(undefined); // 방장?
-  const [publisher, setPublisher] = useState(undefined);
-  const [subscribers, setSubscribers] = useState([]);
-  const [userStreams, setUserStreams] = useState([]);  // 유저 스트림 목록을 저장할 상태 변수
+  const [publisher, setPublisher] = useState(undefined); //  현재 사용자의 스트림을 관리
+  //eslint-disable-next-line
+  const [subscribers, setSubscribers] = useState([]); // 현재 연결된 다른 사용자들의 스트림을 관리
+  const [userStreams, setUserStreams] = useState([]); // 모든 사용자 스트림을 관리, subscribers 배열에 있는 스트림들을 모두 여기에 저장
 
-  // REDUX에서 가져오기
-  var { gameSeq } = useParams(); // url에서 추출
+  let { gameSeq } = useParams(); // url에서 추출
+  dispatch(setGameseq(gameSeq)); // REDUX에 저장
+  // 리덕스에서 데이터를 가져온다.
+  const roomSession = useSelector((state) => state.roomState.session);
+  const userConnection = useSelector((state) => state.roomState.connection);
+  const connectionToken = useSelector(
+    (state) => state.roomState.connectionToken
+  );
+  const myUserName = useSelector((state) => state.roomState.nickname); // 닉네임
 
-  dispatch(setGameseq(gameSeq));
-  // const gameSeq = useSelector(state => state.roomState.gameseq); 
-  const session = useSelector(state => state.roomState.session);
-  const connection = useSelector(state => state.roomState.connection);
-  const connectionToken = useSelector(state => state.roomState.connectionToken);
-  const nickname = useSelector(state => state.roomState.nickname);
+  console.log("리덕스에서 부르자마자 roomSession : " + roomSession);
+  console.log("리덕스에서 부르자마자 userConnection : " + userConnection);
+  console.log("리덕스에서 부르자마자 connectionToken : " + connectionToken);
+  console.log("리덕스에서 부르자마자 myUserName : " + myUserName);
 
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
@@ -57,30 +74,6 @@ function GameWait() {
     },
   });
 
-  // -----------------------------------------------------------------------------------------------------
-  // // 유저 닉네임 가져오기
-  // useEffect(() => {
-  //   const fetchNickname = async () => {
-  //     try {
-  //       const email = getCookie("email");
-  //       const access = getCookie("access");
-  //       const response = await axios.get(
-  //         "https://i9b109.p.ssafy.io:8443/member/info?email=" + email,
-  //         {
-  //           headers: {
-  //             Authorization: "Bearer " + access,
-  //           }
-  //         }
-  //       );
-  //       dispatch(setNickname(response.data.nickname));
-  //     } catch (error) {
-  //       console.error("DB에서 닉네임 불러오기 실패:", error);
-  //     }
-  //   };
-
-  //   fetchNickname();
-  // }, []);
-
   // 로그인 상태관리
   useEffect(() => {
     userInfo()
@@ -97,29 +90,13 @@ function GameWait() {
       });
   }, []);
 
-  useEffect(() => {
-    userInfo()
-      .then((res) => {
-        if (res.status !== 200) {
-          window.alert("로그인을 해주세요!");
-          navigate("/");
-        }
-      })
-      .catch((error) => {
-        console.error("유저 정보 불러오기 실패:", error);
-        window.alert("로그인을 해주세요!");
-        navigate("/");
-      });
-    fetchSession();
-  }, [gameSeq]);
-
   // 페이지 떠날 때 이벤트 리스너 등록 및 해제
-  useEffect(() => {
-    window.addEventListener('beforeunload', onBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', onBeforeUnload);
-    };
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener('beforeunload', onBeforeUnload);
+  //   return () => {
+  //     window.removeEventListener('beforeunload', onBeforeUnload);
+  //   };
+  // }, []);
 
   // 페이지 나갈 때 세션 나가기 함수 호출
   const onBeforeUnload = () => {
@@ -127,59 +104,55 @@ function GameWait() {
   };
   // 세션 나가기
   const leaveSession = () => {
-    // if (session) {
-    connection.disconnect();
-    // }
-    setSessionAction(undefined); // 세션 초기화
-    setSubscribers([]);
-    setMainStreamManager(undefined);
-    setPublisher(undefined);
-    // setMySessionId('SessionA');
-    // setMyUserName('Participant' + Math.floor(Math.random() * 100));
+    // userConnection.disconnect(); // 사용자의 연결을 끊습니다.
+    setRoomSession(undefined); // 세션 초기화
+    setSubscribers([]); // 구독자 목록을 초기화합니다.
+    setMainStreamManager(undefined); // 방장 스트림 관리자를 초기화합니다.
+    setPublisher(undefined); // 현재 사용자의 스트림 관리자를 초기화합니다.
   };
 
-  const handleChangeSessionId = (e) => {
-    setMySessionId(e.target.value);
-  };
+  // 방 세션 ID를 변경하는 역할
+  // const handleChangeSessionId = (e) => {
+  //   setMySessionId(e.target.value);
+  // };
 
-  const handleChangeUserName = (e) => {
-    setMyUserName(e.target.value);
-  };
+  // 유저네임 변경 역할
+  // const handleChangeUserName = (e) => {
+  //   setMyUserName(e.target.value);
+  // };
 
-  function handleMainVideoStream(stream) {
-    if (mainStreamManager !== stream) {
-      setMainStreamManager(stream);
-    }
-  };
+  // function handleMainVideoStream(stream) {
+  //   if (mainStreamManager !== stream) {
+  //     setMainStreamManager(stream);
+  //   }
+  // };
 
-  // "게임 준비" 버튼을 클릭했을 때 동작
+  // 유저 제거
+  // const deleteSubscriber = (streamManager) => {
+  //     const newSubscribers = subscribers.filter(sub => sub !== streamManager);
+  //     setSubscribers(newSubscribers);
+  // };
+
+  // 1. "게임 준비" 버튼을 클릭했을 때 동작
   const handleGameReady = () => {
-    dispatch(setSessionAction(session));
-    dispatch(setConnection(connection));
+    dispatch(setRoomSession(roomSession));
+    dispatch(setUserConnection(userConnection));
     dispatch(setConnectionToken(connectionToken));
 
     // 게임플레이 페이지로 이동하고 gameSeq 매개변수를 전달.
     navigate(`/GamePlay/${gameSeq}`);
   };
 
-  // "채팅" 버튼을 클릭했을 때 동작
-  const handleChat = () => {
-  };
+  // 2. "채팅" 버튼을 클릭했을 때 동작
+  const handleChat = () => {};
 
-  // "나가기" 버튼 눌렀을 때 동작
+  // 3. "나가기" 버튼 눌렀을 때 동작
   const handleExit = () => {
-    // dispatch(resetRoomState());
+    dispatch(resetRoomState());
     onBeforeUnload();
     navigate(`/GameList`);
-    console.log("방 나갈거야 ~")
+    console.log("방 나갈거야 ~");
   };
-
-  // const deleteSubscriber = (streamManager) => {
-  //     const newSubscribers = subscribers.filter(sub => sub !== streamManager);
-  //     setSubscribers(newSubscribers);
-  // };
-
-
 
   // 방 세션 ID 가져오기
   const fetchSession = async () => {
@@ -193,7 +166,7 @@ function GameWait() {
           },
         }
       );
-      dispatch(setSessionAction(response.data.data.sessionId));
+      dispatch(setRoomSession(response.data.data.sessionId));
     } catch (error) {
       console.error("DB에서 세션 id 불러오기 실패:", error);
     }
@@ -202,15 +175,7 @@ function GameWait() {
   // 토큰 만들기
   const fetchConnectionToken = async () => {
     try {
-      // await fetchSession();
-      // // return await createConnection();
-      // if (session) {
-      // session이 생성된 상태인지 확인
-      console.log("세션이야 : " + session);
-      await createConnection(session);
-      // dispatch(setConnection(connection));
-      // dispatch(setConnectionToken(connectionToken));
-      // }
+      await createConnection();
     } catch (error) {
       console.error("연결 토큰을 가져오는데 실패 :", error);
     }
@@ -219,79 +184,95 @@ function GameWait() {
   // openvidu 연결
   const joinSession = async () => {
     try {
+      // OpenVidu 인스턴스를 생성
       const ov = new OpenVidu();
+
+      // OpenVidu 인스턴스를 사용하여 새로운 세션을 초기화 // 기존 방 세션은 변하지 않는다!!
+      // initSession : 미디어 스트림을 전송하기 위한 컨테이너 역할
       const newSession = ov.initSession();
-      // setSessionAction(newSession);
-      setConnection(newSession);
-      newSession.on('streamCreated', (event) => {
-        const subscriber = newSession.subscribe(event.stream, undefined);
-        // setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
-        setUserStreams(prevStreams => [...prevStreams, subscriber]);
 
+      // 새로운 스트림이 생성되었을 때의 이벤트 리스너를 등록
+      newSession.on("streamCreated", (event) => {
+        if (userStreams.length < MAX_USERS) {
+          const subscriber = newSession.subscribe(event.stream, undefined);
+          // setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+          setUserStreams((prevStreams) => [...prevStreams, subscriber]);
+        }
       });
 
-      newSession.on('streamDestroyed', (event) => {
-        deleteSubscriber(event.stream.streamManager);
+      // 스트림이 파괴되었을 때의 이벤트 리스너를 등록
+      // newSession.on('streamDestroyed', (event) => {
+      //   deleteSubscriber(event.stream.streamManager);
+      // });
+
+      // 예외 상황이 발생했을 때의 이벤트 리스너를 등록
+      // on(event, callback): 이벤트를 처리하는 리스너를 등록
+      newSession.on("exception", (exception) => {
+        console.warn("예외 상황 발생발생 : " + exception);
       });
 
-      newSession.on('exception', (exception) => {
-        console.warn(exception);
-      });
-
-      const strat_token = connectionToken; // Implement getToken function
-      console.log("닉네임~~~~~~~~~~~~~~" + nickname)
-      newSession.connect(strat_token, { clientData: nickname })
+      newSession
+        .connect(connectionToken, { clientData: myUserName })
         .then(async () => {
+          // initPublisherAsync(targetElement, properties): 로컬 사용자의 미디어 스트림을 생성하는 메서드
           const newPublisher = await ov.initPublisherAsync(undefined, {
             audioSource: undefined,
             videoSource: undefined,
             publishAudio: true,
             publishVideo: true,
-            resolution: '640x480',
+            resolution: "640x480",
             frameRate: 30,
-            insertMode: 'APPEND',
+            insertMode: "APPEND",
             mirror: false,
           });
 
           newSession.publish(newPublisher);
 
           const devices = await ov.getDevices();
-          const videoDevices = devices.filter(device => device.kind === 'videoinput');
-          const currentVideoDeviceId = newPublisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
-          const currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
+          const videoDevices = devices.filter(
+            (device) => device.kind === "videoinput"
+          );
+          const currentVideoDeviceId = newPublisher.stream
+            .getMediaStream()
+            .getVideoTracks()[0]
+            .getSettings().deviceId;
 
-          setMainStreamManager(newPublisher);
+          //eslint-disable-next-line
+          const currentVideoDevice = videoDevices.find(
+            (device) => device.deviceId === currentVideoDeviceId
+          );
+
+          // setMainStreamManager(newPublisher);
           setPublisher(newPublisher);
         })
         .catch((error) => {
-          console.log('There was an error connecting to the session:', error.code, error.message);
+          console.log(
+            "세션을 연결하는데 에러가 존재한다!! :",
+            error.code,
+            error.message
+          );
         });
     } catch (error) {
-      console.error('Error joining session:', error);
+      console.error("Error joining session:", error);
     }
   };
 
-
   // 최종 순서대로!
   useEffect(() => {
-    const final = async () => {
-      try {
-        await fetchSession(); // 세션 ID 가져오기
-        await fetchConnectionToken(); // 연결 토큰 생성
-        await joinSession(); // openvidu 연결
-      } catch (error) {
+    fetchSession() // 방 세션 발급
+      .then(() => fetchConnectionToken()) // 유저 토큰 발급
+      .then(() => {
+        joinSession(); // openvidu 연결
+        console.log("동기 게임 시퀀스입니다 : " + gameSeq);
+        console.log("동기 방 세션입니다 : " + roomSession);
+        console.log("동기 연결 세션입니다: " + userConnection);
+        console.log("동기 연결 토큰입니다 : " + connectionToken);
+        setMainStreamManager(publisher);
+      })
+      .catch((error) => {
         console.error("최종 연결을 실패했습니다 :", error);
-      }
-    };
-
-    // 게임 대기 페이지 진입 시 세션 ID와 연결 토큰을 가져오는 로직 호출
-    final();
+      });
   }, []);
-
-  console.log("게임 시퀀스입니다 : " + gameSeq);
-  console.log("방 세션입니다 : " + session);
-  console.log("연결 세션입니다: " + connection);
-  console.log("연결 토큰입니다 : " + connectionToken);
 
   return (
     <div
@@ -440,9 +421,10 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            <UserVideoComponent
+            {/* <UserVideoComponent
               streamManager={mainStreamManager}
-            />
+            /> */}
+            <UserVideoComponent streamManager={userStreams[0]} />
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
             <div
@@ -469,9 +451,7 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            <UserVideoComponent
-              streamManager={userStreams[0]}
-            />
+            <UserVideoComponent streamManager={userStreams[1]} />
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
             <div
@@ -498,9 +478,7 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            <UserVideoComponent
-              streamManager={userStreams[1]}
-            />
+            <UserVideoComponent streamManager={userStreams[2]} />
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
             <div
@@ -527,9 +505,7 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            <UserVideoComponent
-              streamManager={userStreams[2]}
-            />
+            <UserVideoComponent streamManager={userStreams[3]} />
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
             <div
