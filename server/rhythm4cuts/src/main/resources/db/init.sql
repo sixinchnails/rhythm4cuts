@@ -19,15 +19,15 @@ VALUES (1, '1 profile image', '1 image', '1 file name'),
        (4, '4 profile image', '4 image', '4 file name'),
        (5, '5 profile image', '5 image', '5 file name');
 
-INSERT INTO user (user_seq, name, nickname, email, profile_image_seq, gender, password, point)
-VALUES (1, 'Han', 'ssafy', 'ssafy@naver.com', 1, 'M', '$2a$10$vssYDJemY9v8AAkwLLwHvu3fDFQERHWzSYRRFg0JnXOsMzfDHPtOS', 0),
-       (2, 'hyun', 'hyun', 'abc@gmail.com', 1, 'F', '$2a$10$VFXy93wiuII9frJpYVwkaunhA4yC5.t3PObLeOWDmFSOkif9UUJlG', 0),
-       (3, '민국', '민국', 'acd4548@naver.com', 1, 'M', '$2a$10$LPFxF8MpOlHoN.gjdcwGNOyAYwK6UaEYzAlTKupTW7aVCi0dMK5li', 0),
-       (4, '강현', '현', 'a@naver.com', 1, 'F', '$2a$10$izEmiiCiWgy7YPeuI0Gn5eBG7Fko0SWugFRyEg3ydJBZYYImnaYW2', 1200),
-       (5, '홍유빈', '홍유콩', 'ab@naver.com', 2, 'M', '$2a$10$GnzKA038lOiaZ/dUMOhAiucG7xgs9MVadxTnw1eaY.euum86itJMu', 1000),
-       (6, '최재용', '최재드래곤', 'b@naver.com', 3, 'M', '$2a$10$mH8IoINNgYrqwcUaGcCub.5/G8L0R2hWE3zMZdN0CYMEkJSOwH2Nm', 800),
-       (7, '최한윤', '최고다한윤', 'bc@naver.com', 3, 'F', '$2a$10$H95InRSRPg1tEW4X/DUu8.pO0NXOl.A7Hqef6iHF.1FF9h7iggsMq', 600),
-       (8, '강혀니', '현순', 'z@naver.com', 1, 'F', '$2a$10$YBlzKtNiX4Q/eX2bc2GiKeuy98ie4pXXgjldU80pR7ba.B1kX3OaK', 1100);
+# INSERT INTO user (user_seq, name, nickname, email, profile_image_seq, gender, password, point)
+# VALUES (1, 'Han', 'ssafy', 'ssafy@naver.com', 1, 'M', '$2a$10$vssYDJemY9v8AAkwLLwHvu3fDFQERHWzSYRRFg0JnXOsMzfDHPtOS', 0),
+#        (2, 'hyun', 'hyun', 'abc@gmail.com', 1, 'F', '$2a$10$VFXy93wiuII9frJpYVwkaunhA4yC5.t3PObLeOWDmFSOkif9UUJlG', 0),
+#        (3, '민국', '민국', 'acd4548@naver.com', 1, 'M', '$2a$10$LPFxF8MpOlHoN.gjdcwGNOyAYwK6UaEYzAlTKupTW7aVCi0dMK5li', 0),
+#        (4, '강현', '현', 'a@naver.com', 1, 'F', '$2a$10$izEmiiCiWgy7YPeuI0Gn5eBG7Fko0SWugFRyEg3ydJBZYYImnaYW2', 1200),
+#        (5, '홍유빈', '홍유콩', 'ab@naver.com', 2, 'M', '$2a$10$GnzKA038lOiaZ/dUMOhAiucG7xgs9MVadxTnw1eaY.euum86itJMu', 1000),
+#        (6, '최재용', '최재드래곤', 'b@naver.com', 3, 'M', '$2a$10$mH8IoINNgYrqwcUaGcCub.5/G8L0R2hWE3zMZdN0CYMEkJSOwH2Nm', 800),
+#        (7, '최한윤', '최고다한윤', 'bc@naver.com', 3, 'F', '$2a$10$H95InRSRPg1tEW4X/DUu8.pO0NXOl.A7Hqef6iHF.1FF9h7iggsMq', 600),
+#        (8, '강혀니', '현순', 'z@naver.com', 1, 'F', '$2a$10$YBlzKtNiX4Q/eX2bc2GiKeuy98ie4pXXgjldU80pR7ba.B1kX3OaK', 1100);
 
 INSERT INTO song_rank (song_rank_seq, ranking, singer, title)
 VALUES (1,1,'NewJeans','Super Shy'),
