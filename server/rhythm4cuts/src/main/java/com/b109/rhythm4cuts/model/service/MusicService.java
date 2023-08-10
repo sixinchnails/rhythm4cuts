@@ -78,12 +78,14 @@ public class MusicService {
     public SongDto selectSong(int songSeq) {
 
         Song song = musicRepository.findBySongSeq(songSeq).orElse(null);
-
         SongDto res = new SongDto();
-        res.setSongSeq(songSeq);
-        res.setTitle(song.getTitle());
-        res.setSinger(song.getSinger());
-        res.setUrl(song.getUrl());
+
+        if (song != null) {
+            res.setSongSeq(songSeq);
+            res.setTitle(song.getTitle());
+            res.setSinger(song.getSinger());
+            res.setUrl(song.getUrl());
+        }
 
         return res;
     }
