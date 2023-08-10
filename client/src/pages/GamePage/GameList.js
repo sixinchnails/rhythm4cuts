@@ -165,6 +165,7 @@ function GameList() {
         );
         dispatch(setNickname(response.data.nickname));
       } catch (error) {
+        console.log("닉네임 가져오는데 오류가 발생했어요~")
       }
     };
     fetchNickname();
