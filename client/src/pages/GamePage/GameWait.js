@@ -30,12 +30,12 @@ function GameWait() {
   const session = useSelector(state => state.roomState.session);
 
   const [mySessionId, setMySessionId] = useState('SessionA');
-    const [myUserName, setMyUserName] = useState('Participant' + Math.floor(Math.random() * 100));
-    const [connectSession, setConnectSession] = useState(undefined)
-    const [mainStreamManager, setMainStreamManager] = useState(undefined);
-    const [publisher, setPublisher] = useState(undefined);
-    const [subscribers, setSubscribers] = useState([]);
-  
+  const [myUserName, setMyUserName] = useState('Participant' + Math.floor(Math.random() * 100));
+  const [connectSession, setConnectSession] = useState(undefined)
+  const [mainStreamManager, setMainStreamManager] = useState(undefined);
+  const [publisher, setPublisher] = useState(undefined);
+  const [subscribers, setSubscribers] = useState([]);
+
 
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
@@ -92,77 +92,89 @@ function GameWait() {
   useEffect(() => {
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => {
-        window.removeEventListener('beforeunload', onBeforeUnload);
+      window.removeEventListener('beforeunload', onBeforeUnload);
     };
   }, []);
 
   const onBeforeUnload = () => {
     leaveSession();
-};
+  };
 
-const handleMainVideoStream = (stream) => {
+  const handleMainVideoStream = (stream) => {
     if (mainStreamManager !== stream) {
-        setMainStreamManager(stream);
+      setMainStreamManager(stream);
     }
-};
+  };
 
-const deleteSubscriber = (streamManager) => {
-  const newSubscribers = subscribers.filter(sub => sub !== streamManager);
-  setSubscribers(newSubscribers);
-};
+  const deleteSubscriber = (streamManager) => {
+    const newSubscribers = subscribers.filter(sub => sub !== streamManager);
+    setSubscribers(newSubscribers);
+  };
 
-const joinSession = async () => {
-  try {
+  // ------------------------------------------------------------------------------------------------------------------
+
+  useEffect(() => {
+    const joinSessionTimeout = setTimeout(() => {
+      joinSession();
+    }, 3000);
+
+    return () => clearTimeout(joinSessionTimeout);
+  }, []);
+
+
+  const joinSession = async () => {
+    try {
       const ov = new OpenVidu();
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
       newSession.on('streamCreated', (event) => {
-          const subscriber = newSession.subscribe(event.stream, undefined);
-          setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+        const subscriber = newSession.subscribe(event.stream, undefined);
+        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
       });
 
       newSession.on('streamDestroyed', (event) => {
-          deleteSubscriber(event.stream.streamManager);
+        deleteSubscriber(event.stream.streamManager);
       });
 
       newSession.on('exception', (exception) => {
-          console.warn(exception);
+        console.warn(exception);
       });
 
       const token = await getToken(); // Implement getToken function
 
       console.log("-----------------token : " + token);
       newSession.connect(token, { clientData: myUserName })
-          .then(async () => {
-              const newPublisher = await ov.initPublisherAsync(undefined, {
-                  audioSource: undefined,
-                  videoSource: undefined,
-                  publishAudio: true,
-                  publishVideo: true,
-                  resolution: '640x480',
-                  frameRate: 30,
-                  insertMode: 'APPEND',
-                  mirror: false,
-              });
-
-              newSession.publish(newPublisher);
-
-              const devices = await ov.getDevices();
-              const videoDevices = devices.filter(device => device.kind === 'videoinput');
-              const currentVideoDeviceId = newPublisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
-              const currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
-
-              setMainStreamManager(newPublisher);
-              setPublisher(newPublisher);
-          })
-          .catch((error) => {
-              console.log('There was an error connecting to the session:', error.code, error.message);
+        .then(async () => {
+          const newPublisher = await ov.initPublisherAsync(undefined, {
+            audioSource: undefined,
+            videoSource: undefined,
+            publishAudio: true,
+            publishVideo: true,
+            resolution: '640x480',
+            frameRate: 30,
+            insertMode: 'APPEND',
+            mirror: false,
           });
-  } catch (error) {
+
+          newSession.publish(newPublisher);
+
+          const devices = await ov.getDevices();
+          const videoDevices = devices.filter(device => device.kind === 'videoinput');
+          const currentVideoDeviceId = newPublisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
+          const currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
+
+          setMainStreamManager(newPublisher);
+          setPublisher(newPublisher);
+        })
+        .catch((error) => {
+          console.log('There was an error connecting to the session:', error.code, error.message);
+        });
+    } catch (error) {
       console.error('Error joining session:', error);
-  }
-};
+    }
+  };
+  // ------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -187,7 +199,7 @@ const joinSession = async () => {
     navigate(`/GameList`);
   };
 
-  
+
 
   // 유저 닉네임 가져오기 : 리덕스 저장 => 나중에 로그인 페이지에서 처리
   async function fetchNickname() {
@@ -220,7 +232,7 @@ const joinSession = async () => {
       await fetchSession();
 
       return await createConnection();
-    } catch (error) { 
+    } catch (error) {
       console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
     }
   }
@@ -228,7 +240,7 @@ const joinSession = async () => {
   // 유저 커넥션 발급
   async function fetchSession() {
     try {
-      const access = getCookie("access"); 
+      const access = getCookie("access");
 
       const response = await axios.get(
         `https://i9b109.p.ssafy.io:8443/wait/info/${gameSeq}`,
@@ -250,7 +262,7 @@ const joinSession = async () => {
   const leaveSession = () => {
     console.log('--------------------leave session')
     if (connectSession) {
-        connectSession.disconnect();
+      connectSession.disconnect();
     }
 
     setConnectSession(undefined);
@@ -265,45 +277,49 @@ const joinSession = async () => {
         joinSession();
       }
     }, [connectSession]);
-};
+  };
 
   return (
     <div id="video-wrap">
-      {!connectSession ? (
-          <button onClick={joinSession}>입장</button>
-      ) : null}
+      {/* {!connectSession ? (
+        <button onClick={joinSession}>입장</button>
+      ) : null} */}
 
-      {connectSession ? (
-        <div
-          style={{
-            width: "100%",
-            height: "100vh",
-            backgroundPosition: "center",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-            backgroundImage: "url('/images/GameImage/GameList.jpg')",
-          }}
-        >
+      {/* {connectSession ? ( */}
+      
+      <div
+        style={{
+          width: "100%",
+          height: "100vh",
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundImage: "url('/images/GameImage/GameList.jpg')",
+        }}
+      >
 
-          <Header />
-          <div id="video-container" className="col-md-6">
+        <Header />
+        <div id="video-container" className="col-md-6">
           {publisher ? (
-                            <div className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(publisher)}>
-                                <UserVideoComponent streamManager={publisher} />
-                            </div>
-                        ) : null}
+            <div className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(publisher)}>
+              <UserVideoComponent streamManager={publisher} />
+            </div>
+          ) : null}
           {subscribers.map((sub, i) => (
-                            <div key={sub.id} className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(sub)}>
-                            <span>{sub.id}</span>
-                            <UserVideoComponent streamManager={sub} />
-                        </div>
-                        ))}
-          </div>
-          {/* '로그인 경고' 모달 */}
-          <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
+            <div key={sub.id} className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(sub)}>
+              <span>{sub.id}</span>
+              <UserVideoComponent streamManager={sub} />
+            </div>
+          ))}
         </div>
-      ) : null}
+        {/* '로그인 경고' 모달 */}
+        <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
+      </div>
+      {/* ) : null} */}
     </div>
+
+
+
     // <div className="container">
     //         {!session ? (
     //             <div>
