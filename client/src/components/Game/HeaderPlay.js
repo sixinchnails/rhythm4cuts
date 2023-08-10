@@ -28,10 +28,12 @@ const LoginMypageHeader = () => {
 
   return (
     <div style={headerStyle}>
-      <div style={logoStyle} >
-        <img src="/images/GameImage/HeaderLogo.png"
-          style={imgStyle} alt="Logo"></img>
-      </div>
+      <a href="/GameList">
+        <div style={logoStyle} >
+          <img src="/images/GameImage/HeaderLogo.png"
+            style={imgStyle} alt="Logo"></img>
+        </div>
+      </a>
       <div>
         <Badge color="error" variant="dot" style={{ marginRight: "50px" }}>
           <NotificationsIcon />
