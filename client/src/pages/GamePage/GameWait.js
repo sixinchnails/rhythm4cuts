@@ -271,7 +271,7 @@ function GameWait() {
       await fetchSession();
 
       return await createConnection();
-    } catch (error) {
+    } catch (error) { 
       console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
     }
   }
@@ -279,7 +279,7 @@ function GameWait() {
   // 유저 커넥션 발급
   async function fetchSession() {
     try {
-      const access = getCookie("access");
+      const access = getCookie("access"); 
 
       const response = await axios.get(
         `https://i9b109.p.ssafy.io:8443/wait/info/${gameSeq}`,
