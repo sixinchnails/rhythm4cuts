@@ -1,6 +1,6 @@
 package com.b109.rhythm4cuts.model.repository;
 
-import com.b109.rhythm4cuts.model.domain.Song;
+import com.b109.rhythm4cuts.model.domain.SongRank;
 import com.b109.rhythm4cuts.model.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -17,12 +17,12 @@ public class RankingRepositoryImpl implements RankingRepository{
     EntityManager em;
 
     @Override
-    public List<Song> selectSongOrderBYRank() {
-        String jpql = "SELECT s FROM Song s ORDER BY s.songRank ASC ";
-        List<Song> songs = em.createQuery(jpql, Song.class)
+    public List<SongRank> selectSongOrderBYRank() {
+        String jpql = "SELECT sr FROM SongRank sr";
+        List<SongRank> songRanks = em.createQuery(jpql, SongRank.class)
                 .getResultList();
 
-        return songs;
+        return songRanks;
     }
 
     @Override

@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter @Setter
 public class SongRankDto {
 
-    private int songRankSeq;
+    private Long songRankSeq;
     private String title;
     private String singer;
     private int ranking;

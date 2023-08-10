@@ -7,6 +7,7 @@
 .Join-item {
   display: flex;
   align-items: center;
+
   margin-bottom: 20px; /* 각 항목 사이에 간격을 둡니다. */
 }
 

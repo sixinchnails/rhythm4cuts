@@ -5,6 +5,8 @@ import com.b109.rhythm4cuts.model.dto.*;
 import org.hibernate.sql.Update;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface UserService {
     // Find a user by their ID
     UserDto findById(Long userId);
@@ -49,5 +51,7 @@ public interface UserService {
 
     TokenResponse generateToken(UserDto userDto);
 
-    ResponseEntity<?> reissueAuthenticationToken(TokenRequestDto tokenRequestDto);
+    TokenResponse reissueAuthenticationToken(TokenRequestDto tokenRequestDto);
+
+    List<ProfileImageDto> getProfileImage(List<String> imageIds);
 }

@@ -30,23 +30,23 @@ function Home() {
   //로그인 상태 확인 및 유저 정보 불러오는 부분
   try {
     userInfo()
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         setIsLogin(true);
       })
-      .catch(error => {
+      .catch((error) => {
         setIsLogin(false);
         console.log(error);
-        if (error.response.status === 401) {
+        if (error.response.status !== 200) {
           console.log("accessToken이 만료되었습니다.");
           renewAccessToken()
-            .then(res => {
+            .then((res) => {
               setCookie("access", res.accessToken);
               console.log(res);
               console.log("accessToken 재발급 완료");
               window.location.reload();
             })
-            .catch(error => {
+            .catch((error) => {
               console.log("refresh토큰이 에러");
               console.log(error);
               checkLogin();
@@ -125,9 +125,23 @@ function Home() {
   const noOfMusicPages = Math.ceil(musicData.length / musicPerPage);
 
   //유저 랭킹
-  let user_rank = useSelector(state => {
-    return state.User_Rank;
-  });
+  const [userData, setUserData] = useState([]);
+
+  const fetchUserRank = async () => {
+    try {
+      const response = await axios.get(
+        "https://i9b109.p.ssafy.io:8443/ranking/user"
+      );
+      console.log(response.data.data);
+      setUserData(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserRank();
+  }, []);
 
   // 유저 개수 컨트롤러
   const userPerPage = 7; // 한 페이지당 표시할 방 수
@@ -138,11 +152,11 @@ function Home() {
     setUserPage(value);
   };
 
-  // 음악 페이지 수 계산
-  const noOfUserPages = Math.ceil(user_rank.length / userPerPage);
+  // 유저 페이지 수 계산
+  const noOfUserPages = Math.ceil(userData.length / userPerPage);
 
   useEffect(() => {
-    const wheelHandler = e => {
+    const wheelHandler = (e) => {
       e.preventDefault();
       const { deltaY } = e;
       const { scrollTop } = outerDivRef.current; // 스크롤 위쪽 끝부분 위치
@@ -332,11 +346,12 @@ function Home() {
             </div>
             <div className="rank2">
               <h1>Total Rank</h1>
-              <div className="total_rank"></div>
-              <div className="nickname">
-                <span>{user_rank[0].nickName}</span>
-                <span>{user_rank[1].nickName}</span>
-                <span>{user_rank[2].nickName}</span>
+              <div className="total_rank">
+                <div className="nickname">
+                  <span>{userData.nickname}</span>
+                  <span>{userData.nickname}</span>
+                  <span>{userData.nickname}</span>
+                </div>
               </div>
               <div className="top100">
                 <div style={{ height: "20%" }}>
@@ -356,13 +371,13 @@ function Home() {
                 </div>
                 <div className="user_rank">
                   <div className="rank">
-                    {user_rank
+                    {userData
                       .slice(
                         (userPage - 1) * userPerPage,
                         userPage * userPerPage
                       )
                       .map((user, index) => (
-                        <UserRank key={index} user={user} />
+                        <UserRank key={index} user={user} index={index} />
                       ))}
                   </div>
                 </div>
@@ -408,7 +423,7 @@ function Home() {
                 dateFormat="yyyy.MM.dd" // 날짜 형태
                 shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
                 selected={startDate}
-                onChange={date => setStartDate(date)}
+                onChange={(date) => setStartDate(date)}
               />
             </div>
           </div>
