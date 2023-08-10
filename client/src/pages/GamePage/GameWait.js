@@ -396,7 +396,7 @@ function GameWait() {
               margin: "5px",
               borderRadius: "20px",
             }}
-          >
+          > 
             {/* <UserVideoComponent
               streamManager={mainStreamManager}
             /> */}
