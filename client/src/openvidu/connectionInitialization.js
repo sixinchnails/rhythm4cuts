@@ -6,7 +6,7 @@ import { setConnectionToken, setConnection } from "../store";
 const OPENVIDU_SERVER_URL = "https://i9b109.p.ssafy.io";
 const OPENVIDU_SERVER_SECRET = "zlwhsalsrnrWid1234";
 
-export const createConnection = async () => {
+export const createConnection = async (connection) => {
   // sessionId 매개변수 삭제
   try {
     // 리덕스 스토어에서 세션 정보를 가져옵니다.
@@ -25,14 +25,16 @@ export const createConnection = async () => {
       }
     );
 
-    // 정규식을 사용하여 토큰 부분을 추출합니다.
-    // const tokenRegex = /token=([^&]+)/;
-    // const matches = tokenString.match(tokenRegex);
-    // const token = matches ? matches[1] : null;
 
     // 연결 세션&토큰을 리덕스 스토어에 저장합니다.
-    store.dispatch(setConnection(response.data.id));
-    store.dispatch(setConnectionToken(response.data.token));
+    if (connection == null) {
+      console.log("커넥션이 null 이네!!!")
+      store.dispatch(setConnection(response.data.id));
+      store.dispatch(setConnectionToken(response.data.token));
+
+    } else{
+      console.log("커넥션이 null 이 아니네!")
+    }
     // return response.data.id;
     return {
       connection: response.data.id,

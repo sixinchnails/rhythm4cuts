@@ -17,7 +17,7 @@ import axios from "axios";
 
 function GameWait() {
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
-  const dispatch = useDispatch(); // 리덕스 업데이트
+  const dispatch = useDispatch(); // 리덕스 업데이트 
   const navigate = useNavigate(); // 페이지 이동
 
   // const [mySessionId, setMySessionId] = useState('SessionA');
@@ -36,15 +36,15 @@ function GameWait() {
   const connection = useSelector(state => state.roomState.connection);
   const connectionToken = useSelector(state => state.roomState.connectionToken);
   const nickname = useSelector(state => state.roomState.nickname);
-
+  
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
     setLoginAlertOpen(true);
   };
-  const handleCloseLoginAlert = () => {
+  const handleCloseLoginAlert = () => { 
     setLoginAlertOpen(false);
     navigate("/Login");
-  };
+  }; 
 
   // Styled 버튼 ( css )
   const StyledIconButton = styled(IconButton)({
@@ -56,30 +56,6 @@ function GameWait() {
       backgroundColor: "#1976d2", // 마우스 오버 시 배경색 변경
     },
   });
-
-  // -----------------------------------------------------------------------------------------------------
-  // // 유저 닉네임 가져오기
-  // useEffect(() => {
-  //   const fetchNickname = async () => {
-  //     try {
-  //       const email = getCookie("email");
-  //       const access = getCookie("access");
-  //       const response = await axios.get(
-  //         "https://i9b109.p.ssafy.io:8443/member/info?email=" + email,
-  //         {
-  //           headers: {
-  //             Authorization: "Bearer " + access,
-  //           }
-  //         }
-  //       );
-  //       dispatch(setNickname(response.data.nickname));
-  //     } catch (error) {
-  //       console.error("DB에서 닉네임 불러오기 실패:", error);
-  //     }
-  //   };
-
-  //   fetchNickname();
-  // }, []);
 
   // 로그인 상태관리
   useEffect(() => {
@@ -129,11 +105,13 @@ function GameWait() {
   const leaveSession = () => {
     // if (session) {
     connection.disconnect();
+    // 리덕스 초기화
+    resetRoomState();
     // }
-    setSessionAction(undefined); // 세션 초기화
-    setSubscribers([]);
-    setMainStreamManager(undefined);
-    setPublisher(undefined);
+    // setSessionAction(undefined); // 세션 초기화
+    // setSubscribers([]);
+    // setMainStreamManager(undefined);
+    // setPublisher(undefined);
     // setMySessionId('SessionA');
     // setMyUserName('Participant' + Math.floor(Math.random() * 100));
   };
@@ -153,7 +131,7 @@ function GameWait() {
   };
 
   // "게임 준비" 버튼을 클릭했을 때 동작
-  const handleGameReady = () => {
+  function handleGameReady() {
     dispatch(setSessionAction(session));
     dispatch(setConnection(connection));
     dispatch(setConnectionToken(connectionToken));
@@ -170,16 +148,14 @@ function GameWait() {
   const handleExit = () => {
     // dispatch(resetRoomState());
     onBeforeUnload();
-    navigate(`/GameList`);
     console.log("방 나갈거야 ~")
+    navigate(`/GameList`);
   };
 
   // const deleteSubscriber = (streamManager) => {
   //     const newSubscribers = subscribers.filter(sub => sub !== streamManager);
   //     setSubscribers(newSubscribers);
   // };
-
-
 
   // 방 세션 ID 가져오기
   const fetchSession = async () => {
@@ -200,17 +176,11 @@ function GameWait() {
   };
 
   // 토큰 만들기
-  const fetchConnectionToken = async () => {
+  const fetchConnectionToken = async (connection) => {
     try {
-      // await fetchSession();
-      // // return await createConnection();
-      // if (session) {
-      // session이 생성된 상태인지 확인
-      console.log("세션이야 : " + session);
-      await createConnection(session);
-      // dispatch(setConnection(connection));
-      // dispatch(setConnectionToken(connectionToken));
-      // }
+      // console.log("세션이야 : " + session);
+      await createConnection(connection);
+
     } catch (error) {
       console.error("연결 토큰을 가져오는데 실패 :", error);
     }
@@ -238,7 +208,10 @@ function GameWait() {
         console.warn(exception);
       });
 
-      const strat_token = connectionToken; // Implement getToken function
+      console.log("null이면 안된다 1 : " + connectionToken)
+      const strat_token = connectionToken; // Implement getToken function  
+      console.log("null이면 안된다 2 : " + connectionToken)
+
       console.log("닉네임~~~~~~~~~~~~~~" + nickname)
       newSession.connect(strat_token, { clientData: nickname })
         .then(async () => {
@@ -272,20 +245,33 @@ function GameWait() {
   };
 
 
-  // 최종 순서대로!
-  useEffect(() => {
-    const final = async () => {
-      try {
-        await fetchSession(); // 세션 ID 가져오기
-        await fetchConnectionToken(); // 연결 토큰 생성
-        await joinSession(); // openvidu 연결
-      } catch (error) {
-        console.error("최종 연결을 실패했습니다 :", error);
-      }
-    };
+  // // 최종 순서대로! (비동기)
+  // useEffect(() => {
+  //   const final = async () => {
+  //     try {
+  //       await fetchSession(); // 세션 ID 가져오기
+  //       await fetchConnectionToken(); // 연결 토큰 생성
+  //       await joinSession(); // openvidu 연결
+  //     } catch (error) {
+  //       console.error("최종 연결을 실패했습니다 :", error);
+  //     }
+  //   };
 
-    // 게임 대기 페이지 진입 시 세션 ID와 연결 토큰을 가져오는 로직 호출
-    final();
+  //   // 게임 대기 페이지 진입 시 세션 ID와 연결 토큰을 가져오는 로직 호출
+  //   final();
+  // }, []);
+
+  // 최종 순서대로! (동기)
+  useEffect(() => {
+    fetchSession() // 방 세션 발급
+      .then(() => fetchConnectionToken()) // 유저 토큰 발급
+      .then(() => {
+        joinSession(); // openvidu 연결
+        setMainStreamManager(publisher);
+      })
+      .catch((error) => {
+        console.error("최종 연결을 실패했습니다 :", error);
+      });
   }, []);
 
   console.log("게임 시퀀스입니다 : " + gameSeq);
@@ -441,7 +427,7 @@ function GameWait() {
             }}
           >
             <UserVideoComponent
-              streamManager={mainStreamManager}
+              streamManager={userStreams[0]}
             />
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
@@ -470,7 +456,7 @@ function GameWait() {
             }}
           >
             <UserVideoComponent
-              streamManager={userStreams[0]}
+              streamManager={userStreams[1]}
             />
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
@@ -499,7 +485,7 @@ function GameWait() {
             }}
           >
             <UserVideoComponent
-              streamManager={userStreams[1]}
+              streamManager={userStreams[2]}
             />
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
@@ -528,7 +514,7 @@ function GameWait() {
             }}
           >
             <UserVideoComponent
-              streamManager={userStreams[2]}
+              streamManager={userStreams[3]}
             />
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
