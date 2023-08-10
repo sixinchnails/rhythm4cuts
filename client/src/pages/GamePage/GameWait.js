@@ -32,6 +32,7 @@ import {
   setConnectionToken,
   resetRoomState,
 } from "../../store";
+import { useWebSocket } from "../../utils/WebSocket/CreateFriend";
 
 // Styled 버튼
 const StyledIconButton = styled(IconButton)({
@@ -50,11 +51,11 @@ function GameWait() {
   const navigate = useNavigate();
   let { gameSeq } = useParams(); // URL에서 가져와
 
-  const session = useSelector((state) => state.roomState.session);
-  const connection = useSelector((state) => state.roomState.connection);
-  const connectionToken = useSelector(
-    (state) => state.roomState.connectionToken
-  );
+  const session = useSelector(state => state.roomState.session);
+  const connection = useSelector(state => state.roomState.connection);
+  const connectionToken = useSelector(state => state.roomState.connectionToken);
+
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
 
   // -----------------------------------------------------------------------------------------------------------------
 
@@ -69,15 +70,16 @@ function GameWait() {
 
   // 로그인 상태관리
   useEffect(() => {
+    connectWebSocket();
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
         } else {
           // 로그인 상태가 아니라면 알림.
           handleOpenLoginAlert();
         }
       })
-      .catch((error) => {
+      .catch(error => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -85,13 +87,13 @@ function GameWait() {
 
   useEffect(() => {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status !== 200) {
           window.alert("로그인을 해주세요!");
           navigate("/");
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("유저 정보 불러오기 실패:", error);
         window.alert("로그인을 해주세요!");
         navigate("/");
