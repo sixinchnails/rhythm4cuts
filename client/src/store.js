@@ -48,13 +48,13 @@ const roomState = createSlice({
 export const { setSession, setConnection, setConnectionToken, setNickname, setGameseq, resetRoomState } = roomState.actions;
 
 // Room 세션 ID를 설정하는 액션 함수
-export const setRoomSession = sessionId => dispatch => {
-  dispatch(setSession(sessionId));
+export const setRoomSession = session => dispatch => {
+  dispatch(setSession(session));
 };
 
 // Room 세션 ID를 설정하는 액션 함수
-export const setUserConnection = (connectionId) => (dispatch) => {
-  dispatch(setConnection(connectionId));
+export const setUserConnection = (connection) => (dispatch) => {
+  dispatch(setConnection(connection));
 };
 
 // 유저 토큰을 설정하는 액션 함수

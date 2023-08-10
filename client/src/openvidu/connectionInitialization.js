@@ -11,6 +11,7 @@ export const createConnection = async () => {
   try {
     // 리덕스 스토어에서 세션 정보를 가져옵니다.
     const session = store.getState().roomState.session;
+    console.log("연결 세션" + session)
 
     const response = await axios.post(
       `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${session}/connection`, // session 변수로 변경
@@ -24,11 +25,6 @@ export const createConnection = async () => {
         },
       }
     );
-
-    // 정규식을 사용하여 토큰 부분을 추출합니다.
-    // const tokenRegex = /token=([^&]+)/;
-    // const matches = tokenString.match(tokenRegex);
-    // const token = matches ? matches[1] : null;
 
     // 연결 세션&토큰을 리덕스 스토어에 저장합니다.
     store.dispatch(setConnection(response.data.id));
