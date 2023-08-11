@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import OpenViduVideoComponent from "./OvVideo";
+import { userInfo } from '../../apis/userInfo';
+
 
 export default class UserVideoComponent extends Component {
   // constructor(props) {
@@ -45,7 +47,10 @@ export default class UserVideoComponent extends Component {
   //     return JSON.parse(streamManager.stream.connection.data).clientData;
   //   }
   //   return "";
-  // }
+  // }  // 로그인 상태 확인
+ 
+
+
 
   render() {
     return (
@@ -53,6 +58,7 @@ export default class UserVideoComponent extends Component {
         <div className="streamcomponent">
           <OpenViduVideoComponent streamManager={this.props.streamManager} />
           <div>{/* <p>{this.getNicknameTag()}</p> */}</div>
+          <div>dddddd</div>
         </div>
       </div>
     );

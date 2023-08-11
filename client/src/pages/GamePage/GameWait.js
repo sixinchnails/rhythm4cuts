@@ -37,6 +37,7 @@ import axios from "axios";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 function GameWait() {
+
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
   const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate(); // 페이지 이동
@@ -105,6 +106,10 @@ function GameWait() {
       });
   }, []);
 
+  const data = userInfo;
+  console.log("1이야 : " + data);
+  console.log("2이야 : " + data.data);
+
   useEffect(() => {
     userInfo()
       .then(res => {
@@ -119,6 +124,7 @@ function GameWait() {
         navigate("/");
       });
   }, [gameSeq]);
+
 
   // 페이지 떠날 때 이벤트 리스너 등록 및 해제
   useEffect(() => {
@@ -250,7 +256,7 @@ function GameWait() {
   }
 
   // "채팅" 버튼을 클릭했을 때 동작
-  const handleChat = () => {};
+  const handleChat = () => { };
 
   // "나가기" 버튼 눌렀을 때 동작
   const handleExit = () => {
@@ -504,9 +510,9 @@ function GameWait() {
             {players[0] && (
               <UserVideoComponent
                 streamManager={players[0]}
-                // streamManager={publisher}
-                // streamManager={subscribers[0]}
-                // streamManager={mainStreamManager}
+              // streamManager={publisher}
+              // streamManager={subscribers[0]}
+              // streamManager={mainStreamManager}
               />
             )}
           </Grid>
