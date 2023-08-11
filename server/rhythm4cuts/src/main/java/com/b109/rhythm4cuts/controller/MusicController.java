@@ -22,7 +22,7 @@ public class MusicController {
     @PostMapping("/add")
     public ResponseEntity<?> addYoutubeMusic(@RequestBody SongDto songDto) {
         try {
-            musicService.saveMusic(songDto.getUrl(), songDto.getYoutube_id());
+            musicService.saveMusic(songDto.getYoutube_id());
             return new ResponseEntity<>("Success", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Fail", HttpStatus.INTERNAL_SERVER_ERROR);
