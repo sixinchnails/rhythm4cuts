@@ -1,5 +1,5 @@
-import React from "react";
 import { Button, List, ListItem, ListItemText } from "@mui/material";
+import React from "react";
 
 // GameWait 창에서 친구 초대 모달에 들어갈 컴포넌트
 function FriendList({ friends }) {
@@ -17,12 +17,12 @@ function FriendList({ friends }) {
     }
   });
 
-    // "Direct 초대" 버튼 클릭 시 처리할 함수
-    const handleInviteClick = (friend) => {
-      // 현재는 아무것도 수행하지 않고, 친구 이름을 콘솔에 출력!!
-      console.log(`Inviting ${friend.name}...`);
-      // 서버가 준비되면 이 부분에 API 호출 등의 로직을 추가할 수 있다.
-    };
+  // "Direct 초대" 버튼 클릭 시 처리할 함수
+  const handleInviteClick = (friend) => {
+    // 현재는 아무것도 수행하지 않고, 친구 이름을 콘솔에 출력!!
+    console.log(`Inviting ${friend.name}...`);
+    // 서버가 준비되면 이 부분에 API 호출 등의 로직을 추가할 수 있다.
+  };
 
   return (
     <List>
@@ -34,7 +34,8 @@ function FriendList({ friends }) {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => handleInviteClick(friend)}>
+              onClick={() => handleInviteClick(friend)}
+            >
               Direct Invite
             </Button>
           )}

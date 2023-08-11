@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { removeCookie } from "../../utils/cookie";
 import "./BlackHeader.css";
 import { Link } from "react-router-dom";
@@ -48,7 +47,7 @@ const LoginMypageHeader = () => {
   return (
     <div className="Header_outer2">
       <div className="Header_logo2" onClick={GoMain}>
-        <img src="images/Mypage_Logo.png"></img>
+        <img src="images/Mypage_Logo.png" alt="헤더 사진"></img>
       </div>
       <div>
         <Badge color="error" variant="dot" style={{ marginRight: "20px" }}>
