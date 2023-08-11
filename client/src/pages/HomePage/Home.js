@@ -18,7 +18,7 @@ import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import "animate.css";
 import "./Home.css";
-import { useWebSocket } from "../../utils/WebSocket/CreateFriend";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 const DIVIDER_HEIGHT = 5;
 

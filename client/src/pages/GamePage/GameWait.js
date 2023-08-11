@@ -24,7 +24,7 @@ import { userInfo } from "../../apis/userInfo";
 import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
 import { setSession as setSessionAction, setConnection } from "../../store";
-import { useWebSocket } from "../../utils/WebSocket/CreateFriend";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 // Styled 버튼
 const StyledIconButton = styled(IconButton)({

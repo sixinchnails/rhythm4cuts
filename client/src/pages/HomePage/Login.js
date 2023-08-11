@@ -7,7 +7,7 @@ import "./Login.css";
 import { Box } from "@mui/material";
 import { login } from "../../apis/login";
 import { setCookie } from "../../utils/cookie";
-import { useWebSocket } from "../../utils/WebSocket/CreateFriend";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 const Login = () => {
   const emailRef = useRef();

@@ -113,7 +113,6 @@ function AddFriend({ isOpen, handleClose }) {
     if (stomp.connected) {
       stomp.send("/public/request", {}, JSON.stringify(request));
     }
-    // stomp.send("/public/request", {}, JSON.stringify(requestPayload))
   }
 
   return (
