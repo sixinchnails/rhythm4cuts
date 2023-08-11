@@ -31,10 +31,12 @@ public class Song {
     private Integer playCount;
 
     //영상 url
+    @Column(length = 500)
     private String url;
 
     //유튜브 영상의 url id값
-    private String youtube_id;
+    @Column(name = "youtube_id")
+    private String youtubeId;
 
     //노래의 주파수 정보
     @OneToMany(mappedBy = "song", cascade = CascadeType.ALL)
@@ -53,7 +55,7 @@ public class Song {
         songDto.setSongSeq(this.getSongSeq());
         songDto.setTitle(this.getTitle());
         songDto.setUrl(this.getUrl());
-        songDto.setYoutube_id(this.getYoutube_id());
+        songDto.setYoutubeId(this.getYoutubeId());
         songDto.setSinger(this.getSinger());
         songDto.setPlayCount(this.getPlayCount());
         return songDto;

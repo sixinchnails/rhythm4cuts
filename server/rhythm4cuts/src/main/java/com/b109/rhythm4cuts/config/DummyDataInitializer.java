@@ -167,69 +167,34 @@ public class DummyDataInitializer {
         user8.setPassword(bCryptPasswordEncoder.encode("1234"));
         userRepository.save(user8);
 
-        Song song1 = new Song();
-        song1.setTitle("Super Shy");
-        song1.setSinger("NewJeans");
-        song1.setPlayCount(0);
-        song1.setUrl("8-HPStXQ4tY");
-        musicRepository.save(song1);
+        // Melon Top 100 Dummy Data
+        try {
+            melonService.clearMelonChart();
+            melonService.scrapeAndSaveMelonChart();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        Song song2 = new Song();
-        song2.setTitle("Candy");
-        song2.setSinger("NCT DREAM");
-        song2.setPlayCount(0);
-        song2.setUrl("DalyHh0PYoo");
-        musicRepository.save(song2);
+        // Youtube Music(Super Shy, Candy, 사건의 지평선, 사랑은 늘 도망가, 잠깐 시간 될까) Dummy Data
+        String[] youtubeId = {
+                "https://www.youtube.com/watch?v=8-HPStXQ4tY",
+                "https://www.youtube.com/watch?v=DalyHh0PYoo",
+                "https://www.youtube.com/watch?v=Qj1Gt5z4zxo",
+                "https://www.youtube.com/watch?v=fmiEetlCGtA",
+                "https://www.youtube.com/watch?v=8-9iT2Z8CLY"
+        };
 
-        Song song3 = new Song();
-        song3.setTitle("사건의지평선");
-        song3.setSinger("윤하");
-        song3.setPlayCount(0);
-        song3.setUrl("Qj1Gt5z4zxo");
-        musicRepository.save(song3);
+        String[] url = {
+                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+Super+Shy+-+NewJeans+_+TJ+Karaoke.mp4",
+                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+Candy+-+NCT+DREAM+_+TJ+Karaoke.mp4",
+                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+%EC%82%AC%EA%B1%B4%EC%9D%98%EC%A7%80%ED%8F%89%EC%84%A0+-+%EC%9C%A4%ED%95%98+_+TJ+Karaoke.mp4",
+                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+%EC%82%AC%EB%9E%91%EC%9D%80%EB%8A%98%EB%8F%84%EB%A7%9D%EA%B0%80(%EC%8B%A0%EC%82%AC%EC%99%80%EC%95%84%EA%B0%80%EC%94%A8OST)+-+%EC%9E%84%EC%98%81%EC%9B%85+_+TJ+Karaoke.mp4",
+                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+%EC%9E%A0%EA%B9%90%EC%8B%9C%EA%B0%84%EB%90%A0%EA%B9%8C+-+%EC%9D%B4%EB%AC%B4%EC%A7%84+_+TJ+Karaoke.mp4"
+        };
 
-        Song song4 = new Song();
-        song4.setTitle("사랑은늘도망가(신사와아가씨OST)");
-        song4.setSinger("임영웅");
-        song4.setPlayCount(0);
-        song4.setUrl("fmiEetlCGtA");
-        musicRepository.save(song4);
-
-        Song song5 = new Song();
-        song5.setTitle("잠깐시간될까");
-        song5.setSinger("이무진");
-        song5.setPlayCount(0);
-        song5.setUrl("8-9iT2Z8CLY");
-        musicRepository.save(song5);
-
-
-//
-//        // Melon Top 100 Dummy Data
-//        try {
-//            melonService.clearMelonChart();
-//            melonService.scrapeAndSaveMelonChart();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        // Youtube Music(Super Shy, Candy, 사건의 지평선, 사랑은 늘 도망가, 잠깐 시간 될까) Dummy Data
-//        String[] youtubeId = { "https://www.youtube.com/watch?v=8-HPStXQ4tY",
-//                "https://www.youtube.com/watch?v=DalyHh0PYoo",
-//                "https://www.youtube.com/watch?v=Qj1Gt5z4zxo",
-//                "https://www.youtube.com/watch?v=fmiEetlCGtA",
-//                "https://www.youtube.com/watch?v=8-9iT2Z8CLY" };
-//
-//        String[] url = {
-//                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+Super+Shy+-+NewJeans+_+TJ+Karaoke.mp4",
-//                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+Candy+-+NCT+DREAM+_+TJ+Karaoke.mp4",
-//                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+%EC%82%AC%EA%B1%B4%EC%9D%98%EC%A7%80%ED%8F%89%EC%84%A0+-+%EC%9C%A4%ED%95%98+_+TJ+Karaoke.mp4",
-//                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+%EC%82%AC%EB%9E%91%EC%9D%80%EB%8A%98%EB%8F%84%EB%A7%9D%EA%B0%80(%EC%8B%A0%EC%82%AC%EC%99%80%EC%95%84%EA%B0%80%EC%94%A8OST)+-+%EC%9E%84%EC%98%81%EC%9B%85+_+TJ+Karaoke.mp4",
-//                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+%EC%9E%A0%EA%B9%90%EC%8B%9C%EA%B0%84%EB%90%A0%EA%B9%8C+-+%EC%9D%B4%EB%AC%B4%EC%A7%84+_+TJ+Karaoke.mp4"
-//        };
-
-//        for (int i = 0; i < youtubeId.length; i++) {
-//            musicService.saveMusic(youtubeId[i]);
-//        }
+        for (int i = 0; i < youtubeId.length; i++) {
+            musicService.saveMusic(youtubeId[i], url[i]);
+        }
     }
 
 
