@@ -140,10 +140,10 @@ function GameWait() {
   useEffect(() => {
     const joinSessionTimeout = setTimeout(() => {
       joinSession();
-    }, 1000);
+    }, 5000); 
 
     return () => clearTimeout(joinSessionTimeout);
-  }, []);
+  }, []); 
 
   const joinSession = async () => {
     try {
