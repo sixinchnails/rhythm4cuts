@@ -1,12 +1,11 @@
 // MyPoint.js
-/* eslint-disable */
-import React, { useEffect, useState } from "react";
-import "./MyPoint.css";
-import "../../components/My/My_Friend.css";
-import Sidebar from "../../components/My/My_SideBar";
-import LoginMypageHeader from "../../components/Home/BlackHeader";
-import { userInfo } from "../../apis/userInfo";
+import { React, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { userInfo } from "../../apis/userInfo";
+import LoginMypageHeader from "../../components/Home/BlackHeader";
+import Sidebar from "../../components/My/My_SideBar";
+import "../../components/My/My_Friend.css";
+import "./MyPoint.css";
 
 const MyPoint = () => {
   //누적 포인트
@@ -18,18 +17,17 @@ const MyPoint = () => {
   const navigate = useNavigate();
 
   //로그인 상태 확인
-  const [isLogin, setIsLogin] = useState(false);
 
   try {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           setPoint(res.data.point);
           setPointSum(res.data.score_sum);
-          setIsLogin(true);
+          console.log(res);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         window.alert("로그인을 해주세요!");
         navigate("/");
       });

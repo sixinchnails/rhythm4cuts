@@ -1,14 +1,13 @@
-/* eslint-disable */
-import { React, useState } from "react";
 import { Modal, Box, TextField, Button } from "@mui/material";
+import { React, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../apis/login";
 import { getCookie } from "../../utils/cookie";
+import { login } from "../../apis/login";
 
 function CheckUserToModiInfo({ isOpen, handleClose }) {
   localStorage.setItem("checkstatus", "false");
   const navigate = useNavigate();
-  const [email, setEmail] = useState(getCookie("email"));
+  const [email] = useState(getCookie("email"));
   const [pw, setPW] = useState("");
   const onChangePW = (e) => {
     setPW(e.target.value);
@@ -77,4 +76,3 @@ function CheckUserToModiInfo({ isOpen, handleClose }) {
 }
 
 export default CheckUserToModiInfo;
-

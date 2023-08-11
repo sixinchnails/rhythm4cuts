@@ -1,5 +1,5 @@
-import React from "react";
 import { Card, CardContent, Typography } from "@mui/material";
+import React from "react";
 
 function PlayerEmpty() {
   return (
@@ -9,7 +9,8 @@ function PlayerEmpty() {
           width: "15vw",
           height: "32vh",
           position: "relative", // 추가: 로딩 스피너를 정확한 위치에 표시하기 위해 필요
-        }}>
+        }}
+      >
         <CardContent>
           <img
             src="/images/Empty.png"

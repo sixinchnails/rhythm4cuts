@@ -47,7 +47,7 @@ function GameWait() {
   dispatch(setGameseq(gameSeq));
   // const gameSeq = useSelector(state => state.roomState.gameseq);
 
-  const session = useSelector(state => state.roomState.session);
+  const session = useSelector((state) => state.roomState.session);
 
   const [mySessionId, setMySessionId] = useState("SessionA");
   const [myUserName, setMyUserName] = useState(
@@ -84,14 +84,14 @@ function GameWait() {
   useEffect(() => {
     connectWebSocket();
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
         } else {
           // 로그인 상태가 아니라면 알림.
           handleOpenLoginAlert();
         }
       })
-      .catch(error => {
+      .catch((error) => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -99,13 +99,13 @@ function GameWait() {
 
   useEffect(() => {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status !== 200) {
           window.alert("로그인을 해주세요!");
           navigate("/");
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("유저 정보 불러오기 실패:", error);
         window.alert("로그인을 해주세요!");
         navigate("/");
@@ -124,14 +124,14 @@ function GameWait() {
     leaveSession();
   };
 
-  const handleMainVideoStream = stream => {
+  const handleMainVideoStream = (stream) => {
     if (mainStreamManager !== stream) {
       setMainStreamManager(stream);
     }
   };
 
-  const deleteSubscriber = streamManager => {
-    const newSubscribers = subscribers.filter(sub => sub !== streamManager);
+  const deleteSubscriber = (streamManager) => {
+    const newSubscribers = subscribers.filter((sub) => sub !== streamManager);
     setSubscribers(newSubscribers);
   };
 
@@ -151,20 +151,20 @@ function GameWait() {
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
-      newSession.on("streamCreated", event => {
+      newSession.on("streamCreated", (event) => {
         const subscriber = newSession.subscribe(event.stream, undefined);
-        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+        setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
 
         if (!mainStreamManager) {
           setMainStreamManager(subscriber);
         }
       });
 
-      newSession.on("streamDestroyed", event => {
+      newSession.on("streamDestroyed", (event) => {
         deleteSubscriber(event.stream.streamManager);
       });
 
-      newSession.on("exception", exception => {
+      newSession.on("exception", (exception) => {
         console.warn(exception);
       });
 
@@ -189,20 +189,20 @@ function GameWait() {
 
           const devices = await ov.getDevices();
           const videoDevices = devices.filter(
-            device => device.kind === "videoinput"
+            (device) => device.kind === "videoinput"
           );
           const currentVideoDeviceId = newPublisher.stream
             .getMediaStream()
             .getVideoTracks()[0]
             .getSettings().deviceId;
           const currentVideoDevice = videoDevices.find(
-            device => device.deviceId === currentVideoDeviceId
+            (device) => device.deviceId === currentVideoDeviceId
           );
 
           setMainStreamManager(newPublisher);
           setPublisher(newPublisher);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(
             "There was an error connecting to the session:",
             error.code,
