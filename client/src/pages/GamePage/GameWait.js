@@ -465,9 +465,9 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {subscribers[1] && (
+            {subscribers[0] && (
               <UserVideoComponent
-                streamManager={subscribers[1]}
+                streamManager={subscribers[0]}
               />
             )}
           </Grid>
@@ -496,9 +496,9 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {subscribers[2] && (
+            {subscribers[1] && (
               <UserVideoComponent
-                streamManager={subscribers[2]}
+                streamManager={subscribers[1]}
               />
             )}
           </Grid>
@@ -527,9 +527,9 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {subscribers[3] && (
+            {subscribers[2] && (
               <UserVideoComponent
-                streamManager={subscribers[3]}
+                streamManager={subscribers[2]}
               />
             )}
 
