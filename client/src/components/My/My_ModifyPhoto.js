@@ -1,6 +1,6 @@
-import React from "react";
 import { Modal, Box, Button, Stack, Grid } from "@mui/material";
 import { useState } from "react";
+import React from "react";
 import "./My_ModifyPhoto.css";
 
 function SelectImageModal({ isOpen, handleClose, onSelect }) {
@@ -8,7 +8,7 @@ function SelectImageModal({ isOpen, handleClose, onSelect }) {
 
   const images = ["1", "2", "3", "4"];
 
-  const handleImageClick = imageName => {
+  const handleImageClick = (imageName) => {
     setSelectedImage(imageName);
   };
 

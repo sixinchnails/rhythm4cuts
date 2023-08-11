@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Typography, Container, Grid } from "@mui/material";
+import { React, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function NextToScore() {
   const navigate = useNavigate();
@@ -8,7 +8,7 @@ function NextToScore() {
 
   useEffect(() => {
     const countdown = setInterval(() => {
-      setSeconds(prevSeconds => prevSeconds - 1);
+      setSeconds((prevSeconds) => prevSeconds - 1);
     }, 1000);
 
     if (seconds === 0) {

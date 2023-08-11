@@ -1,6 +1,7 @@
 package com.b109.rhythm4cuts.model.service;
 
 import com.b109.rhythm4cuts.model.domain.Song;
+import com.b109.rhythm4cuts.model.dto.SongDto;
 import com.b109.rhythm4cuts.model.dto.YoutubeResponseDto;
 import com.b109.rhythm4cuts.model.repository.MusicRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +13,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -36,10 +39,10 @@ public class MusicService {
         }
     }
 
-    public void saveMusic(String url) {
+    public void saveMusic(String youtubeId) {
 
         String paramName = "v";                                  // 파라미터 이름
-        String paramValue = extractQueryString(url, paramName);  // 파라미터 값
+        String paramValue = extractQueryString(youtubeId, paramName);  // 파라미터 값
 
         // 추출한 파라미터 값을 통해, YouTube Data v3 API를 호출
         URI uri = UriComponentsBuilder
@@ -67,9 +70,37 @@ public class MusicService {
 
             song.setTitle(Content[0].substring(0, Content[0].length() - 1));         // 제목 입력
             song.setSinger(Content[1].substring(1, Content[1].length() - 1));        // 가수 입력
-            song.setUrl(id);                                                         // 유튜브 동영상 ID값 입력
+//            song.setUrl(url);                                                        // 영상 url 입력
+            song.setYoutube_id(id);                                                  // 유튜브 동영상 ID값 입력
 
             musicRepository.save(song);
         }
+    }
+
+    public SongDto selectSong(int songSeq) {
+
+        Song song = musicRepository.findBySongSeq(songSeq).orElse(null);
+        SongDto res = new SongDto();
+
+        if (song != null) {
+            res.setSongSeq(songSeq);
+            res.setTitle(song.getTitle());
+            res.setSinger(song.getSinger());
+            res.setUrl(song.getUrl());
+        }
+
+        return res;
+    }
+
+    public List<SongDto> selectAll() {
+
+        List<Song> songs = musicRepository.findAll();
+        List<SongDto> res = new ArrayList<>();
+
+        songs.forEach(song -> {
+            res.add(song.getSongDto());
+        });
+
+        return res;
     }
 }

@@ -1,11 +1,11 @@
-import React from "react";
-import { Box, Paper } from "@mui/material";
 import { useSpring, animated } from "react-spring";
+import { Box, Paper } from "@mui/material";
+import React from "react";
 
 function Podium({ rank, src, color, crownWidth }) {
   const props = useSpring({
     from: { transform: "translate3d(0,0px,0)", opacity: 1 },
-    to: async next => {
+    to: async (next) => {
       if (rank === "Gold") {
         while (1) {
           await next({ transform: "translate3d(0,20px,0)" });
@@ -32,7 +32,8 @@ function Podium({ rank, src, color, crownWidth }) {
           borderRadius: "15px", // Rounded corners
           padding: 2,
           marginBottom: 2,
-        }}>
+        }}
+      >
         <Box sx={{ width: "100%", height: "50%" }}>
           <img
             src={src}

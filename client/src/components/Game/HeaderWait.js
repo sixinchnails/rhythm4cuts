@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { removeCookie } from "../../utils/cookie";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "../../utils/cookie";

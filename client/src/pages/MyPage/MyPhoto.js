@@ -1,25 +1,22 @@
 // MyPhoto.js
-/* eslint-disable */
-import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/My/My_SideBar";
-import "./MyPhoto.css";
-import ImageByMonth from "../../components/My/My_Image";
-import { userInfo } from "../../apis/userInfo";
-import LoginMypageHeader from "../../components/Home/BlackHeader";
+import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "../../utils/cookie";
-import axios from "axios";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import { userInfo } from "../../apis/userInfo";
 import { Stack } from "@mui/material";
+import LoginMypageHeader from "../../components/Home/BlackHeader";
+import ImageByMonth from "../../components/My/My_Image";
+import Sidebar from "../../components/My/My_SideBar";
+import Button from "@mui/material/Button";
+import axios from "axios";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import "./MyPhoto.css";
 
 const MyPhoto = () => {
   const navigate = useNavigate();
 
   //로그인 상태 확인
-  const [isLogin, setIsLogin] = useState(false);
 
   const [points, setPoints] = useState(0);
   const [showModal, setShowModal] = useState(false);
@@ -34,16 +31,16 @@ const MyPhoto = () => {
           Authorization: "Bearer " + getCookie("access"),
         },
       })
-      .then(response => {
+      .then((response) => {
         const data = response.data;
         setPoints(data.point);
       })
-      .catch(error => {});
+      .catch((error) => {});
   }, [email]);
 
   useEffect(() => {}, [points]);
 
-  const handleDownloadClick = imageSrc => {
+  const handleDownloadClick = (imageSrc) => {
     if (points >= 300) {
       setSelectedImage(imageSrc);
       setShowModal(true);
@@ -67,7 +64,7 @@ const MyPhoto = () => {
           },
         }
       )
-      .then(response => {
+      .then((response) => {
         // Successfully paid points and received updated points from server
         const updatedPoints = response.data.point;
         setPoints(updatedPoints);
@@ -79,19 +76,19 @@ const MyPhoto = () => {
         downloadLink.click();
         setShowModal(false);
       })
-      .catch(error => {
+      .catch((error) => {
         window.alert("포인트 차감 중 오류가 발생했습니다. 다시 시도해주세요.");
       });
   };
 
   try {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
-          setIsLogin(true);
+          console.log(res);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         window.alert("로그인을 해주세요!");
         navigate("/");
       });

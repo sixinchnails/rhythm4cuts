@@ -1,9 +1,9 @@
 // 지금 페이지의 이름을 그 페이지의 제목처럼 표시해줄 컴포넌트
-import React from "react";
 import { useLocation } from "react-router-dom";
-import "./My_MainContent.css";
 import { useState } from "react";
 import AddFriend from "../Common/AddFriend";
+import React from "react";
+import "./My_MainContent.css";
 
 function MainContent() {
   const location = useLocation();

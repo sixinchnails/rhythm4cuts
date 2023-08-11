@@ -1,16 +1,15 @@
 // Mypage.js
-/* eslint-disable */
+import { React, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import React, { useEffect, useState } from "react";
-import "./Mypage.css";
 import Sidebar from "../../components/My/My_SideBar";
+import "./Mypage.css";
 // 마이 페이지들 import
+import { userInfo } from "../../apis/userInfo";
+import CheckUserToModiInfo from "../../components/Common/CheckUserToModiInfo";
+import LoginMypageHeader from "../../components/Home/BlackHeader";
 import MainContent from "../../components/My/My_MainContent"; // MainContent 컴포넌트를 import
 import UserInfo from "../../components/My/My_UserInfo"; // UserInfo 컴포넌트를 import
 import Button from "@mui/material/Button";
-import { userInfo } from "../../apis/userInfo";
-import LoginMypageHeader from "../../components/Home/BlackHeader";
-import CheckUserToModiInfo from "../../components/Common/CheckUserToModiInfo";
 
 const Mypage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,7 +39,7 @@ const Mypage = () => {
   // 로그인 상태 확인
   try {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           setNickName(res.data.nickname);
           setName(res.data.name);
@@ -48,7 +47,7 @@ const Mypage = () => {
           setPhoto(res.data.profile_img_seq);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         navigate("/");
         window.alert("로그인을 해주세요!");
       });
