@@ -58,6 +58,9 @@ function GameWait() {
   const [publisher, setPublisher] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
 
+  // 통합
+  const [players, setPlayers] = useState([]);
+
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
     setLoginAlertOpen(true);
@@ -140,16 +143,16 @@ function GameWait() {
   useEffect(() => {
     const joinSessionTimeout = setTimeout(() => {
       joinSession();
-    }, 5000); 
+    }, 3000);
 
     return () => clearTimeout(joinSessionTimeout);
-  }, []); 
+  }, []);
 
   const joinSession = async () => {
     try {
       fetchNickname();
-      
-      const ov = new OpenVidu(); 
+
+      const ov = new OpenVidu();
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
@@ -157,8 +160,10 @@ function GameWait() {
         const subscriber = newSession.subscribe(event.stream, undefined);
         setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
 
+        setPlayers((prevPlayers) => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
+
         if (!mainStreamManager) {
-          setMainStreamManager(subscriber);
+          setMainStreamManager(subscriber);  
         }
       });
 
@@ -203,6 +208,8 @@ function GameWait() {
 
           setMainStreamManager(newPublisher);
           setPublisher(newPublisher);
+          setPlayers((prevPlayers) => [...prevPlayers, newPublisher]); // 플레이어 스트림 추가 // 맨 처음 등록될듯
+
         })
         .catch((error) => {
           console.log(
@@ -227,7 +234,7 @@ function GameWait() {
   }
 
   // "채팅" 버튼을 클릭했을 때 동작
-  const handleChat = () => {};
+  const handleChat = () => { };
 
   // "나가기" 버튼 눌렀을 때 동작
   const handleExit = () => {
@@ -460,11 +467,12 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {publisher && (
+            {players[0] && (
               <UserVideoComponent
-                streamManager={publisher}
-                // streamManager={subscribers[0]}
-                // streamManager={mainStreamManager}
+                streamManager={players[0]}
+                // streamManager={publisher}
+              // streamManager={subscribers[0]}
+              // streamManager={mainStreamManager}
               />
             )}
           </Grid>
@@ -493,8 +501,8 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {subscribers[0] && (
-              <UserVideoComponent streamManager={subscribers[0]} />
+            {players[1] && (
+              <UserVideoComponent streamManager={players[1]} />
             )}
           </Grid>
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
@@ -522,8 +530,8 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {subscribers[1] && (
-              <UserVideoComponent streamManager={subscribers[1]} />
+            {players[2] && (
+              <UserVideoComponent streamManager={players[2]} />
             )}
           </Grid>
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
@@ -551,8 +559,8 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {subscribers[2] && (
-              <UserVideoComponent streamManager={subscribers[2]} />
+            {players[3] && (
+              <UserVideoComponent streamManager={players[3]} />
             )}
           </Grid>
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
