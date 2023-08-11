@@ -186,7 +186,7 @@ public class DummyDataInitializer {
         };
 
         for (int i = 0; i < youtubeId.length; i++) {
-            musicService.saveMusic(url[i], youtubeId[i]);
+            musicService.saveMusic(youtubeId[i]);
         }
     }
 
