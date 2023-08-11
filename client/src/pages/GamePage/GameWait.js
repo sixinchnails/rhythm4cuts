@@ -140,22 +140,23 @@ function GameWait() {
   useEffect(() => {
     const joinSessionTimeout = setTimeout(() => {
       joinSession();
-    }, 1000);
+    }, 3000);
 
     return () => clearTimeout(joinSessionTimeout);
-  }, []);
+  }, []); 
 
   const joinSession = async () => {
     try {
-      fetchNickname();
+      fetchNickname(); 
       
-      const ov = new OpenVidu(); 
+      const ov = new OpenVidu();  
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
       newSession.on("streamCreated", (event) => {
         const subscriber = newSession.subscribe(event.stream, undefined);
         setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+        console.log("왜이램")
 
         if (!mainStreamManager) {
           setMainStreamManager(subscriber);
@@ -467,7 +468,7 @@ function GameWait() {
                 // streamManager={mainStreamManager}
               />
             )}
-          </Grid>
+          </Grid> 
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
               style={{
@@ -493,8 +494,8 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {subscribers[0] && (
-              <UserVideoComponent streamManager={subscribers[0]} />
+            {subscribers[1] && (
+              <UserVideoComponent streamManager={subscribers[1]} />
             )}
           </Grid>
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
@@ -522,8 +523,8 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {subscribers[1] && (
-              <UserVideoComponent streamManager={subscribers[1]} />
+            {subscribers[2] && (
+              <UserVideoComponent streamManager={subscribers[2]} />
             )}
           </Grid>
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
@@ -551,8 +552,8 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {subscribers[2] && (
-              <UserVideoComponent streamManager={subscribers[2]} />
+            {subscribers[3] && (
+              <UserVideoComponent streamManager={subscribers[3]} />
             )}
           </Grid>
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
