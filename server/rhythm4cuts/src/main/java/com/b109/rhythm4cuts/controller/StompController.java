@@ -1,6 +1,8 @@
 package com.b109.rhythm4cuts.controller;
 
+import com.b109.rhythm4cuts.model.domain.GameImage;
 import com.b109.rhythm4cuts.model.dto.FriendDto;
+import com.b109.rhythm4cuts.model.dto.GameInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -29,5 +31,15 @@ public class StompController {
     public void inviteFriend(FriendDto friendDto) {
         friendDto.setMessage(friendDto.getFromUser() + "님이 " + friendDto.getToUser() + "님에게 친구 요청을 보냇습니다.");
         messagingTemplate.convertAndSend("/subscribe/friend/invite" + friendDto.getToUser(), friendDto);
+    }
+
+    @MessageMapping(value = "/song")
+    public void startSong(GameInfoDto gameInfo) {
+        
+    }
+
+    @MessageMapping(value = "/mr")
+    public void startMR(GameInfoDto gameInfo){
+
     }
 }
