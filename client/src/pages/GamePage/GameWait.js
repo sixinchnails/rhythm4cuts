@@ -42,13 +42,12 @@ function GameWait() {
   const navigate = useNavigate(); // 페이지 이동
   const [nickname, setNickname] = useState(undefined);
 
-  // REDUX에서 가져오기
   var { gameSeq } = useParams(); // url에서 추출
 
   dispatch(setGameseq(gameSeq));
   // const gameSeq = useSelector(state => state.roomState.gameseq);
 
-  const session = useSelector((state) => state.roomState.session);
+  const session = useSelector(state => state.roomState.session);
 
   const [mySessionId, setMySessionId] = useState("SessionA");
   const [myUserName, setMyUserName] = useState(
@@ -58,6 +57,9 @@ function GameWait() {
   const [mainStreamManager, setMainStreamManager] = useState(undefined);
   const [publisher, setPublisher] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
+
+  // 통합
+  const [players, setPlayers] = useState([]);
 
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
@@ -90,14 +92,14 @@ function GameWait() {
   useEffect(() => {
     connectWebSocket();
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
         } else {
           // 로그인 상태가 아니라면 알림.
           handleOpenLoginAlert();
         }
       })
-      .catch((error) => {
+      .catch(error => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -105,13 +107,13 @@ function GameWait() {
 
   useEffect(() => {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status !== 200) {
           window.alert("로그인을 해주세요!");
           navigate("/");
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("유저 정보 불러오기 실패:", error);
         window.alert("로그인을 해주세요!");
         navigate("/");
@@ -130,55 +132,67 @@ function GameWait() {
     leaveSession();
   };
 
-  const handleMainVideoStream = (stream) => {
-    if (mainStreamManager !== stream) {
-      setMainStreamManager(stream);
-    }
-  };
+  // const leaveSession = () => {
+  //   if (connectSession) {
+  //     connectSession.disconnect();
+  //   }
 
-  const deleteSubscriber = (streamManager) => {
-    const newSubscribers = subscribers.filter((sub) => sub !== streamManager);
-    setSubscribers(newSubscribers);
-  };
+  //   // setConnectSession(undefined);
+  //   // setSubscribers([]);
+  //   // setMySessionId("SessionA");
+  //   // setMyUserName('Participant' + Math.floor(Math.random() * 100));
+  //   // setMainStreamManager(undefined);
+  //   // setPublisher(undefined);
+  // };
 
   // ------------------------------------------------------------------------------------------------------------------
+  let MAX_PLAYERS = 4;
 
   useEffect(() => {
-    const joinSessionTimeout = setTimeout(() => {
-      joinSession();
-    }, 1000);
+    if (players.length >= MAX_PLAYERS) {
+      window.alert("잘못된 접근 경로입니다.");
+      navigate("/");
+    } else {
+      const joinSessionTimeout = setTimeout(() => {
+        joinSession();
+      }, 3000);
 
-    return () => clearTimeout(joinSessionTimeout);
+      return () => clearTimeout(joinSessionTimeout);
+    }
   }, []);
+
+  // players 배열의 길이가 항상 4로 유지되도록 조절
 
   const joinSession = async () => {
     try {
       fetchNickname();
-      
-      const ov = new OpenVidu(); 
+
+      const ov = new OpenVidu();
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
-      newSession.on("streamCreated", (event) => {
+      newSession.on("streamCreated", event => {
+        // 인원 수 제한 : subscribers.length = 방장을 제외한 수
         const subscriber = newSession.subscribe(event.stream, undefined);
-        setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+
+        setPlayers(prevPlayers => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
 
         if (!mainStreamManager) {
           setMainStreamManager(subscriber);
         }
       });
 
-      newSession.on("streamDestroyed", (event) => {
+      newSession.on("streamDestroyed", event => {
         deleteSubscriber(event.stream.streamManager);
       });
 
-      newSession.on("exception", (exception) => {
+      newSession.on("exception", exception => {
         console.warn(exception);
       });
 
       const token = await getToken(); // Implement getToken function
 
-      console.log("-----------------token : " + token);
       newSession
         .connect(token, { clientData: myUserName })
         .then(async () => {
@@ -197,20 +211,24 @@ function GameWait() {
 
           const devices = await ov.getDevices();
           const videoDevices = devices.filter(
-            (device) => device.kind === "videoinput"
+            device => device.kind === "videoinput"
           );
           const currentVideoDeviceId = newPublisher.stream
             .getMediaStream()
             .getVideoTracks()[0]
             .getSettings().deviceId;
           const currentVideoDevice = videoDevices.find(
-            (device) => device.deviceId === currentVideoDeviceId
+            device => device.deviceId === currentVideoDeviceId
           );
 
           setMainStreamManager(newPublisher);
           setPublisher(newPublisher);
+
+          if (players.length === 0) {
+            setPlayers(prevPlayers => [...prevPlayers, newPublisher]); // 플레이어 스트림 추가 // 맨 처음 등록
+          }
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(
             "There was an error connecting to the session:",
             error.code,
@@ -221,14 +239,13 @@ function GameWait() {
       console.error("Error joining session:", error);
     }
   };
+  console.log("방 인원수 : " + players.length);
   // ------------------------------------------------------------------------------------------------------------------
 
   // "게임 준비" 버튼을 클릭했을 때 동작
   function handleGameReady() {
     dispatch(userSession(session));
     dispatch(setConnection(connection));
-
-    // 게임플레이 페이지로 이동하고 gameSeq 매개변수를 전달.
     navigate(`/GamePlay/${gameSeq}`);
   }
 
@@ -237,7 +254,7 @@ function GameWait() {
 
   // "나가기" 버튼 눌렀을 때 동작
   const handleExit = () => {
-    // dispatch(resetRoomState());
+    // axios 인원 수 줄이기
     onBeforeUnload();
     console.log("방 나갈거야 ~");
     navigate(`/GameList`);
@@ -484,9 +501,10 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {publisher && (
+            {players[0] && (
               <UserVideoComponent
-                streamManager={publisher}
+                streamManager={players[0]}
+                // streamManager={publisher}
                 // streamManager={subscribers[0]}
                 // streamManager={mainStreamManager}
               />
@@ -517,9 +535,7 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {subscribers[0] && (
-              <UserVideoComponent streamManager={subscribers[0]} />
-            )}
+            {players[1] && <UserVideoComponent streamManager={players[1]} />}
           </Grid>
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
@@ -546,9 +562,7 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {subscribers[1] && (
-              <UserVideoComponent streamManager={subscribers[1]} />
-            )}
+            {players[2] && <UserVideoComponent streamManager={players[2]} />}
           </Grid>
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
@@ -575,9 +589,7 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {subscribers[2] && (
-              <UserVideoComponent streamManager={subscribers[2]} />
-            )}
+            {players[3] && <UserVideoComponent streamManager={players[3]} />}
           </Grid>
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div

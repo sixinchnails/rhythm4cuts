@@ -24,7 +24,7 @@ const initialState = {
   session: null,
   connection: null,
   connectionToken: null,
-  nickname: null,
+  // nickname: null,
   gameseq: null,
 };
 
@@ -52,7 +52,7 @@ const roomState = createSlice({
       state.session = initialState.session;
       state.connection = initialState.connection;
       state.connectionToken = initialState.connectionToken;
-      state.nickname = initialState.nickname;
+      // state.nickname = initialState.nickname;
       state.gameseq = initialState.gameseq;
     },
   },
