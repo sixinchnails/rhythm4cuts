@@ -276,7 +276,7 @@ function Home() {
             <div className="rules">
               <img
                 alt="게임 규칙 이미지"
-                style={{ height: 420, width: 450 }}
+                style={{ height: 500, width: 530 }}
                 src="images/removeRules.png"
               />
             </div>
