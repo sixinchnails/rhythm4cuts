@@ -41,7 +41,6 @@ function GameWait() {
   const navigate = useNavigate(); // 페이지 이동
   const [nickname, setNickname] = useState(undefined);
 
-  // REDUX에서 가져오기
   var { gameSeq } = useParams(); // url에서 추출
 
   dispatch(setGameseq(gameSeq));
@@ -123,20 +122,30 @@ function GameWait() {
     };
   }, []);
 
+  // 0명이 될때
   const onBeforeUnload = () => {
     leaveSession();
   };
 
-  const handleMainVideoStream = (stream) => {
-    if (mainStreamManager !== stream) {
-      setMainStreamManager(stream);
+  const leaveSession = () => {
+    if (connectSession) {
+      connectSession.disconnect();
     }
+
+    setConnectSession(undefined);
+    setSubscribers([]);
+    setMySessionId("SessionA");
+    // setMyUserName('Participant' + Math.floor(Math.random() * 100));
+    setMainStreamManager(undefined);
+    setPublisher(undefined);
+
+    useEffect(() => {
+      if (!connectSession) {
+        joinSession();
+      }
+    }, [connectSession]);
   };
 
-  const deleteSubscriber = (streamManager) => {
-    const newSubscribers = subscribers.filter((sub) => sub !== streamManager);
-    setSubscribers(newSubscribers);
-  };
 
   // ------------------------------------------------------------------------------------------------------------------
 
@@ -148,88 +157,96 @@ function GameWait() {
     return () => clearTimeout(joinSessionTimeout);
   }, []);
 
+  // players 배열의 길이가 항상 4로 유지되도록 조절
+  let MAX_PLAYERS = 4;
+
   const joinSession = async () => {
-    try {
-      fetchNickname();
+    if (players.length < MAX_PLAYERS) {
+      try {
+        fetchNickname();
 
-      const ov = new OpenVidu();
-      const newSession = ov.initSession();
-      setConnectSession(newSession);
+        const ov = new OpenVidu();
+        const newSession = ov.initSession();
+        setConnectSession(newSession);
 
-      newSession.on("streamCreated", (event) => {
-        const subscriber = newSession.subscribe(event.stream, undefined);
-        setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
 
-        setPlayers((prevPlayers) => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
+        newSession.on("streamCreated", (event) => {
+          // 인원 수 제한 : subscribers.length = 방장을 제외한 수
+          const subscriber = newSession.subscribe(event.stream, undefined);
+          setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
 
-        if (!mainStreamManager) {
-          setMainStreamManager(subscriber);  
-        }
-      });
+            setPlayers((prevPlayers) => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
 
-      newSession.on("streamDestroyed", (event) => {
-        deleteSubscriber(event.stream.streamManager);
-      });
-
-      newSession.on("exception", (exception) => {
-        console.warn(exception);
-      });
-
-      const token = await getToken(); // Implement getToken function
-
-      console.log("-----------------token : " + token);
-      newSession
-        .connect(token, { clientData: myUserName })
-        .then(async () => {
-          const newPublisher = await ov.initPublisherAsync(undefined, {
-            audioSource: undefined,
-            videoSource: undefined,
-            publishAudio: true,
-            publishVideo: true,
-            resolution: "640x480",
-            frameRate: 30,
-            insertMode: "APPEND",
-            mirror: false,
-          });
-
-          newSession.publish(newPublisher);
-
-          const devices = await ov.getDevices();
-          const videoDevices = devices.filter(
-            (device) => device.kind === "videoinput"
-          );
-          const currentVideoDeviceId = newPublisher.stream
-            .getMediaStream()
-            .getVideoTracks()[0]
-            .getSettings().deviceId;
-          const currentVideoDevice = videoDevices.find(
-            (device) => device.deviceId === currentVideoDeviceId
-          );
-
-          setMainStreamManager(newPublisher);
-          setPublisher(newPublisher);
-          setPlayers((prevPlayers) => [...prevPlayers, newPublisher]); // 플레이어 스트림 추가 // 맨 처음 등록될듯
-
-        })
-        .catch((error) => {
-          console.log(
-            "There was an error connecting to the session:",
-            error.code,
-            error.message
-          );
+          if (!mainStreamManager) {
+            setMainStreamManager(subscriber);
+          }
         });
-    } catch (error) {
-      console.error("Error joining session:", error);
-    }
-  };
+
+        newSession.on("streamDestroyed", (event) => {
+          deleteSubscriber(event.stream.streamManager);
+        });
+
+        newSession.on("exception", (exception) => {
+          console.warn(exception);
+        });
+
+        const token = await getToken(); // Implement getToken function
+
+        newSession
+          .connect(token, { clientData: myUserName })
+          .then(async () => {
+            const newPublisher = await ov.initPublisherAsync(undefined, {
+              audioSource: undefined,
+              videoSource: undefined,
+              publishAudio: true,
+              publishVideo: true,
+              resolution: "640x480",
+              frameRate: 30,
+              insertMode: "APPEND",
+              mirror: false,
+            });
+
+            newSession.publish(newPublisher);
+
+            const devices = await ov.getDevices();
+            const videoDevices = devices.filter(
+              (device) => device.kind === "videoinput"
+            );
+            const currentVideoDeviceId = newPublisher.stream
+              .getMediaStream()
+              .getVideoTracks()[0]
+              .getSettings().deviceId;
+            const currentVideoDevice = videoDevices.find(
+              (device) => device.deviceId === currentVideoDeviceId
+            );
+
+            setMainStreamManager(newPublisher);
+            setPublisher(newPublisher);
+
+            if (players.length === 0) {
+              setPlayers((prevPlayers) => [...prevPlayers, newPublisher]); // 플레이어 스트림 추가 // 맨 처음 등록
+            }
+
+          })
+          .catch((error) => {
+            console.log(
+              "There was an error connecting to the session:",
+              error.code,
+              error.message
+            );
+          });
+      } catch (error) {
+        console.error("Error joining session:", error);
+      }
+    };
+  }
+  console.log("방 인원수 : " + players.length)
   // ------------------------------------------------------------------------------------------------------------------
 
   // "게임 준비" 버튼을 클릭했을 때 동작
   function handleGameReady() {
-    dispatch(userSession(session));
+    dispatch(userSession(session));  
     dispatch(setConnection(connection));
-
-    // 게임플레이 페이지로 이동하고 gameSeq 매개변수를 전달.
     navigate(`/GamePlay/${gameSeq}`);
   }
 
@@ -238,7 +255,7 @@ function GameWait() {
 
   // "나가기" 버튼 눌렀을 때 동작
   const handleExit = () => {
-    // dispatch(resetRoomState());
+    dispatch(resetRoomState());
     onBeforeUnload();
     console.log("방 나갈거야 ~");
     navigate(`/GameList`);
@@ -300,25 +317,6 @@ function GameWait() {
     }
   }
 
-  const leaveSession = () => {
-    console.log("--------------------leave session");
-    if (connectSession) {
-      connectSession.disconnect();
-    }
-
-    setConnectSession(undefined);
-    setSubscribers([]);
-    setMySessionId("SessionA");
-    // setMyUserName('Participant' + Math.floor(Math.random() * 100));
-    setMainStreamManager(undefined);
-    setPublisher(undefined);
-
-    useEffect(() => {
-      if (!connectSession) {
-        joinSession();
-      }
-    }, [connectSession]);
-  };
 
   return (
     <div
@@ -470,7 +468,7 @@ function GameWait() {
             {players[0] && (
               <UserVideoComponent
                 streamManager={players[0]}
-                // streamManager={publisher}
+              // streamManager={publisher}
               // streamManager={subscribers[0]}
               // streamManager={mainStreamManager}
               />
@@ -501,9 +499,7 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {players[1] && (
-              <UserVideoComponent streamManager={players[1]} />
-            )}
+            {players[1] && <UserVideoComponent streamManager={players[1]} />}
           </Grid>
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
@@ -530,9 +526,7 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {players[2] && (
-              <UserVideoComponent streamManager={players[2]} />
-            )}
+            {players[2] && <UserVideoComponent streamManager={players[2]} />}
           </Grid>
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
@@ -559,9 +553,7 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {players[3] && (
-              <UserVideoComponent streamManager={players[3]} />
-            )}
+            {players[3] && <UserVideoComponent streamManager={players[3]} />}
           </Grid>
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
