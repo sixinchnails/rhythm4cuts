@@ -44,16 +44,6 @@ function AddFriend({ isOpen, handleClose }) {
     console.log(error);
   }
 
-  // useEffect(() => {
-  //   stomp.connect({}, () => {
-  //     console.log("connected");
-  //     console.log("--------------------" + fromUser);
-  //     stomp.subscribe(`/subscribe/friend/${{fromUser}}`, () => {
-  //       alert("친구 요청 옴");
-  //     });
-  //   });
-  // }, []);
-
   useEffect(() => {
     stomp.connect({}, () => {
       console.log("connected");
