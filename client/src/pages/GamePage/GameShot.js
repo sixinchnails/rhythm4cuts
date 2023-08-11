@@ -363,6 +363,7 @@ function copyCapture(element) {
     domtoimage
       .toPng(element)
       .then(function (dataUrl) {
+        console.log(dataUrl);
         const link = document.createElement("a");
         link.download = "capture.png";
         link.href = dataUrl;

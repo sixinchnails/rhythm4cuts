@@ -573,5 +573,4 @@ function GameWait() {
     </div>
   );
 }
-
 export default GameWait;
