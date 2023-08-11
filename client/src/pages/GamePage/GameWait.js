@@ -124,7 +124,9 @@ function GameWait() {
 
   const joinSession = async () => {
     try {
-      const ov = new OpenVidu();
+      fetchNickname();
+      
+      const ov = new OpenVidu(); 
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
@@ -556,36 +558,3 @@ function GameWait() {
 }
 
 export default GameWait;
-
-
-// <div id="video-wrap">
-
-// <div
-//   style={{
-//     width: "100%",
-//     height: "100vh",
-//     backgroundPosition: "center",
-//     backgroundSize: "cover",
-//     backgroundRepeat: "no-repeat",
-//     backgroundImage: "url('/images/GameImage/GameList.jpg')",
-//   }}
-// >
-
-//   <Header />
-//   <div id="video-container" className="col-md-6">
-//     {publisher ? (
-//       <div className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(publisher)}>
-//         <UserVideoComponent streamManager={publisher} />
-//       </div>
-//     ) : null}
-//     {subscribers.map((sub, i) => (
-//       <div key={sub.id} className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(sub)}>
-//         <span>{sub.id}</span>
-//         <UserVideoComponent streamManager={sub} />
-//       </div>
-//     ))}
-//   </div>
-//   {/* '로그인 경고' 모달 */}
-//   <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
-// </div>
-// </div>
