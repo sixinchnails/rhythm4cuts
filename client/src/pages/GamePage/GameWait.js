@@ -533,7 +533,7 @@ function GameWait() {
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
             <div
-              style={{
+              style={{  
                 fontFamily: "Pretendard-Regular",
                 fontSize: "20px",
                 color: "white",
