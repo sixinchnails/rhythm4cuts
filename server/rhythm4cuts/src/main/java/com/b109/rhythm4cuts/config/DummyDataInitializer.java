@@ -1,8 +1,10 @@
 package com.b109.rhythm4cuts.config;
 
 import com.b109.rhythm4cuts.model.domain.ProfileImage;
+import com.b109.rhythm4cuts.model.domain.Song;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.repository.FriendRepository;
+import com.b109.rhythm4cuts.model.repository.MusicRepository;
 import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import com.b109.rhythm4cuts.model.service.MelonService;
@@ -28,16 +30,19 @@ public class DummyDataInitializer {
 
     private final MelonService melonService;
     private final MusicService musicService;
+    private final MusicRepository musicRepository;
 
     public DummyDataInitializer(UserRepository userRepository, ProfileImageRepository profileImageRepository,
                                 BCryptPasswordEncoder bCryptPasswordEncoder
-            , FriendRepository friendRepository, MelonService melonService, MusicService musicService) {
+            , FriendRepository friendRepository, MelonService melonService, MusicService musicService
+    , MusicRepository musicRepository) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.friendRepository = friendRepository;
         this.melonService = melonService;
         this.musicService = musicService;
+        this.musicRepository = musicRepository;
     }
 
 
@@ -161,6 +166,43 @@ public class DummyDataInitializer {
         user8.setPoint(1100);
         user8.setPassword(bCryptPasswordEncoder.encode("1234"));
         userRepository.save(user8);
+
+        Song song1 = new Song();
+        song1.setTitle("Super Shy");
+        song1.setSinger("NewJeans");
+        song1.setPlayCount(0);
+        song1.setUrl("8-HPStXQ4tY");
+        musicRepository.save(song1);
+
+        Song song2 = new Song();
+        song2.setTitle("Candy");
+        song2.setSinger("NCT DREAM");
+        song2.setPlayCount(0);
+        song2.setUrl("DalyHh0PYoo");
+        musicRepository.save(song2);
+
+        Song song3 = new Song();
+        song3.setTitle("사건의지평선");
+        song3.setSinger("윤하");
+        song3.setPlayCount(0);
+        song3.setUrl("Qj1Gt5z4zxo");
+        musicRepository.save(song3);
+
+        Song song4 = new Song();
+        song4.setTitle("사랑은늘도망가(신사와아가씨OST)");
+        song4.setSinger("임영웅");
+        song4.setPlayCount(0);
+        song4.setUrl("fmiEetlCGtA");
+        musicRepository.save(song4);
+
+        Song song5 = new Song();
+        song5.setTitle("잠깐시간될까");
+        song5.setSinger("이무진");
+        song5.setPlayCount(0);
+        song5.setUrl("8-9iT2Z8CLY");
+        musicRepository.save(song5);
+
+
 //
 //        // Melon Top 100 Dummy Data
 //        try {

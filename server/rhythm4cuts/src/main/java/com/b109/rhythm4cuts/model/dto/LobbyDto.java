@@ -11,6 +11,7 @@ public class LobbyDto {
     private int gameSeq;
     private String title;
     private int songSeq;
+    private String songTitle;
     private int headcount;
     private int isSecret;
     private String password;
