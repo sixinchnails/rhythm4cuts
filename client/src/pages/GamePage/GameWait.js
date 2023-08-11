@@ -158,7 +158,7 @@ function GameWait() {
   }, []);
 
   // players 배열의 길이가 항상 4로 유지되도록 조절
-  let MAX_PLAYERS = 4;
+  let MAX_PLAYERS = 2;
 
   const joinSession = async () => {
     if (players.length < MAX_PLAYERS) {
