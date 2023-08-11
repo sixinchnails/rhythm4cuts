@@ -272,7 +272,7 @@ function GameWait() {
     setConnectSession(undefined);
     setSubscribers([]);
     setMySessionId('SessionA');
-    setMyUserName('Participant' + Math.floor(Math.random() * 100));
+    // setMyUserName('Participant' + Math.floor(Math.random() * 100));
     setMainStreamManager(undefined);
     setPublisher(undefined);
 
@@ -431,9 +431,10 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {subscribers[0] && (
+            {publisher && (
               <UserVideoComponent
-                streamManager={subscribers[0]}
+                streamManager={publisher}
+              // streamManager={subscribers[0]}
               // streamManager={mainStreamManager}
               />
             )}
@@ -509,7 +510,7 @@ function GameWait() {
                 color: "white",
                 padding: "5px",
               }}
-            >
+            > 
               세번째 선수
             </div>
           </Grid>
