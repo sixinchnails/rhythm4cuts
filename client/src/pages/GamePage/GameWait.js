@@ -431,10 +431,10 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-            {mainStreamManager && (
+            {subscribers[0] && (
               <UserVideoComponent
-                // streamManager={subscribers[0]}
-                streamManager={mainStreamManager}
+                streamManager={subscribers[0]}
+              // streamManager={mainStreamManager}
               />
             )}
 
@@ -473,12 +473,12 @@ function GameWait() {
           <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
               style={{
-                fontFamily: "Pretendard-Regular",    
+                fontFamily: "Pretendard-Regular",
                 fontSize: "20px",
-                color: "white", 
+                color: "white",
                 padding: "5px",
               }}
-            > 
+            >
               두번째 선수
             </div>
           </Grid>
@@ -522,11 +522,11 @@ function GameWait() {
               height: "25vh",
               border: "2px solid white",
               padding: "2px",
-              margin: "5px", 
+              margin: "5px",
               borderRadius: "20px",
             }}
           >
-            {subscribers[3] && (  
+            {subscribers[3] && (
               <UserVideoComponent
                 streamManager={subscribers[3]}
               />
