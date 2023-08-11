@@ -2,10 +2,13 @@ import { Grid, Card, CardMedia, Typography, Box } from "@mui/material";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LockIcon from "@mui/icons-material/Lock";
 import React from "react";
+import { useSelector } from "react-redux";
 
 function RoomList({ room }) {
   // 방 인원수 파악
   let isFull = room.currentOccupancy >= room.maxOccupancy;
+
+  const songTitle = useSelector(state => state.songTitle); // Redux에서 노래 제목 상태
 
   return (
     <Grid item xs={6} sm={12}>
@@ -73,7 +76,7 @@ function RoomList({ room }) {
                 }}
               >
                 {/* 나중에 음악 DB파일에서 가져와야합니다. */}
-                🎵 {room.songSeq}
+                🎵 {songTitle}
               </Typography>
             </Grid>
 

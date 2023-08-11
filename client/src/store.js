@@ -5,6 +5,19 @@ import {
 } from "@reduxjs/toolkit";
 import { closeSessionAndConnection } from "./openvidu/closeSessionAndConnection";
 
+//방 노래 제목 넘겨주기 위해
+const songTitleSlice = createSlice({
+  name: "songTitle",
+  initialState: "", // 노래 제목의 초기 상태는 빈 문자열로 설정
+  reducers: {
+    setSongTitle: (state, action) => {
+      return action.payload; // 액션의 페이로드로 상태를 업데이트
+    },
+  },
+});
+
+export const { setSongTitle } = songTitleSlice.actions;
+
 // ----------------------------------------------------------------------------------------------------------------
 // 방 세션 관리
 const initialState = {
@@ -435,5 +448,6 @@ export default configureStore({
     webcamStream: webcamStreamSlice.reducer,
     notification: notificationSlice.reducer,
     roomState: roomState.reducer,
+    songTitle: songTitleSlice.reducer,
   },
 });
