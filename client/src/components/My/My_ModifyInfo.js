@@ -1,13 +1,13 @@
-/* eslint-disable */
-import "./My_ModifyInfo.css";
-import Button from "@mui/material/Button";
+/*eslint-disable*/
 import { useState, useEffect } from "react";
-import React, { useRef } from "react";
+import { React, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from "../../apis/userInfo";
 import SelectImageModal from "./My_ModifyPhoto";
+import Button from "@mui/material/Button";
+import axios from "axios";
+import "./My_ModifyInfo.css";
 
 function UserInfo(props) {
   const navigate = useNavigate();
@@ -51,12 +51,12 @@ function UserInfo(props) {
   };
 
   // 이미지 선택 후의 동작을 정의한 핸들러
-  const handleImageSelect = selectedImage => {
+  const handleImageSelect = (selectedImage) => {
     setPhoto(selectedImage); // 선택한 이미지로 상태 업데이트
   };
 
   // 비밀번호 유효성 검사 함수
-  const checkPassword = password => {
+  const checkPassword = (password) => {
     const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     return regex.test(password);
   };
@@ -212,7 +212,8 @@ function UserInfo(props) {
               <span className="modify-value">{props.nickName}</span>
               <Button
                 className="modify-value-button"
-                style={{ left: "170px" }}
+                style={{ left: "170px", fontWeight: "bolder" }}
+                sx={{ color: "white", ":hover": { color: "blue" } }}
                 onClick={() => setNicknameEdit(!nicknameEdit)}
               >
                 수정
@@ -235,21 +236,30 @@ function UserInfo(props) {
                   className="modify-input"
                   value={nickname}
                   placeholder={props.nickName}
-                  onChange={e => {
+                  onChange={(e) => {
                     setNickname(e.target.value);
                     setNickNameCheckStatus(false);
                   }}
                 />
                 <Button
-                  color="primary"
-                  style={{ minWidth: "90px", top: "20px" }}
+                  style={{
+                    minWidth: "90px",
+                    top: "20px",
+                    fontWeight: "bolder",
+                  }}
+                  sx={{ color: "white", ":hover": { color: "blue" } }}
                   onClick={nickNameCheck}
                 >
                   중복 확인
                 </Button>
                 <Button
-                  color="warning"
-                  style={{ minWidth: "50px", top: "20px" }}
+                  className="fin"
+                  style={{
+                    minWidth: "50px",
+                    top: "20px",
+                    fontWeight: "bolder",
+                  }}
+                  sx={{ color: "white", ":hover": { color: "red" } }}
                   onClick={nickNameModify}
                 >
                   완료
@@ -264,7 +274,8 @@ function UserInfo(props) {
 
               <Button
                 className="modify-value-button"
-                style={{ left: "160px" }}
+                style={{ left: "160px", fontWeight: "bolder" }}
+                sx={{ color: "white", ":hover": { color: "blue" } }}
                 onClick={() => setPasswordEdit(!passwordEdit)}
               >
                 수정
@@ -288,7 +299,7 @@ function UserInfo(props) {
                     className="modify-input"
                     placeholder="현재 비밀번호"
                     value={oldPassWord}
-                    onChange={e => setOldPassWord(e.target.value)}
+                    onChange={(e) => setOldPassWord(e.target.value)}
                   />
                 </div>
                 <div
@@ -307,7 +318,7 @@ function UserInfo(props) {
                     className="modify-input"
                     placeholder="영어,숫자,특수 기호 포함 8자리 이상"
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   {isValidPassword && password && (
                     <img
@@ -350,19 +361,9 @@ function UserInfo(props) {
                     className="modify-input"
                     placeholder="영어,숫자,특수 기호 포함 8자리 이상"
                     value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                   />
-                  <Button
-                    color="warning"
-                    style={{
-                      minWidth: "50px",
-                      top: "20px",
-                      marginLeft: "100px",
-                    }}
-                    onClick={changePW}
-                  >
-                    완료
-                  </Button>
+
                   {password === confirmPassword && confirmPassword && (
                     <img
                       src={"/images/체크.png"}
@@ -387,6 +388,18 @@ function UserInfo(props) {
                       }}
                     />
                   )}
+                  <Button
+                    color="warning"
+                    style={{
+                      minWidth: "50px",
+                      top: "20px",
+                      fontWeight: "bolder",
+                    }}
+                    sx={{ color: "white", ":hover": { color: "red" } }}
+                    onClick={changePW}
+                  >
+                    변경
+                  </Button>
                 </div>
               </>
             )}
@@ -419,7 +432,7 @@ function UserInfo(props) {
               // onChange={handleFileChange}
             />
           </div>
-          <Button
+          {/* <Button
             variant="contained"
             color="primary"
             className="complete-button"
@@ -428,9 +441,10 @@ function UserInfo(props) {
               color: "#000000",
               fontWeight: "bold",
             }}
+            onClick={() => navigate("/MyPage")}
           >
             수정 완료
-          </Button>
+          </Button> */}
         </div>
       </div>
 

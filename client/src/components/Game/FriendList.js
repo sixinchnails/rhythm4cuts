@@ -1,5 +1,5 @@
-import React from "react";
 import { List, ListItem, Typography } from "@mui/material";
+import React from "react";
 
 function FriendList({ friends }) {
   // 먼저 "온라인 상태"에 따라 정렬하고, 같은 "온라인 상태"를 가진 친구들 사이에서 "이름"에 따라 정렬합니다
@@ -29,7 +29,7 @@ function FriendList({ friends }) {
           </Typography>
           <Typography
             variant="body1"
-            style={{ color: "#ffffff", paddingLeft: "10px" , padding: "5px" }}
+            style={{ color: "#ffffff", paddingLeft: "10px", padding: "5px" }}
             component="span"
           >
             {friend.name}
