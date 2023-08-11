@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   Modal,
   Box,
@@ -10,13 +11,13 @@ import {
   FormControlLabel,
   Radio,
 } from "@mui/material";
-import { setSession, setGameseq } from "../../store";
-import { React, useState } from "react";
 import { createSession } from "../../openvidu/sessionInitialization";
+import { setSession, setGameseq } from "../../store";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getCookie } from "../../utils/cookie";
+import React, { useState } from "react";
 import axios from "axios";
 
 function CreateRoom({ isOpen, handleClose }) {

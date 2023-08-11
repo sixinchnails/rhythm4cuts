@@ -1,4 +1,3 @@
-/*eslint-disable*/
 import {
   setSession as setRoomSession,
   setConnection as setUserConnection,
@@ -12,16 +11,17 @@ import {
   ExitToApp as ExitToAppIcon,
 } from "@mui/icons-material";
 import { styled, Card, Grid, Typography, IconButton } from "@mui/material";
-import { React, useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
 import { createConnection } from "../../openvidu/connectionInitialization";
+import UserVideoComponent from "../../components/Game/UserVideoComponent";
+import React, { useState, useEffect } from "react";
+import LoginAlert from "../../components/Common/LoginAlert";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import Header from "../../components/Game/HeaderPlay";
+// import Next from "../../components/Game/NextToPlay";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from "../../apis/userInfo";
 import { OpenVidu } from "openvidu-browser";
-import UserVideoComponent from "../../components/Game/UserVideoComponent";
-import LoginAlert from "../../components/Common/LoginAlert";
-import Header from "../../components/Game/HeaderPlay";
 import axios from "axios";
 
 function GameWait() {
@@ -32,10 +32,8 @@ function GameWait() {
 
   // const [mySessionId, setMySessionId] = useState('SessionA');
   // const [myUserName, setMyUserName] = useState('Participant' + Math.floor(Math.random() * 100));
-  //eslint-disable-next-line
   const [mainStreamManager, setMainStreamManager] = useState(undefined); // 방장?
   const [publisher, setPublisher] = useState(undefined); //  현재 사용자의 스트림을 관리
-  //eslint-disable-next-line
   const [subscribers, setSubscribers] = useState([]); // 현재 연결된 다른 사용자들의 스트림을 관리
   const [userStreams, setUserStreams] = useState([]); // 모든 사용자 스트림을 관리, subscribers 배열에 있는 스트림들을 모두 여기에 저장
 
@@ -48,7 +46,6 @@ function GameWait() {
     (state) => state.roomState.connectionToken
   );
   const myUserName = useSelector((state) => state.roomState.nickname); // 닉네임
-
   console.log("리덕스에서 부르자마자 roomSession : " + roomSession);
   console.log("리덕스에서 부르자마자 userConnection : " + userConnection);
   console.log("리덕스에서 부르자마자 connectionToken : " + connectionToken);
@@ -236,8 +233,6 @@ function GameWait() {
             .getMediaStream()
             .getVideoTracks()[0]
             .getSettings().deviceId;
-
-          //eslint-disable-next-line
           const currentVideoDevice = videoDevices.find(
             (device) => device.deviceId === currentVideoDeviceId
           );

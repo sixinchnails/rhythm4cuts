@@ -212,7 +212,8 @@ function UserInfo(props) {
               <span className="modify-value">{props.nickName}</span>
               <Button
                 className="modify-value-button"
-                style={{ left: "170px" }}
+                style={{ left: "170px", fontWeight: "bolder" }}
+                sx={{ color: "white", ":hover": { color: "blue" } }}
                 onClick={() => setNicknameEdit(!nicknameEdit)}
               >
                 수정
@@ -241,15 +242,24 @@ function UserInfo(props) {
                   }}
                 />
                 <Button
-                  color="primary"
-                  style={{ minWidth: "90px", top: "20px" }}
+                  style={{
+                    minWidth: "90px",
+                    top: "20px",
+                    fontWeight: "bolder",
+                  }}
+                  sx={{ color: "white", ":hover": { color: "blue" } }}
                   onClick={nickNameCheck}
                 >
                   중복 확인
                 </Button>
                 <Button
-                  color="warning"
-                  style={{ minWidth: "50px", top: "20px" }}
+                  className="fin"
+                  style={{
+                    minWidth: "50px",
+                    top: "20px",
+                    fontWeight: "bolder",
+                  }}
+                  sx={{ color: "white", ":hover": { color: "red" } }}
                   onClick={nickNameModify}
                 >
                   완료
@@ -264,7 +274,8 @@ function UserInfo(props) {
 
               <Button
                 className="modify-value-button"
-                style={{ left: "160px" }}
+                style={{ left: "160px", fontWeight: "bolder" }}
+                sx={{ color: "white", ":hover": { color: "blue" } }}
                 onClick={() => setPasswordEdit(!passwordEdit)}
               >
                 수정
@@ -352,17 +363,7 @@ function UserInfo(props) {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
-                  <Button
-                    color="warning"
-                    style={{
-                      minWidth: "50px",
-                      top: "20px",
-                      marginLeft: "100px",
-                    }}
-                    onClick={changePW}
-                  >
-                    완료
-                  </Button>
+
                   {password === confirmPassword && confirmPassword && (
                     <img
                       src={"/images/체크.png"}
@@ -387,6 +388,18 @@ function UserInfo(props) {
                       }}
                     />
                   )}
+                  <Button
+                    color="warning"
+                    style={{
+                      minWidth: "50px",
+                      top: "20px",
+                      fontWeight: "bolder",
+                    }}
+                    sx={{ color: "white", ":hover": { color: "red" } }}
+                    onClick={changePW}
+                  >
+                    변경
+                  </Button>
                 </div>
               </>
             )}
@@ -419,7 +432,7 @@ function UserInfo(props) {
               // onChange={handleFileChange}
             />
           </div>
-          <Button
+          {/* <Button
             variant="contained"
             color="primary"
             className="complete-button"
@@ -428,9 +441,10 @@ function UserInfo(props) {
               color: "#000000",
               fontWeight: "bold",
             }}
+            onClick={() => navigate("/MyPage")}
           >
             수정 완료
-          </Button>
+          </Button> */}
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import { React, Component } from "react";
+import React, { Component } from "react";
 import OpenViduVideoComponent from "./OvVideo";
 
 export default class UserVideoComponent extends Component {
@@ -7,9 +7,10 @@ export default class UserVideoComponent extends Component {
     // 비디오 요소를 저장할 Ref 생성
     this.videoRef = React.createRef();
   }
+
   // 컴포넌트가 처음 마운트될 때 호출되는 메서드
   async componentDidMount() {
-    await this.getMediaStream(); // 웹캠 스트림 가져오기
+    this.getMediaStream(); // 웹캠 스트림 가져오기
     // await this.addStreamToStreamManager()
   }
 
@@ -21,7 +22,6 @@ export default class UserVideoComponent extends Component {
         audio: true,
       });
       if (this.videoRef.current) {
-        // Check if videoRef is not null
         this.videoRef.current.srcObject = stream;
 
         await this.addStreamToStreamManager();

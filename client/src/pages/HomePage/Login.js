@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { setCookie } from "../../utils/cookie";
 import { login } from "../../apis/login";
 import SearchPassword from "../../components/Common/SearchPassword";
+// import video from "../../../public/videos/11.mp4";
 import "./Login.css";
 
 const Login = () => {
@@ -67,6 +68,9 @@ const Login = () => {
 
   return (
     <div className="bg">
+      {/* <video autoPlay loop muted>
+        <source src={video} type="video/mp4" />
+      </video> */}
       <div className="outer">
         <div className="logo">
           <a href="/">
