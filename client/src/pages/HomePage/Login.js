@@ -1,6 +1,7 @@
 // Login.js
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 import { setCookie } from "../../utils/cookie";
 import { login } from "../../apis/login";
 import SearchPassword from "../../components/Common/SearchPassword";
@@ -44,6 +45,7 @@ const Login = () => {
     }
   };
 
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
   // 로그인
   const Login = async () => {
     try {
@@ -53,6 +55,7 @@ const Login = () => {
         setCookie("access", result.data.accessToken);
         setCookie("refresh", result.data.refreshToken);
         setCookie("email", result.data.email);
+        // connectWebSocket(); // 로그인 성공 후 웹소켓 연결 시작
         navigate("/");
       } else {
         window.alert("로그인에 실패하였습니다!");

@@ -15,6 +15,7 @@ import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import "animate.css";
 import "./Home.css";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 const DIVIDER_HEIGHT = 5;
 
@@ -85,6 +86,8 @@ function Home() {
   const outerDivRef = useRef();
   const [scrollIndex, setScrollIndex] = useState(1);
 
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
+
   //음악 랭킹
   const [musicData, setMusicData] = useState([]);
 
@@ -101,6 +104,7 @@ function Home() {
   };
 
   useEffect(() => {
+    connectWebSocket();
     fetchMusicRank();
   }, []);
 
