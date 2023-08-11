@@ -586,7 +586,7 @@ function GameWait() {
                 nickname={nickname}
                 streamManager={players[2]}
               />
-            ) : (
+            ) : ( 
               <video autoPlay loop muted style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "20px", }}>
                 <source src="/videos/33.mp4" type="video/mp4" />
               </video>
@@ -595,7 +595,7 @@ function GameWait() {
  
           {/* Player 4 */}
           <Grid
-            item
+            item 
             xs={3}
             style={{
               backgroundColor: "transparent",
