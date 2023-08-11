@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom"; //Link,
 import { Provider } from "react-redux";
 import store from "./store";
-import { WebSocketProvider } from "./utils/WebSocket/CreateFriend";
+import { WebSocketProvider } from "./utils/WebSocket/WebSocket";
 
 import Home from "./pages/HomePage/Home";
 import Join from "./pages/HomePage/Join";

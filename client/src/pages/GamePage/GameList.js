@@ -15,7 +15,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from "../../apis/userInfo";
 import CreateRoom from "../../components/Common/CreateRoom";
@@ -27,8 +27,11 @@ import RoomList from "../../components/Game/RoomList";
 import Header from "../../components/Game/HeaderWait";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { setNickname } from '../../store';
 
 function GameList() {
+
+  const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate();
   const [isCreateRoomModalOpen, setCreateRoomModalOpen] = useState(false); //  '방 만들기' 모달의 상태를 관리
   const [searchCategory, setSearchCategory] = useState("gameSeq"); //  검색 카테고리 상태 (기본값을 'gameSeq'로 설정)
@@ -38,7 +41,7 @@ function GameList() {
   const [page, setPage] = useState(1); // 페이지 상태
   const friends = useSelector((state) => state.GameList_Friend); // 친구 리스트
   const itemsPerPage = 6; // 한 페이지당 표시할 방 수
-
+  
   // 친구 추가
   const [isAddFriendModalOpen, setAddFriendModalOpen] = useState(false);
 
@@ -95,7 +98,6 @@ function GameList() {
           },
         }
       );
-      // console.log("오잉"+response.data.data);
       return response.data.data;
     } catch (error) {
       console.error("방 리스트 가져오는데 실패 뽝!! : ", error);
@@ -147,6 +149,28 @@ function GameList() {
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
+
+  // // 유저 닉네임 가져오기 : 리덕스 저장 => 나중에 로그인 페이지에서 처리
+  // useEffect(() => {
+  //   const fetchNickname = async () => {
+  //     try {
+  //       const email = getCookie("email");
+  //       const access = getCookie("access");
+  //       const response = await axios.get(
+  //         "https://i9b109.p.ssafy.io:8443/member/info?email=" + email,
+  //         {
+  //           headers: {
+  //             Authorization: "Bearer " + access,
+  //           }
+  //         }
+  //       );
+  //       // dispatch(setNickname(response.data.nickname));
+        
+  //     } catch (error) {
+  //     }
+  //   };
+  //   fetchNickname();
+  // }, []);
 
   return (
     <div

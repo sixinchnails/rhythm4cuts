@@ -38,13 +38,19 @@ export function WebSocketProvider({ children }) {
                 clearInterval(reconnectInterval);
                 reconnectInterval = null;
               }
-
-              console.log("스토어 연결");
               const fromUser = res.data.user_seq;
               if (fromUser) {
                 stomp.subscribe(`/subscribe/friend/${fromUser}`, message => {
                   setMessages(prev => [...prev, message.body]);
                   window.alert("친추옴");
+                });
+                stomp.subscribe(`/subscribe/game/${fromUser}`, message => {
+                  setMessages(prev => [...prev, message.body]);
+                  window.alert("게임 초대 옴");
+                });
+                stomp.subscribe(`/subscribe/startSong/${fromUser}`, message => {
+                  const songData = JSON.parse(message.body);
+                  startSongAt(songData.song, songData.timestamp);
                 });
               }
             });
@@ -59,6 +65,20 @@ export function WebSocketProvider({ children }) {
         });
     }
   }, []);
+
+  // 노래 시작 함수
+  const startSongAt = (song, timestamp) => {
+    const currentTime = new Date().getTime();
+    const delay = timestamp - currentTime; // 서버가 지정한 시작 시간과 현재 시간의 차이를 계산
+
+    if (delay > 0) {
+      setTimeout(() => {
+        // playSong(song); // 노래 재생 로직 (이 부분은 별도로 구현해야 함)
+      }, delay);
+    } else {
+      // playSong(song); // 이미 시작 시간이 지났으면 즉시 노래 재생
+    }
+  };
 
   const disconnectWebSocket = useCallback(() => {
     if (socket) {

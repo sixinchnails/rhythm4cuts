@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect } from "react";
 import {
   Modal,
@@ -29,13 +30,13 @@ function AddFriend({ isOpen, handleClose }) {
   // const [client, setClient] = useState(null);
   const [fromUser, setFromUser] = useState("");
   const [toUser, setToUser] = useState("");
-  
+
   try {
     userInfo()
       .then(res => {
         if (res.status === 200) {
           setFromUser(res.data.user_seq);
-          console.log(res.data.user_seq)
+          console.log(res.data.user_seq);
         }
       })
       .catch(error => {
@@ -112,7 +113,6 @@ function AddFriend({ isOpen, handleClose }) {
     if (stomp.connected) {
       stomp.send("/public/request", {}, JSON.stringify(request));
     }
-    // stomp.send("/public/request", {}, JSON.stringify(requestPayload))
   }
 
   return (

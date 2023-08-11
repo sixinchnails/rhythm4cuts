@@ -1,5 +1,18 @@
 /* eslint-disable */
 import {
+  setSession as userSession,
+  setConnection,
+  setConnectionToken,
+  resetRoomState,
+  setPlayers,
+  setGameseq,
+} from "../../store";
+import {
+  Chat as ChatIcon,
+  Check as CheckIcon,
+  ExitToApp as ExitToAppIcon,
+} from "@mui/icons-material";
+import {
   styled,
   Button,
   Card,
@@ -9,55 +22,41 @@ import {
   IconButton,
 } from "@mui/material";
 import { createConnection } from "../../openvidu/connectionInitialization";
+import UserVideoComponent from "../../components/Game/UserVideoComponent";
+import React, { Component, useState, useEffect } from "react";
+import LoginAlert from "../../components/Common/LoginAlert";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect, useState } from "react";
-import { getCookie } from "../../utils/cookie";
-import { userInfo } from "../../apis/userInfo";
-// import { setSession, resetRoomState } from "../../store";
-import LoginAlert from "../../components/Common/LoginAlert";
-import UserVideo from "../../components/Game/UserVideo";
 import Header from "../../components/Game/HeaderPlay";
 import Next from "../../components/Game/NextToPlay";
+import { getCookie } from "../../utils/cookie";
+import { userInfo } from "../../apis/userInfo";
+import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
-import {
-  Chat as ChatIcon,
-  Check as CheckIcon,
-  ExitToApp as ExitToAppIcon,
-} from "@mui/icons-material";
-import UserVideoComponent from "../../components/Game/UserVideoComponent";
-import {
-  setSession as setSessionAction,
-  setConnection,
-  setConnectionToken,
-  resetRoomState,
-} from "../../store";
-import { useWebSocket } from "../../utils/WebSocket/CreateFriend";
-
-// Styled 버튼
-const StyledIconButton = styled(IconButton)({
-  color: "white",
-  margin: "20px",
-  boxShadow: "10px 5px 5px rgba(0, 0, 0, 0.8)",
-  borderRadius: "10px",
-  "&:hover": {
-    backgroundColor: "#1976d2", // 마우스 오버 시 배경색 변경
-  },
-});
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 function GameWait() {
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  let { gameSeq } = useParams(); // URL에서 가져와
+  const dispatch = useDispatch(); // 리덕스 업데이트
+  const navigate = useNavigate(); // 페이지 이동
+  const [nickname, setNickname] = useState(undefined);
+
+  // REDUX에서 가져오기
+  var { gameSeq } = useParams(); // url에서 추출
+
+  dispatch(setGameseq(gameSeq));
+  // const gameSeq = useSelector(state => state.roomState.gameseq);
 
   const session = useSelector(state => state.roomState.session);
-  const connection = useSelector(state => state.roomState.connection);
-  const connectionToken = useSelector(state => state.roomState.connectionToken);
 
-  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
-
-  // -----------------------------------------------------------------------------------------------------------------
+  const [mySessionId, setMySessionId] = useState("SessionA");
+  const [myUserName, setMyUserName] = useState(
+    "Participant" + Math.floor(Math.random() * 100)
+  );
+  const [connectSession, setConnectSession] = useState(undefined);
+  const [mainStreamManager, setMainStreamManager] = useState(undefined);
+  const [publisher, setPublisher] = useState(undefined);
+  const [subscribers, setSubscribers] = useState([]);
 
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
@@ -67,6 +66,19 @@ function GameWait() {
     setLoginAlertOpen(false);
     navigate("/Login");
   };
+
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
+
+  // Styled 버튼 ( css )
+  const StyledIconButton = styled(IconButton)({
+    color: "white",
+    margin: "20px",
+    boxShadow: "10px 5px 5px rgba(0, 0, 0, 0.8)",
+    borderRadius: "10px",
+    "&:hover": {
+      backgroundColor: "#1976d2", // 마우스 오버 시 배경색 변경
+    },
+  });
 
   // 로그인 상태관리
   useEffect(() => {
@@ -98,73 +110,205 @@ function GameWait() {
         window.alert("로그인을 해주세요!");
         navigate("/");
       });
-    fetchSession();
   }, [gameSeq]);
 
-  // 방 세션 ID 가져오기
-  const fetchSession = async () => {
+  // 페이지 떠날 때 이벤트 리스너 등록 및 해제
+  useEffect(() => {
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", onBeforeUnload);
+    };
+  }, []);
+
+  const onBeforeUnload = () => {
+    leaveSession();
+  };
+
+  const handleMainVideoStream = stream => {
+    if (mainStreamManager !== stream) {
+      setMainStreamManager(stream);
+    }
+  };
+
+  const deleteSubscriber = streamManager => {
+    const newSubscribers = subscribers.filter(sub => sub !== streamManager);
+    setSubscribers(newSubscribers);
+  };
+
+  // ------------------------------------------------------------------------------------------------------------------
+
+  useEffect(() => {
+    const joinSessionTimeout = setTimeout(() => {
+      joinSession();
+    }, 3000);
+
+    return () => clearTimeout(joinSessionTimeout);
+  }, []);
+
+  const joinSession = async () => {
     try {
+      const ov = new OpenVidu();
+      const newSession = ov.initSession();
+      setConnectSession(newSession);
+
+      newSession.on("streamCreated", event => {
+        const subscriber = newSession.subscribe(event.stream, undefined);
+        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+
+        if (!mainStreamManager) {
+          setMainStreamManager(subscriber);
+        }
+      });
+
+      newSession.on("streamDestroyed", event => {
+        deleteSubscriber(event.stream.streamManager);
+      });
+
+      newSession.on("exception", exception => {
+        console.warn(exception);
+      });
+
+      const token = await getToken(); // Implement getToken function
+
+      console.log("-----------------token : " + token);
+      newSession
+        .connect(token, { clientData: myUserName })
+        .then(async () => {
+          const newPublisher = await ov.initPublisherAsync(undefined, {
+            audioSource: undefined,
+            videoSource: undefined,
+            publishAudio: true,
+            publishVideo: true,
+            resolution: "640x480",
+            frameRate: 30,
+            insertMode: "APPEND",
+            mirror: false,
+          });
+
+          newSession.publish(newPublisher);
+
+          const devices = await ov.getDevices();
+          const videoDevices = devices.filter(
+            device => device.kind === "videoinput"
+          );
+          const currentVideoDeviceId = newPublisher.stream
+            .getMediaStream()
+            .getVideoTracks()[0]
+            .getSettings().deviceId;
+          const currentVideoDevice = videoDevices.find(
+            device => device.deviceId === currentVideoDeviceId
+          );
+
+          setMainStreamManager(newPublisher);
+          setPublisher(newPublisher);
+        })
+        .catch(error => {
+          console.log(
+            "There was an error connecting to the session:",
+            error.code,
+            error.message
+          );
+        });
+    } catch (error) {
+      console.error("Error joining session:", error);
+    }
+  };
+  // ------------------------------------------------------------------------------------------------------------------
+
+  // "게임 준비" 버튼을 클릭했을 때 동작
+  function handleGameReady() {
+    dispatch(userSession(session));
+    dispatch(setConnection(connection));
+
+    // 게임플레이 페이지로 이동하고 gameSeq 매개변수를 전달.
+    navigate(`/GamePlay/${gameSeq}`);
+  }
+
+  // "채팅" 버튼을 클릭했을 때 동작
+  const handleChat = () => {};
+
+  // "나가기" 버튼 눌렀을 때 동작
+  const handleExit = () => {
+    // dispatch(resetRoomState());
+    onBeforeUnload();
+    console.log("방 나갈거야 ~");
+    navigate(`/GameList`);
+  };
+
+  // 유저 닉네임 가져오기 : 리덕스 저장 => 나중에 로그인 페이지에서 처리
+  async function fetchNickname() {
+    try {
+      const email = getCookie("email");
       const access = getCookie("access");
       const response = await axios.get(
-        "https://i9b109.p.ssafy.io:8443/wait/info/" + gameSeq,
+        "https://i9b109.p.ssafy.io:8443/member/info?email=" + email,
         {
           headers: {
             Authorization: "Bearer " + access,
           },
         }
       );
-      dispatch(setSessionAction(response.data.data.sessionId));
+      setNickname(response.data.nickname);
     } catch (error) {
-      console.error("DB에서 세션 id 불러오기 실패:", error);
+      console.log("유저 닉네임 불러오기 실패");
     }
-  };
+  }
 
-  // 연결 유저 토큰 만들기
-  const fetchConnectionToken = async () => {
+  // 방 세션 발급
+  async function getToken() {
+    let res = await fetchConnectionToken();
+    return res["connectionToken"];
+  }
+
+  // 유저 토큰 발급
+  async function fetchConnectionToken() {
     try {
-      if (session) {
-        // session이 생성된 상태인지 확인
-        const { connection, connectionToken } = await createConnection(session);
-        dispatch(setConnection(connection));
-        dispatch(setConnectionToken(connectionToken));
-      }
+      await fetchSession();
+
+      return await createConnection();
     } catch (error) {
       console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
     }
-  };
+  }
 
-  useEffect(() => {
-    if (session) {
-      fetchConnectionToken();
+  // 유저 커넥션 발급
+  async function fetchSession() {
+    try {
+      const access = getCookie("access");
+
+      const response = await axios.get(
+        `https://i9b109.p.ssafy.io:8443/wait/info/${gameSeq}`,
+        {
+          headers: {
+            Authorization: "Bearer " + access,
+          },
+        }
+      );
+      console.log("-----------------" + response.data.data.sessionId);
+      dispatch(userSession(response.data.data.sessionId));
+    } catch (error) {
+      console.error("DB에서 세션 id 불러오기 실패:", error);
     }
-  }, [session]);
+  }
 
-  console.log("게임 시퀀스입니다 : " + gameSeq);
-  console.log("세션입니다 : " + session);
-  console.log("연결 세션id입니다: " + connection);
-  console.log("연결 토큰입니다 : " + connectionToken);
+  const leaveSession = () => {
+    console.log("--------------------leave session");
+    if (connectSession) {
+      connectSession.disconnect();
+    }
 
-  const handleGameReady = () => {
-    // "게임 준비" 버튼을 클릭했을 때 동작하는 로직을 여기에 구현합니다.
-  };
+    setConnectSession(undefined);
+    setSubscribers([]);
+    setMySessionId("SessionA");
+    // setMyUserName('Participant' + Math.floor(Math.random() * 100));
+    setMainStreamManager(undefined);
+    setPublisher(undefined);
 
-  const handleChat = () => {
-    // "채팅" 버튼을 클릭했을 때 동작하는 로직을 여기에 구현합니다.
-  };
-
-  const handleExit = () => {
-    dispatch(resetRoomState());
-    navigate(`/GameList`);
-  };
-
-  // 임시 게임플레이 페이지 이동
-  const handleGameStart = () => {
-    navigate(`/GamePlay/${gameSeq}`);
-  };
-
-  const getUserConnectionData = () => {
-    const nickname = gameSeq + "_" + connection;
-    return JSON.stringify({ clientData: nickname });
+    useEffect(() => {
+      if (!connectSession) {
+        joinSession();
+      }
+    }, [connectSession]);
   };
 
   return (
@@ -195,9 +339,8 @@ function GameWait() {
             style={{
               fontFamily: "Pretendard-Regular",
               fontWeight: "bold",
-              fontSize: "px",
+              fontSize: "10px",
               color: "red",
-              marginBottom: "10px",
             }}
           >
             전원 준비가 되면 게임이 시작합니다 악!
@@ -217,7 +360,7 @@ function GameWait() {
             <Card
               style={{
                 width: "55vw",
-                height: "50vh",
+                height: "40vh",
                 background: "transparent",
                 borderRadius: "30px",
               }}
@@ -229,7 +372,7 @@ function GameWait() {
                 loop
                 style={{
                   width: "100%",
-                  height: "100%",
+                  height: "40vh",
                   objectFit: "cover",
                 }}
               />
@@ -243,19 +386,19 @@ function GameWait() {
             direction="column"
             alignItems="center"
             justifyContent="center"
-            style={{ paddingTop: "50px" }}
+            style={{ paddingTop: "40px" }}
           >
             {/* "게임준비" 버튼 */}
             <StyledIconButton
               onClick={handleGameReady}
-              style={{ width: "200px" }}
+              style={{ width: "70%" }}
             >
               <CheckIcon />
               <Typography
                 style={{
                   fontFamily: "Pretendard-Regular",
                   fontSize: "20px",
-                  padding: "20px",
+                  padding: "15px",
                 }}
               >
                 게임 준비
@@ -263,13 +406,13 @@ function GameWait() {
             </StyledIconButton>
 
             {/* "채팅" 버튼 */}
-            <StyledIconButton onClick={handleChat} style={{ width: "200px" }}>
+            <StyledIconButton onClick={handleChat} style={{ width: "70%" }}>
               <ChatIcon />
               <Typography
                 style={{
                   fontFamily: "Pretendard-Regular",
                   fontSize: "20px",
-                  padding: "20px",
+                  padding: "15px",
                 }}
               >
                 채팅
@@ -277,13 +420,13 @@ function GameWait() {
             </StyledIconButton>
 
             {/* "나가기" 버튼 */}
-            <StyledIconButton onClick={handleExit} style={{ width: "200px" }}>
+            <StyledIconButton onClick={handleExit} style={{ width: "70%" }}>
               <ExitToAppIcon />
               <Typography
                 style={{
                   fontFamily: "Pretendard-Regular",
                   fontSize: "20px",
-                  padding: "20px",
+                  padding: "15px",
                 }}
               >
                 나가기
@@ -308,20 +451,22 @@ function GameWait() {
             xs={2}
             style={{
               backgroundColor: "black",
-              height: "20vh",
+              height: "25vh",
               border: "2px solid white",
               padding: "2px",
               margin: "5px",
               borderRadius: "20px",
             }}
           >
-            <UserVideoComponent
-              streamManager={{ session, connection, connectionToken }}
-              connectionData={getUserConnectionData()}
-            />
+            {publisher && (
+              <UserVideoComponent
+                streamManager={publisher}
+                // streamManager={subscribers[0]}
+                // streamManager={mainStreamManager}
+              />
+            )}
           </Grid>
-
-          <Grid item xs={1} style={{ height: "20vh" }}>
+          <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
               style={{
                 fontFamily: "Pretendard-Regular",
@@ -339,19 +484,18 @@ function GameWait() {
             xs={2}
             style={{
               backgroundColor: "black",
-              height: "20vh",
+              height: "25vh",
               border: "2px solid white",
               padding: "2px",
               margin: "5px",
               borderRadius: "20px",
             }}
           >
-            <UserVideoComponent
-              streamManager={{ session, connection, connectionToken }}
-              connectionData={getUserConnectionData()}
-            />
+            {subscribers[0] && (
+              <UserVideoComponent streamManager={subscribers[0]} />
+            )}
           </Grid>
-          <Grid item xs={1} style={{ height: "20vh" }}>
+          <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
               style={{
                 fontFamily: "Pretendard-Regular",
@@ -363,26 +507,24 @@ function GameWait() {
               두번째 선수
             </div>
           </Grid>
-
           {/* Player 3 */}
           <Grid
             item
             xs={2}
             style={{
               backgroundColor: "black",
-              height: "20vh",
+              height: "25vh",
               border: "2px solid white",
               padding: "2px",
               margin: "5px",
               borderRadius: "20px",
             }}
           >
-            <UserVideoComponent
-              streamManager={{ session, connection, connectionToken }}
-              connectionData={getUserConnectionData()}
-            />
+            {subscribers[1] && (
+              <UserVideoComponent streamManager={subscribers[1]} />
+            )}
           </Grid>
-          <Grid item xs={1} style={{ height: "20vh" }}>
+          <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
               style={{
                 fontFamily: "Pretendard-Regular",
@@ -400,19 +542,18 @@ function GameWait() {
             xs={2}
             style={{
               backgroundColor: "black",
-              height: "20vh",
+              height: "25vh",
               border: "2px solid white",
               padding: "2px",
               margin: "5px",
               borderRadius: "20px",
             }}
           >
-            <UserVideoComponent
-              streamManager={{ session, connection, connectionToken }}
-              connectionData={getUserConnectionData()}
-            />
+            {subscribers[2] && (
+              <UserVideoComponent streamManager={subscribers[2]} />
+            )}
           </Grid>
-          <Grid item xs={1} style={{ height: "20vh" }}>
+          <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
               style={{
                 fontFamily: "Pretendard-Regular",

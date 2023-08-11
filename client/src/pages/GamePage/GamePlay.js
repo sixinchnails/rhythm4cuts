@@ -21,7 +21,6 @@ function GamePlay(gameSeq) {
   console.log("GameSeq: " + gameSeq);
   console.log("play session: " + session);
   console.log("connectionToken: " + connectionToken);
-  
 
   return (
     <div

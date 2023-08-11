@@ -12,7 +12,7 @@ import {
   Radio,
 } from "@mui/material";
 import { createSession } from "../../openvidu/sessionInitialization";
-import { setSession, setGameSeq } from "../../store";
+import { setSession, setGameseq } from "../../store";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -61,9 +61,9 @@ function CreateRoom({ isOpen, handleClose }) {
           }
         );
         console.log("방 만들어졌습니다~ 세션아이디 : " + sessionResponse.id);
-        console.log("방 만들어졌습니다~ gameSeq : ", response.data.data);
-        // dispatch(setSession(sessionResponse.id)); // 방 session 정보를 넘기기위해
-        // dispatch(setGameSeq(response.data.data)); // 방 gameSeq 정보를 넘기기위해
+        console.log("방 만들어졌습니다~ gameseq : ", response.data.data);
+        dispatch(setSession(sessionResponse.id)); // 방 session 정보를 넘기기위해
+        dispatch(setGameseq(response.data.data)); // 방 gameseq 정보를 넘기기위해
 
         // 방 생성 후 해당 방으로 이동
         navigate(`/GameWait/${response.data.data}`);
