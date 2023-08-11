@@ -13,6 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -86,6 +87,18 @@ public class MusicService {
             res.setSinger(song.getSinger());
             res.setUrl(song.getUrl());
         }
+
+        return res;
+    }
+
+    public List<SongDto> selectAll() {
+
+        List<Song> songs = musicRepository.findAll();
+        List<SongDto> res = new ArrayList<>();
+
+        songs.forEach(song -> {
+            res.add(song.getSongDto());
+        });
 
         return res;
     }

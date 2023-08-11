@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,7 +29,7 @@ public class MusicController {
         }
     }
 
-    // API 2. DB에 저장된 영상 id값, 제목, 가수를 전달하는 메서드
+    // API 2. DB에 저장된 노래 영상 링크, 제목, 가수를 전달하는 메서드
     @GetMapping("/play/{songSeq}")
     public ResponseEntity<?> playMusic(@PathVariable("songSeq") int songSeq) {
 
@@ -38,6 +39,20 @@ public class MusicController {
         res.put("message", "Success");
         res.put("statusCode", 200);
         res.put("data", songDto);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    // API 3. DB에 저장된 모든 노래 리스트를 출력
+    @GetMapping
+    public ResponseEntity<?> selectAllList() {
+
+        List<SongDto> songDtos = musicService.selectAll();
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("message", "Success");
+        res.put("statusCode", 200);
+        res.put("data", songDtos);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
