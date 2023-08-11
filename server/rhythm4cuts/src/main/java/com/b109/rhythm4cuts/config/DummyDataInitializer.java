@@ -1,8 +1,10 @@
 package com.b109.rhythm4cuts.config;
 
 import com.b109.rhythm4cuts.model.domain.ProfileImage;
+import com.b109.rhythm4cuts.model.domain.Song;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.repository.FriendRepository;
+import com.b109.rhythm4cuts.model.repository.MusicRepository;
 import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import com.b109.rhythm4cuts.model.service.MelonService;
@@ -28,16 +30,19 @@ public class DummyDataInitializer {
 
     private final MelonService melonService;
     private final MusicService musicService;
+    private final MusicRepository musicRepository;
 
     public DummyDataInitializer(UserRepository userRepository, ProfileImageRepository profileImageRepository,
                                 BCryptPasswordEncoder bCryptPasswordEncoder
-            , FriendRepository friendRepository, MelonService melonService, MusicService musicService) {
+            , FriendRepository friendRepository, MelonService melonService, MusicService musicService
+    , MusicRepository musicRepository) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.friendRepository = friendRepository;
         this.melonService = melonService;
         this.musicService = musicService;
+        this.musicRepository = musicRepository;
     }
 
 
