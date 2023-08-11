@@ -48,18 +48,20 @@ export default class UserVideoComponent extends Component {
   //   }
   //   return "";
   // }  // 로그인 상태 확인
- 
+
 
 
 
   render() {
     return (
-      <div style={{ width: "100%", height: "100%" }}>
-        <div className="streamcomponent">
-          <OpenViduVideoComponent streamManager={this.props.streamManager} />
-          <div>{/* <p>{this.getNicknameTag()}</p> */}</div>
-          <div>dddddd</div>
+      <div>
+        <div style={{ width: "50%", height: "100%" }}>
+          <div className="streamcomponent">
+            <OpenViduVideoComponent streamManager={this.props.streamManager} />
+            <div>{/* <p>{this.getNicknameTag()}</p> */}</div>
+          </div>
         </div>
+        
       </div>
     );
   }
