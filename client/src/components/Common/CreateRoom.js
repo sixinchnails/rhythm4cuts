@@ -76,7 +76,7 @@ function CreateRoom({ isOpen, handleClose }) {
     setSongSeq(song.songSeq);
     setSearchTerm(song.title); // 선택한 노래의 제목을 표시
     setSearchResults([]); // 검색 결과를 초기화하여 목록을 숨김
-    dispatch(setSongTitle(song.title)); // 선택한 노래의 제목을 Redux에 저장
+    // dispatch(setSongTitle(song.title)); // 선택한 노래의 제목을 Redux에 저장
   };
 
   const handleCreateRoom = async () => {

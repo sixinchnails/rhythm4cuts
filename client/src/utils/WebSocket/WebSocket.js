@@ -12,6 +12,7 @@ export function useWebSocket() {
 export function WebSocketProvider({ children }) {
   const [connected, setConnected] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [hasNotification, setHasNotification] = useState(false); // 알림 상태 추가
   let socket = null;
   let reconnectInterval;
 
@@ -42,11 +43,11 @@ export function WebSocketProvider({ children }) {
               if (fromUser) {
                 stomp.subscribe(`/subscribe/friend/${fromUser}`, message => {
                   setMessages(prev => [...prev, message.body]);
-                  window.alert("친추옴");
+                  setHasNotification(true); // 알림 상태 업데이트
                 });
                 stomp.subscribe(`/subscribe/game/${fromUser}`, message => {
                   setMessages(prev => [...prev, message.body]);
-                  window.alert("게임 초대 옴");
+                  setHasNotification(true); // 알림 상태 업데이트
                 });
                 stomp.subscribe(`/subscribe/startSong/${fromUser}`, message => {
                   const songData = JSON.parse(message.body);
@@ -80,6 +81,11 @@ export function WebSocketProvider({ children }) {
     }
   };
 
+  const resetNotification = () => {
+    // 알림 초기화 함수
+    setHasNotification(false);
+  };
+
   const disconnectWebSocket = useCallback(() => {
     if (socket) {
       socket.disconnect();
@@ -97,6 +103,8 @@ export function WebSocketProvider({ children }) {
     messages,
     connectWebSocket,
     disconnectWebSocket,
+    hasNotification, // 알림 상태
+    resetNotification, // 알림 초기화 함수
   };
 
   return (
