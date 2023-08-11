@@ -30,29 +30,19 @@ function AddFriend({ isOpen, handleClose }) {
 
   try {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           setFromUser(res.data.user_seq);
           console.log(res.data.user_seq);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         Navigate("/");
         window.alert("로그인을 해주세요!");
       });
   } catch (error) {
     console.log(error);
   }
-
-  // useEffect(() => {
-  //   stomp.connect({}, () => {
-  //     console.log("connected");
-  //     console.log("--------------------" + fromUser);
-  //     stomp.subscribe(`/subscribe/friend/${{fromUser}}`, () => {
-  //       alert("친구 요청 옴");
-  //     });
-  //   });
-  // }, []);
 
   useEffect(() => {
     stomp.connect({}, () => {
@@ -77,7 +67,7 @@ function AddFriend({ isOpen, handleClose }) {
             },
           }
         )
-        .then((response) => {
+        .then(response => {
           if (response.data.data.length > 0) {
             const { nickname, email, userSeq } = response.data.data[0];
             setUserInfo({ nickname, email });
@@ -87,7 +77,7 @@ function AddFriend({ isOpen, handleClose }) {
             setToUser("");
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error);
         });
     } else {
@@ -96,7 +86,7 @@ function AddFriend({ isOpen, handleClose }) {
     }
   }, [debouncedFriendNickname]);
 
-  const handleNameChange = async (event) => {
+  const handleNameChange = async event => {
     setfriendNickname(event.target.value);
   };
 

@@ -5,6 +5,19 @@ import {
 } from "@reduxjs/toolkit";
 import { closeSessionAndConnection } from "./openvidu/closeSessionAndConnection";
 
+//방 노래 제목 넘겨주기 위해
+const songTitleSlice = createSlice({
+  name: "songTitle",
+  initialState: "", // 노래 제목의 초기 상태는 빈 문자열로 설정
+  reducers: {
+    setSongTitle: (state, action) => {
+      return action.payload; // 액션의 페이로드로 상태를 업데이트
+    },
+  },
+});
+
+export const { setSongTitle } = songTitleSlice.actions;
+
 // ----------------------------------------------------------------------------------------------------------------
 // 방 세션 관리
 const initialState = {
@@ -27,25 +40,32 @@ const roomState = createSlice({
     },
     setConnectionToken: (state, action) => {
       state.connectionToken = action.payload;
-    },  
+    },
     setNickname: (state, action) => {
-      state.nickname = action.payload; 
+      state.nickname = action.payload;
     },
     setGameseq: (state, action) => {
       state.gameseq = action.payload;
     },
     // 상태 초기화
-    resetRoomState: (state) => {
+    resetRoomState: state => {
       state.session = initialState.session;
       state.connection = initialState.connection;
       state.connectionToken = initialState.connectionToken;
       // state.nickname = initialState.nickname;
       state.gameseq = initialState.gameseq;
-    }
+    },
   },
 });
 
-export const { setSession, setConnection, setConnectionToken, setNickname, setGameseq, resetRoomState } = roomState.actions;
+export const {
+  setSession,
+  setConnection,
+  setConnectionToken,
+  setNickname,
+  setGameseq,
+  resetRoomState,
+} = roomState.actions;
 
 // Room 세션 ID를 설정하는 액션 함수
 export const setRoomSession = session => dispatch => {
@@ -53,7 +73,7 @@ export const setRoomSession = session => dispatch => {
 };
 
 // Room 세션 ID를 설정하는 액션 함수
-export const setUserConnection = (connection) => (dispatch) => {
+export const setUserConnection = connection => dispatch => {
   dispatch(setConnection(connection));
 };
 
@@ -61,7 +81,6 @@ export const setUserConnection = (connection) => (dispatch) => {
 export const setUserToken = userToken => dispatch => {
   dispatch(setConnectionToken(userToken));
 };
-
 
 // --------------------------------------------------------------------------------------------------
 // 웹캠 스트림 상태를 저장하는 slice를 생성합니다.
@@ -76,7 +95,7 @@ const webcamStreamSlice = createSlice({
 });
 
 export const { setWebcamStream } = webcamStreamSlice.actions;
- 
+
 // 방을 종료하는 비동기 액션을 생성합니다.
 // 이 액션은 방의 sessionId와 연결의 connectionId를 인수로 받아 OpenVidu 서버에서 세션을 종료하고 이를 반환합니다.
 export const closeSession = createAsyncThunk(
@@ -429,5 +448,6 @@ export default configureStore({
     webcamStream: webcamStreamSlice.reducer,
     notification: notificationSlice.reducer,
     roomState: roomState.reducer,
+    songTitle: songTitleSlice.reducer,
   },
 });

@@ -11,6 +11,7 @@ import {
   Chat as ChatIcon,
   Check as CheckIcon,
   ExitToApp as ExitToAppIcon,
+  PersonAdd as PersonAddIcon,
 } from "@mui/icons-material";
 import {
   styled,
@@ -46,7 +47,7 @@ function GameWait() {
   dispatch(setGameseq(gameSeq));
   // const gameSeq = useSelector(state => state.roomState.gameseq);
 
-  const session = useSelector((state) => state.roomState.session);
+  const session = useSelector(state => state.roomState.session);
 
   const [mySessionId, setMySessionId] = useState("SessionA");
   const [myUserName, setMyUserName] = useState(
@@ -82,18 +83,23 @@ function GameWait() {
     },
   });
 
+  const handleAddFriend = () => {
+    // 친구 추가 로직을 여기에 작성
+    console.log("친구 추가 버튼 클릭!");
+  };
+
   // 로그인 상태관리
   useEffect(() => {
     connectWebSocket();
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
         } else {
           // 로그인 상태가 아니라면 알림.
           handleOpenLoginAlert();
         }
       })
-      .catch((error) => {
+      .catch(error => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -101,13 +107,13 @@ function GameWait() {
 
   useEffect(() => {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status !== 200) {
           window.alert("로그인을 해주세요!");
           navigate("/");
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("유저 정보 불러오기 실패:", error);
         window.alert("로그인을 해주세요!");
         navigate("/");
@@ -126,18 +132,18 @@ function GameWait() {
     leaveSession();
   };
 
-  const leaveSession = () => {
-    if (connectSession) {
-      connectSession.disconnect();
-    }
+  // const leaveSession = () => {
+  //   if (connectSession) {
+  //     connectSession.disconnect();
+  //   }
 
-    // setConnectSession(undefined);
-    // setSubscribers([]);
-    // setMySessionId("SessionA");
-    // setMyUserName('Participant' + Math.floor(Math.random() * 100));
-    // setMainStreamManager(undefined);
-    // setPublisher(undefined);
-  };
+  //   // setConnectSession(undefined);
+  //   // setSubscribers([]);
+  //   // setMySessionId("SessionA");
+  //   // setMyUserName('Participant' + Math.floor(Math.random() * 100));
+  //   // setMainStreamManager(undefined);
+  //   // setPublisher(undefined);
+  // };
 
   // ------------------------------------------------------------------------------------------------------------------
   let MAX_PLAYERS = 4;
@@ -159,29 +165,29 @@ function GameWait() {
 
   const joinSession = async () => {
     try {
-      fetchNickname(); 
-  
+      fetchNickname();
+
       const ov = new OpenVidu();
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
-      newSession.on("streamCreated", (event) => {
+      newSession.on("streamCreated", event => {
         // 인원 수 제한 : subscribers.length = 방장을 제외한 수
         const subscriber = newSession.subscribe(event.stream, undefined);
-        setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
 
-        setPlayers((prevPlayers) => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
+        setPlayers(prevPlayers => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
 
         if (!mainStreamManager) {
           setMainStreamManager(subscriber);
         }
       });
 
-      newSession.on("streamDestroyed", (event) => {
+      newSession.on("streamDestroyed", event => {
         deleteSubscriber(event.stream.streamManager);
       });
 
-      newSession.on("exception", (exception) => {
+      newSession.on("exception", exception => {
         console.warn(exception);
       });
 
@@ -205,25 +211,24 @@ function GameWait() {
 
           const devices = await ov.getDevices();
           const videoDevices = devices.filter(
-            (device) => device.kind === "videoinput"
+            device => device.kind === "videoinput"
           );
           const currentVideoDeviceId = newPublisher.stream
             .getMediaStream()
             .getVideoTracks()[0]
             .getSettings().deviceId;
           const currentVideoDevice = videoDevices.find(
-            (device) => device.deviceId === currentVideoDeviceId
+            device => device.deviceId === currentVideoDeviceId
           );
 
           setMainStreamManager(newPublisher);
           setPublisher(newPublisher);
 
           if (players.length === 0) {
-            setPlayers((prevPlayers) => [...prevPlayers, newPublisher]); // 플레이어 스트림 추가 // 맨 처음 등록
+            setPlayers(prevPlayers => [...prevPlayers, newPublisher]); // 플레이어 스트림 추가 // 맨 처음 등록
           }
-
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(
             "There was an error connecting to the session:",
             error.code,
@@ -233,8 +238,8 @@ function GameWait() {
     } catch (error) {
       console.error("Error joining session:", error);
     }
-  }
-  console.log("방 인원수 : " + players.length)
+  };
+  console.log("방 인원수 : " + players.length);
   // ------------------------------------------------------------------------------------------------------------------
 
   // "게임 준비" 버튼을 클릭했을 때 동작
@@ -245,7 +250,7 @@ function GameWait() {
   }
 
   // "채팅" 버튼을 클릭했을 때 동작
-  const handleChat = () => { };
+  const handleChat = () => {};
 
   // "나가기" 버튼 눌렀을 때 동작
   const handleExit = () => {
@@ -311,6 +316,36 @@ function GameWait() {
     }
   }
 
+  function InviteFriend() {
+    var request = {
+      fromUser: fromUser,
+      toUser: toUser,
+      // roomNumber :
+    };
+    if (stomp.connected) {
+      stomp.send("/public/request", {}, JSON.stringify(request));
+    }
+  }
+
+  const leaveSession = () => {
+    console.log("--------------------leave session");
+    if (connectSession) {
+      connectSession.disconnect();
+    }
+
+    setConnectSession(undefined);
+    setSubscribers([]);
+    setMySessionId("SessionA");
+    // setMyUserName('Participant' + Math.floor(Math.random() * 100));
+    setMainStreamManager(undefined);
+    setPublisher(undefined);
+
+    useEffect(() => {
+      if (!connectSession) {
+        joinSession();
+      }
+    }, [connectSession]);
+  };
 
   return (
     <div
@@ -389,6 +424,13 @@ function GameWait() {
             justifyContent="center"
             style={{ paddingTop: "40px" }}
           >
+            {/* 친구 추가 버튼 */}
+            <StyledIconButton
+              style={{ position: "absolute", top: "100px", right: "40px" }}
+              onClick={handleAddFriend}
+            >
+              <PersonAddIcon />
+            </StyledIconButton>
             {/* "게임준비" 버튼 */}
             <StyledIconButton
               onClick={handleGameReady}
@@ -462,9 +504,9 @@ function GameWait() {
             {players[0] && (
               <UserVideoComponent
                 streamManager={players[0]}
-              // streamManager={publisher}
-              // streamManager={subscribers[0]}
-              // streamManager={mainStreamManager}
+                // streamManager={publisher}
+                // streamManager={subscribers[0]}
+                // streamManager={mainStreamManager}
               />
             )}
           </Grid>
