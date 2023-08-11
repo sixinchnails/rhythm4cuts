@@ -131,6 +131,10 @@ function GameWait() {
       newSession.on('streamCreated', (event) => {
         const subscriber = newSession.subscribe(event.stream, undefined);
         setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+
+        if (!mainStreamManager) {
+          setMainStreamManager(subscriber);
+        }
       });
 
       newSession.on('streamDestroyed', (event) => {
@@ -420,18 +424,22 @@ function GameWait() {
             xs={2}
             style={{
               backgroundColor: "black",
-              height: "20vh",
+              height: "25vh",
               border: "2px solid white",
               padding: "2px",
               margin: "5px",
               borderRadius: "20px",
             }}
           >
-            <UserVideoComponent
-              streamManager={subscribers[0]}
-            />
+            {mainStreamManager && (
+              <UserVideoComponent
+                // streamManager={subscribers[0]}
+                streamManager={mainStreamManager}
+              />
+            )}
+
           </Grid>
-          <Grid item xs={1} style={{ height: "20vh" }}>
+          <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
               style={{
                 fontFamily: "Pretendard-Regular",
@@ -449,23 +457,25 @@ function GameWait() {
             xs={2}
             style={{
               backgroundColor: "black",
-              height: "20vh",
+              height: "25vh",
               border: "2px solid white",
               padding: "2px",
               margin: "5px",
               borderRadius: "20px",
             }}
           >
-            <UserVideoComponent
-              streamManager={subscribers[0]}
-            />
+            {subscribers[1] && (
+              <UserVideoComponent
+                streamManager={subscribers[1]}
+              />
+            )}
           </Grid>
-          <Grid item xs={1} style={{ height: "20vh" }}>
+          <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
               style={{
-                fontFamily: "Pretendard-Regular",
+                fontFamily: "Pretendard-Regular",    
                 fontSize: "20px",
-                color: "white",
+                color: "white", 
                 padding: "5px",
               }}
             >
@@ -478,18 +488,20 @@ function GameWait() {
             xs={2}
             style={{
               backgroundColor: "black",
-              height: "20vh",
+              height: "25vh",
               border: "2px solid white",
               padding: "2px",
               margin: "5px",
               borderRadius: "20px",
             }}
           >
-            <UserVideoComponent
-              streamManager={subscribers[0]}
-            />
+            {subscribers[2] && (
+              <UserVideoComponent
+                streamManager={subscribers[2]}
+              />
+            )}
           </Grid>
-          <Grid item xs={1} style={{ height: "20vh" }}>
+          <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
               style={{
                 fontFamily: "Pretendard-Regular",
@@ -507,18 +519,21 @@ function GameWait() {
             xs={2}
             style={{
               backgroundColor: "black",
-              height: "20vh",
+              height: "25vh",
               border: "2px solid white",
               padding: "2px",
-              margin: "5px",
+              margin: "5px", 
               borderRadius: "20px",
             }}
           >
-            <UserVideoComponent
-              streamManager={subscribers[0]}
-            />
+            {subscribers[3] && (  
+              <UserVideoComponent
+                streamManager={subscribers[3]}
+              />
+            )}
+
           </Grid>
-          <Grid item xs={1} style={{ height: "20vh" }}>
+          <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
             <div
               style={{
                 fontFamily: "Pretendard-Regular",
