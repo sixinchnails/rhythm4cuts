@@ -1,12 +1,11 @@
 // MyModify.js
-/* eslint-disable */
-import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/My/My_SideBar";
-import MainContent from "../../components/My/My_MainContent";
-import ModifyInfo from "../../components/My/My_ModifyInfo";
+import { React, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
 import LoginMypageHeader from "../../components/Home/BlackHeader";
-import { useNavigate } from "react-router-dom";
+import MainContent from "../../components/My/My_MainContent";
+import ModifyInfo from "../../components/My/My_ModifyInfo";
+import Sidebar from "../../components/My/My_SideBar";
 
 const MyModify = () => {
   const navigate = useNavigate();
@@ -18,12 +17,12 @@ const MyModify = () => {
   //로그인 상태 확인
   try {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           setNickName(res.data.nickname);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         window.alert("로그인을 해주세요!");
         navigate("/");
       });

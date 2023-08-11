@@ -1,12 +1,9 @@
 // Home.js
-/* eslint-disable */
 //데이터가 들어오면 만들어야하는 애들 : 소개 영상, 음악 랭킹, 유저 랭킹, 일자별 방명록
 import { React, useRef, useEffect, useState } from "react";
-import { getCookie, setCookie } from "../../utils/cookie";
+import { getCookie, removeCookie, setCookie } from "../../utils/cookie";
 import { renewAccessToken } from "../../apis/renewAccessToken";
 import { Grid, Pagination } from "@mui/material";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
 import DatePicker from "react-datepicker";
 import MusicRank from "../../components/Home/MusicRank";
@@ -23,7 +20,6 @@ import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 const DIVIDER_HEIGHT = 5;
 
 function Home() {
-  const navigate = useNavigate();
   //로그인 상태 저장변수
   const [isLogin, setIsLogin] = useState(false);
 
@@ -278,7 +274,11 @@ function Home() {
               ></iframe>
             </div>
             <div className="rules">
-              <img style={{ height: 560, width: 514 }} src="images/Rules.png" />
+              <img
+                alt="게임 규칙 이미지"
+                style={{ height: 420, width: 450 }}
+                src="images/removeRules.png"
+              />
             </div>
           </div>
         </div>
@@ -348,9 +348,13 @@ function Home() {
               <h1>Total Rank</h1>
               <div className="total_rank">
                 <div className="nickname">
-                  <span>{userData.nickname}</span>
-                  <span>{userData.nickname}</span>
-                  <span>{userData.nickname}</span>
+                  {userData.length > 0 ? (
+                    <div>
+                      <span>{userData[1].nickname}</span>
+                      <span>{userData[0].nickname}</span>
+                      <span>{userData[2].nickname}</span>
+                    </div>
+                  ) : null}
                 </div>
               </div>
               <div className="top100">

@@ -1,13 +1,12 @@
 // Login.js
-/* eslint-disable */
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import SearchPassword from "../../components/Common/SearchPassword";
-import "./Login.css";
-import { Box } from "@mui/material";
-import { login } from "../../apis/login";
-import { setCookie } from "../../utils/cookie";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
+import { setCookie } from "../../utils/cookie";
+import { login } from "../../apis/login";
+import SearchPassword from "../../components/Common/SearchPassword";
+// import video from "../../../public/videos/11.mp4";
+import "./Login.css";
 
 const Login = () => {
   const emailRef = useRef();
@@ -30,17 +29,17 @@ const Login = () => {
 
   // id 파트
   const [id, setId] = useState("");
-  const onChangeId = e => {
+  const onChangeId = (e) => {
     setId(e.target.value);
   };
 
   // pw 파트
   const [pw, setPW] = useState("");
-  const onChangePW = e => {
+  const onChangePW = (e) => {
     setPW(e.target.value);
   };
 
-  const onKeyPress = e => {
+  const onKeyPress = (e) => {
     if (e.key === "Enter") {
       Login();
     }
@@ -72,10 +71,14 @@ const Login = () => {
 
   return (
     <div className="bg">
+      {/* <video autoPlay loop muted>
+        <source src={video} type="video/mp4" />
+      </video> */}
       <div className="outer">
         <div className="logo">
           <a href="/">
             <img
+              alt="로고 사진"
               src="images/Home_Logo.png"
               style={{ marginLeft: "50px", marginTop: "25px" }}
             ></img>
