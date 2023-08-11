@@ -1,6 +1,6 @@
+import { getCookie } from "../../utils/cookie";
 import React from "react";
 import "./My_UserInfo.css"; // 이 CSS 파일은 UserInfo 컴포넌트에 적용할 스타일을 정의하는 파일입니다.
-import { getCookie } from "../../utils/cookie";
 
 function UserInfo(props) {
   const email = getCookie("email");

@@ -1,12 +1,9 @@
-/* eslint-disable */
 import { useDispatch, useSelector } from "react-redux";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { setHasNotification } from "../../store";
-import { Client } from "@stomp/stompjs";
 import { Link } from "react-router-dom";
 //종모양 바로 밑에 모달 띄우게하기
 import Popover from "@mui/material/Popover";
-import SockJS from "sockjs-client";
 import Badge from "@mui/material/Badge";
 import "./Header.css";
 
@@ -17,7 +14,7 @@ const Header = () => {
     (state) => state.notification.hasNotification
   );
   //모달 여부
-  const [popoverMessage, setPopoverMessage] = useState("아무 정보가 없습니다.");
+  const [popoverMessage] = useState("아무 정보가 없습니다.");
   const [anchorEl, setAnchorEl] = useState(null);
 
   //누르면 모달 열리게
@@ -50,7 +47,7 @@ const Header = () => {
   return (
     <div className="Header_outer1">
       <Link className="Header_logo1" to={"/"}>
-        <img src="images/Home_Logo.png" />
+        <img src="images/Home_Logo.png" alt="헤더 사진" />
       </Link>
       <div>
         <Badge

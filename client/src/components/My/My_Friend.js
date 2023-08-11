@@ -1,5 +1,3 @@
-import React from "react";
-import { useSelector } from "react-redux";
 import {
   Paper,
   Typography,
@@ -9,10 +7,12 @@ import {
   Grid,
   Box,
 } from "@mui/material";
+import { useSelector } from "react-redux";
 import { useState } from "react";
+import React from "react";
 
 function FriendInfo() {
-  const Info = useSelector(state => state.MyPage_Friend);
+  const Info = useSelector((state) => state.MyPage_Friend);
 
   const itemsPerPage = 6;
   const [page, setPage] = useState(1);
