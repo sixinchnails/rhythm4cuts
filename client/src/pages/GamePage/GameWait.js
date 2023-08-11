@@ -478,7 +478,7 @@ function GameWait() {
                 color: "white", 
                 padding: "5px",
               }}
-            >
+            > 
               두번째 선수
             </div>
           </Grid>

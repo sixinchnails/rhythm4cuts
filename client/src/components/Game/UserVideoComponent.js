@@ -8,7 +8,7 @@ export default class UserVideoComponent extends Component {
   //   // 비디오 요소를 저장할 Ref 생성
   //   this.videoRef = React.createRef();
   // }
-  
+
   // // 컴포넌트가 처음 마운트될 때 호출되는 메서드
   // async componentDidMount() {
   //   await this.getMediaStream(); // 웹캠 스트림 가져오기

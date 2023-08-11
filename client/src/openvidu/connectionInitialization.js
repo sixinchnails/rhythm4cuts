@@ -38,6 +38,6 @@ export const createConnection = async () => {
     };
   } catch (error) {
     console.error("연결할때 에러:" + error);
-    return null;
+    return null;  
   }
 };
