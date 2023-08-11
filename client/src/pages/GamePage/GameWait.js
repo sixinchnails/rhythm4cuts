@@ -428,74 +428,72 @@ function GameWait() {
             alignItems="center"
             justifyContent="center">
 
-              <Grid container spacing={2}>
-                {/* 친구 초대 버튼 */}
-                <Grid item xs={5} style={{margin:"1px"}}>
-                  <StyledIconButton onClick={handleAddFriend} style={{ width:"12vw"}}>
-                    <PersonAddIcon />
-                    <Typography
-                      style={{
-                        fontFamily: "Pretendard-Regular",
-                        fontSize: "20px",
-                        padding: "15px",
-                      }}
-                    >
-                      친구 초대
-                    </Typography>
-                  </StyledIconButton>
-                </Grid>
-
-                {/* "게임준비" 버튼 */}
-                <Grid item xs={5} style={{margin:"1px"}}>
-                  <StyledIconButton onClick={handleGameReady} style={{ width:"12vw"}}>
-                    <CheckIcon />
-                    <Typography
-                      style={{
-                        fontFamily: "Pretendard-Regular",
-                        fontSize: "20px",
-                        padding: "15px",
-                      }}
-                    >
-                      게임 준비
-                    </Typography>
-                  </StyledIconButton>
-                </Grid>
-
-                {/* "채팅" 버튼 */}
-                <Grid item xs={5} style={{margin:"1px"}}>
-                  <StyledIconButton onClick={handleChat} style={{ width:"12vw"}} >
-                    <ChatIcon />
-                    <Typography
-                      style={{
-                        fontFamily: "Pretendard-Regular",
-                        fontSize: "20px",
-                        padding: "15px",
-                      }}
-                    >
-                      채팅
-                    </Typography>
-                  </StyledIconButton>
-                </Grid>
-
-                {/* "나가기" 버튼 */}
-                <Grid item xs={5} style={{margin:"1px"}}>
-                  <StyledIconButton onClick={handleExit} style={{ width:"12vw"}} >
-                    <ExitToAppIcon />
-                    <Typography
-                      style={{
-                        fontFamily: "Pretendard-Regular",
-                        fontSize: "20px",
-                        padding: "15px",
-                      }}
-                    >
-                      나가기
-                    </Typography>
-                  </StyledIconButton>
-                </Grid>
+            <Grid container spacing={2}>
+              {/* 친구 초대 버튼 */}
+              <Grid item xs={5} style={{ margin: "1px" }}>
+                <StyledIconButton onClick={handleAddFriend} style={{ width: "12vw" }}>
+                  <PersonAddIcon />
+                  <Typography
+                    style={{
+                      fontFamily: "Pretendard-Regular",
+                      fontSize: "20px",
+                      padding: "15px",
+                    }}
+                  >
+                    친구 초대
+                  </Typography>
+                </StyledIconButton>
               </Grid>
 
-          </Grid>
+              {/* "게임준비" 버튼 */}
+              <Grid item xs={5} style={{ margin: "1px" }}>
+                <StyledIconButton onClick={handleGameReady} style={{ width: "12vw" }}>
+                  <CheckIcon />
+                  <Typography
+                    style={{
+                      fontFamily: "Pretendard-Regular",
+                      fontSize: "20px",
+                      padding: "15px",
+                    }}
+                  >
+                    게임 준비
+                  </Typography>
+                </StyledIconButton>
+              </Grid>
 
+              {/* "채팅" 버튼 */}
+              <Grid item xs={5} style={{ margin: "1px" }}>
+                <StyledIconButton onClick={handleChat} style={{ width: "12vw" }} >
+                  <ChatIcon />
+                  <Typography
+                    style={{
+                      fontFamily: "Pretendard-Regular",
+                      fontSize: "20px",
+                      padding: "15px",
+                    }}
+                  >
+                    채팅
+                  </Typography>
+                </StyledIconButton>
+              </Grid>
+
+              {/* "나가기" 버튼 */}
+              <Grid item xs={5} style={{ margin: "1px" }}>
+                <StyledIconButton onClick={handleExit} style={{ width: "12vw" }} >
+                  <ExitToAppIcon />
+                  <Typography
+                    style={{
+                      fontFamily: "Pretendard-Regular",
+                      fontSize: "20px",
+                      padding: "15px",
+                    }}
+                  >
+                    나가기
+                  </Typography>
+                </StyledIconButton>
+              </Grid>
+            </Grid>
+          </Grid>
         </Grid>
 
         {/* Bottom */}
@@ -506,8 +504,8 @@ function GameWait() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            marginLeft: "50px",
-            marginRight: "50px",
+            margin: "50px"
+
           }}
         >
           {/* Player 1 */}
@@ -515,118 +513,111 @@ function GameWait() {
             item
             xs={3}
             style={{
-              backgroundColor: "black",
-              height: "25vh",
+              backgroundColor: "transparent",
+              height: "34vh",
               padding: "2px",
               margin: "20px",
-              border: "2px solid white",
+              // border: "2px solid white",
               borderRadius: "20px",
             }}
           >
-            {players[0] && (
+
+            {/* {players[0] && (
               <UserVideoComponent
+                nickname={nickname}
                 streamManager={players[0]}
               // streamManager={publisher}
               // streamManager={subscribers[0]}
               // streamManager={mainStreamManager}
               />
+            )} */}
+            {players[0] ? (
+              <UserVideoComponent
+                nickname={nickname}
+                streamManager={players[0]}
+              />
+            ) : (
+              <video autoPlay loop muted style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "20px", }}>
+                <source src="/videos/33.mp4" type="video/mp4" />
+              </video>
             )}
-          </Grid>
-          {/* <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
-            <div
-              style={{
-                fontFamily: "Pretendard-Regular",
-                fontSize: "20px",
-                color: "white",
-                padding: "5px",
-              }}
-            >
-              첫번째 선수
-            </div>
-          </Grid> */}
+          </Grid> 
 
           {/* Player 2 */}
           <Grid
             item
             xs={3}
             style={{
-              backgroundColor: "black",
-              height: "25vh",
+              backgroundColor: "transparent",
+              height: "34vh",
               padding: "2px",
               margin: "20px",
-              border: "2px solid white",
+              // border: "2px solid white",
               borderRadius: "20px",
             }}
           >
-            {players[1] && <UserVideoComponent streamManager={players[1]} />}
+            {players[1] ? (
+              <UserVideoComponent
+                nickname={nickname}
+                streamManager={players[1]}
+              />
+            ) : (
+              <video autoPlay loop muted style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "20px", }}>
+                <source src="/videos/33.mp4" type="video/mp4" />
+              </video>
+            )}
           </Grid>
-          {/* <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
-            <div
-              style={{
-                fontFamily: "Pretendard-Regular",
-                fontSize: "20px",
-                color: "white",
-                padding: "5px",
-              }}
-            >
-              두번째 선수
-            </div>
-          </Grid> */}
 
           {/* Player 3 */}
           <Grid
             item
             xs={3}
             style={{
-              backgroundColor: "black",
-              height: "25vh",
+              backgroundColor: "transparent",
+              height: "34vh",
               padding: "2px",
               margin: "20px",
-              border: "2px solid white",
+              // border: "2px solid white",
               borderRadius: "20px",
             }}
           >
-            {players[2] && <UserVideoComponent streamManager={players[2]} />}
+            {players[2] ? (
+              <UserVideoComponent
+                nickname={nickname}
+                streamManager={players[2]}
+              />
+            ) : (
+              <video autoPlay loop muted style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "20px", }}>
+                <source src="/videos/33.mp4" type="video/mp4" />
+              </video>
+            )}
           </Grid>
-          {/* <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
-            <div
-              style={{
-                fontFamily: "Pretendard-Regular",
-                fontSize: "20px",
-                color: "white",
-                padding: "5px",
-              }}
-            >
-              세번째 선수
-            </div>
-          </Grid> */}
+ 
           {/* Player 4 */}
           <Grid
             item
             xs={3}
             style={{
-              backgroundColor: "black",
-              height: "25vh",
+              backgroundColor: "transparent",
+              height: "34vh",
               padding: "2px",
               margin: "20px",
-              border: "2px solid white",
+              // border: "2px solid white",
               borderRadius: "20px",
             }}
           >
-            {players[3] && <UserVideoComponent streamManager={players[3]} />}
+            {players[3] ? (
+              <UserVideoComponent
+                nickname={nickname}
+                streamManager={players[3]}
+              />
+            ) : (
+              <video autoPlay loop muted style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "20px", }}>
+                <source src="/videos/33.mp4" type="video/mp4" />
+              </video>
+            )}
           </Grid>
-          {/* <Grid item xs={1} style={{ width: "20vw", height: "20vh" }}>
-            <div
-              style={{
-                fontFamily: "Pretendard-Regular",
-                fontSize: "20px",
-                color: "white",
-                padding: "5px",
-              }}
-            >
-              네번째 선수
-            </div>
-          </Grid> */}
+
         </Grid>
       </Grid>
 

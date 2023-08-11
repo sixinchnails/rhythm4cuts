@@ -3,46 +3,38 @@ import OpenViduVideoComponent from "./OvVideo";
 import { userInfo } from '../../apis/userInfo';
 
 
-export default class UserVideoComponent extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   // 비디오 요소를 저장할 Ref 생성
-  //   this.videoRef = React.createRef();
-  // }
+const UserVideoComponent = ({ streamManager, nickname }) => {
 
-  // // 컴포넌트가 처음 마운트될 때 호출되는 메서드
-  // async componentDidMount() {
-  //   await this.getMediaStream(); // 웹캠 스트림 가져오기
-  //   await this.addStreamToStreamManager()
-  // }
+  // const videoRef = useRef(null);
 
-  // // 웹캠 스트림을 가져오는 메서드
-  // async getMediaStream() {
+  // useEffect(() => {
+  //   getMediaStream();
+  //   addStreamToStreamManager();
+  // }, []);
+
+  // const getMediaStream = async () => {
   //   try {
   //     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-  //     if (this.videoRef.current) { // Check if videoRef is not null
-  //       this.videoRef.current.srcObject = stream;
+  //     if (videoRef.current) {
+  //       videoRef.current.srcObject = stream;
   //     } else {
   //       console.error('Error: videoRef is null');
   //     }
   //   } catch (error) {
   //     console.error('Error accessing webcam:', error);
   //   }
-  // }
+  // };
 
-  // async addStreamToStreamManager() {
-  //   const { streamManager } = this.props;
-  //   // if (streamManager && streamManager.addStream) {
+  // const addStreamToStreamManager = () => {
   //   if (streamManager && typeof streamManager.addStream === 'function') {
-  //     streamManager.addStream(this.videoRef.current.srcObject);
+  //     streamManager.addStream(videoRef.current.srcObject);
   //   } else {
   //     console.error('Error: addStream method not found in streamManager');
   //   }
-  // }
+  // };
 
   // 사용자의 닉네임을 가져오는 메서드
-  // getNicknameTag() {
-  //   const { streamManager } = this.props;
+  // const getNicknameTag = () => {
   //   if (streamManager && streamManager.stream) {
   //     return JSON.parse(streamManager.stream.connection.data).clientData;
   //   }
@@ -50,19 +42,26 @@ export default class UserVideoComponent extends Component {
   // }  // 로그인 상태 확인
 
 
-
-
-  render() {
-    return (
+  return (
+    <div>
       <div>
-        <div style={{ width: "50%", height: "100%" }}>
-          <div className="streamcomponent">
-            <OpenViduVideoComponent streamManager={this.props.streamManager} />
-            <div>{/* <p>{this.getNicknameTag()}</p> */}</div>
-          </div>
+        <div className="streamcomponent">
+          <OpenViduVideoComponent streamManager={streamManager} />
         </div>
-        
+
+        <div
+          style={{
+            fontFamily: "Pretendard-Regular",
+            fontSize: "20px",
+            color: "white",
+            margin: "20px",
+          }}
+        >
+          {nickname}
+        </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
+
+export default UserVideoComponent;
