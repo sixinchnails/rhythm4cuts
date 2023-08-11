@@ -11,6 +11,7 @@ import {
   Chat as ChatIcon,
   Check as CheckIcon,
   ExitToApp as ExitToAppIcon,
+  PersonAdd as PersonAddIcon,
 } from "@mui/icons-material";
 import {
   styled,
@@ -79,6 +80,11 @@ function GameWait() {
       backgroundColor: "#1976d2", // 마우스 오버 시 배경색 변경
     },
   });
+
+  const handleAddFriend = () => {
+    // 친구 추가 로직을 여기에 작성
+    console.log("친구 추가 버튼 클릭!");
+  };
 
   // 로그인 상태관리
   useEffect(() => {
@@ -291,6 +297,17 @@ function GameWait() {
     }
   }
 
+  function InviteFriend() {
+    var request = {
+      fromUser: fromUser,
+      toUser: toUser,
+      // roomNumber :
+    };
+    if (stomp.connected) {
+      stomp.send("/public/request", {}, JSON.stringify(request));
+    }
+  }
+
   const leaveSession = () => {
     console.log("--------------------leave session");
     if (connectSession) {
@@ -388,6 +405,13 @@ function GameWait() {
             justifyContent="center"
             style={{ paddingTop: "40px" }}
           >
+            {/* 친구 추가 버튼 */}
+            <StyledIconButton
+              style={{ position: "absolute", top: "100px", right: "40px" }}
+              onClick={handleAddFriend}
+            >
+              <PersonAddIcon />
+            </StyledIconButton>
             {/* "게임준비" 버튼 */}
             <StyledIconButton
               onClick={handleGameReady}
