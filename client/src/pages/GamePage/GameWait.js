@@ -50,17 +50,13 @@ function GameWait() {
 
   const session = useSelector(state => state.roomState.session);
 
-  const [mySessionId, setMySessionId] = useState("SessionA");
-  const [myUserName, setMyUserName] = useState(
-    "Participant" + Math.floor(Math.random() * 100)
-  );
+  const [myUserName, setMyUserName] = useState(undefined);
   const [connectSession, setConnectSession] = useState(undefined);
-  const [mainStreamManager, setMainStreamManager] = useState(undefined);
-  const [publisher, setPublisher] = useState(undefined);
-  const [subscribers, setSubscribers] = useState([]);
 
-  // 통합
-  const [players, setPlayers] = useState([]);
+  const [mainStreamManager, setMainStreamManager] = useState(undefined); // 방장
+  const [publisher, setPublisher] = useState(undefined); // 자신
+  const [subscribers, setSubscribers] = useState([]); // 구독자 
+  const [players, setPlayers] = useState([]);  // 통합
 
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
@@ -106,10 +102,6 @@ function GameWait() {
       });
   }, []);
 
-  const data = userInfo;
-  console.log("1이야 : " + data);
-  console.log("2이야 : " + data.data);
-
   useEffect(() => {
     userInfo()
       .then(res => {
@@ -146,7 +138,6 @@ function GameWait() {
   //   // setConnectSession(undefined);
   //   // setSubscribers([]);
   //   // setMySessionId("SessionA");
-  //   // setMyUserName('Participant' + Math.floor(Math.random() * 100));
   //   // setMainStreamManager(undefined);
   //   // setPublisher(undefined);
   // };
@@ -315,7 +306,6 @@ function GameWait() {
           },
         }
       );
-      console.log("-----------------" + response.data.data.sessionId);
       dispatch(userSession(response.data.data.sessionId));
     } catch (error) {
       console.error("DB에서 세션 id 불러오기 실패:", error);
@@ -341,7 +331,6 @@ function GameWait() {
 
     setConnectSession(undefined);
     setSubscribers([]);
-    setMySessionId("SessionA");
     // setMyUserName('Participant' + Math.floor(Math.random() * 100));
     setMainStreamManager(undefined);
     setPublisher(undefined);
@@ -521,7 +510,6 @@ function GameWait() {
               borderRadius: "20px",
             }}
           >
-
             {/* {players[0] && (
               <UserVideoComponent
                 nickname={nickname}
@@ -541,7 +529,7 @@ function GameWait() {
                 <source src="/videos/33.mp4" type="video/mp4" />
               </video>
             )}
-          </Grid> 
+          </Grid>
 
           {/* Player 2 */}
           <Grid
@@ -586,16 +574,16 @@ function GameWait() {
                 nickname={nickname}
                 streamManager={players[2]}
               />
-            ) : ( 
+            ) : (
               <video autoPlay loop muted style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "20px", }}>
                 <source src="/videos/33.mp4" type="video/mp4" />
               </video>
             )}
           </Grid>
- 
+
           {/* Player 4 */}
           <Grid
-            item 
+            item
             xs={3}
             style={{
               backgroundColor: "transparent",
