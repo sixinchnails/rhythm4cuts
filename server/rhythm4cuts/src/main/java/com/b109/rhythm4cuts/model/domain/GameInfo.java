@@ -77,7 +77,7 @@ public class GameInfo {
         lobbyDto.setPassword(this.getPassword());
 //        lobbyDto.setStatus(this.getRoomStatus());
         lobbyDto.setSessionId(this.getSessionId());
-
+        lobbyDto.setSongTitle(this.getSong().getTitle());
         return lobbyDto;
     }
 
