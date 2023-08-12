@@ -53,6 +53,13 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    public List<String> getUserPhotoList(int userSeq) {
+        List<String> filmUrls = filmRepository.findByUserSeq(userSeq);
+
+        return filmUrls;
+    }
+
+    @Override
     public List<BackgroundDto> getBackgroundList() {
         return null;
     }

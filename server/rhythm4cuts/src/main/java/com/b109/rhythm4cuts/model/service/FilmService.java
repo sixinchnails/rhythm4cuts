@@ -20,4 +20,5 @@ public interface FilmService {
     public void saveFilm(FilmDto filmInfo) throws IOException;
     public Resource downFilm(String filmName) throws Exception;
     public List<Resource> downDailyFilm(int year, int month, int day, int page);
+    public List<String> getUserPhotoList(int userSeq);
 }

@@ -1,7 +1,9 @@
 package com.b109.rhythm4cuts.controller;
 
 import com.b109.rhythm4cuts.model.dto.FilmDto;
+import com.b109.rhythm4cuts.model.dto.UserDto;
 import com.b109.rhythm4cuts.model.service.FilmService;
+import com.b109.rhythm4cuts.model.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -21,6 +23,7 @@ public class FilmController {
     //application properties 수정
     //websecurityconfig 수정
     private final FilmService filmService;
+    private final UserService userService;
 
     // API 1. 데일리 방명록 사진 리스트
     // date: 방명록 조회 날짜 (ex. 2023-07-24)
@@ -46,5 +49,13 @@ public class FilmController {
         // 넘어온 사진 정보를 DB에 저장할 예정
         filmService.saveFilm(filmInfo);
         return ResponseEntity.ok("File uploaded success");
+    }
+
+    @GetMapping("/photo")
+    public ResponseEntity<List<String>> getPhotos(@RequestParam String email) throws IOException {
+        int userSeq = userService.findByEmail(email).getUserSeq();
+        List<String> filmUrls = filmService.getUserPhotoList(userSeq);
+
+        return ResponseEntity.status(200).body(filmUrls);
     }
 }
