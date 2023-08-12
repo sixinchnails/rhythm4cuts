@@ -7,16 +7,19 @@ import axios from "axios";
 import Badge from "@mui/material/Badge";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
+import { useState } from "react";
+import YourModalComponent from "../Common/ConfirmFriend";
 
 const LoginMypageHeader = () => {
   const navigate = useNavigate();
   const access = getCookie("access");
-  const { hasNotification, resetNotification } = useWebSocket();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { hasNotification, resetNotification, friendRequest } = useWebSocket();
 
   const onNotificationClick = () => {
     // 알림을 클릭하면 알림 상태를 초기화
     resetNotification();
-    // ... 원하는 로직 실행 ...
+    setIsModalOpen(true); // 모달 열기
   };
 
   const checkLogin = async () => {
@@ -70,6 +73,12 @@ const LoginMypageHeader = () => {
           Logout
         </Link>
       </div>
+      {isModalOpen && friendRequest && (
+        <YourModalComponent
+          friendRequest={friendRequest}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

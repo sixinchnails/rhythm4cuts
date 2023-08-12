@@ -80,18 +80,27 @@ function CreateRoom({ isOpen, handleClose }) {
   };
 
   const handleCreateRoom = async () => {
+    // 1. 사용자가 선택한 노래 제목의 유효성 검사
+    const songExists = allSongs.some(song => song.songSeq === songSeq);
+
+    if (!songExists) {
+      // 2. 유효성 검사가 실패하면 모달 알림창을 표시
+      alert("노래 제목을 확인해주세요!");
+      return;
+    }
+
+    // 3. 유효성 검사가 통과되면 방을 만듭니다.
     try {
-      const sessionResponse = await createSession(); // 세션 id 만들기
+      const sessionResponse = await createSession();
       if (sessionResponse != null) {
-        // 방 정보를 서버로 전송하는 Axios 요청
         const response = await axios.post(
           "https://i9b109.p.ssafy.io:8443/lobby/room",
           {
-            title: title, // 방 제목
-            songSeq: songSeq, // 노래제목 (일련번호 : 검색 예정)
-            isSecret: isSecret === "비밀 방" ? 1 : 0, // 방 모드 (일반 vs 비밀)
-            password: password, // 비밀번호
-            sessionId: sessionResponse.id, // 세션 아이디
+            title: title,
+            songSeq: songSeq,
+            isSecret: isSecret === "비밀 방" ? 1 : 0,
+            password: password,
+            sessionId: sessionResponse.id,
           },
           {
             headers: {
@@ -101,10 +110,8 @@ function CreateRoom({ isOpen, handleClose }) {
         );
         console.log("방 만들어졌습니다~ 세션아이디 : " + sessionResponse.id);
         console.log("방 만들어졌습니다~ gameseq : ", response.data.data);
-        dispatch(setSession(sessionResponse.id)); // 방 session 정보를 넘기기위해
-        dispatch(setGameseq(response.data.data)); // 방 gameseq 정보를 넘기기위해
-
-        // 방 생성 후 해당 방으로 이동
+        dispatch(setSession(sessionResponse.id));
+        dispatch(setGameseq(response.data.data));
         navigate(`/GameWait/${response.data.data}`);
       }
     } catch (error) {

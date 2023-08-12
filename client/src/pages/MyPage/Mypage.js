@@ -15,7 +15,7 @@ import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 const Mypage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
+  // const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
 
   const handleOpenSearchPasswordModal = () => {
     setIsModalOpen(true);
@@ -59,7 +59,8 @@ const Mypage = () => {
   }
 
   useEffect(() => {
-    connectWebSocket();
+    console.log("연결");
+    // connectWebSocket();
   }, []);
 
   return (

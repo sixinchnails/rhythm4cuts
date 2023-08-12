@@ -44,17 +44,20 @@ function AddFriend({ isOpen, handleClose }) {
     console.log(error);
   }
 
-  useEffect(() => {
-    stomp.connect({}, () => {
-      console.log("connected");
-      if (fromUser) {
-        console.log("Subscribing to user:", fromUser);
-        stomp.subscribe(`/subscribe/friend/${fromUser}`, () => {
-          // alert("친구 요청 옴");
-        });
-      }
-    });
-  }, [fromUser]);
+  // useEffect(() => {
+  //   if (!stomp.conneted) {
+  //     console.log("연결 안됨.");
+  //     stomp.connect({}, () => {
+  //       console.log("connected");
+  //       if (fromUser) {
+  //         console.log("Subscribing to user:", fromUser);
+  //         stomp.subscribe(`/subscribe/friend/${fromUser}`, () => {
+  //           // alert("친구 요청 옴");
+  //         });
+  //       }
+  //     });
+  //   }
+  // }, [fromUser]);
 
   useEffect(() => {
     if (debouncedFriendNickname) {
@@ -97,7 +100,10 @@ function AddFriend({ isOpen, handleClose }) {
       fromUser: fromUser,
       toUser: toUser,
     };
+    console.log("보내기 직전입니다.");
+    console.log(stomp.connected);
     if (stomp.connected) {
+      console.log("보냈습니다.");
       stomp.send("/public/request", {}, JSON.stringify(request));
     }
   }
