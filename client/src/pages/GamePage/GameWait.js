@@ -509,7 +509,7 @@ function GameWait() {
               // border: "2px solid white",
               borderRadius: "20px",
             }}
-          >  
+          >
             {/* {players[0] && (
               <UserVideoComponent
                 nickname={nickname}
