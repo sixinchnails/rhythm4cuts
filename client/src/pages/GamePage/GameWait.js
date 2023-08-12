@@ -41,12 +41,10 @@ function GameWait() {
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
   const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate(); // 페이지 이동
-  const [nickname, setNickname] = useState(undefined);
 
   var { gameSeq } = useParams(); // url에서 추출
 
   dispatch(setGameseq(gameSeq));
-  // const gameSeq = useSelector(state => state.roomState.gameseq);
 
   const session = useSelector(state => state.roomState.session);
 
@@ -68,6 +66,7 @@ function GameWait() {
   };
 
   const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
+  const [isSessionJoined, setSessionJoined] = useState(false); // 세션에 참여했는지 여부
 
   // Styled 버튼 ( css )
   const StyledIconButton = styled(IconButton)({
@@ -79,11 +78,6 @@ function GameWait() {
       backgroundColor: "#1976d2", // 마우스 오버 시 배경색 변경
     },
   });
-
-  const handleAddFriend = () => {
-    // 친구 추가 로직을 여기에 작성
-    console.log("친구 추가 버튼 클릭!");
-  };
 
   // 로그인 상태관리
   useEffect(() => {
@@ -117,59 +111,94 @@ function GameWait() {
       });
   }, [gameSeq]);
 
-
   // 페이지 떠날 때 이벤트 리스너 등록 및 해제
   useEffect(() => {
+    // beforeunload는 웹 브라우저에서 발생하는 이벤트 중 하나로, 사용자가 현재 페이지를 떠날 때 발생하는 이벤트
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => {
       window.removeEventListener("beforeunload", onBeforeUnload);
     };
   }, []);
 
-  const onBeforeUnload = () => {
-    leaveSession();
-  };
+  // 시작 -----------------------------------------------------------------------------------------------------
+  // 유저 토큰 발급
+  async function getToken() {
+    let res = await fetchConnectionToken();
+    return res["connectionToken"];
+  }
 
-  // const leaveSession = () => {
-  //   if (connectSession) {
-  //     connectSession.disconnect();
-  //   }
+  async function fetchConnectionToken() {
+    try {
+      await fetchSession();
 
-  //   // setConnectSession(undefined);
-  //   // setSubscribers([]);
-  //   // setMySessionId("SessionA");
-  //   // setMainStreamManager(undefined);
-  //   // setPublisher(undefined);
-  // };
+      return await createConnection();
+    } catch (error) {
+      console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
+    }
+  }
 
-  // ------------------------------------------------------------------------------------------------------------------
-  let MAX_PLAYERS = 40; // 4
+  const access = getCookie("access");
 
+  // 방 세션 가져오기
+  async function fetchSession() {
+    try {
+
+      // 방 인원수 Axios 1. 들어올때, 인원 수 추가하기 ( 4명 초과면 아웃! )
+      try {
+        await axios.get(
+          `https://i9b109.p.ssafy.io:8443/lobby/room/${gameSeq}`,
+          {
+            headers: {
+              Authorization: "Bearer " + access,
+            },
+          }
+        );
+      } catch (error) {
+        window.alert("방인원수가 초과되었습니다. 게임 리스트 페이지로 이동합니다. ");
+        navigate(`/GameList`);
+      }
+
+      // 방 세션 DB에서 가져오기 
+      const response = await axios.get(
+        `https://i9b109.p.ssafy.io:8443/wait/info/${gameSeq}`,
+        {
+          headers: {
+            Authorization: "Bearer " + access,
+          },
+        }
+      );
+
+      dispatch(userSession(response.data.data.sessionId));
+    } catch (error) {
+      console.error("DB에서 세션 id 불러오기 실패:", error);
+    }
+  }
+
+  // ------------------------------------------------------------------------------------------------------------
   useEffect(() => {
-    if (players.length >= MAX_PLAYERS) {
-      window.alert("잘못된 접근 경로입니다.");
-      navigate("/");
-    } else {
+    if (!isSessionJoined) { // 세션에 참여하지 않았을 때만 실행
       const joinSessionTimeout = setTimeout(() => {
         joinSession();
-      }, 3000);
+      }, 2000);
 
       return () => clearTimeout(joinSessionTimeout);
     }
-  }, []);
+  }, [isSessionJoined]);
 
-  // players 배열의 길이가 항상 4로 유지되도록 조절
-
+  // --------------------------------------------------------------------------------------------------------------
   const joinSession = async () => {
     try {
-      fetchNickname();
+
+      if (connectSession) {
+        console.log("이미 세션에 참여한 경우 중복 호출 방지");
+        return;
+      }
 
       const ov = new OpenVidu();
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
       newSession.on("streamCreated", event => {
-        // 인원 수 제한 : subscribers.length = 방장을 제외한 수
         const subscriber = newSession.subscribe(event.stream, undefined);
         setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
 
@@ -204,26 +233,38 @@ function GameWait() {
             mirror: false,
           });
 
+          //--------------------------
+
+          // <<Before>>
+          //   newSession.publish(newPublisher);
+
+          //   const devices = await ov.getDevices();
+          //   const videoDevices = devices.filter(
+          //     device => device.kind === "videoinput"
+          //   );
+          //   const currentVideoDeviceId = newPublisher.stream
+          //     .getMediaStream()
+          //     .getVideoTracks()[0]
+          //     .getSettings().deviceId;
+          //   const currentVideoDevice = videoDevices.find(
+          //     device => device.deviceId === currentVideoDeviceId
+          //   );
+
+          //   setMainStreamManager(newPublisher);
+          //   setPublisher(newPublisher);
+
+          //   if (players.length === 0) { // 방장을 플레이어 스트림 추가
+          //     setPlayers(prevPlayers => [...prevPlayers, newPublisher]);
+          //   }
+
+          // <<After>>
           newSession.publish(newPublisher);
 
-          const devices = await ov.getDevices();
-          const videoDevices = devices.filter(
-            device => device.kind === "videoinput"
-          );
-          const currentVideoDeviceId = newPublisher.stream
-            .getMediaStream()
-            .getVideoTracks()[0]
-            .getSettings().deviceId;
-          const currentVideoDevice = videoDevices.find(
-            device => device.deviceId === currentVideoDeviceId
-          );
-
-          setMainStreamManager(newPublisher);
           setPublisher(newPublisher);
+          setMainStreamManager(newPublisher);
+          setPlayers(prevPlayers => [...prevPlayers, newPublisher]);
 
-          if (players.length === 0) {
-            setPlayers(prevPlayers => [...prevPlayers, newPublisher]); // 플레이어 스트림 추가 // 맨 처음 등록
-          }
+          //--------------------------
         })
         .catch(error => {
           console.log(
@@ -236,82 +277,14 @@ function GameWait() {
       console.error("Error joining session:", error);
     }
   };
-  console.log("방 인원수 : " + players.length);
-  // ------------------------------------------------------------------------------------------------------------------
 
-  // "게임 준비" 버튼을 클릭했을 때 동작
-  function handleGameReady() {
-    dispatch(userSession(session));
-    dispatch(setConnection(connection));
-    navigate(`/GamePlay/${gameSeq}`);
-  }
-
-  // "채팅" 버튼을 클릭했을 때 동작
-  const handleChat = () => { };
-
-  // "나가기" 버튼 눌렀을 때 동작
-  const handleExit = () => {
-    // axios 인원 수 줄이기
-    onBeforeUnload();
-    console.log("방 나갈거야 ~");
-    navigate(`/GameList`);
+  // "친구 초대" 버튼을 눌렀을 때 동작 ------------------------------------------------------------------------------
+  const handleAddFriend = () => {
+    console.log("친구 초대 버튼 클릭!");
+    InviteFriend();
   };
 
-  // 유저 닉네임 가져오기 : 리덕스 저장 => 나중에 로그인 페이지에서 처리
-  async function fetchNickname() {
-    try {
-      const email = getCookie("email");
-      const access = getCookie("access");
-      const response = await axios.get(
-        "https://i9b109.p.ssafy.io:8443/member/info?email=" + email,
-        {
-          headers: {
-            Authorization: "Bearer " + access,
-          },
-        }
-      );
-      setNickname(response.data.nickname);
-    } catch (error) {
-      console.log("유저 닉네임 불러오기 실패");
-    }
-  }
-
-  // 방 세션 발급
-  async function getToken() {
-    let res = await fetchConnectionToken();
-    return res["connectionToken"];
-  }
-
-  // 유저 토큰 발급
-  async function fetchConnectionToken() {
-    try {
-      await fetchSession();
-
-      return await createConnection();
-    } catch (error) {
-      console.error("연결 토큰을 가져오는데 실패하였습니다:", error);
-    }
-  }
-
-  // 유저 커넥션 발급
-  async function fetchSession() {
-    try {
-      const access = getCookie("access");
-
-      const response = await axios.get(
-        `https://i9b109.p.ssafy.io:8443/wait/info/${gameSeq}`,
-        {
-          headers: {
-            Authorization: "Bearer " + access,
-          },
-        }
-      );
-      dispatch(userSession(response.data.data.sessionId));
-    } catch (error) {
-      console.error("DB에서 세션 id 불러오기 실패:", error);
-    }
-  }
-
+  // 친구 초대
   function InviteFriend() {
     var request = {
       fromUser: fromUser,
@@ -323,23 +296,60 @@ function GameWait() {
     }
   }
 
+  // "게임 준비" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
+  function handleGameReady() {
+    dispatch(userSession(session));
+    dispatch(setConnection(connection));
+    navigate(`/GamePlay/${gameSeq}`);
+  }
+
+  // "채팅" 버튼을 클릭했을 때 동작 ---------------------------------------------------------------------------------
+  const handleChat = () => { };
+
+  // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
+  const handleExit = () => {
+    onBeforeUnload();
+    console.log("방 나갈거야 ~");
+
+    navigate(`/GameList`);
+  };
+
+  const onBeforeUnload = () => {
+    leaveSession();
+  };
+
+  // 방에서 나갈때 ㅣ 수정 필요 
   const leaveSession = () => {
     console.log("--------------------leave session");
-    if (connectSession) {
-      connectSession.disconnect();
+    // 방 인원수 Axios 2. 나갈때  axios 인원 수 줄이기
+    axios.get(
+      `https://i9b109.p.ssafy.io:8443/lobby/room/exit/${gameSeq}`,
+      {
+        headers: {
+          Authorization: "Bearer " + access,
+        },
+      }
+    );
+
+    // 나가는 플레이어를 찾아서 배열에서 제거
+    const updatedPlayers = players.filter(player => player !== publisher);
+    // 상태 업데이트
+    setPlayers(updatedPlayers); // 나간 플레이어를 제외한 플레이어 목록으로 상태 업데이트
+
+
+    // 구독 중인 스트림 해제
+    subscribers.forEach(subscriber => subscriber.unsubscribe());
+
+    if (publisher) {
+      // 자신의 스트림 해제
+      if (publisher.stream && typeof publisher.stream.dispose === "function") {
+        publisher.stream.dispose();
+      }
     }
 
-    setConnectSession(undefined);
-    setSubscribers([]);
-    // setMyUserName('Participant' + Math.floor(Math.random() * 100));
-    setMainStreamManager(undefined);
-    setPublisher(undefined);
-
-    useEffect(() => {
-      if (!connectSession) {
-        joinSession();
-      }
-    }, [connectSession]);
+    if (connectSession) {
+      connectSession.disconnect(); // 현재 유저 커넥션 연결을 끊음
+    }
   };
 
   return (
@@ -512,7 +522,6 @@ function GameWait() {
           >
             {/* {players[0] && (
               <UserVideoComponent
-                nickname={nickname}
                 streamManager={players[0]}
               // streamManager={publisher}
               // streamManager={subscribers[0]}
@@ -521,7 +530,6 @@ function GameWait() {
             )} */}
             {players[0] ? (
               <UserVideoComponent
-                nickname={nickname}
                 streamManager={players[0]}
               />
             ) : (
@@ -546,7 +554,6 @@ function GameWait() {
           >
             {players[1] ? (
               <UserVideoComponent
-                nickname={nickname}
                 streamManager={players[1]}
               />
             ) : (
@@ -571,7 +578,6 @@ function GameWait() {
           >
             {players[2] ? (
               <UserVideoComponent
-                nickname={nickname}
                 streamManager={players[2]}
               />
             ) : (
@@ -596,7 +602,6 @@ function GameWait() {
           >
             {players[3] ? (
               <UserVideoComponent
-                nickname={nickname}
                 streamManager={players[3]}
               />
             ) : (
