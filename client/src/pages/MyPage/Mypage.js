@@ -1,5 +1,5 @@
 // Mypage.js
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/My/My_SideBar";
 import "./Mypage.css";
@@ -10,9 +10,12 @@ import LoginMypageHeader from "../../components/Home/BlackHeader";
 import MainContent from "../../components/My/My_MainContent"; // MainContent 컴포넌트를 import
 import UserInfo from "../../components/My/My_UserInfo"; // UserInfo 컴포넌트를 import
 import Button from "@mui/material/Button";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 const Mypage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
 
   const handleOpenSearchPasswordModal = () => {
     setIsModalOpen(true);
@@ -39,7 +42,7 @@ const Mypage = () => {
   // 로그인 상태 확인
   try {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           setNickName(res.data.nickname);
           setName(res.data.name);
@@ -47,13 +50,17 @@ const Mypage = () => {
           setPhoto(res.data.profile_img_seq);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         navigate("/");
         window.alert("로그인을 해주세요!");
       });
   } catch (error) {
     console.log(error);
   }
+
+  useEffect(() => {
+    connectWebSocket();
+  }, []);
 
   return (
     <div

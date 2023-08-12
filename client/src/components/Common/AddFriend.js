@@ -50,7 +50,7 @@ function AddFriend({ isOpen, handleClose }) {
       if (fromUser) {
         console.log("Subscribing to user:", fromUser);
         stomp.subscribe(`/subscribe/friend/${fromUser}`, () => {
-          alert("친구 요청 옴");
+          // alert("친구 요청 옴");
         });
       }
     });

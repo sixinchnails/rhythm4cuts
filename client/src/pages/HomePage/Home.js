@@ -137,6 +137,7 @@ function Home() {
 
   useEffect(() => {
     fetchUserRank();
+    connectWebSocket();
   }, []);
 
   // 유저 개수 컨트롤러

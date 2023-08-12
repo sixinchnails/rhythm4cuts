@@ -26,7 +26,7 @@ export function WebSocketProvider({ children }) {
           if (res.data.user_seq !== null) {
             socket = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
             const stomp = Stomp.over(socket);
-
+            console.log(res.data.user_seq + "연결 후");
             socket.onclose = () => {
               console.error("웹소켓 연결이 끊어졌습니다. 재연결을 시도합니다.");
               if (!reconnectInterval) {
@@ -43,6 +43,7 @@ export function WebSocketProvider({ children }) {
               if (fromUser) {
                 stomp.subscribe(`/subscribe/friend/${fromUser}`, message => {
                   setMessages(prev => [...prev, message.body]);
+                  window.alert("친추옴");
                   setHasNotification(true); // 알림 상태 업데이트
                 });
                 stomp.subscribe(`/subscribe/game/${fromUser}`, message => {
