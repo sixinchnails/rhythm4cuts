@@ -43,6 +43,7 @@ export function WebSocketProvider({ children }) {
               if (fromUser) {
                 stomp.subscribe(`/subscribe/friend/${fromUser}`, message => {
                   setMessages(prev => [...prev, message.body]);
+                  window.alert("친추옴");
                   setHasNotification(true); // 알림 상태 업데이트
                 });
                 stomp.subscribe(`/subscribe/game/${fromUser}`, message => {
