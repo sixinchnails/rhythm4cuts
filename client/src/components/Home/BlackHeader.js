@@ -14,7 +14,7 @@ const LoginMypageHeader = () => {
   const navigate = useNavigate();
   const access = getCookie("access");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { hasNotification, resetNotification, friendRequest } = useWebSocket();
+  const { hasNotification, resetNotification, friendRequest } = useWebSocket(); // 여기서 friendRequest 가져옴
 
   const onNotificationClick = () => {
     // 알림을 클릭하면 알림 상태를 초기화

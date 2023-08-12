@@ -16,7 +16,8 @@ const MyFriend = () => {
   const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
 
   useEffect(() => {
-    // connectWebSocket();
+    connectWebSocket();
+    console.log("WebSocket attempted to connect");
   }, []);
 
   try {

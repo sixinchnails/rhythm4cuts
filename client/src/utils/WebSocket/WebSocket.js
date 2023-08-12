@@ -19,7 +19,14 @@ export function WebSocketProvider({ children }) {
   let reconnectInterval;
 
   const connectWebSocket = useCallback(() => {
-    if (!socket) {
+    if (socket && socket.connected) {
+      console.log("WebSocket is already connected");
+    } else {
+      console.log("Attempting to connect to WebSocket");
+      // ... (이후의 연결 코드)
+    }
+
+    if (!socket || !socket.connected) {
       // 먼저 사용자 정보를 가져옵니다.
       userInfo()
         .then(res => {
@@ -29,7 +36,6 @@ export function WebSocketProvider({ children }) {
             socket = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
             const stomp = Stomp.over(socket);
             console.log(res.data.user_seq + "연결 후");
-            console.log(stomp.connected);
             socket.onclose = () => {
               console.error("웹소켓 연결이 끊어졌습니다. 재연결을 시도합니다.");
               if (!reconnectInterval) {
@@ -46,7 +52,6 @@ export function WebSocketProvider({ children }) {
               if (fromUser) {
                 stomp.subscribe(`/subscribe/friend/${fromUser}`, message => {
                   setMessages(prev => [...prev, message.body]);
-                  // window.alert("친추옴");
                   setHasNotification(true);
                   setFriendRequest(message.body); // 여기서 메시지 내용 저장
                 });
@@ -110,7 +115,7 @@ export function WebSocketProvider({ children }) {
     disconnectWebSocket,
     hasNotification, // 알림 상태
     resetNotification, // 알림 초기화 함수
-    friendRequest, // 친구 요청 정보
+    friendRequest,
   };
 
   return (
