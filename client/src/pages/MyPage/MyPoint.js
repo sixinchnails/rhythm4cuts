@@ -14,7 +14,7 @@ const MyPoint = () => {
 
   const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
 
-  //포인트
+  // 보유 포인트
   const [point, setPoint] = useState("");
 
   const navigate = useNavigate();
