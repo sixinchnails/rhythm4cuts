@@ -39,7 +39,7 @@ public class MusicService {
         }
     }
 
-    public void saveMusic(String youtubeId) {
+    public void saveMusic(String youtubeId, String url) {
 
         String paramName = "v";                                  // 파라미터 이름
         String paramValue = extractQueryString(youtubeId, paramName);  // 파라미터 값
@@ -70,8 +70,8 @@ public class MusicService {
 
             song.setTitle(Content[0].substring(0, Content[0].length() - 1));         // 제목 입력
             song.setSinger(Content[1].substring(1, Content[1].length() - 1));        // 가수 입력
-//            song.setUrl(url);                                                        // 영상 url 입력
-            song.setYoutube_id(id);                                                  // 유튜브 동영상 ID값 입력
+            song.setUrl(url);                                                        // 영상 url 입력
+            song.setYoutubeId(id);                                                  // 유튜브 동영상 ID값 입력
 
             musicRepository.save(song);
         }

@@ -30,4 +30,16 @@ public class StompController {
         friendDto.setMessage(friendDto.getFromUser() + "님이 " + friendDto.getToUser() + "님에게 친구 요청을 보냇습니다.");
         messagingTemplate.convertAndSend("/subscribe/friend/invite" + friendDto.getToUser(), friendDto);
     }
+
+    @MessageMapping(value = "/song")
+    public void startSong(FriendDto friendDto) {
+        System.out.println(friendDto.getGameSeq()+"에서 노래를 시작합니다.");
+        messagingTemplate.convertAndSend("/subscribe/song" + friendDto.getGameSeq(), friendDto);
+    }
+
+    @MessageMapping(value = "/mr")
+    public void startMR(FriendDto friendDto) {
+        System.out.println(friendDto.getGameSeq()+"에서 MR을 시작합니다.");
+        messagingTemplate.convertAndSend("/subscribe/MR" + friendDto.getGameSeq(), friendDto);
+    }
 }

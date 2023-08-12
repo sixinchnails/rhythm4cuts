@@ -18,11 +18,11 @@ public class MusicController {
 
     private final MusicService musicService;
 
-    // API 1. 영상 url과 Youtube Link를 통해 영상 id값, 제목, 가수 추출 메서드
+    // API 1. 영상 url를 저장하고 Youtube Link를 통해 영상 id값, 제목, 가수 추출하여 저장하는 메서드
     @PostMapping("/add")
     public ResponseEntity<?> addYoutubeMusic(@RequestBody SongDto songDto) {
         try {
-            musicService.saveMusic(songDto.getYoutube_id());
+            musicService.saveMusic(songDto.getYoutubeId(), songDto.getUrl());
             return new ResponseEntity<>("Success", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Fail", HttpStatus.INTERNAL_SERVER_ERROR);
