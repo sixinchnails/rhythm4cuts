@@ -212,7 +212,7 @@ function UserInfo(props) {
               <span className="modify-value">{props.nickName}</span>
               <Button
                 className="modify-value-button"
-                style={{ left: "170px", fontWeight: "bolder" }}
+                style={{ left: "100px", fontWeight: "bolder" }}
                 sx={{ color: "white", ":hover": { color: "blue" } }}
                 onClick={() => setNicknameEdit(!nicknameEdit)}
               >
@@ -274,7 +274,7 @@ function UserInfo(props) {
 
               <Button
                 className="modify-value-button"
-                style={{ left: "160px", fontWeight: "bolder" }}
+                style={{ left: "90px", fontWeight: "bolder" }}
                 sx={{ color: "white", ":hover": { color: "blue" } }}
                 onClick={() => setPasswordEdit(!passwordEdit)}
               >
@@ -312,7 +312,9 @@ function UserInfo(props) {
                     width: "600px",
                   }}
                 >
-                  <span className="modify-password-name">새 비밀번호</span>
+                  <span className="modify-password-name">
+                    &nbsp;&nbsp;새 비밀번호&nbsp;&nbsp;
+                  </span>
                   <input
                     type="password"
                     className="modify-input"
