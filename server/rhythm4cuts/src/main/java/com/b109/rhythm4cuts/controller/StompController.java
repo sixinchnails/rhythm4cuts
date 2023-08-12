@@ -1,6 +1,5 @@
 package com.b109.rhythm4cuts.controller;
 
-import com.b109.rhythm4cuts.model.domain.GameInfo;
 import com.b109.rhythm4cuts.model.dto.FriendDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;

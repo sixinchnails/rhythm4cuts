@@ -88,6 +88,8 @@ public class DummyDataInitializer {
         user.setEmail("ssafy@naver.com");
         user.setProfileImage(profileImage1);
         user.setGender("M");
+        user.setPoint(1000);
+        user.setScoreSum(7000);
         user.setPassword(bCryptPasswordEncoder.encode("1234"));
 
         userRepository.save(user);

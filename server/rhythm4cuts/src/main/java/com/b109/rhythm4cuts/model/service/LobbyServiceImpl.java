@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.model.service;
 
+import com.b109.rhythm4cuts.exception.RoomFullException;
 import com.b109.rhythm4cuts.model.domain.GameInfo;
 import com.b109.rhythm4cuts.model.domain.Song;
 import com.b109.rhythm4cuts.model.dto.LobbyDto;
@@ -79,5 +80,26 @@ public class LobbyServiceImpl implements LobbyService {
     @Override
     public void updateConnectionId(UserDto userDto) throws SQLException {
         lobbyRepository.putConnectionId(userDto);
+    }
+
+    @Override
+    public void enterRoom(int gameSeq) throws Exception {
+        GameInfo gameInfo = lobbyRepository.selectSeqLobby(gameSeq);
+        if(gameInfo.getHeadCount()>3) {
+            throw new RoomFullException("방이 다 찼습니다.");
+        }
+        int headCount = gameInfo.getHeadCount();
+        gameInfo.setHeadCount(headCount + 1);
+    }
+
+    @Override
+    public void exitRoom(int gameSeq) throws Exception {
+        GameInfo gameInfo = lobbyRepository.selectSeqLobby(gameSeq);
+        int headCount = gameInfo.getHeadCount();
+        gameInfo.setHeadCount(headCount - 1);
+        if(gameInfo.getHeadCount() == -1) {
+            lobbyRepository.deleteById(gameSeq);
+        }
+
     }
 }
