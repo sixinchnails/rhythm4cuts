@@ -311,7 +311,6 @@ function GameWait() {
     onBeforeUnload();
     console.log("방 나갈거야 ~");
 
-    navigate(`/GameList`);
   };
 
   const onBeforeUnload = () => {
@@ -330,6 +329,8 @@ function GameWait() {
         },
       }
     );
+    
+    navigate(`/GameList`);
 
     // 나가는 플레이어를 찾아서 배열에서 제거
     const updatedPlayers = players.filter(player => player !== publisher);
