@@ -310,7 +310,6 @@ function GameWait() {
   const handleExit = () => {
     onBeforeUnload();
     console.log("방 나갈거야 ~");
-
     navigate(`/GameList`);
   };
 
@@ -321,7 +320,8 @@ function GameWait() {
   // 방에서 나갈때 ㅣ 수정 필요 
   const leaveSession = () => {
     console.log("--------------------leave session");
-    // 방 인원수 Axios 2. 나갈때  axios 인원 수 줄이기
+
+    // 방 인원수 줄이는 요청 보내기
     axios.get(
       `https://i9b109.p.ssafy.io:8443/lobby/room/exit/${gameSeq}`,
       {
@@ -331,26 +331,24 @@ function GameWait() {
       }
     );
 
-    // 나가는 플레이어를 찾아서 배열에서 제거
+    // 나가는 플레이어를 배열에서 제거하고 상태 업데이트
     const updatedPlayers = players.filter(player => player !== publisher);
-    // 상태 업데이트
-    setPlayers(updatedPlayers); // 나간 플레이어를 제외한 플레이어 목록으로 상태 업데이트
+    setPlayers(updatedPlayers);
 
 
+    // 자신의 스트림 해제
+    if (typeof publisher.stream.dispose === "function") {
+      publisher.stream.dispose();
+    }
     // 구독 중인 스트림 해제
     subscribers.forEach(subscriber => subscriber.unsubscribe());
 
-    if (publisher) {
-      // 자신의 스트림 해제
-      if (publisher.stream && typeof publisher.stream.dispose === "function") {
-        publisher.stream.dispose();
-      }
-    }
-
+    // 현재 유저 커넥션 연결 끊기
     if (connectSession) {
-      connectSession.disconnect(); // 현재 유저 커넥션 연결을 끊음
+      connectSession.disconnect();
     }
   };
+
 
   return (
     <div
@@ -366,7 +364,7 @@ function GameWait() {
       <Header />
 
       <Grid container>
-   
+
         {/* TOP */}
         <Grid container>
           {/* Top : LEFT */}
