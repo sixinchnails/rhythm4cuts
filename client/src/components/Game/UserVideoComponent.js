@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
-import OpenViduVideoComponent from './OvVideo';
+import React, { Component } from "react";
+import OpenViduVideoComponent from "./OvVideo";
 
 export default class UserVideoComponent extends Component {
-
   // constructor(props) {
   //   super(props);
   //   // 비디오 요소를 저장할 Ref 생성
@@ -29,7 +28,6 @@ export default class UserVideoComponent extends Component {
   //   }
   // }
 
-
   // async addStreamToStreamManager() {
   //   const { streamManager } = this.props;
   //   // if (streamManager && streamManager.addStream) {
@@ -54,9 +52,7 @@ export default class UserVideoComponent extends Component {
       <div style={{ width: "100%", height: "100%" }}>
         <div className="streamcomponent">
           <OpenViduVideoComponent streamManager={this.props.streamManager} />
-          <div>
-            {/* <p>{this.getNicknameTag()}</p> */}
-          </div>
+          <div>{/* <p>{this.getNicknameTag()}</p> */}</div>
         </div>
       </div>
     );

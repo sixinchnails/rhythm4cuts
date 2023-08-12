@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Modal,
   Box,
@@ -7,9 +6,10 @@ import {
   CardContent,
   CardActions,
 } from "@mui/material";
-import FriendListInvite from "../Game/FriendListInvite";
+import { React, useState } from "react";
 import { useSelector } from "react-redux";
 import { styled } from "@mui/system";
+import FriendListInvite from "../Game/FriendListInvite";
 import AddFriend from "./AddFriend"; // 'AddFriend' 모달 컴포넌트를 import 합니다.
 
 const CustomCard = styled(Card)({
@@ -32,7 +32,7 @@ function CreateRoom({ isOpen, handleClose }) {
   const handleOpenAddFriendModal = () => setIsAddFriendModalOpen(true);
   const handleCloseAddFriendModal = () => setIsAddFriendModalOpen(false);
 
-  let friends = useSelector(state => state.GameList_Friend); // 친구 리스트
+  let friends = useSelector((state) => state.GameList_Friend); // 친구 리스트
 
   return (
     <>
@@ -45,22 +45,22 @@ function CreateRoom({ isOpen, handleClose }) {
             justifyContent: "center",
             height: "100vh",
             overflow: "auto",
-            
-          }}>
-            
+          }}
+        >
           <CustomCard>
             {/* 친구추가 모달연결 */}
             <CardActions sx={{ justifyContent: "center" }}>
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleOpenAddFriendModal}>
+                onClick={handleOpenAddFriendModal}
+              >
                 친구 추가
               </Button>
             </CardActions>
 
             {/* 친구 리스트 */}
-            <StyledCardContent sx={{ height: "70%", margin: "5%"}}>
+            <StyledCardContent sx={{ height: "70%", margin: "5%" }}>
               <FriendListInvite friends={friends} />
             </StyledCardContent>
 

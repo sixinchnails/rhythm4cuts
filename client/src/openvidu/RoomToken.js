@@ -1,6 +1,6 @@
 // RoomToken.js
-import { createSession } from "./sessionInitialization";
 import { createConnection } from "./connectionInitialization";
+import { createSession } from "./sessionInitialization";
 
 export const createRoom = async (gameSeq) => {
   try {

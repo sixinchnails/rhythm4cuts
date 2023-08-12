@@ -1,16 +1,9 @@
-/* eslint-disable */
-import React, { useEffect, useRef, useState } from "react";
+import { React, useEffect, useState } from "react";
 import "./My_JoinInfo.css";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
-import {
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-} from "@mui/material";
+import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
 
 const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
   const [name, setName] = useState("");
@@ -20,7 +13,6 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState(""); // 비밀번호 확인을 위한 상태 추가
   const [isPasswordValid, setIsPasswordValid] = useState(false); // 비밀번호 유효성 상태
-  const [birth, setbirth] = useState("");
   const [nickname, setnickname] = useState("");
   const [nickNameStatus, setNickNameStatus] = useState(false);
   const [gender, setgender] = useState("");
@@ -64,23 +56,6 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
   ]);
 
   // 상태가 변경될 때마다 콜백 함수를 호출
-
-  const genderRef = useRef(); // ref를 생성합니다.
-  const nicknameRef = useRef(); // ref를 생성합니다.
-  const handleBirthChange = (e) => {
-    setbirth(e.target.value);
-    if (e.target.value.length >= 6) {
-      // 입력 값의 길이가 6 이상이면
-      genderRef.current.focus(); // gender 입력 필드로 초점을 이동합니다.
-    }
-  };
-  const handleGenderChange = (e) => {
-    setgender(e.target.value);
-    if (e.target.value.length >= 1) {
-      // 입력 값의 길이가 6 이상이면
-      nicknameRef.current.focus(); // gender 입력 필드로 초점을 이동합니다.
-    }
-  };
 
   //이메일 코드 전송
   const emailCheck = async () => {
@@ -129,6 +104,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
       return (
         <img
           src={"/images/체크.png"}
+          alt="확인 사진"
           style={{
             width: "40px",
             height: "40px",
@@ -168,6 +144,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
       return (
         <img
           src={"/images/체크.png"}
+          alt="확인 사진"
           style={{
             width: "40px",
             height: "40px",

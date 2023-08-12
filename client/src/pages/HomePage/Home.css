@@ -111,6 +111,13 @@ body {
 .Home2 > .content > .rules {
   width: 37vw;
   height: 75vh;
+  background-image: url("../../../public/images/9.jpg");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
 }
 
 .Home2 > .content > .rules > img {
@@ -209,7 +216,18 @@ body {
 
 .Home3 > .content > .rank2 > .total_rank > .nickname {
   height: 5%;
-  width: 79%;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  margin: 1%;
+  color: white;
+  justify-content: center;
+  font-weight: bolder;
+}
+
+.Home3 > .content > .rank2 > .total_rank > .nickname > div {
+  height: 5%;
+  width: 75%;
   display: flex;
   align-items: flex-end;
   margin: 1%;
