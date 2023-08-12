@@ -31,7 +31,6 @@ const MyPoint = () => {
         if (res.status === 200) {
           setPoint(res.data.point);
           setPointSum(res.data.score_sum);
-          console.log(res);
         }
       })
       .catch(error => {
