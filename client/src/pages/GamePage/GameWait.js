@@ -366,27 +366,6 @@ function GameWait() {
       <Header />
 
       <Grid container>
-        {/* 멘트
-        <Grid
-          container
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            zIndex: 1, // z-index를 1로 설정하여 비디오 위에 텍스트가 나타나도록
-          }}
-        >
-          <Typography
-            variant="h4"
-            style={{
-              fontFamily: "Pretendard-Regular",
-              fontWeight: "bold",
-              fontSize: "10px",
-              color: "red",
-            }}
-          >
-            전원 준비가 되면 게임이 시작합니다 악!
-          </Typography>
-        </Grid> */}
 
         {/* TOP */}
         <Grid container>
