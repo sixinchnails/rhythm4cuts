@@ -1,5 +1,6 @@
 // MyFriend.js
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { userInfo } from "../../apis/userInfo";
 import LoginMypageHeader from "../../components/Home/BlackHeader";
 import MainContent from "../../components/My/My_MainContent";
@@ -7,20 +8,25 @@ import FriendInfo from "../../components/My/My_Friend"; // UserInfo 컴포넌트
 import Sidebar from "../../components/My/My_SideBar";
 import React from "react";
 import "./MyFriend.css";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 const MyFriend = () => {
   const navigate = useNavigate();
 
-  //로그인 상태 확인
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
+
+  useEffect(() => {
+    connectWebSocket();
+  }, []);
 
   try {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           console.log(res);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         window.alert("로그인을 해주세요!");
         navigate("/");
       });
