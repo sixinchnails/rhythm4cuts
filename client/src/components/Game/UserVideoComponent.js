@@ -2,21 +2,14 @@ import React from "react";
 import OpenViduVideoComponent from "./OvVideo";
 
 import { Avatar, Grid } from '@mui/material';
-import { userInfo } from '../../apis/userInfo';
-import { useState } from 'react';
 
 const UserVideoComponent = ({ streamManager }) => {
 
-  const [pointSum, setPointSum] = useState(""); // 누적 포인트
-  const [nickname, setNickname] = useState(""); // 닉네임
-
-  userInfo()
-    .then(res => {
-      if (res.status === 200) {
-        setPointSum(res.data.score_sum);
-        setNickname(res.data.nickname);
-      }
-    })
+  function getUserInfo() {
+    console.log("user info function")
+    console.log(JSON.parse(streamManager.stream.connection.data).clientData);
+    return JSON.parse(streamManager.stream.connection.data).clientData;
+  }
 
   // 서버데이터 가져올 것
   function getProfilePic(pointSum) {
@@ -51,12 +44,12 @@ const UserVideoComponent = ({ streamManager }) => {
         >
           <Grid item xs={3} style={{ marginRight: "10px" }}>
             <Avatar
-              src={getProfilePic(pointSum)}
+              src={getProfilePic(getUserInfo().data.score_sum)}
               style={{ width: "40px", height: "40px", flexShrink: 0 }}
             />
           </Grid>
           <Grid item xs={7} style={{ fontFamily: "Pretendard-Regular", fontSize: "20px" }}>
-            {nickname}
+            {getUserInfo().data.nickname}
           </Grid>
 
         </div>
