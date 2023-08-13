@@ -44,7 +44,7 @@ public class FilmController {
 
     // API 3. 인생네컷 사진 촬영
     @PostMapping("/photo")
-    public ResponseEntity<String> photoShoot(@ModelAttribute FilmDto filmInfo) throws IOException {
+    public ResponseEntity<String> photoShoot(@RequestBody FilmDto filmInfo) throws IOException {
 
         // 넘어온 사진 정보를 DB에 저장할 예정
         filmService.saveFilm(filmInfo);

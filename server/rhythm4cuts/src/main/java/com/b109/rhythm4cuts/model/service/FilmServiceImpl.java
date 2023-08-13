@@ -35,6 +35,7 @@ public class FilmServiceImpl implements FilmService {
 
     private final FilmRepository filmRepository;
     private final UserRepository userRepository;
+    private final S3UploadService s3UploadService;
 
     @Value("${photo.storage.path}")
     private String imageStoragePath;
@@ -67,32 +68,47 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public void saveFilm(FilmDto filmInfo) throws IOException {
         GameImage gameImage = new GameImage();
-        //User user =  userRepository.findByUserSeq(filmInfo.getUserSeq());
+        User user =  userRepository.findByUserSeq(filmInfo.getUserSeq());
         //GameInfo gameInfo = gameRepository.findByGameSeq(filmDto.getGameSeq());
         //BackGround backGround = backGroundRepository.findByBackGroundSeq(filmDto.getBackGroundSeq());
 
-//        gameImage.setUser(user);
+        gameImage.setUser(user);
         //gameImage.setGameInfo(gameInfo);
         //gameImage.setBackGround(backGround);
         gameImage.setGameRank(filmInfo.getPlayerRank());
-        gameImage.setFileName(generateFileName(filmInfo.getPrivateFilm().getOriginalFilename()));
-        gameImage.setTotalFileName("total_" + generateFileName(filmInfo.getCommonFilm().getOriginalFilename()));
 
+        String privateFilmName = generateFileName(filmInfo.getPrivateFilm().getOriginalFilename());
+        String commonFilmName = "total_" + generateFileName(filmInfo.getCommonFilm().getOriginalFilename());
+
+        //private & common 이미지 파일명 설정
+        gameImage.setFileName(privateFilmName);
+        gameImage.setTotalFileName(commonFilmName);
+
+        filmInfo.getCommonFilm().getName();
+
+        //s3 url 설정
+        
         filmRepository.save(gameImage);
         byte[] privateFileData = filmInfo.getPrivateFilm().getBytes();
         byte[] commonFileDate = filmInfo.getCommonFilm().getBytes();
 
+        String commonUrl = s3UploadService.saveFile(filmInfo.getCommonFilm(), commonFilmName);
+        String privateUrl = s3UploadService.saveFile(filmInfo.getPrivateFilm(), privateFilmName);
 
-        File folder = new File(imageStoragePath);
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
+        System.out.println("[Url]");
+        System.out.println(commonUrl);
+        System.out.println(privateUrl);
 
-        Path privateFilePath = Paths.get(imageStoragePath, gameImage.getFileName());
-        Files.write(privateFilePath, privateFileData);
-
-        Path commonFilePath = Paths.get(imageStoragePath, gameImage.getTotalFileName());
-        Files.write(commonFilePath, commonFileDate);
+//        File folder = new File(imageStoragePath);
+//        if (!folder.exists()) {
+//            folder.mkdirs();
+//        }
+//
+//        Path privateFilePath = Paths.get(imageStoragePath, gameImage.getFileName());
+//        Files.write(privateFilePath, privateFileData);
+//
+//        Path commonFilePath = Paths.get(imageStoragePath, gameImage.getTotalFileName());
+//        Files.write(commonFilePath, commonFileDate);
     }
 
     @Override
