@@ -110,7 +110,7 @@ function RoomList({ room, onRoomClick }) {
               >
                 Num : {room.gameSeq}
                 <br />
-                Title : {room.title}
+                Title : {room.title.length > 20 ? room.title.substring(0, 20) + "  . . ." : room.title}
               </Typography>
             </Grid>
 
@@ -146,7 +146,7 @@ function RoomList({ room, onRoomClick }) {
                 </Box>
               </Grid>
               <Grid item>
-                {room.isSecret ? <LockIcon /> : <LockOpenIcon />}
+                {room.isSecret ? <Box color="red"><LockIcon /> </Box> : <LockOpenIcon />}
               </Grid>
             </Grid>
           </Grid>
