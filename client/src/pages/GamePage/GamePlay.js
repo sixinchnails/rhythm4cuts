@@ -20,6 +20,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import UserVideo from "../../components/Game/UserVideo";
 import Header from "../../components/Game/HeaderPlay";
 import axios from "axios";
+import { async } from "q";
+import { getCookie } from "../../utils/cookie";
 
 // GameWait에서 받아오는 세션값이 다르면 접근제한.(예정)
 
@@ -44,6 +46,28 @@ function GamePlay(gameSeq) {
     }, 3000);
   };
 
+  // 해당 노래 영상 가져오기
+  const [songSeq, setSongSeq] = useState(117);
+  const [musicUrl, setMusicUrl] = useState("");
+
+  const bringUrl = async () => {
+    const headers = {
+      Authorization: "Bearer " + getCookie("access"),
+    };
+    const result = await axios.get(
+      `https://i9b109.p.ssafy.io:8443/music/play/${songSeq}`,
+      {
+        headers,
+      }
+    );
+    console.log(result.data.data.url);
+    setMusicUrl(result.data.data.url);
+  };
+
+  useEffect(() => {
+    bringUrl();
+  }, []);
+
   return (
     <div
       style={{
@@ -62,8 +86,8 @@ function GamePlay(gameSeq) {
         <Grid container alignItems="center" justifyContent="center">
           <Card
             style={{
-              width: "50vw",
-              height: "50vh",
+              width: "65vw",
+              height: "55vh",
               background: "transparent",
               borderRadius: "30px",
             }}
@@ -83,7 +107,7 @@ function GamePlay(gameSeq) {
             <button onClick={handleButtonClick}>Music Start</button>
             {videoVisible && (
               <video
-                controls
+                controls={false}
                 autoPlay
                 loop
                 style={{
@@ -91,13 +115,9 @@ function GamePlay(gameSeq) {
                   height: "100%",
                   objectFit: "cover",
                 }}
-              >
-                {/* 여기 부분을 gameSeq를 통해 songSeq를 가져와서 url을 찾아야 함 (axios) */}
-                <source
-                  src="https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+%EC%9E%A0%EA%B9%90%EC%8B%9C%EA%B0%84%EB%90%A0%EA%B9%8C+-+%EC%9D%B4%EB%AC%B4%EC%A7%84+_+TJ+Karaoke.mp4"
-                  type="video/mp4"
-                ></source>
-              </video>
+                src={musicUrl}
+                type="video/mp4"
+              ></video>
             )}
           </Card>
         </Grid>

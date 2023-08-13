@@ -39,10 +39,10 @@ function CreateRoom({ isOpen, handleClose }) {
           Authorization: "Bearer " + getCookie("access"),
         },
       })
-      .then(response => {
+      .then((response) => {
         setAllSongs(response.data.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
   }, []);
@@ -50,7 +50,7 @@ function CreateRoom({ isOpen, handleClose }) {
   // 검색어 변경 시 검색 결과 필터링
   useEffect(() => {
     if (searchTerm) {
-      const results = allSongs.filter(song =>
+      const results = allSongs.filter((song) =>
         song.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setSearchResults(results);
@@ -59,20 +59,20 @@ function CreateRoom({ isOpen, handleClose }) {
     }
   }, [searchTerm, allSongs]);
 
-  const handleSongChange = event => {
+  const handleSongChange = (event) => {
     setSongSeq(event.target.value);
     setSearchTerm(event.target.value);
   };
 
-  const handleModeChange = event => {
+  const handleModeChange = (event) => {
     setIsSecret(event.target.value);
   };
 
-  const handlePasswordChange = event => {
+  const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
-  const selectSong = song => {
+  const selectSong = (song) => {
     setSongSeq(song.songSeq);
     setSearchTerm(song.title); // 선택한 노래의 제목을 표시
     setSearchResults([]); // 검색 결과를 초기화하여 목록을 숨김
@@ -81,7 +81,7 @@ function CreateRoom({ isOpen, handleClose }) {
 
   const handleCreateRoom = async () => {
     // 1. 사용자가 선택한 노래 제목의 유효성 검사
-    const songExists = allSongs.some(song => song.songSeq === songSeq);
+    const songExists = allSongs.some((song) => song.songSeq === songSeq);
 
     if (!songExists) {
       // 2. 유효성 검사가 실패하면 모달 알림창을 표시
@@ -112,7 +112,9 @@ function CreateRoom({ isOpen, handleClose }) {
         console.log("방 만들어졌습니다~ gameseq : ", response.data.data);
         dispatch(setSession(sessionResponse.id));
         dispatch(setGameseq(response.data.data));
-        navigate(`/GameWait/${response.data.data}`);
+        navigate(`/GameWait/${response.data.data}`, {
+          state: { data: songSeq },
+        });
       }
     } catch (error) {
       console.error("세션을 받지 못했죠~", error);
@@ -154,7 +156,7 @@ function CreateRoom({ isOpen, handleClose }) {
             marginBottom: "20px",
             backgroundColor: "rgba(0, 128, 255, 0.1)",
           }}
-          onChange={event => setTitle(event.target.value)}
+          onChange={(event) => setTitle(event.target.value)}
           inputProps={{ style: { color: "#ffffff" } }}
           InputLabelProps={{ style: { color: "#ffffff" } }}
         />
@@ -171,7 +173,7 @@ function CreateRoom({ isOpen, handleClose }) {
           inputProps={{ style: { color: "#ffffff" } }}
           InputLabelProps={{ style: { color: "#ffffff" } }}
         />
-        {searchResults.map(song => (
+        {searchResults.map((song) => (
           <div
             key={song.songSeq}
             style={{ marginBottom: "3%", cursor: "pointer" }}
