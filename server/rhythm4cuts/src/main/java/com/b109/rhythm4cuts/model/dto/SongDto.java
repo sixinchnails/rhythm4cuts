@@ -27,6 +27,6 @@ public class SongDto {
     private String url;
 
     //유튜브 영상 url의 id값
-    private String youtube_id;
+    private String youtubeId;
 
 }
