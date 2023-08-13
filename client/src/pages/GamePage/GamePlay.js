@@ -29,7 +29,7 @@ function GamePlay({ gameSeq }) {
   const dispatch = useDispatch(); // 리덕스 넣기
   const session = useSelector(state => state.roomState.session);
   const connectionToken = useSelector(state => state.roomState.connectionToken);
-  const { connectWebSocket } = useWebSocket();
+  const { connectWebSocket, sendGameStartMessage } = useWebSocket();
 
   useEffect(() => {
     connectWebSocket(gameSeq);
