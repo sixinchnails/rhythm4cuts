@@ -341,7 +341,7 @@ function GameWait() {
     // }
 
     // 구독 중인 스트림 해제
-    subscribers.forEach(subscriber => subscriber.unsubscribe());
+    subscribers.forEach(subscriber => subscriber.unsubscribe()); 
 
     // 현재 유저 커넥션 연결 끊기
     if (connectSession) {
