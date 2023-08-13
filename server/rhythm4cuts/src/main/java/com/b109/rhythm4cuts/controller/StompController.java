@@ -34,12 +34,12 @@ public class StompController {
     @MessageMapping(value = "/song")
     public void startSong(FriendDto friendDto) {
         System.out.println(friendDto.getGameSeq()+"에서 노래를 시작합니다.");
-        messagingTemplate.convertAndSend("/subscribe/song" + friendDto.getGameSeq(), friendDto);
+        messagingTemplate.convertAndSend("/subscribe/song/" + friendDto.getGameSeq(), friendDto);
     }
 
     @MessageMapping(value = "/mr")
     public void startMR(FriendDto friendDto) {
         System.out.println(friendDto.getGameSeq()+"에서 MR을 시작합니다.");
-        messagingTemplate.convertAndSend("/subscribe/MR" + friendDto.getGameSeq(), friendDto);
+        messagingTemplate.convertAndSend("/subscribe/MR/" + friendDto.getGameSeq(), friendDto);
     }
 }
