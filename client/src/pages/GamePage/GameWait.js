@@ -512,8 +512,6 @@ function GameWait() {
             ))}
           </Grid>
         </Grid>
-
-
       </Grid>
 
       {/* '로그인 경고' 모달 */}
