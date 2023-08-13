@@ -218,10 +218,12 @@ function GameWait() {
       });
 
       const token = await getToken(); // Implement getToken function
+      const userData = await userInfo();
 
       newSession
-        .connect(token, { clientData: myUserName })
+        .connect(token, { clientData: userData })
         .then(async () => {
+          console.log(userData);
           const newPublisher = await ov.initPublisherAsync(undefined, {
             audioSource: undefined,
             videoSource: undefined,
