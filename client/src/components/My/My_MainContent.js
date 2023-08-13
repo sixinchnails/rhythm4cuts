@@ -53,27 +53,6 @@ function MainContent() {
       >
         {title}
       </h1>
-      {isMyFriendPage && (
-        <span
-          className="add-friend"
-          onClick={handleOpenAddFriendModal}
-          style={{
-            fontFamily: "Pretendard-Regular",
-            fontWeight: "bold",
-            cursor: "pointer",
-            color: "white",
-            marginRight: "10%",
-          }}
-        >
-          친구 추가
-        </span>
-      )}
-
-      {/* '친구 추가' 모달 */}
-      <AddFriend
-        isOpen={isAddFriendModalOpen}
-        handleClose={handleCloseAddFriendModal}
-      />
     </div>
   );
 }
