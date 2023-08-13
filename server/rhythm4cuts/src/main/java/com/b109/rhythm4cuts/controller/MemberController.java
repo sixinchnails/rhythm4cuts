@@ -225,4 +225,10 @@ public class MemberController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PutMapping("/user/state/{userSeq}")
+    public ResponseEntity<?> setState(@PathVariable int userSeq) throws IOException {
+        UserDto userDto = userService.setUserState(userSeq);
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    }
 }

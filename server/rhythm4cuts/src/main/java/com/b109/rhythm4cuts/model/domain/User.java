@@ -93,6 +93,7 @@ public class User implements UserDetails {
         this.point = 0;
         this.playCount = 0;
         this.scoreSum = 0;
+        this.state = 0;
     }
 
     @Override
