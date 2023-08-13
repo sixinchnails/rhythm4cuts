@@ -22,24 +22,24 @@ public class StompController {
     @MessageMapping(value = "/confirm")
     public void confirmFriend(FriendDto friendDto) {
         friendDto.setMessage(friendDto.getFromUser() + "님과 " + friendDto.getToUser() + "님이 친구가 되엇습니다.");
-        messagingTemplate.convertAndSend("/subscribe/friend/confirm" + friendDto.getToUser(), friendDto);
+        messagingTemplate.convertAndSend("/subscribe/friend/confirm/" + friendDto.getToUser(), friendDto);
     }
 
     @MessageMapping(value = "/invite")
     public void inviteFriend(FriendDto friendDto) {
         friendDto.setMessage(friendDto.getFromUser() + "님이 " + friendDto.getToUser() + "님에게 친구 요청을 보냇습니다.");
-        messagingTemplate.convertAndSend("/subscribe/friend/invite" + friendDto.getToUser(), friendDto);
+        messagingTemplate.convertAndSend("/subscribe/friend/invite/" + friendDto.getToUser(), friendDto);
     }
 
     @MessageMapping(value = "/song")
     public void startSong(FriendDto friendDto) {
         System.out.println(friendDto.getGameSeq()+"에서 노래를 시작합니다.");
-        messagingTemplate.convertAndSend("/subscribe/song" + friendDto.getGameSeq(), friendDto);
+        messagingTemplate.convertAndSend("/subscribe/song/" + friendDto.getGameSeq(), friendDto);
     }
 
     @MessageMapping(value = "/mr")
     public void startMR(FriendDto friendDto) {
         System.out.println(friendDto.getGameSeq()+"에서 MR을 시작합니다.");
-        messagingTemplate.convertAndSend("/subscribe/MR" + friendDto.getGameSeq(), friendDto);
+        messagingTemplate.convertAndSend("/subscribe/MR/" + friendDto.getGameSeq(), friendDto);
     }
 }

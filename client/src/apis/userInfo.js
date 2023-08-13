@@ -12,6 +12,5 @@ export const userInfo = async () => {
     params,
     headers,
   });
-
   return result;
 };
