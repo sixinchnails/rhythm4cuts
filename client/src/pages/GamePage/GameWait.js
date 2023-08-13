@@ -218,10 +218,12 @@ function GameWait() {
       });
 
       const token = await getToken(); // Implement getToken function
+      const userData = await userInfo();
 
       newSession
-        .connect(token, { clientData: myUserName })
+        .connect(token, { clientData: userData })
         .then(async () => {
+          console.log(userData);
           const newPublisher = await ov.initPublisherAsync(undefined, {
             audioSource: undefined,
             videoSource: undefined,
@@ -330,6 +332,8 @@ function GameWait() {
         },
       }
     );
+    
+    navigate(`/GameList`);
 
     // 나가는 플레이어를 배열에서 제거하고 상태 업데이트
     const updatedPlayers = players.filter(player => player !== publisher);
