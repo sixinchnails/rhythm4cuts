@@ -86,6 +86,9 @@ public class User implements UserDetails {
     @Column(name = "connection_id")
     private String connectionId;
 
+    @Column(name="state")
+    private int state;
+
     public User() {
         this.point = 0;
         this.playCount = 0;
@@ -136,6 +139,7 @@ public class User implements UserDetails {
         userDto.setProfileImageSeq(this.getProfileImage().getProfileImageSeq());
 //        userDto.setBirthDate(this.getBirthDate());
         userDto.setGender(this.getGender());
+        userDto.setState(this.getState());
         return userDto;
     }
 }
