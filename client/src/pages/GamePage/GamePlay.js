@@ -20,6 +20,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import UserVideo from "../../components/Game/UserVideo";
 import Header from "../../components/Game/HeaderPlay";
 import axios from "axios";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 // GameWait에서 받아오는 세션값이 다르면 접근제한.(예정)
 
