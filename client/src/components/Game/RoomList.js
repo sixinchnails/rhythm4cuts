@@ -1,8 +1,7 @@
 import { Grid, CardMedia, Typography, Box, Modal, TextField, Button } from "@mui/material";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LockIcon from "@mui/icons-material/Lock";
-import React from "react";
-import { useState } from 'react';
+import React, { useState } from "react";
 import axios from 'axios';
 import { getCookie } from '../../utils/cookie';
 
@@ -51,6 +50,15 @@ function RoomList({ room, onRoomClick }) {
     }
   };
 
+  const [isHovered, setIsHovered] = useState(false);
+  // handleMouseEnter와 handleMouseLeave 함수 추가
+  const handleMouseEnterTitle = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeaveTitle = () => {
+    setIsHovered(false);
+  };
 
   return (
     <Grid item xs={6} sm={12}>
@@ -90,44 +98,46 @@ function RoomList({ room, onRoomClick }) {
           </Grid>
           {/* 오른쪽 : 방번호, 방이름, 노래제목, 방인원수, 모드(비밀방) */}
           <Grid
-            item
-            xs={8}
-            container
-            style={{
-              padding: "10px",
+            item xs={8} container style={{
+              padding: "5px",
               height: "20vh",
             }}
           >
             <Grid item xs={12}>
               <Typography
                 variant="subtitle1"
-                style={{
-                  fontFamily: "Pretendard-Regular",
-                  fontWeight: "bold",
-                }}
+                style={{ fontFamily: "Pretendard-Regular", textAlign: "left" }}
               >
                 Num : {room.gameSeq}
                 <br />
-                Title : {room.title}
+                Title : {room.title.length > 20 ? room.title.substring(0, 20) + "  . . ." : room.title}
               </Typography>
             </Grid>
 
             <Grid item xs={12}>
               <Typography
+                onMouseEnter={handleMouseEnterTitle}
+                onMouseLeave={handleMouseLeaveTitle}
                 style={{
                   textAlign: "center",
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                  transition: "color 0.5s ease", // 텍스트 색상 변화에 대한 트랜지션 추가
+                  color: isHovered ? "gold" : "white", // 마우스 올릴 때 글자색을 gold로 변경
                 }}
               >
                 🎵 {room.songTitle}
               </Typography>
             </Grid>
 
-            <Grid container justifyContent="space-between" alignItems="center">
+            <Grid container justifyContent="space-between" alignItems="center" >
               <Grid item>
                 <Box
                   style={{
                     border: "1px solid",
                     color: isFull ? "red" : "green",
+                    margin: "1px"
                   }}
                 >
                   <Typography variant="body2">
@@ -136,7 +146,7 @@ function RoomList({ room, onRoomClick }) {
                 </Box>
               </Grid>
               <Grid item>
-                {room.isSecret ? <LockIcon /> : <LockOpenIcon />}
+                {room.isSecret ? <Box color="red"><LockIcon /> </Box> : <LockOpenIcon />}
               </Grid>
             </Grid>
           </Grid>
