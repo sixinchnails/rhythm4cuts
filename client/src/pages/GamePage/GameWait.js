@@ -197,7 +197,7 @@ function GameWait() {
         const subscriber = newSession.subscribe(event.stream, undefined);
         setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
 
-        setPlayers(prevPlayers => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
+        // setPlayers(prevPlayers => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
 
         if (!mainStreamManager) {
           setMainStreamManager(subscriber);
