@@ -60,7 +60,7 @@ public class GameInfo {
     private String sessionId;
 
     public GameInfo() {
-        this.headCount = 0;
+        this.headCount = 1;
         this.isSecret = false;
         this.hasImage = false;
         this.roomStatus = RoomStatus.WAIT;

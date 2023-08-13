@@ -54,4 +54,6 @@ public interface UserService {
     TokenResponse reissueAuthenticationToken(TokenRequestDto tokenRequestDto);
 
     List<ProfileImageDto> getProfileImage(List<String> imageIds);
+
+    UserDto setUserState(int userSeq);
 }
