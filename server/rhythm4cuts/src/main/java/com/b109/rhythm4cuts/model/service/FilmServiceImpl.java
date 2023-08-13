@@ -4,6 +4,7 @@ import com.b109.rhythm4cuts.model.domain.GameImage;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.BackgroundDto;
 import com.b109.rhythm4cuts.model.dto.FilmDto;
+import com.b109.rhythm4cuts.model.dto.FilmResponseDto;
 import com.b109.rhythm4cuts.model.repository.FilmRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,10 +55,19 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<String> getUserPhotoList(int userSeq) {
-        List<String> filmUrls = filmRepository.findByUserSeq(userSeq);
+    public List<FilmResponseDto> getUserPhotoList(int userSeq) {
+        List<GameImage> gameImages = filmRepository.findByUserSeq(userSeq);
+        List<FilmResponseDto> filmResponseDtos = new ArrayList<>();
 
-        return filmUrls;
+        for(GameImage gameImage : gameImages) {
+            FilmResponseDto filmResponseDto = new FilmResponseDto();
+            filmResponseDto.setUrl(gameImage.getUrl());
+            filmResponseDto.setCreateDate(gameImage.getCreateDate());
+
+            filmResponseDtos.add(filmResponseDto);
+        }
+
+        return filmResponseDtos;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.b109.rhythm4cuts.controller;
 
 import com.b109.rhythm4cuts.model.dto.FilmDto;
+import com.b109.rhythm4cuts.model.dto.FilmResponseDto;
 import com.b109.rhythm4cuts.model.dto.UserDto;
 import com.b109.rhythm4cuts.model.service.FilmService;
 import com.b109.rhythm4cuts.model.service.UserService;
@@ -52,9 +53,11 @@ public class FilmController {
     }
 
     @GetMapping("/photo")
-    public ResponseEntity<List<String>> getPhotos(@RequestParam String email) throws IOException {
+    public ResponseEntity<List<FilmResponseDto>> getPhotos(@RequestParam String email) throws IOException {
         int userSeq = userService.findByEmail(email).getUserSeq();
-        List<String> filmUrls = filmService.getUserPhotoList(userSeq);
+        List<FilmResponseDto> filmUrls = filmService.getUserPhotoList(userSeq);
+
+        System.out.println(filmUrls);
 
         return ResponseEntity.status(200).body(filmUrls);
     }
