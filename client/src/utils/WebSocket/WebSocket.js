@@ -14,11 +14,12 @@ export function WebSocketProvider({ children }) {
   const [messages, setMessages] = useState([]);
   const [hasNotification, setHasNotification] = useState(false); // 알림 상태 추가
   const [friendRequest, setFriendRequest] = useState(null); // 친구 요청 정보 저장
+  const [videoVisible, setVideoVisible] = useState(false);
 
   let socket = null;
   let reconnectInterval;
 
-  const connectWebSocket = useCallback(() => {
+  const connectWebSocket = useCallback(gameSeq => {
     if (socket && socket.connected) {
       console.log("WebSocket is already connected");
     } else {
@@ -60,9 +61,9 @@ export function WebSocketProvider({ children }) {
                   setMessages(prev => [...prev, message.body]);
                   setHasNotification(true); // 알림 상태 업데이트
                 });
-                stomp.subscribe(`/subscribe/startSong/${fromUser}`, message => {
-                  const songData = JSON.parse(message.body);
-                  startSongAt(songData.song, songData.timestamp);
+                stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
+                  setVideoVisible(true);
+                  window.alert("영상 다같이 시작할게");
                 });
               }
             });
@@ -79,16 +80,15 @@ export function WebSocketProvider({ children }) {
   }, []);
 
   // 노래 시작 함수
-  const startSongAt = (song, timestamp) => {
-    const currentTime = new Date().getTime();
-    const delay = timestamp - currentTime; // 서버가 지정한 시작 시간과 현재 시간의 차이를 계산
-
-    if (delay > 0) {
-      setTimeout(() => {
-        // playSong(song); // 노래 재생 로직 (이 부분은 별도로 구현해야 함)
-      }, delay);
-    } else {
-      // playSong(song); // 이미 시작 시간이 지났으면 즉시 노래 재생
+  const sendGameStartMessage = gameSeq => {
+    if (socket && socket.connected) {
+      const stomp = Stomp.over(socket);
+      // gameSeq 값을 포함하여 서버에 메시지 전송
+      stomp.send(
+        "/send/gameStart",
+        {},
+        JSON.stringify({ type: "GAME_START", gameSeq: gameSeq })
+      );
     }
   };
 
@@ -117,6 +117,7 @@ export function WebSocketProvider({ children }) {
     hasNotification, // 알림 상태
     resetNotification, // 알림 초기화 함수
     friendRequest,
+    sendGameStartMessage, // 추가
   };
 
   return (

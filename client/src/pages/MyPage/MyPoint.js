@@ -20,7 +20,7 @@ const MyPoint = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // connectWebSocket();
+    connectWebSocket();
   }, []);
 
   //로그인 상태 확인

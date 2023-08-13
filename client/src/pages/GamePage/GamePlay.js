@@ -23,11 +23,16 @@ import axios from "axios";
 
 // GameWait에서 받아오는 세션값이 다르면 접근제한.(예정)
 
-function GamePlay(gameSeq) {
+function GamePlay({ gameSeq }) {
   const navigate = useNavigate(); // 페이지 이동
   const dispatch = useDispatch(); // 리덕스 넣기
   const session = useSelector(state => state.roomState.session);
   const connectionToken = useSelector(state => state.roomState.connectionToken);
+  const { connectWebSocket } = useWebSocket();
+
+  useEffect(() => {
+    connectWebSocket(gameSeq);
+  }, [gameSeq]);
 
   console.log("GameSeq: " + gameSeq);
   console.log("play session: " + session);
@@ -37,6 +42,7 @@ function GamePlay(gameSeq) {
   const [videoVisible, setVideoVisible] = useState(false);
 
   const handleButtonClick = () => {
+    sendGameStartMessage(gameSeq);
     setTimeout(() => {
       setVideoVisible(true);
     }, 3000);
@@ -66,18 +72,6 @@ function GamePlay(gameSeq) {
               borderRadius: "30px",
             }}
           >
-            {/* 대기중 비디오 (기존 영상) */}
-            {/* <video
-              src="/images/GameImage/Dance.mp4"
-              autoPlay
-              loop
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
-            /> */}
-            {/* 대기중 비디오 (음악 영상) */}
             <button onClick={handleButtonClick}>Music Start</button>
             {videoVisible && (
               <video
