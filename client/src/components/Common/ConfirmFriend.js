@@ -15,6 +15,12 @@ const YourModalComponent = ({ friendRequest, onClose }) => {
     onClose(); // 모달 닫기
   };
 
+  // friendRequest 문자열을 객체로 변환
+  const requestData = JSON.parse(friendRequest);
+
+  // 원하는 메시지 형식을 만듭니다.
+  const message = `${requestData.fromUser}님이 ${requestData.toUser}님에게 요청을 보냈습니다.`;
+
   return (
     <Modal open={true} onClose={onClose}>
       <Box
@@ -28,7 +34,7 @@ const YourModalComponent = ({ friendRequest, onClose }) => {
           boxShadow: 3,
         }}
       >
-        <p>{friendRequest}님이 친구신청을 하셨습니다.</p>
+        <p>{message}</p>
         <Button variant="contained" color="primary" onClick={handleAccept}>
           수락
         </Button>

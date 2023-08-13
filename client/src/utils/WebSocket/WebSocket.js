@@ -44,6 +44,7 @@ export function WebSocketProvider({ children }) {
             };
 
             stomp.connect({}, () => {
+              console.log("전역 설정");
               if (reconnectInterval) {
                 clearInterval(reconnectInterval);
                 reconnectInterval = null;
