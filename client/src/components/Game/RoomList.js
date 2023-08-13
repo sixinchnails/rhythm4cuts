@@ -1,8 +1,7 @@
 import { Grid, CardMedia, Typography, Box, Modal, TextField, Button } from "@mui/material";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LockIcon from "@mui/icons-material/Lock";
-import React from "react";
-import { useState } from 'react';
+import React, { useState } from "react";
 import axios from 'axios';
 import { getCookie } from '../../utils/cookie';
 
@@ -51,6 +50,16 @@ function RoomList({ room, onRoomClick }) {
     }
   };
 
+  const [isHovered, setIsHovered] = useState(false);
+  // handleMouseEnter와 handleMouseLeave 함수 추가
+  const handleMouseEnterTitle = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeaveTitle = () => {
+    setIsHovered(false);
+  };
+
   return (
     <Grid item xs={6} sm={12}>
       <div
@@ -97,7 +106,7 @@ function RoomList({ room, onRoomClick }) {
             <Grid item xs={12}>
               <Typography
                 variant="subtitle1"
-                style={{ fontFamily: "Pretendard-Regular",textAlign: "left" }}
+                style={{ fontFamily: "Pretendard-Regular", textAlign: "left" }}
               >
                 Num : {room.gameSeq}
                 <br />
@@ -107,8 +116,15 @@ function RoomList({ room, onRoomClick }) {
 
             <Grid item xs={12}>
               <Typography
+                onMouseEnter={handleMouseEnterTitle}
+                onMouseLeave={handleMouseLeaveTitle}
                 style={{
                   textAlign: "center",
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                  transition: "color 0.5s ease", // 텍스트 색상 변화에 대한 트랜지션 추가
+                  color: isHovered ? "gold" : "white", // 마우스 올릴 때 글자색을 gold로 변경
                 }}
               >
                 🎵 {room.songTitle}
