@@ -109,9 +109,9 @@ body {
 }
 
 .Home2 > .content > .rules {
-  width: 37vw;
-  height: 75vh;
-  background-image: url("../../../public/images/9.jpg");
+  width: 38vw;
+  height: 80vh;
+  background-image: url("../../../public/images/99.jpg");
   background-size: cover;
   background-position: center;
   display: flex;
