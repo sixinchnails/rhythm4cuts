@@ -2,9 +2,6 @@
 import {
   setSession as userSession,
   setConnection,
-  setConnectionToken,
-  resetRoomState,
-  setPlayers,
   setGameseq,
 } from "../../store";
 import {
@@ -15,9 +12,7 @@ import {
 } from "@mui/icons-material";
 import {
   styled,
-  Button,
   Card,
-  Container,
   Grid,
   Typography,
   IconButton,
@@ -332,7 +327,7 @@ function GameWait() {
         },
       }
     );
-    
+
     navigate(`/GameList`);
 
     // 나가는 플레이어를 배열에서 제거하고 상태 업데이트
