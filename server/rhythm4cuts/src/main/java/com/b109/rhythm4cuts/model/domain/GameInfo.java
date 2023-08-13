@@ -60,7 +60,7 @@ public class GameInfo {
     private String sessionId;
 
     public GameInfo() {
-        this.headCount = 1;
+        this.headCount = 0;
         this.isSecret = false;
         this.hasImage = false;
         this.roomStatus = RoomStatus.WAIT;
@@ -77,7 +77,7 @@ public class GameInfo {
         lobbyDto.setPassword(this.getPassword());
 //        lobbyDto.setStatus(this.getRoomStatus());
         lobbyDto.setSessionId(this.getSessionId());
-
+        lobbyDto.setSongTitle(this.getSong().getTitle());
         return lobbyDto;
     }
 

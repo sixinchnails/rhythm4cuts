@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.controller;
 
+import com.b109.rhythm4cuts.model.domain.GameInfo;
 import com.b109.rhythm4cuts.model.dto.LobbyDto;
 import com.b109.rhythm4cuts.model.dto.SongDto;
 import com.b109.rhythm4cuts.model.dto.UserDto;
@@ -110,4 +111,27 @@ public class LobbyController {
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    @GetMapping("/room/{gameSeq}")
+    public ResponseEntity<?> enterRoom(@PathVariable int gameSeq) throws Exception {
+       lobbyService.enterRoom(gameSeq);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("message", "Success");
+        res.put("statusCode", 200);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @GetMapping("/room/exit/{gameSeq}")
+    public ResponseEntity<?> exitRoom(@PathVariable int gameSeq) throws Exception {
+        lobbyService.exitRoom(gameSeq);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("message", "Success");
+        res.put("statusCode", 200);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
 }

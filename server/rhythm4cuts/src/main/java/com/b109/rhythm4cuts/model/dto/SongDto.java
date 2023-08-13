@@ -23,7 +23,10 @@ public class SongDto {
     //노래 플레이 횟수
     private Integer playCount;
 
-    //유튜브 영상 url
+    //영상 url
     private String url;
+
+    //유튜브 영상 url의 id값
+    private String youtubeId;
 
 }
