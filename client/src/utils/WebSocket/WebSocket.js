@@ -81,14 +81,14 @@ export function WebSocketProvider({ children }) {
 
   // 노래 시작 함수
   const sendGameStartMessage = gameSeq => {
+    console.log(gameSeq + "웹소켓 연결 페이지에서");
     if (socket && socket.connected) {
       const stomp = Stomp.over(socket);
       // gameSeq 값을 포함하여 서버에 메시지 전송
-      stomp.send(
-        "/send/gameStart",
-        {},
-        JSON.stringify({ type: "GAME_START", gameSeq: gameSeq })
-      );
+      const message = {
+        gameSeq: gameSeq,
+      };
+      stomp.send("/public/song", {}, JSON.stringify(message));
     }
   };
 
