@@ -27,9 +27,9 @@ const roomState = createSlice({
     },
     setConnectionToken: (state, action) => {
       state.connectionToken = action.payload;
-    },  
+    },
     setNickname: (state, action) => {
-      state.nickname = action.payload; 
+      state.nickname = action.payload;
     },
     setGameseq: (state, action) => {
       state.gameseq = action.payload;
@@ -41,14 +41,21 @@ const roomState = createSlice({
       state.connectionToken = initialState.connectionToken;
       state.nickname = initialState.nickname;
       state.gameseq = initialState.gameseq;
-    }
+    },
   },
 });
 
-export const { setSession, setConnection, setConnectionToken, setNickname, setGameseq, resetRoomState } = roomState.actions;
+export const {
+  setSession,
+  setConnection,
+  setConnectionToken,
+  setNickname,
+  setGameseq,
+  resetRoomState,
+} = roomState.actions;
 
 // Room 세션 ID를 설정하는 액션 함수
-export const setRoomSession = session => dispatch => {
+export const setRoomSession = (session) => (dispatch) => {
   dispatch(setSession(session));
 };
 
@@ -58,10 +65,9 @@ export const setUserConnection = (connection) => (dispatch) => {
 };
 
 // 유저 토큰을 설정하는 액션 함수
-export const setUserToken = userToken => dispatch => {
+export const setUserToken = (userToken) => (dispatch) => {
   dispatch(setConnectionToken(userToken));
 };
-
 
 // --------------------------------------------------------------------------------------------------
 // 웹캠 스트림 상태를 저장하는 slice를 생성합니다.
@@ -76,7 +82,7 @@ const webcamStreamSlice = createSlice({
 });
 
 export const { setWebcamStream } = webcamStreamSlice.actions;
- 
+
 // 방을 종료하는 비동기 액션을 생성합니다.
 // 이 액션은 방의 sessionId와 연결의 connectionId를 인수로 받아 OpenVidu 서버에서 세션을 종료하고 이를 반환합니다.
 export const closeSession = createAsyncThunk(
@@ -135,7 +141,7 @@ const MyPage_MyInfo = createSlice({
   reducers: {
     // 프로필 사진 수정 action
     updateProfilePic: (state, action) => {
-      const item = state.find(item => item.name === "프로필 사진");
+      const item = state.find((item) => item.name === "프로필 사진");
       if (item) {
         item.value = action.payload;
       }
