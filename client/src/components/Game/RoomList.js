@@ -5,26 +5,22 @@ import React from "react";
 import { useState } from 'react';
 import axios from 'axios';
 import { getCookie } from '../../utils/cookie';
-import { useNavigate } from 'react-router-dom'; // useNavigate 추가
 
 function RoomList({ room, onRoomClick }) {
   // 방 인원수 파악
   let isFull = room.headcount >= 4;
-  const navigate = useNavigate(); // useNavigate 사용
 
   const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
   const [password, setPassword] = useState("");
 
   const handleCardClick = () => {
 
-    if (room.isSecret === 0) {
-      onRoomClick(room);
-      navigate(`/GameWait/${room.gameSeq}`);
-      window.location.href = `/GameWait/${room.gameSeq}`;
-    } else if (room.isSecret === 1) {
+    if (room.isSecret === 1) {
       setPasswordModalOpen(true);
+    } else if (room.isSecret === 0) {
+      onRoomClick(room);
     } else {
-      console.log("뭘까")
+      console.log("비밀방 체크가 안된듯")
     }
 
   };

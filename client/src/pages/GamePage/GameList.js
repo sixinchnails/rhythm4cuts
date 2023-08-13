@@ -296,9 +296,9 @@ function GameList() {
               .map((room, gameSeq) => (
                 <Grid item xs={6} key={gameSeq}>
                   {/* 방 누르면 입장 */}
-                  <Link >
+                  <Button>
                     <RoomList key={gameSeq} room={room} onRoomClick={handleOpenGameWait} />
-                  </Link>
+                  </Button>
                 </Grid>
               ))}
 
