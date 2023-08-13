@@ -24,7 +24,8 @@ import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 // GameWait에서 받아오는 세션값이 다르면 접근제한.(예정)
 
-function GamePlay({ gameSeq }) {
+function GamePlay() {
+  const { gameSeq } = useParams(); // 여기서 gameSeq를 가져옴
   const navigate = useNavigate(); // 페이지 이동
   const dispatch = useDispatch(); // 리덕스 넣기
   const session = useSelector(state => state.roomState.session);
