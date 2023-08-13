@@ -57,9 +57,6 @@ public class GameImage {
     @Column(name = "download_date")
     private LocalDateTime downloadDate;
 
-    @Column(name = "url")
-    private String url;
-
     public GameImage() {
         this.downloadState = false;
     }

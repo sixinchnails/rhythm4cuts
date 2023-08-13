@@ -1,7 +1,12 @@
 package com.b109.rhythm4cuts.config;
 
-import com.b109.rhythm4cuts.model.domain.*;
-import com.b109.rhythm4cuts.model.repository.*;
+import com.b109.rhythm4cuts.model.domain.ProfileImage;
+import com.b109.rhythm4cuts.model.domain.Song;
+import com.b109.rhythm4cuts.model.domain.User;
+import com.b109.rhythm4cuts.model.repository.FriendRepository;
+import com.b109.rhythm4cuts.model.repository.MusicRepository;
+import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
+import com.b109.rhythm4cuts.model.repository.UserRepository;
 import com.b109.rhythm4cuts.model.service.MelonService;
 import com.b109.rhythm4cuts.model.service.MusicService;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
@@ -14,10 +19,6 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Component
 public class DummyDataInitializer {
@@ -30,15 +31,11 @@ public class DummyDataInitializer {
     private final MelonService melonService;
     private final MusicService musicService;
     private final MusicRepository musicRepository;
-    private final BackGroundRepository backGroundRepository;
-    private final GameInfoRepository gameInfoRepository;
-    private final FilmRepository filmRepository;
 
     public DummyDataInitializer(UserRepository userRepository, ProfileImageRepository profileImageRepository,
                                 BCryptPasswordEncoder bCryptPasswordEncoder
             , FriendRepository friendRepository, MelonService melonService, MusicService musicService
-    , MusicRepository musicRepository, BackGroundRepository backGroundRepository
-    , GameInfoRepository gameInfoRepository, FilmRepository filmRepository) {
+    , MusicRepository musicRepository) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -46,10 +43,9 @@ public class DummyDataInitializer {
         this.melonService = melonService;
         this.musicService = musicService;
         this.musicRepository = musicRepository;
-        this.backGroundRepository = backGroundRepository;
-        this.gameInfoRepository = gameInfoRepository;
-        this.filmRepository = filmRepository;
     }
+
+
 
     @PostConstruct
     @Transactional
@@ -234,45 +230,7 @@ public class DummyDataInitializer {
         for (int i = 0; i < youtubeId.length; i++) {
             musicService.saveMusic(youtubeId[i], url[i]);
         }
-
-        for(int i = 1; i <= 5; i++) {
-            BackGround backGroundImg = new BackGround();
-            backGroundImg.setBackgroundSeq(i);
-
-            backGroundRepository.save(backGroundImg);
-        }
-
-        List<BackGround> backGroundList = backGroundRepository.findAll();
-        List<String> urls = new ArrayList<>(List.of("https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/012382fa1597e60cffef3c58c5212e7f.jpg"
-        , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/aa58e437-05db-4183-9d4d-7ec40a008d88.jpg"
-        , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/D8R-NuUVsAAxTic.jpg"
-                ));
-
-        List<Song> songList = musicRepository.findAll();
-
-        for(int i = 0; i < 3; i++) {
-            GameInfo gameInfo = new GameInfo();
-
-            gameInfo.setGameSeq(i);
-            gameInfo.setSong(songList.get(0));
-            gameInfo.setCreateDate(LocalDateTime.now());
-
-            gameInfoRepository.save(gameInfo);
-        }
-
-
-        List<GameInfo> gameInfoList = gameInfoRepository.findAll();
-
-        for(int i = 1; i <= 4; i++) {
-            GameImage gameImage = new GameImage();
-
-            gameImage.setImageSeq(i);
-            gameImage.setBackGround(backGroundList.get(0));
-            gameImage.setUrl(urls.get(i % 3));
-            gameImage.setUser(user);
-//            gameImage.setGameInfo(gameInfoList.get(0));
-
-            filmRepository.save(gameImage);
-        }
     }
+
+
 }
