@@ -169,39 +169,6 @@ public class DummyDataInitializer {
         user8.setPassword(bCryptPasswordEncoder.encode("1234"));
         userRepository.save(user8);
 
-        User user9 = new User();
-        user9.setName("가");
-        user9.setNickname("가");
-        user9.setEmail("ga@naver.com");
-        user9.setProfileImage(profileImage1);
-//        user8.setBirthDate(targetDate);
-        user9.setGender("F");
-        user9.setPoint(1100);
-        user9.setPassword(bCryptPasswordEncoder.encode("1234"));
-        userRepository.save(user9);
-
-        User user10 = new User();
-        user10.setName("나");
-        user10.setNickname("나");
-        user10.setEmail("na@naver.com");
-        user10.setProfileImage(profileImage1);
-//        user8.setBirthDate(targetDate);
-        user10.setGender("F");
-        user10.setPoint(1100);
-        user10.setPassword(bCryptPasswordEncoder.encode("1234"));
-        userRepository.save(user10);
-
-        User user11 = new User();
-        user11.setName("다");
-        user11.setNickname("다");
-        user11.setEmail("da@naver.com");
-        user11.setProfileImage(profileImage1);
-//        user8.setBirthDate(targetDate);
-        user11.setGender("F");
-        user11.setPoint(1100);
-        user11.setPassword(bCryptPasswordEncoder.encode("1234"));
-        userRepository.save(user11);
-
         // Melon Top 100 Dummy Data
         try {
             melonService.clearMelonChart();

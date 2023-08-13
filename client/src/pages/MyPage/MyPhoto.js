@@ -12,22 +12,17 @@ import axios from "axios";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import "./MyPhoto.css";
-import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 const MyPhoto = () => {
   const navigate = useNavigate();
 
   //로그인 상태 확인
-  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
+
   const [points, setPoints] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
   const email = getCookie("email");
-
-  useEffect(() => {
-    connectWebSocket();
-  }, []);
 
   useEffect(() => {
     axios
@@ -36,16 +31,16 @@ const MyPhoto = () => {
           Authorization: "Bearer " + getCookie("access"),
         },
       })
-      .then(response => {
+      .then((response) => {
         const data = response.data;
         setPoints(data.point);
       })
-      .catch(error => {});
+      .catch((error) => {});
   }, [email]);
 
   useEffect(() => {}, [points]);
 
-  const handleDownloadClick = imageSrc => {
+  const handleDownloadClick = (imageSrc) => {
     if (points >= 300) {
       setSelectedImage(imageSrc);
       setShowModal(true);
@@ -69,7 +64,7 @@ const MyPhoto = () => {
           },
         }
       )
-      .then(response => {
+      .then((response) => {
         // Successfully paid points and received updated points from server
         const updatedPoints = response.data.point;
         setPoints(updatedPoints);
@@ -81,19 +76,19 @@ const MyPhoto = () => {
         downloadLink.click();
         setShowModal(false);
       })
-      .catch(error => {
+      .catch((error) => {
         window.alert("포인트 차감 중 오류가 발생했습니다. 다시 시도해주세요.");
       });
   };
 
   try {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           console.log(res);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         window.alert("로그인을 해주세요!");
         navigate("/");
       });

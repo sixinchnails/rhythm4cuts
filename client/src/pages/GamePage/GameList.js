@@ -24,10 +24,8 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import RoomList from "../../components/Game/RoomList";
 import Header from "../../components/Game/HeaderWait";
 import axios from "axios";
-import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 function GameList() {
-  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
   const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate();
   const [isCreateRoomModalOpen, setCreateRoomModalOpen] = useState(false); //  '방 만들기' 모달의 상태를 관리
@@ -36,7 +34,7 @@ function GameList() {
   const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
   const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
   const [page, setPage] = useState(1); // 페이지 상태
-  const friends = useSelector(state => state.GameList_Friend); // 친구 리스트
+  const friends = useSelector((state) => state.GameList_Friend); // 친구 리스트
   const itemsPerPage = 6; // 한 페이지당 표시할 방 수
 
   // 친구 추가
@@ -69,9 +67,8 @@ function GameList() {
 
   // 로그인 상태관리
   useEffect(() => {
-    connectWebSocket();
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
         } else {
           // 로그인 상태가 아니라면 알림.
@@ -79,7 +76,7 @@ function GameList() {
         }
       })
 
-      .catch(error => {
+      .catch((error) => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -118,7 +115,7 @@ function GameList() {
   };
 
   // 검색어에 따라 방 리스트 필터링
-  let filteredRooms = rooms.filter(room => {
+  let filteredRooms = rooms.filter((room) => {
     switch (searchCategory) {
       case "gameSeq":
         return room.gameSeq
@@ -144,7 +141,7 @@ function GameList() {
     setPage(value);
   };
   // 검색어 변경 이벤트 핸들러
-  const handleSearchChange = event => {
+  const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
@@ -169,10 +166,6 @@ function GameList() {
     };
     fetchNickname();
   }, []);
-
-  const handleOpenGameWait = (room) => {
-    navigate(`/GameWait/${room.gameSeq}`);
-  };
 
   return (
     <div
@@ -205,7 +198,7 @@ function GameList() {
             {/* 검색 카테고리 추가 */}
             <Select
               value={searchCategory}
-              onChange={e => setSearchCategory(e.target.value)}
+              onChange={(e) => setSearchCategory(e.target.value)}
               style={{
                 backgroundColor: "rgba(0, 128, 255, 0.1)",
                 marginRight: "1em",
@@ -296,9 +289,9 @@ function GameList() {
               .map((room, gameSeq) => (
                 <Grid item xs={6} key={gameSeq}>
                   {/* 방 누르면 입장 */}
-                  <Button>
-                    <RoomList key={gameSeq} room={room} onRoomClick={handleOpenGameWait} />
-                  </Button>
+                  <Link to={`/GameWait/${room.gameSeq}`}>
+                    <RoomList key={gameSeq} room={room} />
+                  </Link>
                 </Grid>
               ))}
 

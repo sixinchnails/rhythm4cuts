@@ -7,19 +7,10 @@ import NotificationsIcon from "@mui/icons-material/NotificationsNone";
 import LogoutAlert from "../Common/LogoutAlert";
 import Badge from "@mui/material/Badge";
 import axios from "axios";
-import { useWebSocket } from "../../utils/WebSocket/WebSocket";
-import YourModalComponent from "../Common/ConfirmFriend";
 
 const HeaderWait = () => {
   const navigate = useNavigate();
   const access = getCookie("access");
-  const { hasNotification, resetNotification, friendRequest } = useWebSocket(); // Get the required states and functions from the hook
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const onNotificationClick = () => {
-    resetNotification();
-    setIsModalOpen(true); // Open the modal
-  };
 
   // 모달 상태를 관리하기 위한 state 추가
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
@@ -99,12 +90,7 @@ const HeaderWait = () => {
           fontSize: "20px",
         }}
       >
-        <Badge
-          color="error"
-          variant={hasNotification ? "dot" : "standard"} // Set the variant conditionally based on the hasNotification state
-          onClick={onNotificationClick} // Set the onClick handler
-          style={{ marginRight: "30px" }}
-        >
+        <Badge color="error" variant="dot" style={{ marginRight: "30px" }}>
           <NotificationsIcon />
         </Badge>
         <Link style={loginStyle} onClick={() => setLogoutModalOpen(true)}>
@@ -118,14 +104,6 @@ const HeaderWait = () => {
         onClose={() => setLogoutModalOpen(false)}
         onConfirm={checkLogin}
       />
-
-      {/* Friend request modal */}
-      {isModalOpen && friendRequest && (
-        <YourModalComponent
-          friendRequest={friendRequest}
-          onClose={() => setIsModalOpen(false)}
-        />
-      )}
     </div>
   );
 };

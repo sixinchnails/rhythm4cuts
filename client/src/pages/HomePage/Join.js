@@ -65,10 +65,10 @@ const Join = () => {
       <div style={{ display: "flex", width: "30%" }}>
         <JoinImage
           initialImages={[
-            "/images/1.png",
-            "/images/2.png",
-            "/images/3.png",
-            "/images/4.png",
+            "/images/노래람쥐.png",
+            "/images/노래랑이.png",
+            "/images/노래요미.png",
+            "/images/핑클.png",
           ]}
           onImageSelect={handleImageSelect}
         />
