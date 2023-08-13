@@ -87,6 +87,7 @@ public class MusicService {
             res.setTitle(song.getTitle());
             res.setSinger(song.getSinger());
             res.setUrl(song.getUrl());
+            res.setYoutubeId(song.getYoutubeId());
         }
 
         return res;
