@@ -335,10 +335,11 @@ function GameWait() {
     setPlayers(updatedPlayers);
 
 
-    // 자신의 스트림 해제
-    if (typeof publisher.stream.dispose === "function") {
-      publisher.stream.dispose();
-    }
+    // // 자신의 스트림 해제
+    // if (typeof publisher.stream.dispose === "function") {
+    //   publisher.stream.dispose();
+    // }
+
     // 구독 중인 스트림 해제
     subscribers.forEach(subscriber => subscriber.unsubscribe());
 
