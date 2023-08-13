@@ -26,7 +26,7 @@ const MyPhoto = () => {
   const email = getCookie("email");
 
   useEffect(() => {
-    connectWebSocket();
+    // connectWebSocket();
   }, []);
 
   useEffect(() => {
