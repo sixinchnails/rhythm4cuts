@@ -15,7 +15,6 @@ import UserVideo from "../../components/Game/UserVideo";
 
 //close test
 import { closeSession } from "../../store";
-import UserVideoComponent from "../../components/Game/UserVideoComponent";
 
 const GameShot = () => {
   const dispatch = useDispatch();
@@ -240,7 +239,7 @@ const GameShot = () => {
                     left: 0,
                   }}
                 >
-                  {/* <UserVideoComponent  streamManager={publisher}/> ////////////////////////////////*/}
+                  {/* <Webcam ref={webcamRef} /> */}
                 </Box>
               </Box>
               <Box
@@ -342,13 +341,6 @@ const GameShot = () => {
                 >
                   확인
                 </Button>
-                <Button
-                  variant="contained"
-                  color="warning"
-                  onClick={() => sendCapture(copyRef.current)}
-                >
-                  확인
-                </Button>
 
                 <Button variant="outlined" color="warning" onClick={handleNext}>
                   <FaArrowRight />
@@ -371,7 +363,6 @@ function copyCapture(element) {
     domtoimage
       .toPng(element)
       .then(function (dataUrl) {
-        console.log(dataUrl);
         const link = document.createElement("a");
         link.download = "capture.png";
         link.href = dataUrl;
@@ -380,17 +371,6 @@ function copyCapture(element) {
       .catch(function (error) {
         console.error("oops, something went wrong!", error);
       });
-  }
-}
-
-// 인생네컷 DB 전송 컴포넌트
-function sendCapture(element) {
-  if (element) {
-    domtoimage.toPng(element).then((res) => {
-      try {
-        // const response = async axios.post
-      } catch (error) {}
-    });
   }
 }
 

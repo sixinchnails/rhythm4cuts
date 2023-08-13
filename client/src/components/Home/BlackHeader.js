@@ -6,18 +6,10 @@ import { getCookie } from "../../utils/cookie";
 import axios from "axios";
 import Badge from "@mui/material/Badge";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 const LoginMypageHeader = () => {
   const navigate = useNavigate();
   const access = getCookie("access");
-  const { hasNotification, resetNotification } = useWebSocket();
-
-  const onNotificationClick = () => {
-    // 알림을 클릭하면 알림 상태를 초기화
-    resetNotification();
-    // ... 원하는 로직 실행 ...
-  };
 
   const checkLogin = async () => {
     try {
@@ -58,12 +50,7 @@ const LoginMypageHeader = () => {
         <img src="images/Mypage_Logo.png" alt="헤더 사진"></img>
       </div>
       <div>
-        <Badge
-          color="error"
-          variant={hasNotification ? "dot" : "standard"}
-          onClick={onNotificationClick}
-          style={{ marginRight: "20px" }}
-        >
+        <Badge color="error" variant="dot" style={{ marginRight: "20px" }}>
           <NotificationsIcon />
         </Badge>
         <Link className="Header_Login2" to="/" onClick={checkLogin}>

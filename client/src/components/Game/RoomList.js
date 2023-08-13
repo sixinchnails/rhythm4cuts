@@ -2,7 +2,6 @@ import { Grid, Card, CardMedia, Typography, Box } from "@mui/material";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LockIcon from "@mui/icons-material/Lock";
 import React from "react";
-import { useSelector } from "react-redux";
 
 function RoomList({ room }) {
   // 방 인원수 파악
@@ -74,7 +73,7 @@ function RoomList({ room }) {
                 }}
               >
                 {/* 나중에 음악 DB파일에서 가져와야합니다. */}
-                🎵 {room.songTitle}
+                🎵 {room.songSeq}
               </Typography>
             </Grid>
 

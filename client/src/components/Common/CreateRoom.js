@@ -17,7 +17,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getCookie } from "../../utils/cookie";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
 function CreateRoom({ isOpen, handleClose }) {
@@ -27,56 +27,17 @@ function CreateRoom({ isOpen, handleClose }) {
   const [password, setPassword] = useState(""); // 비밀방 암호
   const [title, setTitle] = useState(uuidv4()); // 방 제목
   const [songSeq, setSongSeq] = useState(""); // 노래 번호 (Integer)
-  const [allSongs, setAllSongs] = useState([]); // 모든 노래 정보 상태
-  const [searchTerm, setSearchTerm] = useState(""); // 노래 검색어 상태
-  const [searchResults, setSearchResults] = useState([]); // 검색 결과 상태
 
-  // 모든 노래 정보 가져오기
-  useEffect(() => {
-    axios
-      .get(`https://i9b109.p.ssafy.io:8443/music`, {
-        headers: {
-          Authorization: "Bearer " + getCookie("access"),
-        },
-      })
-      .then(response => {
-        setAllSongs(response.data.data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }, []);
-
-  // 검색어 변경 시 검색 결과 필터링
-  useEffect(() => {
-    if (searchTerm) {
-      const results = allSongs.filter(song =>
-        song.title.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setSearchResults(results);
-    } else {
-      setSearchResults([]);
-    }
-  }, [searchTerm, allSongs]);
-
-  const handleSongChange = event => {
+  const handleSongChange = (event) => {
     setSongSeq(event.target.value);
-    setSearchTerm(event.target.value);
   };
 
-  const handleModeChange = event => {
+  const handleModeChange = (event) => {
     setIsSecret(event.target.value);
   };
 
-  const handlePasswordChange = event => {
+  const handlePasswordChange = (event) => {
     setPassword(event.target.value);
-  };
-
-  const selectSong = song => {
-    setSongSeq(song.songSeq);
-    setSearchTerm(song.title); // 선택한 노래의 제목을 표시
-    setSearchResults([]); // 검색 결과를 초기화하여 목록을 숨김
-    // dispatch(setSongTitle(song.title)); // 선택한 노래의 제목을 Redux에 저장
   };
 
   const handleCreateRoom = async () => {
@@ -123,9 +84,6 @@ function CreateRoom({ isOpen, handleClose }) {
           backgroundColor: "rgba(50, 100, 255, 0.9)",
           color: "#ffffff",
           padding: "50px",
-          width: "500px", // 여기서 너비를 설정합니다.
-          height: "500px", // 여기서 높이를 설정합니다.
-          overflowY: "auto", // 내용이 너무 많으면 스크롤바가 생깁니다.
         }}
       >
         <img
@@ -147,7 +105,7 @@ function CreateRoom({ isOpen, handleClose }) {
             marginBottom: "20px",
             backgroundColor: "rgba(0, 128, 255, 0.1)",
           }}
-          onChange={event => setTitle(event.target.value)}
+          onChange={(event) => setTitle(event.target.value)}
           inputProps={{ style: { color: "#ffffff" } }}
           InputLabelProps={{ style: { color: "#ffffff" } }}
         />
@@ -159,20 +117,11 @@ function CreateRoom({ isOpen, handleClose }) {
             marginBottom: "20px",
             backgroundColor: "rgba(0, 128, 255, 0.1)",
           }}
-          value={searchTerm}
+          value={songSeq}
           onChange={handleSongChange}
           inputProps={{ style: { color: "#ffffff" } }}
           InputLabelProps={{ style: { color: "#ffffff" } }}
         />
-        {searchResults.map(song => (
-          <div
-            key={song.songSeq}
-            style={{ marginBottom: "3%", cursor: "pointer" }}
-            onClick={() => selectSong(song)}
-          >
-            {song.title} - {song.singer}
-          </div>
-        ))}
         <FormControl
           component="fieldset"
           style={{ marginBottom: "20px", marginLeft: "10px" }}
