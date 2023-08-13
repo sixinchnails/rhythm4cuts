@@ -51,7 +51,6 @@ function RoomList({ room, onRoomClick }) {
     }
   };
 
-
   return (
     <Grid item xs={6} sm={12}>
       <div
@@ -90,21 +89,15 @@ function RoomList({ room, onRoomClick }) {
           </Grid>
           {/* 오른쪽 : 방번호, 방이름, 노래제목, 방인원수, 모드(비밀방) */}
           <Grid
-            item
-            xs={8}
-            container
-            style={{
-              padding: "10px",
+            item xs={8} container style={{
+              padding: "5px",
               height: "20vh",
             }}
           >
             <Grid item xs={12}>
               <Typography
                 variant="subtitle1"
-                style={{
-                  fontFamily: "Pretendard-Regular",
-                  fontWeight: "bold",
-                }}
+                style={{ fontFamily: "Pretendard-Regular",textAlign: "left" }}
               >
                 Num : {room.gameSeq}
                 <br />
@@ -122,12 +115,13 @@ function RoomList({ room, onRoomClick }) {
               </Typography>
             </Grid>
 
-            <Grid container justifyContent="space-between" alignItems="center">
+            <Grid container justifyContent="space-between" alignItems="center" >
               <Grid item>
                 <Box
                   style={{
                     border: "1px solid",
                     color: isFull ? "red" : "green",
+                    margin: "1px"
                   }}
                 >
                   <Typography variant="body2">
