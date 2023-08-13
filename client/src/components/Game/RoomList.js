@@ -1,16 +1,64 @@
-import { Grid, Card, CardMedia, Typography, Box } from "@mui/material";
+import { Grid, CardMedia, Typography, Box, Modal, TextField, Button } from "@mui/material";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LockIcon from "@mui/icons-material/Lock";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useState } from 'react';
+import axios from 'axios';
+import { getCookie } from '../../utils/cookie';
+import { useNavigate } from 'react-router-dom'; // useNavigate 추가
 
-function RoomList({ room }) {
+function RoomList({ room, onRoomClick }) {
   // 방 인원수 파악
-  let isFull = room.currentOccupancy >= room.maxOccupancy;
+  let isFull = room.headcount >= 4;
+  const navigate = useNavigate(); // useNavigate 사용
+
+  const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
+  const [password, setPassword] = useState("");
+
+  const handleCardClick = () => {
+
+    if (room.isSecret === 0) {
+      onRoomClick(room);
+      navigate(`/GameWait/${room.gameSeq}`);
+      window.location.href = `/GameWait/${room.gameSeq}`;
+    } else if (room.isSecret === 1) {
+      setPasswordModalOpen(true);
+    } else {
+      console.log("뭘까")
+    }
+
+  };
+
+  const handlePasswordSubmit = async () => {
+
+    try {
+      const response = await axios.get(
+        `https://i9b109.p.ssafy.io:8443/wait/info/${room.gameSeq}`,
+        {
+          headers: {
+            Authorization: "Bearer " + getCookie("access"),
+          },
+        }
+      );
+      console.log("서버에서 가져온 비밀번호: " + response.data.data.password);
+      console.log("입력한 비밀번호: " + password);
+
+      if (response.data.data.password === password) {
+        setPasswordModalOpen(false);
+        onRoomClick(room);
+        console.log("비밀번호가 맞았습니다.");
+      } else {
+        console.error("비밀번호가 틀렸습니다.");
+      }
+    } catch (error) {
+      console.error("비밀번호 확인에 오류가 발생했습니다.", error);
+    }
+  };
+
 
   return (
     <Grid item xs={6} sm={12}>
-      <Card
+      <div
         style={{
           background: "rgba(0, 0, 0, 0.8)",
           color: "white",
@@ -18,6 +66,7 @@ function RoomList({ room }) {
           height: "19vh",
           borderRadius: "20px",
         }}
+        onClick={handleCardClick}
       >
         <Grid container>
           <Grid
@@ -73,7 +122,6 @@ function RoomList({ room }) {
                   textAlign: "center",
                 }}
               >
-                {/* 나중에 음악 DB파일에서 가져와야합니다. */}
                 🎵 {room.songTitle}
               </Typography>
             </Grid>
@@ -87,7 +135,7 @@ function RoomList({ room }) {
                   }}
                 >
                   <Typography variant="body2">
-                    방 인원수: {room.headcount} / 4
+                    {isFull ? 'FULL' : `방 인원수: ${room.headcount} / 4`}
                   </Typography>
                 </Box>
               </Grid>
@@ -97,7 +145,42 @@ function RoomList({ room }) {
             </Grid>
           </Grid>
         </Grid>
-      </Card>
+      </div>
+
+      <Modal open={isPasswordModalOpen} onClose={() => setPasswordModalOpen(false)}
+        onClick={(event) => event.stopPropagation()}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            minWidth: 300,
+          }}
+        >
+          <Typography variant="h6">비밀번호 입력</Typography>
+          <TextField
+            label="비밀번호"
+            variant="outlined"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            fullWidth
+            type="password"
+            sx={{ my: 2 }}
+          />
+          <Button onClick={handlePasswordSubmit} variant="contained">
+            확인
+          </Button>
+          <Button onClick={() => setPasswordModalOpen(false)} variant="outlined" sx={{ mx: 1 }}>
+            취소
+          </Button>
+        </Box>
+
+      </Modal>
     </Grid>
   );
 }

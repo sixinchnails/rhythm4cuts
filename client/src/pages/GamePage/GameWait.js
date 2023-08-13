@@ -2,9 +2,6 @@
 import {
   setSession as userSession,
   setConnection,
-  setConnectionToken,
-  resetRoomState,
-  setPlayers,
   setGameseq,
 } from "../../store";
 import {
@@ -15,9 +12,7 @@ import {
 } from "@mui/icons-material";
 import {
   styled,
-  Button,
   Card,
-  Container,
   Grid,
   Typography,
   IconButton,
@@ -312,7 +307,7 @@ function GameWait() {
   const handleExit = () => {
     onBeforeUnload();
     console.log("방 나갈거야 ~");
-
+    navigate(`/GameList`);
   };
 
   const onBeforeUnload = () => {
@@ -322,7 +317,8 @@ function GameWait() {
   // 방에서 나갈때 ㅣ 수정 필요 
   const leaveSession = () => {
     console.log("--------------------leave session");
-    // 방 인원수 Axios 2. 나갈때  axios 인원 수 줄이기
+
+    // 방 인원수 줄이는 요청 보내기
     axios.get(
       `https://i9b109.p.ssafy.io:8443/lobby/room/exit/${gameSeq}`,
       {
@@ -331,29 +327,27 @@ function GameWait() {
         },
       }
     );
-    
+
     navigate(`/GameList`);
 
-    // 나가는 플레이어를 찾아서 배열에서 제거
+    // 나가는 플레이어를 배열에서 제거하고 상태 업데이트
     const updatedPlayers = players.filter(player => player !== publisher);
-    // 상태 업데이트
-    setPlayers(updatedPlayers); // 나간 플레이어를 제외한 플레이어 목록으로 상태 업데이트
+    setPlayers(updatedPlayers);
 
 
+    // 자신의 스트림 해제
+    if (typeof publisher.stream.dispose === "function") {
+      publisher.stream.dispose();
+    }
     // 구독 중인 스트림 해제
     subscribers.forEach(subscriber => subscriber.unsubscribe());
 
-    if (publisher) {
-      // 자신의 스트림 해제
-      if (publisher.stream && typeof publisher.stream.dispose === "function") {
-        publisher.stream.dispose();
-      }
-    }
-
+    // 현재 유저 커넥션 연결 끊기
     if (connectSession) {
-      connectSession.disconnect(); // 현재 유저 커넥션 연결을 끊음
+      connectSession.disconnect();
     }
   };
+
 
   return (
     <div
@@ -478,122 +472,47 @@ function GameWait() {
         </Grid>
 
         {/* Bottom */}
-        <Grid
-          style={{
-            height: "25vh",
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            margin: "50px"
-
-          }}
-        >
-          {/* Player 1 */}
+        <Grid container>
+          {/* Bottom */}
           <Grid
-            item
-            xs={3}
             style={{
-              backgroundColor: "transparent",
-              height: "34vh",
-              padding: "2px",
-              margin: "20px",
-              // border: "2px solid white",
-              borderRadius: "20px",
+              height: "25vh",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              margin: "50px"
+
             }}
           >
-            {/* {players[0] && (
-              <UserVideoComponent
-                streamManager={players[0]}
-              // streamManager={publisher}
-              // streamManager={subscribers[0]}
-              // streamManager={mainStreamManager}
-              />
-            )} */}
-            {players[0] ? (
-              <UserVideoComponent
-                streamManager={players[0]}
-              />
-            ) : (
-              <video autoPlay loop muted style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "20px", }}>
-                <source src="/videos/33.mp4" type="video/mp4" />
-              </video>
-            )}
+            {/* 각 플레이어별로 Grid 아이템 생성 */}
+            {[0, 1, 2, 3].map((index) => (
+              <Grid
+                key={index}
+                item
+                xs={3}
+                style={{
+                  backgroundColor: "transparent",
+                  height: "34vh",
+                  padding: "2px",
+                  margin: "20px",
+                  borderRadius: "20px",
+                }}
+              >
+                {/* players 배열에 해당 인덱스의 스트림이 있는 경우 플레이어 정보 표시 */}
+                {players[index] ? (
+                  <UserVideoComponent streamManager={players[index]} />
+                ) : (
+                  <video autoPlay loop muted style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "20px", }}>
+                    <source src="/videos/33.mp4" type="video/mp4" />
+                  </video>
+                )}
+              </Grid>
+            ))}
           </Grid>
-
-          {/* Player 2 */}
-          <Grid
-            item
-            xs={3}
-            style={{
-              backgroundColor: "transparent",
-              height: "34vh",
-              padding: "2px",
-              margin: "20px",
-              // border: "2px solid white",
-              borderRadius: "20px",
-            }}
-          >
-            {players[1] ? (
-              <UserVideoComponent
-                streamManager={players[1]}
-              />
-            ) : (
-              <video autoPlay loop muted style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "20px", }}>
-                <source src="/videos/33.mp4" type="video/mp4" />
-              </video>
-            )}
-          </Grid>
-
-          {/* Player 3 */}
-          <Grid
-            item
-            xs={3}
-            style={{
-              backgroundColor: "transparent",
-              height: "34vh",
-              padding: "2px",
-              margin: "20px",
-              // border: "2px solid white",
-              borderRadius: "20px",
-            }}
-          >
-            {players[2] ? (
-              <UserVideoComponent
-                streamManager={players[2]}
-              />
-            ) : (
-              <video autoPlay loop muted style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "20px", }}>
-                <source src="/videos/33.mp4" type="video/mp4" />
-              </video>
-            )}
-          </Grid>
-
-          {/* Player 4 */}
-          <Grid
-            item
-            xs={3}
-            style={{
-              backgroundColor: "transparent",
-              height: "34vh",
-              padding: "2px",
-              margin: "20px",
-              // border: "2px solid white",
-              borderRadius: "20px",
-            }}
-          >
-            {players[3] ? (
-              <UserVideoComponent
-                streamManager={players[3]}
-              />
-            ) : (
-              <video autoPlay loop muted style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "20px", }}>
-                <source src="/videos/33.mp4" type="video/mp4" />
-              </video>
-            )}
-          </Grid>
-
         </Grid>
+
+
       </Grid>
 
       {/* '로그인 경고' 모달 */}
