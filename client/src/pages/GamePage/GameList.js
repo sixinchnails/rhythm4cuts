@@ -170,6 +170,10 @@ function GameList() {
     fetchNickname();
   }, []);
 
+  const handleOpenGameWait = (room) => {
+    navigate(`/GameWait/${room.gameSeq}`);
+  };
+
   return (
     <div
       style={{
@@ -292,9 +296,9 @@ function GameList() {
               .map((room, gameSeq) => (
                 <Grid item xs={6} key={gameSeq}>
                   {/* 방 누르면 입장 */}
-                  <Link to={`/GameWait/${room.gameSeq}`}>
-                    <RoomList key={gameSeq} room={room} />
-                  </Link>
+                  <Button>
+                    <RoomList key={gameSeq} room={room} onRoomClick={handleOpenGameWait} />
+                  </Button>
                 </Grid>
               ))}
 
