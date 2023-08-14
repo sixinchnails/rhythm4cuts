@@ -31,8 +31,8 @@ public class WaitRoomServiceImpl implements WaitRoomService {
     @Override
     public int insertUserGameInfo(Map<String, Object> param) {
 
-        int userSeq = Integer.parseInt((String) param.get("userSeq"));
-        int gameSeq = Integer.parseInt((String) param.get("gameSeq"));
+        int userSeq = (Integer) param.get("userSeq");
+        int gameSeq = (Integer) param.get("gameSeq");
 
         UserGameInfo userGameInfo = new UserGameInfo();
 
