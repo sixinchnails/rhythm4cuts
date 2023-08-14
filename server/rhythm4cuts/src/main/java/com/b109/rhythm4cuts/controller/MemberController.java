@@ -241,4 +241,11 @@ public class MemberController {
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    @GetMapping("/user/{userSeq}/logs")
+    public ResponseEntity<?> getLogs(@PathVariable int userSeq) throws Exception {
+        List<PointLogDto> pointLogDtoList = userService.getPointLogs(userSeq);
+
+        return new ResponseEntity<>(pointLogDtoList, HttpStatus.OK);
+    }
 }

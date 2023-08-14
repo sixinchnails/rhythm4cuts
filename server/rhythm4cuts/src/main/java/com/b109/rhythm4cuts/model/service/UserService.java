@@ -35,4 +35,5 @@ public interface UserService {
     TokenResponse reissueAuthenticationToken(TokenRequestDto tokenRequestDto);
     List<ProfileImageDto> getProfileImage(List<String> imageIds);
     String findNicknameById(int userSeq);
+    List<PointLogDto> getPointLogs(int userSeq);
 }
