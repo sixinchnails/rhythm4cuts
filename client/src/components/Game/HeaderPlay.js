@@ -9,8 +9,12 @@ const LoginMypageHeader = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
   const onNotificationClick = () => {
-    resetNotification();
-    setIsModalOpen(true); // Open the modal
+    if (!hasNotification) {
+      window.alert("알림이 없습니다!"); // 알림 상태가 false일 때 메시지 표시
+    } else {
+      resetNotification();
+      setIsModalOpen(true); // 모달 열기
+    }
   };
   // 모든 요소에 직접 color 속성 추가
   const headerStyle = {

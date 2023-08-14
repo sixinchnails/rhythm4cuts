@@ -15,8 +15,12 @@ const LoginHeader = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onNotificationClick = () => {
-    resetNotification();
-    setIsModalOpen(true);
+    if (!hasNotification) {
+      window.alert("알림이 없습니다!"); // 알림 상태가 false일 때 메시지 표시
+    } else {
+      resetNotification();
+      setIsModalOpen(true); // 모달 열기
+    }
   };
 
   const checkLogin = async () => {

@@ -25,7 +25,6 @@ function AddFriend({ isOpen, handleClose }) {
   const [friendNickname, setfriendNickname] = useState("");
   const [UserInfo, setUserInfo] = useState({ nickname: "", email: "" });
   const [debouncedFriendNickname] = useDebounce(friendNickname, 300);
-  // const [client, setClient] = useState(null);
   const [fromUser, setFromUser] = useState("");
   const [toUser, setToUser] = useState("");
   const navigate = useNavigate();
@@ -33,22 +32,19 @@ function AddFriend({ isOpen, handleClose }) {
 
   try {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           setFromUser(res.data.user_seq);
           console.log(res.data.user_seq);
         }
       })
-      .catch((error) => {});
+      .catch(error => {});
   } catch (error) {
     console.log(error);
   }
 
   useEffect(() => {
-    console.log("add friend use effect begin");
     stomp.connect({}, () => {
-      console.log("add friend connect");
-      console.log("connected");
       if (fromUser) {
         console.log("Subscribing to user:", fromUser);
         stomp.subscribe(`/subscribe/friend/${fromUser}`, () => {
@@ -71,7 +67,7 @@ function AddFriend({ isOpen, handleClose }) {
             },
           }
         )
-        .then((response) => {
+        .then(response => {
           if (response.data.data.length > 0) {
             const { nickname, email, userSeq } = response.data.data[0];
             setUserInfo({ nickname, email });
@@ -81,7 +77,7 @@ function AddFriend({ isOpen, handleClose }) {
             setToUser("");
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error);
         });
     } else {
@@ -90,7 +86,7 @@ function AddFriend({ isOpen, handleClose }) {
     }
   }, [debouncedFriendNickname]);
 
-  const handleNameChange = async (event) => {
+  const handleNameChange = async event => {
     setfriendNickname(event.target.value);
   };
 
@@ -151,7 +147,7 @@ function AddFriend({ isOpen, handleClose }) {
             }}
             onClick={() => {
               handleClose();
-              requestFriend(fromUser, toUser);
+              requestFriend();
             }}
           >
             요청

@@ -10,7 +10,18 @@ import {
   ExitToApp as ExitToAppIcon,
   PersonAdd as PersonAddIcon,
 } from "@mui/icons-material";
-import { styled, Card, Grid, Typography, IconButton } from "@mui/material";
+import {
+  styled,
+  Card,
+  Grid,
+  Typography,
+  IconButton,
+  Modal,
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+} from "@mui/material";
 import { createConnection } from "../../openvidu/connectionInitialization";
 import UserVideoComponent from "../../components/Game/UserVideoComponent";
 import React, { Component, useState, useEffect } from "react";
@@ -24,12 +35,60 @@ import { userInfo } from "../../apis/userInfo";
 import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
+import SockJS from "sockjs-client";
+import { Stomp } from "@stomp/stompjs";
+
+var sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
+var stomp = Stomp.over(sock);
+
+function InviteFriendsModal({
+  isOpen,
+  onClose,
+  friends,
+  setToUser,
+  InviteGame,
+}) {
+  return (
+    <Modal open={isOpen} onClose={onClose}>
+      <div
+        style={{
+          width: "300px",
+          margin: "100px auto",
+          padding: "20px",
+          backgroundColor: "#fff",
+        }}
+      >
+        <h3>친구 초대하기</h3>
+        <List>
+          {friends.map(friend => (
+            <ListItem key={friend.email}>
+              <ListItemText
+                primary={friend.nickname}
+                secondary={friend.email}
+              />
+              <Button
+                onClick={() => {
+                  setToUser(friend.userSeq); // 친구 선택 시 toUser 상태 업데이트
+                  InviteGame();
+                }}
+              >
+                초대
+              </Button>
+            </ListItem>
+          ))}
+        </List>
+      </div>
+    </Modal>
+  );
+}
 
 function GameWait() {
   const location = useLocation();
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
   const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate(); // 페이지 이동
+  const [userSeq, setUserSeq] = useState("");
+  const [toUser, setToUser] = useState("");
 
   //GameList에서 전달받은 해당 방의 데이터
   const songSeq = location.state?.data;
@@ -41,15 +100,30 @@ function GameWait() {
 
   dispatch(setGameseq(gameSeq));
 
-  const session = useSelector((state) => state.roomState.session);
+  const session = useSelector(state => state.roomState.session);
 
   const [myUserName, setMyUserName] = useState(undefined);
   const [connectSession, setConnectSession] = useState(undefined);
-
   const [mainStreamManager, setMainStreamManager] = useState(undefined); // 방장
   const [publisher, setPublisher] = useState(undefined); // 자신
   const [subscribers, setSubscribers] = useState([]); // 구독자
   const [players, setPlayers] = useState([]); // 통합
+
+  // 상태 추가
+  const [isInviteModalOpen, setInviteModalOpen] = useState(false);
+  const [friends, setFriends] = useState([]);
+
+  // 친구 초대 모달 열기
+  const handleOpenInviteModal = async () => {
+    const friendList = await fetchFriendList(userSeq);
+    setFriends(friendList);
+    setInviteModalOpen(true);
+  };
+
+  // 친구 초대 모달 닫기
+  const handleCloseInviteModal = () => {
+    setInviteModalOpen(false);
+  };
 
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
@@ -58,6 +132,19 @@ function GameWait() {
   const handleCloseLoginAlert = () => {
     setLoginAlertOpen(false);
     navigate("/Login");
+  };
+
+  //친구 목록 가져오는 함수
+  const fetchFriendList = async userSeq => {
+    const headers = {
+      Authorization: "Bearer " + getCookie("access"),
+    };
+
+    const response = await axios.get(
+      `https://i9b109.p.ssafy.io:8443/friend/list/${userSeq}`,
+      { headers }
+    );
+    return response.data.data;
   };
 
   const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
@@ -74,18 +161,40 @@ function GameWait() {
     },
   });
 
+  function InviteGame() {
+    var request = {
+      userSeq: userSeq,
+      toUser: toUser,
+      gameSeq: gameSeq,
+    };
+    if (stomp.connected) {
+      stomp.send("/public/invite", {}, JSON.stringify(request));
+    }
+  }
+
+  useEffect(() => {
+    stomp.connect({}, () => {
+      if (userSeq) {
+        stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
+          alert("게임 초대 요청 옴");
+        });
+      }
+    });
+  }, [userSeq]);
+
   // 로그인 상태관리
   useEffect(() => {
     connectWebSocket();
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
+          setUserSeq(res.data.user_seq);
         } else {
           // 로그인 상태가 아니라면 알림.
           handleOpenLoginAlert();
         }
       })
-      .catch((error) => {
+      .catch(error => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -93,13 +202,13 @@ function GameWait() {
 
   useEffect(() => {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status !== 200) {
           window.alert("로그인을 해주세요!");
           navigate("/");
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("유저 정보 불러오기 실패:", error);
         window.alert("로그인을 해주세요!");
         navigate("/");
@@ -194,22 +303,22 @@ function GameWait() {
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
-      newSession.on("streamCreated", (event) => {
+      newSession.on("streamCreated", event => {
         const subscriber = newSession.subscribe(event.stream, undefined);
-        setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
 
-        setPlayers((prevPlayers) => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
+        setPlayers(prevPlayers => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
 
         if (!mainStreamManager) {
           setMainStreamManager(subscriber);
         }
       });
 
-      newSession.on("streamDestroyed", (event) => {
+      newSession.on("streamDestroyed", event => {
         deleteSubscriber(event.stream.streamManager);
       });
 
-      newSession.on("exception", (exception) => {
+      newSession.on("exception", exception => {
         console.warn(exception);
       });
 
@@ -260,11 +369,11 @@ function GameWait() {
 
           setPublisher(newPublisher);
           setMainStreamManager(newPublisher);
-          setPlayers((prevPlayers) => [...prevPlayers, newPublisher]);
+          setPlayers(prevPlayers => [...prevPlayers, newPublisher]);
 
           //--------------------------
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(
             "There was an error connecting to the session:",
             error.code,
@@ -281,18 +390,6 @@ function GameWait() {
     console.log("친구 초대 버튼 클릭!");
     InviteFriend();
   };
-
-  // 친구 초대
-  function InviteFriend() {
-    var request = {
-      fromUser: fromUser,
-      toUser: toUser,
-      // roomNumber :
-    };
-    if (stomp.connected) {
-      stomp.send("/public/request", {}, JSON.stringify(request));
-    }
-  }
 
   // "게임 준비" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
   function handleGameReady() {
@@ -329,7 +426,7 @@ function GameWait() {
     navigate(`/GameList`);
 
     // 나가는 플레이어를 배열에서 제거하고 상태 업데이트
-    const updatedPlayers = players.filter((player) => player !== publisher);
+    const updatedPlayers = players.filter(player => player !== publisher);
     setPlayers(updatedPlayers);
 
     // // 자신의 스트림 해제
@@ -338,7 +435,7 @@ function GameWait() {
     // }
 
     // 구독 중인 스트림 해제
-    subscribers.forEach((subscriber) => subscriber.unsubscribe());
+    subscribers.forEach(subscriber => subscriber.unsubscribe());
 
     // 현재 유저 커넥션 연결 끊기
     if (connectSession) {
@@ -405,7 +502,9 @@ function GameWait() {
               {/* 친구 초대 버튼 */}
               <Grid item xs={5} style={{ margin: "1px" }}>
                 <StyledIconButton
-                  onClick={handleAddFriend}
+                  onClick={() => {
+                    handleOpenInviteModal();
+                  }}
                   style={{ width: "12vw" }}
                 >
                   <PersonAddIcon />
@@ -495,7 +594,7 @@ function GameWait() {
             }}
           >
             {/* 각 플레이어별로 Grid 아이템 생성 */}
-            {[0, 1, 2, 3].map((index) => (
+            {[0, 1, 2, 3].map(index => (
               <Grid
                 key={index}
                 item
@@ -534,6 +633,14 @@ function GameWait() {
 
       {/* '로그인 경고' 모달 */}
       <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
+      {/* 친구 초대 모달 추가 */}
+      <InviteFriendsModal
+        isOpen={isInviteModalOpen}
+        onClose={handleCloseInviteModal}
+        friends={friends}
+        setToUser={setToUser}
+        InviteGame={InviteGame}
+      />
     </div>
   );
 }

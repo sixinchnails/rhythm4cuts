@@ -31,7 +31,7 @@ export function WebSocketProvider({ children }) {
       // 먼저 사용자 정보를 가져옵니다.
       userInfo()
         .then(res => {
-          console.log(res.data.user_seq);
+          // console.log(res.data.user_seq);
           // 사용자 정보가 존재하면 웹소켓을 연결합니다.
           if (res.data.user_seq !== null) {
             socket = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
