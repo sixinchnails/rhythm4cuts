@@ -34,11 +34,12 @@ public class WaitRoomController {
     @PostMapping("/enter")
     public ResponseEntity<?> insertUserGameInfo(@RequestBody Map<String, Object> param) {
 
-        waitRoomService.insertUserGameInfo(param);
+        int order = waitRoomService.insertUserGameInfo(param);
 
         Map<String, Object> res = new HashMap<>();
         res.put("message", "Success");
         res.put("statusCode", 200);
+        res.put("data", order);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }

@@ -29,7 +29,7 @@ public class WaitRoomServiceImpl implements WaitRoomService {
     }
 
     @Override
-    public void insertUserGameInfo(Map<String, Object> param) {
+    public int insertUserGameInfo(Map<String, Object> param) {
 
         int userSeq = (Integer) param.get("userSeq");
         int gameSeq = (Integer) param.get("gameSeq");
@@ -62,5 +62,7 @@ public class WaitRoomServiceImpl implements WaitRoomService {
         }
         userGameInfo.setGameOrder(order);
         waitRoomRepository.insertUserGameInfo(userGameInfo);
+
+        return order;
     }
 }

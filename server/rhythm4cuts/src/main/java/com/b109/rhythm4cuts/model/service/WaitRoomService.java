@@ -11,5 +11,5 @@ import java.util.Map;
 public interface WaitRoomService {
 
     LobbyDto getWaitRoomInfo(int gameSeq);
-    void insertUserGameInfo(Map<String, Object> param);
+    int insertUserGameInfo(Map<String, Object> param);
 }
