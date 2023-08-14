@@ -1,6 +1,6 @@
-import { Typography, Container, Grid } from "@mui/material";
 import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Typography, Container, Grid } from "@mui/material";
 
 function NextToPlay() {
   const navigate = useNavigate();

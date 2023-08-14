@@ -38,10 +38,9 @@ const Join = () => {
       window.confirm("비밀번호 확인하세요.");
     } else {
       try {
-        //eslint-disable-next-line
+        // eslint-disable-next-line
         const response = await axios.post(
           "https://i9b109.p.ssafy.io:8443/member/register",
-          // "http://lo/calhost:8080/member/register",
           joinInfo
         );
         const confirmed = window.confirm("회원가입이 완료! 로그인 해주세요");
@@ -66,10 +65,10 @@ const Join = () => {
       <div style={{ display: "flex", width: "30%" }}>
         <JoinImage
           initialImages={[
-            "/images/노래람쥐.png",
-            "/images/노래랑이.png",
-            "/images/노래요미.png",
-            "/images/핑클.png",
+            "/images/1.png",
+            "/images/2.png",
+            "/images/3.png",
+            "/images/4.png",
           ]}
           onImageSelect={handleImageSelect}
         />

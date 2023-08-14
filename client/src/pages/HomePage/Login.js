@@ -1,9 +1,11 @@
 // Login.js
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 import { setCookie } from "../../utils/cookie";
 import { login } from "../../apis/login";
 import SearchPassword from "../../components/Common/SearchPassword";
+
 import "./Login.css";
 
 const Login = () => {
@@ -43,6 +45,7 @@ const Login = () => {
     }
   };
 
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
   // 로그인
   const Login = async () => {
     try {
@@ -52,6 +55,7 @@ const Login = () => {
         setCookie("access", result.data.accessToken);
         setCookie("refresh", result.data.refreshToken);
         setCookie("email", result.data.email);
+        // connectWebSocket(); // 로그인 성공 후 웹소켓 연결 시작
         navigate("/");
       } else {
         window.alert("로그인에 실패하였습니다!");
@@ -67,11 +71,14 @@ const Login = () => {
 
   return (
     <div className="bg">
+      <video autoPlay loop muted>
+        <source src="/videos/33.mp4" type="video/mp4" />
+      </video>
       <div className="outer">
         <div className="logo">
           <a href="/">
             <img
-              alt="홈 로고 이미지"
+              alt="로고 사진"
               src="images/Home_Logo.png"
               style={{ marginLeft: "50px", marginTop: "25px" }}
             ></img>

@@ -1,11 +1,12 @@
 // MyModify.js
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
 import LoginMypageHeader from "../../components/Home/BlackHeader";
 import MainContent from "../../components/My/My_MainContent";
 import ModifyInfo from "../../components/My/My_ModifyInfo";
 import Sidebar from "../../components/My/My_SideBar";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 const MyModify = () => {
   const navigate = useNavigate();
@@ -13,6 +14,12 @@ const MyModify = () => {
 
   //닉네임
   const [nickName, setNickName] = useState("");
+
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
+
+  useEffect(() => {
+    connectWebSocket();
+  }, []);
 
   //로그인 상태 확인
   try {

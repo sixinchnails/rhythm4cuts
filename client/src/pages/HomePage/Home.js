@@ -1,7 +1,7 @@
 // Home.js
 //데이터가 들어오면 만들어야하는 애들 : 소개 영상, 음악 랭킹, 유저 랭킹, 일자별 방명록
 import { React, useRef, useEffect, useState } from "react";
-import { getCookie, setCookie, removeCookie } from "../../utils/cookie";
+import { getCookie, removeCookie, setCookie } from "../../utils/cookie";
 import { renewAccessToken } from "../../apis/renewAccessToken";
 import { Grid, Pagination } from "@mui/material";
 import { userInfo } from "../../apis/userInfo";
@@ -15,6 +15,7 @@ import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import "animate.css";
 import "./Home.css";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 const DIVIDER_HEIGHT = 5;
 
@@ -87,6 +88,8 @@ function Home() {
   const outerDivRef = useRef();
   const [scrollIndex, setScrollIndex] = useState(1);
 
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
+
   //음악 랭킹
   const [musicData, setMusicData] = useState([]);
 
@@ -103,6 +106,7 @@ function Home() {
   };
 
   useEffect(() => {
+    connectWebSocket();
     fetchMusicRank();
     fetchUserRank();
   }, []);
@@ -272,6 +276,7 @@ function Home() {
               <img
                 alt="게임 규칙 이미지"
                 style={{ height: 420, width: 450 }}
+                // style={{ height: 500, width: 530 }}
                 src="images/removeRules.png"
               />
             </div>
@@ -343,12 +348,13 @@ function Home() {
               <h1>Total Rank</h1>
               <div className="total_rank">
                 <div className="nickname">
-                  {/* <span>{userData[1].nickname}</span>
-                  <span>{userData[0].nickname}</span>
-                  <span>{userData[2].nickname}</span> */}
-                  <span>{userData.nickname}</span>
-                  <span>{userData.nickname}</span>
-                  <span>{userData.nickname}</span>
+                  {userData.length > 0 ? (
+                    <div>
+                      <span>{userData[1].nickname}</span>
+                      <span>{userData[0].nickname}</span>
+                      <span>{userData[2].nickname}</span>
+                    </div>
+                  ) : null}
                 </div>
               </div>
               <div className="top100">

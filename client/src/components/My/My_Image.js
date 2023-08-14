@@ -15,6 +15,7 @@ const ImageByMonth = ({ month, year, images, onDownloadClick }) => {
           <div key={index} className="image-block">
             {/* image-block : 이미지와 다운로드 버튼을 하나의 블록으로 묶는다. */}
             <img src={image.src} alt={image.alt} className="image-size" />
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a
               href="#"
               onClick={(e) => {

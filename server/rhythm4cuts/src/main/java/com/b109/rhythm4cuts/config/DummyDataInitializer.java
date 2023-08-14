@@ -1,8 +1,10 @@
 package com.b109.rhythm4cuts.config;
 
 import com.b109.rhythm4cuts.model.domain.ProfileImage;
+import com.b109.rhythm4cuts.model.domain.Song;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.repository.FriendRepository;
+import com.b109.rhythm4cuts.model.repository.MusicRepository;
 import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import com.b109.rhythm4cuts.model.service.MelonService;
@@ -28,16 +30,19 @@ public class DummyDataInitializer {
 
     private final MelonService melonService;
     private final MusicService musicService;
+    private final MusicRepository musicRepository;
 
     public DummyDataInitializer(UserRepository userRepository, ProfileImageRepository profileImageRepository,
                                 BCryptPasswordEncoder bCryptPasswordEncoder
-    , FriendRepository friendRepository, MelonService melonService, MusicService musicService) {
+            , FriendRepository friendRepository, MelonService melonService, MusicService musicService
+    , MusicRepository musicRepository) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.friendRepository = friendRepository;
         this.melonService = melonService;
         this.musicService = musicService;
+        this.musicRepository = musicRepository;
     }
 
 
@@ -83,6 +88,8 @@ public class DummyDataInitializer {
         user.setEmail("ssafy@naver.com");
         user.setProfileImage(profileImage1);
         user.setGender("M");
+        user.setPoint(1000);
+        user.setScoreSum(7000);
         user.setPassword(bCryptPasswordEncoder.encode("1234"));
 
         userRepository.save(user);
@@ -171,14 +178,24 @@ public class DummyDataInitializer {
         }
 
         // Youtube Music(Super Shy, Candy, 사건의 지평선, 사랑은 늘 도망가, 잠깐 시간 될까) Dummy Data
-        String[] url = { "https://www.youtube.com/watch?v=8-HPStXQ4tY",
+        String[] youtubeId = {
+                "https://www.youtube.com/watch?v=8-HPStXQ4tY",
                 "https://www.youtube.com/watch?v=DalyHh0PYoo",
                 "https://www.youtube.com/watch?v=Qj1Gt5z4zxo",
                 "https://www.youtube.com/watch?v=fmiEetlCGtA",
-                "https://www.youtube.com/watch?v=8-9iT2Z8CLY" };
+                "https://www.youtube.com/watch?v=8-9iT2Z8CLY"
+        };
 
-        for (int i = 0; i < url.length; i++) {
-            musicService.saveMusic(url[i]);
+        String[] url = {
+                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+Super+Shy+-+NewJeans+_+TJ+Karaoke.mp4",
+                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+Candy+-+NCT+DREAM+_+TJ+Karaoke.mp4",
+                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+%EC%82%AC%EA%B1%B4%EC%9D%98%EC%A7%80%ED%8F%89%EC%84%A0+-+%EC%9C%A4%ED%95%98+_+TJ+Karaoke.mp4",
+                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+%EC%82%AC%EB%9E%91%EC%9D%80%EB%8A%98%EB%8F%84%EB%A7%9D%EA%B0%80(%EC%8B%A0%EC%82%AC%EC%99%80%EC%95%84%EA%B0%80%EC%94%A8OST)+-+%EC%9E%84%EC%98%81%EC%9B%85+_+TJ+Karaoke.mp4",
+                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/mr/%5BTJ%EB%85%B8%EB%9E%98%EB%B0%A9%5D+%EC%9E%A0%EA%B9%90%EC%8B%9C%EA%B0%84%EB%90%A0%EA%B9%8C+-+%EC%9D%B4%EB%AC%B4%EC%A7%84+_+TJ+Karaoke.mp4"
+        };
+
+        for (int i = 0; i < youtubeId.length; i++) {
+            musicService.saveMusic(youtubeId[i], url[i]);
         }
     }
 

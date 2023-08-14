@@ -27,27 +27,10 @@ const Header = () => {
     setAnchorEl(null);
   };
 
-  // useEffect(() => {
-  //   const socket = new SockJS('https://i9b109.p.ssafy.io:8443/stomp/chat');
-  //   const stompClient = new Client({
-  //       webSocketFactory: () => socket,
-  //   });
-
-  //   stompClient.onConnect = function (frame) {
-  //       stompClient.subscribe('/subscribe/friend/2', function () {
-  //         dispatch(setHasNotification(true));
-  //       // 메시지 변경
-  //       setPopoverMessage('누구에게 친구 신청이 왔습니다.');
-  //       });
-  //   };
-
-  //   stompClient.activate();
-  // }, [dispatch]);
-
   return (
     <div className="Header_outer1">
       <Link className="Header_logo1" to={"/"}>
-        <img src="images/Home_Logo.png" alt="헤더 로고" />
+        <img src="images/Home_Logo.png" alt="헤더 사진" />
       </Link>
       <div>
         <Badge

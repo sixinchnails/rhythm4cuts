@@ -20,11 +20,6 @@ public class FriendController {
 
     private final FriendService friendService;
 
-//    @PostMapping("/dummy")
-//    public ResponseEntity<?> setDummyFriend() {
-//
-//    }
-
     @GetMapping("/info/{userSeq}")
     public ResponseEntity<?> getUserInfo(@PathVariable("userSeq") Integer userSeq) throws Exception {
         UserDto userInfo = friendService.getUserInfo(userSeq);

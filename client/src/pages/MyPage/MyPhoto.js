@@ -1,28 +1,33 @@
 // MyPhoto.js
-import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/My/My_SideBar";
-import "./MyPhoto.css";
-import ImageByMonth from "../../components/My/My_Image";
-import { userInfo } from "../../apis/userInfo";
-import LoginMypageHeader from "../../components/Home/BlackHeader";
+import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "../../utils/cookie";
-import axios from "axios";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-import Button from "@mui/material/Button";
+import { userInfo } from "../../apis/userInfo";
 import { Stack } from "@mui/material";
+import LoginMypageHeader from "../../components/Home/BlackHeader";
+import ImageByMonth from "../../components/My/My_Image";
+import Sidebar from "../../components/My/My_SideBar";
+import Button from "@mui/material/Button";
+import axios from "axios";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import "./MyPhoto.css";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 const MyPhoto = () => {
   const navigate = useNavigate();
 
   //로그인 상태 확인
-
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
   const [points, setPoints] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
   const email = getCookie("email");
+
+  useEffect(() => {
+    connectWebSocket();
+  }, []);
 
   useEffect(() => {
     axios
