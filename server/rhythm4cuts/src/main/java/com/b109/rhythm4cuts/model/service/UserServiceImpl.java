@@ -391,4 +391,8 @@ public class UserServiceImpl implements UserService {
 
         return user.getUserDto();
     }
+
+    public String findNicknameById(int userSeq) {
+        return userRepository.findByUserSeq(userSeq).getNickname();
+    }
 }
