@@ -5,6 +5,7 @@ import com.b109.rhythm4cuts.model.dto.*;
 import org.hibernate.sql.Update;
 import org.springframework.http.ResponseEntity;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface UserService {
@@ -34,5 +35,9 @@ public interface UserService {
     TokenResponse generateToken(UserDto userDto);
     TokenResponse reissueAuthenticationToken(TokenRequestDto tokenRequestDto);
     List<ProfileImageDto> getProfileImage(List<String> imageIds);
+
+    UserDto setUserState(int userSeq);
+
+    List<PointLogDto> getPointLogs(int userSeq);
     String findNicknameById(int userSeq);
 }

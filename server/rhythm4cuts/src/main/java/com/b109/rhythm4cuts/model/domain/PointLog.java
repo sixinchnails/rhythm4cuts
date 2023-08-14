@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.model.domain;
 
+import com.b109.rhythm4cuts.model.dto.PointLogDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,11 +27,6 @@ public class PointLog {
     @JoinColumn(name = "user_seq")
     private User user;
 
-    //게임 정보
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "game_seq")
-    private GameInfo gameInfo;
-
     //포인트 증감 내역
     @Column(name="point_history")
     private Integer pointHistory;
@@ -47,6 +43,18 @@ public class PointLog {
     public void setUser(User user) {
         this.user = user;
         user.getPointLogs().add(this);
+    }
+
+    public PointLogDto getPointLogDto() {
+        PointLogDto pointLogDto = new PointLogDto();
+        pointLogDto.setLogSeq(this.getLogSeq());
+        pointLogDto.setCagegorySeq(this.getCategory().getCode());
+        pointLogDto.setUserSeq(this.getUser().getUserSeq());
+        pointLogDto.setPointHistory(this.getPointHistory());
+        pointLogDto.setRemainPoint(this.getRemainPoint());
+        pointLogDto.setCreateDate(this.getCreateDate());
+
+        return pointLogDto;
     }
 
 }

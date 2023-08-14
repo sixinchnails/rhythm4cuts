@@ -5,10 +5,7 @@ import com.b109.rhythm4cuts.model.service.WaitRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,13 +30,27 @@ public class WaitRoomController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    // API 2. 대기방 친구 초대
+    // API 2. 대기방 입장
+    @PostMapping("/enter")
+    public ResponseEntity<?> insertUserGameInfo(@RequestBody Map<String, Object> param) {
 
-    // API 3. 대기방 준비 완료
+        int order = waitRoomService.insertUserGameInfo(param);
 
-    // API 4. 대기방 (방장 권한) 게임 시작
+        Map<String, Object> res = new HashMap<>();
+        res.put("message", "Success");
+        res.put("statusCode", 200);
+        res.put("data", order);
 
-    // API 5. 대기방 (방장 권한) 강제 퇴장
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 
-    // API 6. 대기방 나가기
+    // API 3. 대기방 친구 초대
+
+    // API 4. 대기방 준비 완료
+
+    // API 5. 대기방 (방장 권한) 게임 시작
+
+    // API 6. 대기방 (방장 권한) 강제 퇴장
+
+    // API 7. 대기방 나가기
 }

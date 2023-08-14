@@ -128,7 +128,7 @@ function GamePlay() {
             <button onClick={handleButtonClick}>Music Start</button>
             {videoVisible && (
               <video
-                controls
+                controls={false}
                 autoPlay
                 loop
                 style={{
