@@ -127,7 +127,7 @@ function GameWait() {
     // beforeunload는 웹 브라우저에서 발생하는 이벤트 중 하나로, 사용자가 현재 페이지를 떠날 때 발생하는 이벤트
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => {
-      window.removeEventListener("beforeunload", onBefor eUnload);
+      window.removeEventListener("beforeunload", onBeforeUnload);
     };
   }, []);
 
