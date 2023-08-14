@@ -51,8 +51,7 @@ function GameWait() {
   const [subscribers, setSubscribers] = useState([]); // 구독자
   const [players, setPlayers] = useState([]); // 통합
   const [playerSeq, setPlayerSeq] = useState([]); // 들어오는 playerSeq
-
-  const [userSeq, setUserSeq] = useState(undefined);
+  const access = getCookie("access");
 
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
@@ -84,7 +83,6 @@ function GameWait() {
       .then((res) => {
         if (res.status === 200) {
 
-          // setUserSeq(res.data.user_seq);
           console.log("내 시퀀스는 : " + res.data.user_seq)
         } else {
           // 로그인 상태가 아니라면 알림.
@@ -138,7 +136,7 @@ function GameWait() {
     }
   }
 
-  const access = getCookie("access");
+
 
   // 방 세션 가져오기
   async function fetchSession() {
@@ -253,11 +251,11 @@ function GameWait() {
       console.log("유저 데이터가 뭐냐 : " + userData.data.user_seq);
       setPlayerSeq((prevPlayerSeq) => [...prevPlayerSeq, userData.data.user_seq]);
 
-        console.log("배열을 띄어줘!! : " + playerSeq)
-        console.log("배열을 띄어줘!! : " + playerSeq[0])
-        console.log("배열을 띄어줘!! : " + playerSeq[1])
-        console.log("배열을 띄어줘!! : " + playerSeq[2])
-        console.log("배열을 띄어줘!! : " + playerSeq[3])
+      console.log("배열을 띄어줘!! : " + playerSeq)
+      console.log("배열을 띄어줘!! : " + playerSeq[0])
+      console.log("배열을 띄어줘!! : " + playerSeq[1])
+      console.log("배열을 띄어줘!! : " + playerSeq[2])
+      console.log("배열을 띄어줘!! : " + playerSeq[3])
 
       newSession
         .connect(token, { clientData: userData })
@@ -348,7 +346,24 @@ function GameWait() {
   // "게임 시작" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
   function handleGameReady() {
     // axios 보내기
-    navigate(`/GamePlay/${gameSeq}`);
+    // navigate(`/GamePlay/${gameSeq}`);
+    console.log("access : " + access);
+    console.log("playerSeq[0] : " + playerSeq[0]);
+    console.log("playerSeq[1] : " + playerSeq[1]);
+    console.log("playerSeq[2] : " + playerSeq[2]);
+    console.log("playerSeq[3] : " + playerSeq[3]);
+
+    axios.post(`https://i9b109.p.ssafy.io:8443/`,
+      {
+        headers: {
+          Authorization: "Bearer " + access,
+        }
+      },
+      {
+        gameSeq: gameSeq,
+        setPlayerSeq: [`${playerSeq[0]}`, `${playerSeq[1]}`, `${playerSeq[2]}`, `${playerSeq[3]}`]
+      }
+    )
   }
 
   // "채팅" 버튼을 클릭했을 때 동작 ---------------------------------------------------------------------------------
