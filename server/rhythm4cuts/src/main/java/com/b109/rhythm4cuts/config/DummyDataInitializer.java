@@ -253,44 +253,44 @@ public class DummyDataInitializer {
             musicService.saveMusic(youtubeId[i], url[i]);
         }
 
-        for(int i = 1; i <= 5; i++) {
-            BackGround backGroundImg = new BackGround();
-            backGroundImg.setBackgroundSeq(i);
-
-            backGroundRepository.save(backGroundImg);
-        }
-
-        List<BackGround> backGroundList = backGroundRepository.findAll();
-        List<String> urls = new ArrayList<>(List.of("https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/012382fa1597e60cffef3c58c5212e7f.jpg"
-                , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/aa58e437-05db-4183-9d4d-7ec40a008d88.jpg"
-                , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/D8R-NuUVsAAxTic.jpg"
-        ));
-
-        List<Song> songList = musicRepository.findAll();
-
-        for(int i = 0; i < 3; i++) {
-            GameInfo gameInfo = new GameInfo();
-
-            gameInfo.setGameSeq(i);
-            gameInfo.setSong(songList.get(0));
-            gameInfo.setCreateDate(LocalDateTime.now());
-
-            gameInfoRepository.save(gameInfo);
-        }
-
-
-        List<GameInfo> gameInfoList = gameInfoRepository.findAll();
-
-        for(int i = 1; i <= 4; i++) {
-            GameImage gameImage = new GameImage();
-
-            gameImage.setImageSeq(i);
-            gameImage.setBackGround(backGroundList.get(0));
-            gameImage.setUrl(urls.get(i % 3));
-            gameImage.setUser(user);
-//            gameImage.setGameInfo(gameInfoList.get(0));
-
-            filmRepository.save(gameImage);
-        }
+//        for(int i = 1; i <= 5; i++) {
+//            BackGround backGroundImg = new BackGround();
+//            backGroundImg.setBackgroundSeq(i);
+//
+//            backGroundRepository.save(backGroundImg);
+//        }
+//
+//        List<BackGround> backGroundList = backGroundRepository.findAll();
+//        List<String> urls = new ArrayList<>(List.of("https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/012382fa1597e60cffef3c58c5212e7f.jpg"
+//                , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/aa58e437-05db-4183-9d4d-7ec40a008d88.jpg"
+//                , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/D8R-NuUVsAAxTic.jpg"
+//        ));
+//
+//        List<Song> songList = musicRepository.findAll();
+//
+//        for(int i = 0; i < 3; i++) {
+//            GameInfo gameInfo = new GameInfo();
+//
+//            gameInfo.setGameSeq(i);
+//            gameInfo.setSong(songList.get(0));
+//            gameInfo.setCreateDate(LocalDateTime.now());
+//
+//            gameInfoRepository.save(gameInfo);
+//        }
+//
+//
+//        List<GameInfo> gameInfoList = gameInfoRepository.findAll();
+//
+//        for(int i = 1; i <= 4; i++) {
+//            GameImage gameImage = new GameImage();
+//
+//            gameImage.setImageSeq(i);
+//            gameImage.setBackGround(backGroundList.get(0));
+//            gameImage.setUrl(urls.get(i % 3));
+//            gameImage.setUser(user);
+////            gameImage.setGameInfo(gameInfoList.get(0));
+//
+//            filmRepository.save(gameImage);
+//        }
     }
 }
