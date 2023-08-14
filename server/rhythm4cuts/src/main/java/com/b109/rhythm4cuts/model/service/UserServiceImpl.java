@@ -140,15 +140,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException());
 
-        ProfileImage profileImage = user.getProfileImage();
+        ProfileImage profileImage = profileImageRepository.findByProfileImageSeq(dto.getProfileImageSeq())
+                .orElseThrow(() -> new IllegalArgumentException("해당 프로필 이미지는 존재하지 않습니다."));
 
-        profileImage.setImageName(dto.getImageName());
-        profileImage.setProfileImageSeq(dto.getProfileImageSeq());
-        profileImage.setDescription(dto.getDescription());
-        profileImage.setFileName(dto.getFileName());
+        user.setProfileImage(profileImage);
 
         userRepository.save(user);
-        profileImageRepository.save(profileImage);
     }
 
     //닉네임 변경 메서드
