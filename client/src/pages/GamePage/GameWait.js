@@ -80,6 +80,22 @@ function GameWait() {
     userInfo()
       .then((res) => {
         if (res.status === 200) {
+          const param = {
+            "userSeq": res.data.user_seq,
+            "gameSeq": gameSeq
+          };
+          axios.post("https://i9b109.p.ssafy.io:8443/wait/enter", param, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${getCookie("access")}`
+            }
+          })
+          .then((res) => {
+            console.log("과연 니가 올까?:" + res.data);
+          })
+          .catch((e) => {
+            console.log("에러가 뭐고: " + e);
+          })
         } else {
           // 로그인 상태가 아니라면 알림.
           handleOpenLoginAlert();

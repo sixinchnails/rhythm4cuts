@@ -34,7 +34,9 @@ public class WaitRoomController {
     @PostMapping("/enter")
     public ResponseEntity<?> insertUserGameInfo(@RequestBody Map<String, Object> param) {
 
+        System.out.println("찍혔니? (전)");
         int order = waitRoomService.insertUserGameInfo(param);
+        System.out.println("찍혔니? (후..)");
 
         Map<String, Object> res = new HashMap<>();
         res.put("message", "Success");
