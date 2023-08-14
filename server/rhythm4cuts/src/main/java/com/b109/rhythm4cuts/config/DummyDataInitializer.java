@@ -1,12 +1,11 @@
 package com.b109.rhythm4cuts.config;
 
+import com.b109.rhythm4cuts.model.domain.Category;
 import com.b109.rhythm4cuts.model.domain.ProfileImage;
 import com.b109.rhythm4cuts.model.domain.Song;
 import com.b109.rhythm4cuts.model.domain.User;
-import com.b109.rhythm4cuts.model.repository.FriendRepository;
-import com.b109.rhythm4cuts.model.repository.MusicRepository;
-import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
-import com.b109.rhythm4cuts.model.repository.UserRepository;
+import com.b109.rhythm4cuts.model.domain.*;
+import com.b109.rhythm4cuts.model.repository.*;
 import com.b109.rhythm4cuts.model.service.MelonService;
 import com.b109.rhythm4cuts.model.service.MusicService;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
@@ -19,6 +18,10 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class DummyDataInitializer {
@@ -31,11 +34,18 @@ public class DummyDataInitializer {
     private final MelonService melonService;
     private final MusicService musicService;
     private final MusicRepository musicRepository;
+    private final BackGroundRepository backGroundRepository;
+    private final GameInfoRepository gameInfoRepository;
+    private final FilmRepository filmRepository;
+
+    private final CategoryRepository categoryRepository;
 
     public DummyDataInitializer(UserRepository userRepository, ProfileImageRepository profileImageRepository,
                                 BCryptPasswordEncoder bCryptPasswordEncoder
             , FriendRepository friendRepository, MelonService melonService, MusicService musicService
-    , MusicRepository musicRepository) {
+    , MusicRepository musicRepository, CategoryRepository categoryRepository
+            , BackGroundRepository backGroundRepository
+            , GameInfoRepository gameInfoRepository, FilmRepository filmRepository) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -43,9 +53,11 @@ public class DummyDataInitializer {
         this.melonService = melonService;
         this.musicService = musicService;
         this.musicRepository = musicRepository;
+        this.categoryRepository = categoryRepository;
+        this.backGroundRepository = backGroundRepository;
+        this.gameInfoRepository = gameInfoRepository;
+        this.filmRepository = filmRepository;
     }
-
-
 
     @PostConstruct
     @Transactional
@@ -169,6 +181,49 @@ public class DummyDataInitializer {
         user8.setPassword(bCryptPasswordEncoder.encode("1234"));
         userRepository.save(user8);
 
+        Category category = new Category();
+        category.setCode(1);
+        category.setDescription("구매");
+        categoryRepository.save(category);
+
+        Category category1 = new Category();
+        category1.setCode(2);
+        category1.setDescription("포인트 얻음");
+        categoryRepository.save(category1);
+
+        User user9 = new User();
+        user9.setName("가");
+        user9.setNickname("가");
+        user9.setEmail("ga@naver.com");
+        user9.setProfileImage(profileImage1);
+//        user8.setBirthDate(targetDate);
+        user9.setGender("F");
+        user9.setPoint(1100);
+        user9.setPassword(bCryptPasswordEncoder.encode("1234"));
+        userRepository.save(user9);
+
+        User user10 = new User();
+        user10.setName("나");
+        user10.setNickname("나");
+        user10.setEmail("na@naver.com");
+        user10.setProfileImage(profileImage1);
+//        user8.setBirthDate(targetDate);
+        user10.setGender("F");
+        user10.setPoint(1100);
+        user10.setPassword(bCryptPasswordEncoder.encode("1234"));
+        userRepository.save(user10);
+
+        User user11 = new User();
+        user11.setName("다");
+        user11.setNickname("다");
+        user11.setEmail("da@naver.com");
+        user11.setProfileImage(profileImage1);
+//        user8.setBirthDate(targetDate);
+        user11.setGender("F");
+        user11.setPoint(1100);
+        user11.setPassword(bCryptPasswordEncoder.encode("1234"));
+        userRepository.save(user11);
+
         // Melon Top 100 Dummy Data
         try {
             melonService.clearMelonChart();
@@ -197,7 +252,45 @@ public class DummyDataInitializer {
         for (int i = 0; i < youtubeId.length; i++) {
             musicService.saveMusic(youtubeId[i], url[i]);
         }
+
+//        for(int i = 1; i <= 5; i++) {
+//            BackGround backGroundImg = new BackGround();
+//            backGroundImg.setBackgroundSeq(i);
+//
+//            backGroundRepository.save(backGroundImg);
+//        }
+//
+//        List<BackGround> backGroundList = backGroundRepository.findAll();
+//        List<String> urls = new ArrayList<>(List.of("https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/012382fa1597e60cffef3c58c5212e7f.jpg"
+//                , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/aa58e437-05db-4183-9d4d-7ec40a008d88.jpg"
+//                , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/D8R-NuUVsAAxTic.jpg"
+//        ));
+//
+//        List<Song> songList = musicRepository.findAll();
+//
+//        for(int i = 0; i < 3; i++) {
+//            GameInfo gameInfo = new GameInfo();
+//
+//            gameInfo.setGameSeq(i);
+//            gameInfo.setSong(songList.get(0));
+//            gameInfo.setCreateDate(LocalDateTime.now());
+//
+//            gameInfoRepository.save(gameInfo);
+//        }
+//
+//
+//        List<GameInfo> gameInfoList = gameInfoRepository.findAll();
+//
+//        for(int i = 1; i <= 4; i++) {
+//            GameImage gameImage = new GameImage();
+//
+//            gameImage.setImageSeq(i);
+//            gameImage.setBackGround(backGroundList.get(0));
+//            gameImage.setUrl(urls.get(i % 3));
+//            gameImage.setUser(user);
+////            gameImage.setGameInfo(gameInfoList.get(0));
+//
+//            filmRepository.save(gameImage);
+//        }
     }
-
-
 }

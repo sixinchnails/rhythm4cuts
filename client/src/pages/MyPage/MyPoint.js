@@ -1,5 +1,5 @@
 // MyPoint.js
-import { React, useState, useEffect } from "react";
+import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
 import LoginMypageHeader from "../../components/Home/BlackHeader";
@@ -16,7 +16,7 @@ const MyPoint = () => {
 
   const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
 
-  // 보유 포인트
+  //포인트
   const [point, setPoint] = useState("");
 
   const navigate = useNavigate();
@@ -67,6 +67,7 @@ const MyPoint = () => {
           setPoint(res.data.point);
           setPointSum(res.data.score_sum);
           setUserSeq(res.data.user_seq);
+          console.log(res);
         }
       })
       .catch((error) => {
