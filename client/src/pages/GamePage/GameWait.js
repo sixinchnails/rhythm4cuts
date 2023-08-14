@@ -33,7 +33,7 @@ function GameWait() {
 
   //GameList에서 전달받은 해당 방의 데이터
   const songSeq = location.state?.data;
-  { 
+  {
     console.log(songSeq);
   }
 
@@ -50,7 +50,6 @@ function GameWait() {
   const [publisher, setPublisher] = useState(undefined); // 자신
   const [subscribers, setSubscribers] = useState([]); // 구독자
   const [players, setPlayers] = useState([]); // 통합
-  const [playerSeq, setPlayerSeq] = useState([]); // 들어오는 playerSeq
   const [gameStarted, setGameStarted] = useState(false); // 게임 시작 여부 상태
   const access = getCookie("access");
 
@@ -78,31 +77,52 @@ function GameWait() {
     },
   });
 
+
+  useEffect(() => {
+    axios.get("https://i9b109.p.ssafy.io:8443/member/info", {
+      params: {
+        "email": getCookie("email"),
+      },
+      headers: {
+        'Authorization': `Bearer ${getCookie("access")}`
+      }
+    })
+      .then((res) => {
+        const param = {
+          "userSeq": String(res.data.user_seq),
+          "gameSeq": String(gameSeq)
+        };
+        console.log("체크하자 1 " + param.userSeq);
+        console.log("체크하자 2 " + param.gameSeq);
+
+        return axios.post("https://i9b109.p.ssafy.io:8443/wait/enter", param, {
+          headers: {
+            // 'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getCookie("access")}`
+          }
+        });
+      })
+      .then((postRes) => {
+        // 이곳에서 post 요청에 대한 응답 처리
+        console.log("POST 요청 응답:", postRes);
+      })
+      .catch((error) => {
+        // 에러 처리
+        console.error("에러 발생:", error);
+      });
+  }, []);
+
   // 로그인 상태관리
   useEffect(() => {
     connectWebSocket();
     userInfo()
       .then((res) => {
         if (res.status === 200) {
-          const param = {
-            "userSeq": res.data.user_seq,
-            "gameSeq": gameSeq
-          };
-          axios.post("https://i9b109.p.ssafy.io:8443/wait/enter", param, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${getCookie("access")}`
-            }
-          })
-          .then((res) => {
-            console.log("과연 니가 올까?:" + res.data);
-          })
-          .catch((e) => {
-            console.log("에러가 뭐고: " + e);
-          })
+
         } else {
           // 로그인 상태가 아니라면 알림.
           handleOpenLoginAlert();
+
         }
       })
       .catch((error) => {
@@ -238,14 +258,7 @@ function GameWait() {
 
       const token = await getToken(); // Implement getToken function
       const userData = await userInfo();
-      console.log("유저 데이터가 뭐냐 : " + userData.data.user_seq);
-      setPlayerSeq((prevPlayerSeq) => [...prevPlayerSeq, userData.data.user_seq]);
-
-      console.log("배열을 띄어줘!! : " + playerSeq)
-      console.log("배열을 띄어줘!! : " + playerSeq[0])
-      console.log("배열을 띄어줘!! : " + playerSeq[1])
-      console.log("배열을 띄어줘!! : " + playerSeq[2])
-      console.log("배열을 띄어줘!! : " + playerSeq[3])
+      // console.log("유저 데이터가 뭐냐 : " + userData.data.user_seq);
 
       newSession
         .connect(token, { clientData: userData })
@@ -281,13 +294,7 @@ function GameWait() {
     }
   };
 
-  useEffect(() => {
-    console.log("배열을 0 !! : ", playerSeq);
-    console.log("배열을 1 !! : ", playerSeq[0]);
-    console.log("배열을 2 !! : ", playerSeq[1]);
-    console.log("배열을 3 !! : ", playerSeq[2]);
-    console.log("배열을 4 !! : ", playerSeq[3]);
-  }, [playerSeq]);
+
 
 
   // "친구 초대" 버튼을 눌렀을 때 동작 ------------------------------------------------------------------------------
@@ -313,24 +320,20 @@ function GameWait() {
     setGameStarted(true);
 
     // axios 보내기
-    // navigate(`/GamePlay/${gameSeq}`);
-    console.log("access : " + access);
-    console.log("playerSeq[0] : " + playerSeq[0]);
-    console.log("playerSeq[1] : " + playerSeq[1]);
-    console.log("playerSeq[2] : " + playerSeq[2]);
-    console.log("playerSeq[3] : " + playerSeq[3]);
+    // console.log("access : " + access);
 
-    axios.post(`https://i9b109.p.ssafy.io:8443/`,
-      {
-        headers: {
-          Authorization: "Bearer " + access,
-        }
-      },
-      {
-        gameSeq: gameSeq,
-        setPlayerSeq: [`${playerSeq[0]}`, `${playerSeq[1]}`, `${playerSeq[2]}`, `${playerSeq[3]}`]
-      }
-    )
+    // axios.post(`https://i9b109.p.ssafy.io:8443/wait/enter`,
+    //   {
+    //     headers: {
+    //       Authorization: "Bearer " + access,
+    //     }
+    //   },
+    //   {
+    //     "gameSeq": gameSeq,
+    //     "userSeq": userseq
+    //   }
+    // )
+
   }
 
   // "채팅" 버튼을 클릭했을 때 동작 ---------------------------------------------------------------------------------
@@ -370,12 +373,13 @@ function GameWait() {
     // }
 
     // 구독 중인 스트림 해제
-    subscribers.forEach(subscriber => {
-      const streamManager = subscriber.streamManager; // 구독자 객체에서 streamManager 가져오기
-      if (streamManager) {
-        streamManager.stream.dispose(); // streamManager에 있는 stream을 해제
+    subscribers.forEach((subscriber) => {
+      if (typeof subscriber.unsubscribe === "function") {
+        subscriber.unsubscribe(); // 구독자 해제
+        if (subscriber.streamManager) {
+          subscriber.streamManager.stream.dispose(); // streamManager에 있는 stream 해제
+        }
       }
-      subscriber.unsubscribe(); // 구독자 해제
     });
 
     // 현재 유저 커넥션 연결 끊기
