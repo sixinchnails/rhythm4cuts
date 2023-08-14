@@ -1,9 +1,15 @@
 package com.b109.rhythm4cuts.model.service;
 
 import com.b109.rhythm4cuts.config.jwt.TokenProvider;
-import com.b109.rhythm4cuts.model.domain.*;
+import com.b109.rhythm4cuts.model.domain.Category;
+import com.b109.rhythm4cuts.model.domain.PointLog;
+import com.b109.rhythm4cuts.model.domain.ProfileImage;
+import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.*;
-import com.b109.rhythm4cuts.model.repository.*;
+import com.b109.rhythm4cuts.model.repository.CategoryRepository;
+import com.b109.rhythm4cuts.model.repository.LogRepository;
+import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
+import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -16,8 +22,6 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import javax.transaction.Transactional;
-import java.sql.SQLException;
 import java.util.*;
 
 import java.security.SecureRandom;
@@ -31,17 +35,15 @@ import static com.b109.rhythm4cuts.model.service.Utils.getRandomString;
 
 @RequiredArgsConstructor
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final LogRepository logRepository;
-    private final LobbyRepository lobbyRepository;
-    private final CategoryRepository categoryRepository;
     private final ProfileImageRepository profileImageRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JavaMailSender javaMailSender;
     private final TokenProvider tokenProvider;
     private final RedisTemplate redisTemplate;
+    private final CategoryRepository categoryRepository;
+    private final LogRepository logRepository;
 
     //id로 사용자 객체를 찾는 메서드
     public UserDto findById(Long userId) {
@@ -138,10 +140,10 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException());
 
-        Optional<ProfileImage> profileImage = profileImageRepository.findByProfileImageSeq(dto.getProfileImageSeq());
+        ProfileImage profileImage = profileImageRepository.findByProfileImageSeq(dto.getProfileImageSeq())
+                .orElseThrow(() -> new IllegalArgumentException("해당 프로필 이미지는 존재하지 않습니다."));
 
-        if (profileImage.isEmpty()) throw new IllegalArgumentException("해당 프로필 사진은 존재하지 않습니다.");
-        else user.setProfileImage(profileImage.get());
+        user.setProfileImage(profileImage);
 
         userRepository.save(user);
     }
@@ -236,13 +238,13 @@ public class UserServiceImpl implements UserService {
 
         //update
         userRepository.save(user);
-
         PointLogDto pointLogDto = new PointLogDto();
         pointLogDto.setUserSeq(user.getUserSeq());
         pointLogDto.setRemainPoint(user.getPoint());
         pointLogDto.setPointHistory(-payPoints);
-        pointLogDto.setCagegorySeq(1);
+        pointLogDto.setCategorySeq(1);
         setPointLog(pointLogDto);
+
         return user.getPoint();
     }
 
@@ -339,7 +341,7 @@ public class UserServiceImpl implements UserService {
 
         //레디스에서 기존 액세스 토큰(키)과 리프레쉬 토큰(밸류)를 삭제
         if (redisTemplate.hasKey(redisATKKey)) redisTemplate.delete(redisATKKey);
-        //해당 토큰을 키로 가진 매핑이 없는데요? 이미 리프레쉬 한번하는데 쓴 액세스 토큰을 다시 보냈을 때 발생.
+            //해당 토큰을 키로 가진 매핑이 없는데요? 이미 리프레쉬 한번하는데 쓴 액세스 토큰을 다시 보냈을 때 발생.
         else throw new JwtException("Invalid access token. Possible reason is the access token provided was previously used for refresh.");
 
         //RefreshToken이 없을 때 실행
@@ -389,19 +391,13 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    @Override
-    public UserDto setUserState(int userSeq) {
-        User user = userRepository.findByUserSeq(userSeq);
-        int state = user.getState();
-        if(state == 0) user.setState(1);
-        else user.setState(0);
-
-        return user.getUserDto();
+    public String findNicknameById(int userSeq) {
+        return userRepository.findByUserSeq(userSeq).getNickname();
     }
 
     public void setPointLog(PointLogDto pointLogDto) {
         User user = userRepository.findByUserSeq(pointLogDto.getUserSeq());
-        Category category = categoryRepository.findByCode(pointLogDto.getCagegorySeq());
+        Category category = categoryRepository.findByCode(pointLogDto.getCategorySeq());
 
         PointLog pointLog = new PointLog();
 
@@ -423,8 +419,5 @@ public class UserServiceImpl implements UserService {
         });
 
         return logsDto;
-    }
-    public String findNicknameById(int userSeq) {
-        return userRepository.findByUserSeq(userSeq).getNickname();
     }
 }

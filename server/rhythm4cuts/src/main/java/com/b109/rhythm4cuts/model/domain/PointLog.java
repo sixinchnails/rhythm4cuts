@@ -48,7 +48,7 @@ public class PointLog {
     public PointLogDto getPointLogDto() {
         PointLogDto pointLogDto = new PointLogDto();
         pointLogDto.setLogSeq(this.getLogSeq());
-        pointLogDto.setCagegorySeq(this.getCategory().getCode());
+        pointLogDto.setCategorySeq(this.getCategory().getCode());
         pointLogDto.setUserSeq(this.getUser().getUserSeq());
         pointLogDto.setPointHistory(this.getPointHistory());
         pointLogDto.setRemainPoint(this.getRemainPoint());
@@ -56,5 +56,4 @@ public class PointLog {
 
         return pointLogDto;
     }
-
 }
