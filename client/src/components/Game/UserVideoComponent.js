@@ -1,12 +1,11 @@
-import React from "react";
+import { React, Component } from "react";
 import OpenViduVideoComponent from "./OvVideo";
 
-import { Avatar, Grid } from '@mui/material';
+import { Avatar, Grid } from "@mui/material";
 
 const UserVideoComponent = ({ streamManager }) => {
-
   function getUserInfo() {
-    console.log("user info function")
+    console.log("user info function");
     console.log(JSON.parse(streamManager.stream.connection.data).clientData);
     return JSON.parse(streamManager.stream.connection.data).clientData;
   }
@@ -39,7 +38,9 @@ const UserVideoComponent = ({ streamManager }) => {
             fontSize: "20px",
             color: "white",
             margin: "20px",
-            display: "flex", alignItems: "center", justifyContent: "center"
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           <Grid item xs={3} style={{ marginRight: "10px" }}>
@@ -48,14 +49,17 @@ const UserVideoComponent = ({ streamManager }) => {
               style={{ width: "40px", height: "40px", flexShrink: 0 }}
             />
           </Grid>
-          <Grid item xs={7} style={{ fontFamily: "Pretendard-Regular", fontSize: "20px" }}>
+          <Grid
+            item
+            xs={7}
+            style={{ fontFamily: "Pretendard-Regular", fontSize: "20px" }}
+          >
             {getUserInfo().data.nickname}
           </Grid>
-
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default UserVideoComponent;

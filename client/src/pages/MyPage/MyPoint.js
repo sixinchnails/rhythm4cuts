@@ -27,13 +27,13 @@ const MyPoint = () => {
 
   try {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           setPoint(res.data.point);
           setPointSum(res.data.score_sum);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         window.alert("로그인을 해주세요!");
         navigate("/");
       });

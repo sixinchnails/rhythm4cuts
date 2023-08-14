@@ -43,6 +43,7 @@ const HeaderWait = () => {
         removeCookie("access");
         removeCookie("refresh");
         removeCookie("email");
+        navigate("/");
       } else {
         window.confirm("로그아웃 실패.");
       }
