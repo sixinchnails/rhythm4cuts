@@ -38,10 +38,7 @@ function AddFriend({ isOpen, handleClose }) {
           console.log(res.data.user_seq);
         }
       })
-      .catch((error) => {
-        Navigate("/");
-        window.alert("로그인을 해주세요!");
-      });
+      .catch((error) => {});
   } catch (error) {
     console.log(error);
   }
