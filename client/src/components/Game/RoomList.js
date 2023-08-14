@@ -12,6 +12,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import React, { useState } from "react";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
+import { useEffect } from 'react';
 
 function RoomList({ room, onRoomClick }) {
   // 방 인원수 파악

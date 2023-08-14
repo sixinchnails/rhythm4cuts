@@ -112,6 +112,7 @@ public class LobbyController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    // API 8. 방 입장 (ver.2)
     @GetMapping("/room/{gameSeq}")
     public ResponseEntity<?> enterRoom(@PathVariable int gameSeq) throws Exception {
        lobbyService.enterRoom(gameSeq);
@@ -123,6 +124,7 @@ public class LobbyController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    // API 9. 방 퇴장
     @GetMapping("/room/exit/{gameSeq}")
     public ResponseEntity<?> exitRoom(@PathVariable int gameSeq) throws Exception {
         lobbyService.exitRoom(gameSeq);

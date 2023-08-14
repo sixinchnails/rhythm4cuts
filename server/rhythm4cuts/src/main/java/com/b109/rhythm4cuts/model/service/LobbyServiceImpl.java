@@ -97,7 +97,7 @@ public class LobbyServiceImpl implements LobbyService {
         GameInfo gameInfo = lobbyRepository.selectSeqLobby(gameSeq);
         int headCount = gameInfo.getHeadCount();
         gameInfo.setHeadCount(headCount - 1);
-        if(gameInfo.getHeadCount() == -1) {
+        if(gameInfo.getHeadCount() == 0) {
             lobbyRepository.deleteById(gameSeq);
         }
 
