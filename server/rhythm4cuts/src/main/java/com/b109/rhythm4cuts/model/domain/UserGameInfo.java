@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.model.domain;
 
+import com.b109.rhythm4cuts.model.dto.UserGameInfoDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -79,5 +80,15 @@ public class UserGameInfo implements UserDetails {
     @Override
     public boolean isEnabled() {
         return false;
+    }
+
+    public UserGameInfoDto getUserGameInfoDto() {
+        UserGameInfoDto userGameInfoDto = new UserGameInfoDto();
+
+        userGameInfoDto.setUserGameInfoSeq(this.getUserGameInfoSeq());
+        userGameInfoDto.setGameSeq(this.getGameInfo().getGameSeq());
+        userGameInfoDto.setUserSeq(this.getUser().getUserSeq());
+
+        return userGameInfoDto;
     }
 }
