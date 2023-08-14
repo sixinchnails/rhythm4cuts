@@ -91,6 +91,7 @@ function CreateRoom({ isOpen, handleClose }) {
     // 3. 유효성 검사가 통과되면 방을 만듭니다.
     try {
       const sessionResponse = await createSession();
+      
       if (sessionResponse != null) {
         const response = await axios.post(
           "https://i9b109.p.ssafy.io:8443/lobby/room",
