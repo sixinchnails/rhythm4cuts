@@ -68,6 +68,7 @@ public class WaitRoomController {
             req.put("userSeq", playerSeq.get(i));
             req.put("order", orderList.get(i));
 
+
             responseList.set(orderList.get(i) - 1, playerSeq.get(i));
 
             waitRoomService.insertUserGameInfo(req);
