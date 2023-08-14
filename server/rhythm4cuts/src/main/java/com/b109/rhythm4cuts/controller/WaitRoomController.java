@@ -45,6 +45,7 @@ public class WaitRoomController {
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+    
 
     // API 3. 대기방 친구 초대
 
