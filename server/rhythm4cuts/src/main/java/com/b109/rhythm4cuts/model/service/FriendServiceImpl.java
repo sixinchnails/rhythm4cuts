@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.model.service;
 
+import com.b109.rhythm4cuts.exception.RequestFriendDuplicationException;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.FriendDto;
 import com.b109.rhythm4cuts.model.dto.UserDto;
@@ -65,6 +66,8 @@ public class FriendServiceImpl implements FriendService{
 
     @Override
     public void addFriend(FriendDto friend) throws Exception {
+
+
         friendRepository.updateRequestFriendToConfirm(friend.getFromUser(), friend.getToUser());
         friendRepository.insertFriend(friend.getFromUser(), friend.getToUser());
         friendRepository.insertFriend(friend.getToUser(), friend.getFromUser());
@@ -72,6 +75,11 @@ public class FriendServiceImpl implements FriendService{
 
     @Override
     public void requestFriend(FriendDto friendDto) throws Exception {
+        List<User> users = friendRepository.selectRequestFriendList(friendDto.getFromUser());
+
+        users.forEach(user -> {
+            if(user.getUserSeq() == friendDto.getToUser()) throw new RequestFriendDuplicationException("이미 친구 요청을 보냈습니다.");
+        });
         friendRepository.insertRequestFriend(friendDto.getFromUser(), friendDto.getToUser());
     }
 

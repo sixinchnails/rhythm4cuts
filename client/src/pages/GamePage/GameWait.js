@@ -33,7 +33,7 @@ function GameWait() {
 
   //GameList에서 전달받은 해당 방의 데이터
   const songSeq = location.state?.data;
-  {
+  { 
     console.log(songSeq);
   }
 
@@ -111,7 +111,7 @@ function GameWait() {
     // beforeunload는 웹 브라우저에서 발생하는 이벤트 중 하나로, 사용자가 현재 페이지를 떠날 때 발생하는 이벤트
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => {
-      window.removeEventListener("beforeunload", onBeforeUnload);
+      window.removeEventListener("beforeunload", onBefor eUnload);
     };
   }, []);
 

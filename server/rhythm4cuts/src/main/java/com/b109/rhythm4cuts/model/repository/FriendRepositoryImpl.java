@@ -54,9 +54,11 @@ public class FriendRepositoryImpl implements FriendRepository{
     public List<User> selectRequestFriendList(int userSeq) throws SQLException {
         User fromUser = em.find(User.class, userSeq);
 
-        String jpql = "SELECT rf.toUser FROM RequestFriend rf JOIN User u ON rf.fromUser.userSeq = u.userSeq WHERE rf.fromUser = :user";
+        String jpql = "SELECT rf.toUser FROM RequestFriend rf JOIN User u ON rf.fromUser.userSeq = u.userSeq WHERE rf.fromUser = :user and rf.requestStatus = :status";
+
         List<User> users = em.createQuery(jpql, User.class)
                 .setParameter("user", fromUser)
+                .setParameter("status", RequestStatus.WAIT)
                 .getResultList();
 
 
