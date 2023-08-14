@@ -368,7 +368,13 @@ function GameWait() {
     // }
 
     // 구독 중인 스트림 해제
-    subscribers.forEach(subscriber => subscriber.unsubscribe());
+    subscribers.forEach(subscriber => {
+      const streamManager = subscriber.streamManager; // 구독자 객체에서 streamManager 가져오기
+      if (streamManager) {
+        streamManager.stream.dispose(); // streamManager에 있는 stream을 해제
+      }
+      subscriber.unsubscribe(); // 구독자 해제
+    });
 
     // 현재 유저 커넥션 연결 끊기
     if (connectSession) {
@@ -542,13 +548,14 @@ function GameWait() {
                 {players[index] ? (
                   <UserVideoComponent streamManager={players[index]} />
                 ) : (
+                  // 빈 자리 표시
                   <video
                     autoPlay
                     loop
                     muted
                     style={{
-                      width: "100%",
-                      height: "100%",
+                      width: "80%", // 비디오 크기 조정
+                      height: "80%", // 비디오 크기 조정
                       objectFit: "cover",
                       borderRadius: "20px",
                     }}
