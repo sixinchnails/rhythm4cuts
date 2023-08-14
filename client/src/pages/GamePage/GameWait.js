@@ -51,6 +51,8 @@ function GameWait() {
   const [subscribers, setSubscribers] = useState([]); // 구독자 
   const [players, setPlayers] = useState([]);  // 통합
 
+  const [userSeq, setUserSeq] = useState(undefined);
+
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
     setLoginAlertOpen(true);
@@ -80,6 +82,9 @@ function GameWait() {
     userInfo()
       .then(res => {
         if (res.status === 200) {
+
+          setUserSeq(res.data.user_seq);
+
         } else {
           // 로그인 상태가 아니라면 알림.
           handleOpenLoginAlert();
@@ -174,11 +179,39 @@ function GameWait() {
     if (!isSessionJoined) { // 세션에 참여하지 않았을 때만 실행
       const joinSessionTimeout = setTimeout(() => {
         joinSession();
-      }, 2000);
+      }, 5000);
 
       return () => clearTimeout(joinSessionTimeout);
     }
   }, [isSessionJoined]);
+
+
+  // 테스트다 한윤아
+  useEffect(() => {
+
+    console.log("내가만든쿠키" + getCookie("access"));
+    console.log("res.data.user_seq아 몰라" + userSeq + " 랑" + gameSeq);
+    console.log("userSeq: " + userSeq);
+    const access = getCookie("access");
+    console.log("토큰 : " + access);
+
+    axios.post(
+      `https://i9b109.p.ssafy.io:8443/wait/enter`,
+      {
+        userSeq: userSeq,
+        gameSeq: gameSeq
+      },
+      {
+        headers: {
+          'Authorization': "Bearer " + access,
+        },
+      }
+    )
+      .then((resp) => {
+        console.log("resp야.. : " + resp.data)
+      });
+
+  }, [userSeq]);
 
   // --------------------------------------------------------------------------------------------------------------
   const joinSession = async () => {
@@ -341,7 +374,7 @@ function GameWait() {
     // }
 
     // 구독 중인 스트림 해제
-    subscribers.forEach(subscriber => subscriber.unsubscribe()); 
+    subscribers.forEach(subscriber => subscriber.unsubscribe());
 
     // 현재 유저 커넥션 연결 끊기
     if (connectSession) {
