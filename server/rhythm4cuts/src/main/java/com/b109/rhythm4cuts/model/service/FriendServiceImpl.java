@@ -53,7 +53,7 @@ public class FriendServiceImpl implements FriendService{
 
     @Override
     public List<UserDto> getRequestFriendList(int userSeq) throws Exception {
-        List<User> users = friendRepository.selectRequestFriendList(userSeq);
+        List<User> users = friendRepository.selectRequestWaitFriendList(userSeq);
         System.out.println(users);
         List<UserDto> res = new ArrayList<>();
         users.forEach(user->{
@@ -66,7 +66,7 @@ public class FriendServiceImpl implements FriendService{
 
     @Override
     public void addFriend(FriendDto friend) throws Exception {
-
+        System.out.println("실행");
 
         friendRepository.updateRequestFriendToConfirm(friend.getFromUser(), friend.getToUser());
         friendRepository.insertFriend(friend.getFromUser(), friend.getToUser());
