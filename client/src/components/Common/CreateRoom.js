@@ -1,4 +1,3 @@
-/* eslint-disable */
 import {
   Modal,
   Box,
@@ -15,13 +14,13 @@ import { createSession } from "../../openvidu/sessionInitialization";
 import { setSession, setGameseq } from "../../store";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { getCookie } from "../../utils/cookie";
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 
 function CreateRoom({ isOpen, handleClose }) {
-  const dispatch = useDispatch(); // Redux
+  const dispatch = useDispatch(); // 리덕스 넣기
   const navigate = useNavigate(); // 페이지 이동
   const [isSecret, setIsSecret] = useState("일반 방"); // 모드
   const [password, setPassword] = useState(""); // 비밀방 암호

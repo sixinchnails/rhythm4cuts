@@ -50,7 +50,7 @@ const LoginHeader = () => {
 
   const [nickName, setNickName] = useState("");
   const [point, setPoint] = useState(0);
-  userInfo().then(res => {
+  userInfo().then((res) => {
     setNickName(res.data.nickname);
     setPoint(res.data.point);
   });

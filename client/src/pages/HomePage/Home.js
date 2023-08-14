@@ -79,7 +79,9 @@ function Home() {
       } else {
         window.confirm("1오류가 발생했습니다.");
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const [startDate, setStartDate] = useState(new Date());
@@ -129,8 +131,8 @@ function Home() {
       const response = await axios.get(
         "https://i9b109.p.ssafy.io:8443/ranking/user"
       );
-      console.log(response.data.data);
       setUserData(response.data.data);
+      console.log(response.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -273,7 +275,8 @@ function Home() {
             <div className="rules">
               <img
                 alt="게임 규칙 이미지"
-                style={{ height: 500, width: 530 }}
+                style={{ height: 420, width: 450 }}
+                // style={{ height: 500, width: 530 }}
                 src="images/removeRules.png"
               />
             </div>
