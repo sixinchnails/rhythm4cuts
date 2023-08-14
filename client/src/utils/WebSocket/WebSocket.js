@@ -65,6 +65,16 @@ export function WebSocketProvider({ children }) {
                   setVideoVisible(true);
                   window.alert("영상 다같이 시작할게");
                 });
+                stomp.connect({}, () => {
+                  if (fromUser) {
+                    stomp.subscribe(
+                      `/subscribe/friend/invite/${fromUser}`,
+                      () => {
+                        alert("게임 초대 요청 옴");
+                      }
+                    );
+                  }
+                });
               }
             });
 

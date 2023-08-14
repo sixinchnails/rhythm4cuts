@@ -93,12 +93,32 @@ function AddFriend({ isOpen, handleClose }) {
   function requestFriend() {
     console.log(fromUser);
     console.log(toUser);
-    var request = {
+
+    const requestData = {
       fromUser: fromUser,
       toUser: toUser,
     };
+
+    axios
+      .post("https://i9b109.p.ssafy.io:8443/friend/request", requestData, {
+        headers: {
+          Authorization: "Bearer " + getCookie("access"),
+        },
+      })
+      .then(response => {
+        if (response.status === 200) {
+          console.log("친구 요청 성공");
+          alert("친구 요청이 성공적으로 보내졌습니다!");
+        } else {
+          console.error("친구 요청 실패:", response.data);
+        }
+      })
+      .catch(error => {
+        console.error("친구 요청 중 오류 발생:", error);
+      });
+
     if (stomp.connected) {
-      stomp.send("/public/request", {}, JSON.stringify(request));
+      stomp.send("/public/request", {}, JSON.stringify(requestData));
     }
   }
 

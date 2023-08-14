@@ -69,6 +69,7 @@ function InviteFriendsModal({
               <Button
                 onClick={() => {
                   setToUser(friend.userSeq); // 친구 선택 시 toUser 상태 업데이트
+                  console.log(friend.user);
                   InviteGame();
                 }}
               >
@@ -163,7 +164,7 @@ function GameWait() {
 
   function InviteGame() {
     var request = {
-      userSeq: userSeq,
+      fromUser: userSeq,
       toUser: toUser,
       gameSeq: gameSeq,
     };
