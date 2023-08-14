@@ -1,11 +1,12 @@
 // MyFriend.js
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
+import { React } from "react";
+import { useEffect } from "react";
 import LoginMypageHeader from "../../components/Home/BlackHeader";
 import MainContent from "../../components/My/My_MainContent";
 import FriendInfo from "../../components/My/My_Friend"; // UserInfo 컴포넌트를 import
 import Sidebar from "../../components/My/My_SideBar";
-import React from "react";
 import "./MyFriend.css";
 
 const MyFriend = () => {

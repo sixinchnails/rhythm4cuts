@@ -24,8 +24,10 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import RoomList from "../../components/Game/RoomList";
 import Header from "../../components/Game/HeaderWait";
 import axios from "axios";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 function GameList() {
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
   const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate();
   const [isCreateRoomModalOpen, setCreateRoomModalOpen] = useState(false); //  '방 만들기' 모달의 상태를 관리
@@ -67,6 +69,7 @@ function GameList() {
 
   // 로그인 상태관리
   useEffect(() => {
+    connectWebSocket();
     userInfo()
       .then((res) => {
         if (res.status === 200) {
@@ -166,6 +169,10 @@ function GameList() {
     };
     fetchNickname();
   }, []);
+
+  const handleOpenGameWait = (room) => {
+    navigate(`/GameWait/${room.gameSeq}`);
+  };
 
   return (
     <div
@@ -289,9 +296,13 @@ function GameList() {
               .map((room, gameSeq) => (
                 <Grid item xs={6} key={gameSeq}>
                   {/* 방 누르면 입장 */}
-                  <Link to={`/GameWait/${room.gameSeq}`}>
-                    <RoomList key={gameSeq} room={room} />
-                  </Link>
+                  <Button>
+                    <RoomList
+                      key={gameSeq}
+                      room={room}
+                      onRoomClick={handleOpenGameWait}
+                    />
+                  </Button>
                 </Grid>
               ))}
 

@@ -11,11 +11,12 @@ import {
 } from "@mui/material";
 import { useDebounce } from "use-debounce";
 import { getCookie } from "../../utils/cookie";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import axios from "axios";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 var sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
 var stomp = Stomp.over(sock);
@@ -27,6 +28,8 @@ function AddFriend({ isOpen, handleClose }) {
   // const [client, setClient] = useState(null);
   const [fromUser, setFromUser] = useState("");
   const [toUser, setToUser] = useState("");
+  const navigate = useNavigate();
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
 
   try {
     userInfo()
@@ -36,37 +39,28 @@ function AddFriend({ isOpen, handleClose }) {
           console.log(res.data.user_seq);
         }
       })
-      .catch((error) => {
-        Navigate("/");
-        window.alert("로그인을 해주세요!");
-      });
+      .catch((error) => {});
   } catch (error) {
     console.log(error);
   }
 
-  // useEffect(() => {
-  //   stomp.connect({}, () => {
-  //     console.log("connected");
-  //     console.log("--------------------" + fromUser);
-  //     stomp.subscribe(`/subscribe/friend/${{fromUser}}`, () => {
-  //       alert("친구 요청 옴");
-  //     });
-  //   });
-  // }, []);
-
   useEffect(() => {
+    console.log("add friend use effect begin");
     stomp.connect({}, () => {
+      console.log("add friend connect");
       console.log("connected");
       if (fromUser) {
         console.log("Subscribing to user:", fromUser);
         stomp.subscribe(`/subscribe/friend/${fromUser}`, () => {
-          alert("친구 요청 옴");
+          // alert("친구 요청 옴");
         });
       }
     });
   }, [fromUser]);
 
   useEffect(() => {
+    // connectWebSocket();
+
     if (debouncedFriendNickname) {
       axios
         .get(
