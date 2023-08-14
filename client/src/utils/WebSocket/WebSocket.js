@@ -57,24 +57,23 @@ export function WebSocketProvider({ children }) {
                   setHasNotification(true);
                   setFriendRequest(message.body); // 여기서 메시지 내용 저장
                 });
-                stomp.subscribe(`/subscribe/game/${fromUser}`, message => {
-                  setMessages(prev => [...prev, message.body]);
-                  setHasNotification(true); // 알림 상태 업데이트
-                });
+                // stomp.subscribe(`/subscribe/game/${fromUser}`, message => {
+                //   setMessages(prev => [...prev, message.body]);
+                //   setHasNotification(true); // 알림 상태 업데이트
+                // });
                 stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
                   setVideoVisible(true);
                   window.alert("영상 다같이 시작할게");
                 });
-                stomp.connect({}, () => {
-                  if (fromUser) {
-                    stomp.subscribe(
-                      `/subscribe/friend/invite/${fromUser}`,
-                      () => {
-                        alert("게임 초대 요청 옴");
-                      }
-                    );
-                  }
-                });
+                if (fromUser) {
+                  console.log("전역 웹소캣 연결 확인");
+                  stomp.subscribe(
+                    `/subscribe/friend/invite/${fromUser}`,
+                    () => {
+                      alert("게임 초대 요청 옴");
+                    }
+                  );
+                }
               }
             });
 
