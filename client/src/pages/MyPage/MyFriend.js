@@ -8,17 +8,11 @@ import MainContent from "../../components/My/My_MainContent";
 import FriendInfo from "../../components/My/My_Friend"; // UserInfo 컴포넌트를 import
 import Sidebar from "../../components/My/My_SideBar";
 import "./MyFriend.css";
-import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 const MyFriend = () => {
   const navigate = useNavigate();
 
-  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
-
-  useEffect(() => {
-    connectWebSocket();
-    console.log("WebSocket attempted to connect");
-  }, []);
+  //로그인 상태 확인
 
   try {
     userInfo()
