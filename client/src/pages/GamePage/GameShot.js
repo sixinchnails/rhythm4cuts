@@ -342,13 +342,6 @@ const GameShot = () => {
                 >
                   확인
                 </Button>
-                <Button
-                  variant="contained"
-                  color="warning"
-                  onClick={() => sendCapture(copyRef.current)}
-                >
-                  확인
-                </Button>
 
                 <Button variant="outlined" color="warning" onClick={handleNext}>
                   <FaArrowRight />
