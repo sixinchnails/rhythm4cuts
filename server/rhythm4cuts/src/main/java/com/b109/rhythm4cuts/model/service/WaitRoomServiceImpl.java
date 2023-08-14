@@ -37,7 +37,6 @@ public class WaitRoomServiceImpl implements WaitRoomService {
 
         int userSeq = Integer.parseInt((String) param.get("userSeq"));
         int gameSeq = Integer.parseInt((String) param.get("gameSeq"));
-        int order = (Integer) param.get("order");
 
         UserGameInfo userGameInfo = new UserGameInfo();
 
@@ -50,21 +49,21 @@ public class WaitRoomServiceImpl implements WaitRoomService {
         }
 
         // 순서 알고리즘
-//        int[] orders = { 1, 2, 3, 4 };
-//        int order = -1;
-//
-//        List<UserGameInfo> userGameInfos = waitRoomRepository.selectAll(gameSeq);
-//        for (int i = 0; i < userGameInfos.size(); i++) {
-//            if (userGameInfos.get(i).getGameOrder() != orders[i]) {
-//                order = orders[i];
-//                break;
-//            }
-//        }
-//
-//        // 중간에 빈 상태가 아닌 경우
-//        if (order == -1) {
-//            order = userGameInfos.size() + 1;
-//        }
+        int[] orders = { 1, 2, 3, 4 };
+        int order = -1;
+
+        List<UserGameInfo> userGameInfos = waitRoomRepository.selectAll(gameSeq);
+        for (int i = 0; i < userGameInfos.size(); i++) {
+            if (userGameInfos.get(i).getGameOrder() != orders[i]) {
+                order = orders[i];
+                break;
+            }
+        }
+
+        // 중간에 빈 상태가 아닌 경우
+        if (order == -1) {
+            order = userGameInfos.size() + 1;
+        }
         userGameInfo.setGameOrder(order);
         waitRoomRepository.insertUserGameInfo(userGameInfo);
 
