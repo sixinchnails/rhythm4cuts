@@ -59,6 +59,7 @@ const Mypage = () => {
   }
 
   useEffect(() => {
+    console.log("연결");
     connectWebSocket();
   }, []);
 

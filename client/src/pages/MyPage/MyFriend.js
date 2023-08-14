@@ -17,6 +17,7 @@ const MyFriend = () => {
 
   useEffect(() => {
     connectWebSocket();
+    console.log("WebSocket attempted to connect");
   }, []);
 
   try {
