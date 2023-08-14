@@ -21,8 +21,11 @@ import UserVideo from "../../components/Game/UserVideo";
 import Header from "../../components/Game/HeaderPlay";
 import axios from "axios";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
+import { Stomp } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
 
-// GameWait에서 받아오는 세션값이 다르면 접근제한.(예정)
+var sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
+var stomp = Stomp.over(sock);
 
 function GamePlay() {
   const { gameSeq } = useParams(); // 여기서 gameSeq를 가져옴
@@ -33,7 +36,25 @@ function GamePlay() {
   const { connectWebSocket, sendGameStartMessage } = useWebSocket();
 
   useEffect(() => {
-    connectWebSocket(gameSeq);
+    stomp.connect({}, () => {
+      console.log("GamePlay connected to WebSocket");
+      // 특정 토픽 구독
+      stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
+        console.log("video start");
+        setVideoVisible(true);
+      });
+    });
+    // 컴포넌트 unmount 시 웹소켓 연결 해제 및 구독 해제
+    return () => {
+      if (stomp.connected) {
+        stomp.unsubscribe(`/subscribe/song/${gameSeq}`);
+        stomp.disconnect();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    // connectWebSocket(gameSeq);
   }, [gameSeq]);
 
   console.log("GameSeq: " + gameSeq);
@@ -44,10 +65,18 @@ function GamePlay() {
   const [videoVisible, setVideoVisible] = useState(false);
 
   const handleButtonClick = () => {
-    sendGameStartMessage(gameSeq);
-    setTimeout(() => {
-      setVideoVisible(true);
-    }, 3000);
+    console.log("게임 시작 버튼 누름");
+    if (stomp.connected) {
+      console.log("연결 후 자동 재생 요청");
+      const message = {
+        gameSeq: gameSeq,
+        // 필요한 경우 여기에 다른 데이터 추가
+      };
+      stomp.send("/public/song", {}, JSON.stringify(message));
+    }
+    // setTimeout(() => {
+    //   setVideoVisible(true);
+    // }, 3000);
   };
 
   return (
