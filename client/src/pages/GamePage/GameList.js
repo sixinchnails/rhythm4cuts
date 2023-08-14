@@ -96,6 +96,7 @@ function GameList() {
           },
         }
       );
+      console.log(response.data.data);
       return response.data.data;
     } catch (error) {
       console.error("방 리스트 가져오는데 실패 뽝!! : ", error);
