@@ -5,6 +5,7 @@ import com.b109.rhythm4cuts.model.dto.*;
 import org.hibernate.sql.Update;
 import org.springframework.http.ResponseEntity;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface UserService {
@@ -56,4 +57,6 @@ public interface UserService {
     List<ProfileImageDto> getProfileImage(List<String> imageIds);
 
     UserDto setUserState(int userSeq);
+
+    List<PointLogDto> getPointLogs(int userSeq);
 }

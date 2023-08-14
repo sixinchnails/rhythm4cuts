@@ -1,12 +1,10 @@
 package com.b109.rhythm4cuts.config;
 
+import com.b109.rhythm4cuts.model.domain.Category;
 import com.b109.rhythm4cuts.model.domain.ProfileImage;
 import com.b109.rhythm4cuts.model.domain.Song;
 import com.b109.rhythm4cuts.model.domain.User;
-import com.b109.rhythm4cuts.model.repository.FriendRepository;
-import com.b109.rhythm4cuts.model.repository.MusicRepository;
-import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
-import com.b109.rhythm4cuts.model.repository.UserRepository;
+import com.b109.rhythm4cuts.model.repository.*;
 import com.b109.rhythm4cuts.model.service.MelonService;
 import com.b109.rhythm4cuts.model.service.MusicService;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
@@ -32,10 +30,12 @@ public class DummyDataInitializer {
     private final MusicService musicService;
     private final MusicRepository musicRepository;
 
+    private final CategoryRepository categoryRepository;
+
     public DummyDataInitializer(UserRepository userRepository, ProfileImageRepository profileImageRepository,
                                 BCryptPasswordEncoder bCryptPasswordEncoder
             , FriendRepository friendRepository, MelonService melonService, MusicService musicService
-    , MusicRepository musicRepository) {
+    , MusicRepository musicRepository, CategoryRepository categoryRepository) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -43,6 +43,7 @@ public class DummyDataInitializer {
         this.melonService = melonService;
         this.musicService = musicService;
         this.musicRepository = musicRepository;
+        this.categoryRepository = categoryRepository;
     }
 
 
@@ -168,6 +169,16 @@ public class DummyDataInitializer {
         user8.setPoint(1100);
         user8.setPassword(bCryptPasswordEncoder.encode("1234"));
         userRepository.save(user8);
+
+        Category category = new Category();
+        category.setCode(1);
+        category.setDescription("구매");
+        categoryRepository.save(category);
+
+        Category category1 = new Category();
+        category1.setCode(2);
+        category1.setDescription("포인트 얻음");
+        categoryRepository.save(category1);
 
         // Melon Top 100 Dummy Data
         try {

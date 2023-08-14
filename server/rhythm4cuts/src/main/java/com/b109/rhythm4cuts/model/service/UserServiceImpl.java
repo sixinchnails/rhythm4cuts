@@ -1,11 +1,9 @@
 package com.b109.rhythm4cuts.model.service;
 
 import com.b109.rhythm4cuts.config.jwt.TokenProvider;
-import com.b109.rhythm4cuts.model.domain.ProfileImage;
-import com.b109.rhythm4cuts.model.domain.User;
+import com.b109.rhythm4cuts.model.domain.*;
 import com.b109.rhythm4cuts.model.dto.*;
-import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
-import com.b109.rhythm4cuts.model.repository.UserRepository;
+import com.b109.rhythm4cuts.model.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -18,6 +16,8 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import javax.transaction.Transactional;
+import java.sql.SQLException;
 import java.util.*;
 
 import java.security.SecureRandom;
@@ -31,8 +31,12 @@ import static com.b109.rhythm4cuts.model.service.Utils.getRandomString;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final LogRepository logRepository;
+    private final LobbyRepository lobbyRepository;
+    private final CategoryRepository categoryRepository;
     private final ProfileImageRepository profileImageRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JavaMailSender javaMailSender;
@@ -236,6 +240,12 @@ public class UserServiceImpl implements UserService {
         //update
         userRepository.save(user);
 
+        PointLogDto pointLogDto = new PointLogDto();
+        pointLogDto.setUserSeq(user.getUserSeq());
+        pointLogDto.setRemainPoint(user.getPoint());
+        pointLogDto.setPointHistory(-payPoints);
+        pointLogDto.setCagegorySeq(1);
+        setPointLog(pointLogDto);
         return user.getPoint();
     }
 
@@ -390,5 +400,31 @@ public class UserServiceImpl implements UserService {
         else user.setState(0);
 
         return user.getUserDto();
+    }
+
+    public void setPointLog(PointLogDto pointLogDto) {
+        User user = userRepository.findByUserSeq(pointLogDto.getUserSeq());
+        Category category = categoryRepository.findByCode(pointLogDto.getCagegorySeq());
+
+        PointLog pointLog = new PointLog();
+
+        pointLog.setUser(user);
+        pointLog.setCategory(category);
+        pointLog.setPointHistory(pointLogDto.getPointHistory());
+        pointLog.setRemainPoint(pointLogDto.getRemainPoint());
+
+        logRepository.save(pointLog);
+    }
+
+    public List<PointLogDto> getPointLogs(int userSeq) {
+        User user = userRepository.findByUserSeq(userSeq);
+        List<PointLog> logs = logRepository.findByUser(user);
+
+        List<PointLogDto> logsDto = new ArrayList<>();
+        logs.forEach((log)-> {
+            logsDto.add(log.getPointLogDto());
+        });
+
+        return logsDto;
     }
 }
