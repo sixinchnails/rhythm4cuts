@@ -48,7 +48,7 @@ const roomState = createSlice({
       state.gameseq = action.payload;
     },
     // 상태 초기화
-    resetRoomState: state => {
+    resetRoomState: (state) => {
       state.session = initialState.session;
       state.connection = initialState.connection;
       state.connectionToken = initialState.connectionToken;
@@ -73,7 +73,7 @@ export const setRoomSession = (session) => (dispatch) => {
 };
 
 // Room 세션 ID를 설정하는 액션 함수
-export const setUserConnection = connection => dispatch => {
+export const setUserConnection = (connection) => (dispatch) => {
   dispatch(setConnection(connection));
 };
 
@@ -217,6 +217,7 @@ let GameShot_frameImage = createSlice({
     "/images/Blue.png",
     "/images/Green.png",
     "/images/Red.png",
+    "/images/기본네컷.jpg",
   ],
 });
 
