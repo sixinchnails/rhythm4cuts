@@ -20,4 +20,5 @@ public class UserDto {
     private int profileImageSeq;
     private String refreshToken;
     private String connectionId;
+    private int state;
 }

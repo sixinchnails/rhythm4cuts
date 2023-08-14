@@ -1,27 +1,20 @@
 // MyPoint.js
-import { React, useState, useEffect } from "react";
+import { React, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
 import LoginMypageHeader from "../../components/Home/BlackHeader";
 import Sidebar from "../../components/My/My_SideBar";
 import "../../components/My/My_Friend.css";
 import "./MyPoint.css";
-import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 const MyPoint = () => {
   //누적 포인트
   const [pointSum, setPointSum] = useState("");
 
-  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
-
-  // 보유 포인트
+  //포인트
   const [point, setPoint] = useState("");
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    connectWebSocket();
-  }, []);
 
   //로그인 상태 확인
 
@@ -31,6 +24,7 @@ const MyPoint = () => {
         if (res.status === 200) {
           setPoint(res.data.point);
           setPointSum(res.data.score_sum);
+          console.log(res);
         }
       })
       .catch((error) => {
