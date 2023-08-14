@@ -43,13 +43,14 @@ function GameWait() {
 
   const session = useSelector((state) => state.roomState.session);
 
-  const [myUserName, setMyUserName] = useState(undefined);
+  // const [myUserName, setMyUserName] = useState(undefined);
   const [connectSession, setConnectSession] = useState(undefined);
 
   const [mainStreamManager, setMainStreamManager] = useState(undefined); // 방장
   const [publisher, setPublisher] = useState(undefined); // 자신
   const [subscribers, setSubscribers] = useState([]); // 구독자
   const [players, setPlayers] = useState([]); // 통합
+  const [playerSeq, setPlayerSeq] = useState([]); // 들어오는 playerSeq
 
   const [userSeq, setUserSeq] = useState(undefined);
 
@@ -83,8 +84,8 @@ function GameWait() {
       .then((res) => {
         if (res.status === 200) {
 
-          setUserSeq(res.data.user_seq);
-
+          // setUserSeq(res.data.user_seq);
+          console.log("내 시퀀스는 : " + res.data.user_seq)
         } else {
           // 로그인 상태가 아니라면 알림.
           handleOpenLoginAlert();
@@ -188,37 +189,41 @@ function GameWait() {
   }, [isSessionJoined]);
 
 
-  // 테스트다 한윤아
+  // // 테스트다 한윤아
   // useEffect(() => {
-
   //   if (userSeq && gameSeq) {
-  //     console.log("내가만든쿠키" + getCookie("access"));
+  //     // console.log("내가만든쿠키" + getCookie("access"));
   //     console.log("res.data.user_seq아 몰라" + userSeq + " 랑" + gameSeq);
-  //     const access = getCookie("access");
+  //     // const access = getCookie("access");
 
-  //     axios.post(
-  //       `https://i9b109.p.ssafy.io:8443/wait/enter`,
-  //       {
-  //         "userSeq": 6,
-  //         "gameSeq": 183
-  //       },
-  //       {
-  //         headers: {
-  //           Authorization: "Bearer " + access,
-  //         },
-  //       }
-  //     );
+  //     // axios.post(
+  //     //   `https://i9b109.p.ssafy.io:8443/wait/enter`,
+  //     //   {
+  //     //     "userSeq": 6,
+  //     //     "gameSeq": 183
+  //     //   },
+  //     //   {
+  //     //     headers: {
+  //     //       Authorization: "Bearer " + access,
+  //     //     },
+  //     //   }
+  //     // );
+
+  //     setPlayerSeq((prevPlayers) => [...prevPlayers, userSeq]); // 플레이어 시퀀스
 
   //   }
-  // }, [userSeq]);
+  // }, []);
 
   // --------------------------------------------------------------------------------------------------------------
   const joinSession = async () => {
+
+
     try {
       if (connectSession) {
         console.log("이미 세션에 참여한 경우 중복 호출 방지");
         return;
       }
+
 
       const ov = new OpenVidu();
       const newSession = ov.initSession();
@@ -245,11 +250,18 @@ function GameWait() {
 
       const token = await getToken(); // Implement getToken function
       const userData = await userInfo();
+      console.log("유저 데이터가 뭐냐 : " + userData.data.user_seq);
+      setPlayerSeq((prevPlayerSeq) => [...prevPlayerSeq, userData.data.user_seq]);
+
+        console.log("배열을 띄어줘!! : " + playerSeq)
+        console.log("배열을 띄어줘!! : " + playerSeq[0])
+        console.log("배열을 띄어줘!! : " + playerSeq[1])
+        console.log("배열을 띄어줘!! : " + playerSeq[2])
+        console.log("배열을 띄어줘!! : " + playerSeq[3])
 
       newSession
         .connect(token, { clientData: userData })
         .then(async () => {
-          console.log(userData);
           const newPublisher = await ov.initPublisherAsync(undefined, {
             audioSource: undefined,
             videoSource: undefined,
@@ -306,6 +318,15 @@ function GameWait() {
     }
   };
 
+  useEffect(() => {
+    console.log("배열을 0 !! : ", playerSeq);
+    console.log("배열을 1 !! : ", playerSeq[0]);
+    console.log("배열을 2 !! : ", playerSeq[1]);
+    console.log("배열을 3 !! : ", playerSeq[2]);
+    console.log("배열을 4 !! : ", playerSeq[3]);
+  }, [playerSeq]);
+
+
   // "친구 초대" 버튼을 눌렀을 때 동작 ------------------------------------------------------------------------------
   const handleAddFriend = () => {
     console.log("친구 초대 버튼 클릭!");
@@ -324,10 +345,9 @@ function GameWait() {
     }
   }
 
-  // "게임 준비" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
+  // "게임 시작" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
   function handleGameReady() {
-    dispatch(userSession(session));
-    dispatch(setConnection(connection));
+    // axios 보내기
     navigate(`/GamePlay/${gameSeq}`);
   }
 
@@ -457,24 +477,6 @@ function GameWait() {
                 </StyledIconButton>
               </Grid>
 
-              {/* "게임준비" 버튼 */}
-              <Grid item xs={5} style={{ margin: "1px" }}>
-                <StyledIconButton
-                  onClick={handleGameReady}
-                  style={{ width: "12vw" }}
-                >
-                  <CheckIcon />
-                  <Typography
-                    style={{
-                      fontFamily: "Pretendard-Regular",
-                      fontSize: "20px",
-                      padding: "15px",
-                    }}
-                  >
-                    게임 준비
-                  </Typography>
-                </StyledIconButton>
-              </Grid>
 
               {/* "채팅" 버튼 */}
               <Grid item xs={5} style={{ margin: "1px" }}>
@@ -513,6 +515,27 @@ function GameWait() {
                   </Typography>
                 </StyledIconButton>
               </Grid>
+
+              {/* "게임 시작" 버튼 */}
+              {players.length === 4 && (
+                <Grid item xs={5} style={{ margin: "1px" }}>
+                  <StyledIconButton
+                    onClick={handleGameReady}
+                    style={{ width: "12vw" }}
+                  >
+                    <CheckIcon />
+                    <Typography
+                      style={{
+                        fontFamily: "Pretendard-Regular",
+                        fontSize: "20px",
+                        padding: "15px",
+                      }}
+                    >
+                      게임 시작
+                    </Typography>
+                  </StyledIconButton>
+                </Grid>
+              )}
             </Grid>
           </Grid>
         </Grid>

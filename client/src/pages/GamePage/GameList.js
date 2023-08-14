@@ -180,7 +180,6 @@ function GameList() {
     if (joinableRooms.length > 0) {
       try {
         // 여기에 입장 로직을 작성
-        // 예시: 웹소켓 등을 이용하여 해당 방으로 입장 요청을 보냄
         // 입장 요청이 성공하면 게임 대기실 페이지로 이동
         navigate(`/GameWait/${joinableRooms[0].gameSeq}`);
       } catch (error) {
