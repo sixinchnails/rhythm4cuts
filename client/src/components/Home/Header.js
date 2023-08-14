@@ -11,14 +11,14 @@ const Header = () => {
   //알람이 온지 안 온지 여부
   const dispatch = useDispatch();
   const hasNotification = useSelector(
-    state => state.notification.hasNotification
+    (state) => state.notification.hasNotification
   );
   //모달 여부
   const [popoverMessage] = useState("아무 정보가 없습니다.");
   const [anchorEl, setAnchorEl] = useState(null);
 
   //누르면 모달 열리게
-  const handleClick = event => {
+  const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
     dispatch(setHasNotification(false));
   };

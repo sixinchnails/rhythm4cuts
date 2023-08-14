@@ -68,7 +68,7 @@ export const {
 } = roomState.actions;
 
 // Room 세션 ID를 설정하는 액션 함수
-export const setRoomSession = session => dispatch => {
+export const setRoomSession = (session) => (dispatch) => {
   dispatch(setSession(session));
 };
 
@@ -78,7 +78,7 @@ export const setUserConnection = connection => dispatch => {
 };
 
 // 유저 토큰을 설정하는 액션 함수
-export const setUserToken = userToken => dispatch => {
+export const setUserToken = (userToken) => (dispatch) => {
   dispatch(setConnectionToken(userToken));
 };
 
@@ -155,7 +155,7 @@ const MyPage_MyInfo = createSlice({
   reducers: {
     // 프로필 사진 수정 action
     updateProfilePic: (state, action) => {
-      const item = state.find(item => item.name === "프로필 사진");
+      const item = state.find((item) => item.name === "프로필 사진");
       if (item) {
         item.value = action.payload;
       }
