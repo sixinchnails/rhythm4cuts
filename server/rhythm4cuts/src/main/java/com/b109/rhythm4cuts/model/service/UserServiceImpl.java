@@ -381,4 +381,18 @@ public class UserServiceImpl implements UserService {
 
         return null;
     }
+
+    @Override
+    public UserDto setUserState(int userSeq) {
+        User user = userRepository.findByUserSeq(userSeq);
+        int state = user.getState();
+        if(state == 0) user.setState(1);
+        else user.setState(0);
+
+        return user.getUserDto();
+    }
+
+    public String findNicknameById(int userSeq) {
+        return userRepository.findByUserSeq(userSeq).getNickname();
+    }
 }

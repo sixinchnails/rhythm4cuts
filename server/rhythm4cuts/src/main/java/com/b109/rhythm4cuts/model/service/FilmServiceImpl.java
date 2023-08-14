@@ -97,7 +97,7 @@ public class FilmServiceImpl implements FilmService {
         filmInfo.getCommonFilm().getName();
 
         //s3 url 설정
-        
+
         filmRepository.save(gameImage);
         byte[] privateFileData = filmInfo.getPrivateFilm().getBytes();
         byte[] commonFileDate = filmInfo.getCommonFilm().getBytes();

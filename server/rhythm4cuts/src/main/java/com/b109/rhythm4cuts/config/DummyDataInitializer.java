@@ -37,8 +37,8 @@ public class DummyDataInitializer {
     public DummyDataInitializer(UserRepository userRepository, ProfileImageRepository profileImageRepository,
                                 BCryptPasswordEncoder bCryptPasswordEncoder
             , FriendRepository friendRepository, MelonService melonService, MusicService musicService
-    , MusicRepository musicRepository, BackGroundRepository backGroundRepository
-    , GameInfoRepository gameInfoRepository, FilmRepository filmRepository) {
+            , MusicRepository musicRepository, BackGroundRepository backGroundRepository
+            , GameInfoRepository gameInfoRepository, FilmRepository filmRepository) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -244,9 +244,9 @@ public class DummyDataInitializer {
 
         List<BackGround> backGroundList = backGroundRepository.findAll();
         List<String> urls = new ArrayList<>(List.of("https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/012382fa1597e60cffef3c58c5212e7f.jpg"
-        , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/aa58e437-05db-4183-9d4d-7ec40a008d88.jpg"
-        , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/D8R-NuUVsAAxTic.jpg"
-                ));
+                , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/aa58e437-05db-4183-9d4d-7ec40a008d88.jpg"
+                , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/D8R-NuUVsAAxTic.jpg"
+        ));
 
         List<Song> songList = musicRepository.findAll();
 
