@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useDebounce } from "use-debounce";
 import { getCookie } from "../../utils/cookie";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
@@ -28,6 +28,7 @@ function AddFriend({ isOpen, handleClose }) {
   // const [client, setClient] = useState(null);
   const [fromUser, setFromUser] = useState("");
   const [toUser, setToUser] = useState("");
+  const navigate = useNavigate();
   const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
 
   try {

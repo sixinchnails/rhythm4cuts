@@ -17,7 +17,6 @@ import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 const MyPhoto = () => {
   const navigate = useNavigate();
 
-  //로그인 상태 확인
   const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
   const [points, setPoints] = useState(0);
   const [showModal, setShowModal] = useState(false);
@@ -99,7 +98,8 @@ const MyPhoto = () => {
       });
   } catch (error) {}
 
-  const imagesData = [
+  //사진 데이터 관리
+  const [imagesData, setImagesData] = useState([
     {
       year: 2023,
       month: 3,
@@ -117,7 +117,29 @@ const MyPhoto = () => {
         { src: "/images/네컷5.jfif", alt: "Image 2" },
       ],
     },
-  ];
+  ]);
+
+  const bringImages = async () => {
+    const params = {
+      email: getCookie("email"),
+    };
+    const headers = {
+      Authorization: getCookie("access"),
+    };
+    const email = getCookie();
+    const result = await axios.get(
+      "https://i9b109.p.ssafy.io:8443/film/photo",
+      params,
+      headers,
+      { email }
+    );
+    console.log(result);
+    // setImagesData(result);
+  };
+
+  useEffect(() => {
+    bringImages();
+  }, []);
 
   const afterDeduction = points - 300;
 

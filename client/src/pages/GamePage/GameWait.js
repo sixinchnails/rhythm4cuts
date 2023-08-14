@@ -15,7 +15,7 @@ import { createConnection } from "../../openvidu/connectionInitialization";
 import UserVideoComponent from "../../components/Game/UserVideoComponent";
 import React, { Component, useState, useEffect } from "react";
 import LoginAlert from "../../components/Common/LoginAlert";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../../components/Game/HeaderPlay";
 import Next from "../../components/Game/NextToPlay";
@@ -26,9 +26,16 @@ import axios from "axios";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 function GameWait() {
+  const location = useLocation();
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
   const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate(); // 페이지 이동
+
+  //GameList에서 전달받은 해당 방의 데이터
+  const songSeq = location.state?.data;
+  {
+    console.log(songSeq);
+  }
 
   var { gameSeq } = useParams(); // url에서 추출
 

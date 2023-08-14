@@ -111,7 +111,9 @@ function CreateRoom({ isOpen, handleClose }) {
         console.log("방 만들어졌습니다~ gameseq : ", response.data.data);
         dispatch(setSession(sessionResponse.id));
         dispatch(setGameseq(response.data.data));
-        navigate(`/GameWait/${response.data.data}`);
+        navigate(`/GameWait/${response.data.data}`, {
+          state: { data: songSeq },
+        });
       }
     } catch (error) {
       console.error("세션을 받지 못했죠~", error);
