@@ -41,7 +41,7 @@ public class WaitRoomServiceImpl implements WaitRoomService {
 
         if (waitRoomRepository.selectOne(userGameInfo) != null) {
             System.out.println("error 발생! 이미 데이터가 들어가있음!");
-            return;
+            return -1;
         }
 
         // 순서 알고리즘
