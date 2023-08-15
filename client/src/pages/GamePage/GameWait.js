@@ -28,7 +28,7 @@ import React, { Component, useState, useEffect } from "react";
 import LoginAlert from "../../components/Common/LoginAlert";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Header from "../../components/Game/HeaderPlay";
+// import Header from "../../components/Game/HeaderPlay";
 import Next from "../../components/Game/NextToPlay";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from "../../apis/userInfo";
@@ -38,8 +38,8 @@ import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 
-var sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
-var stomp = Stomp.over(sock);
+
+
 
 function InviteFriendsModal({
   isOpen,
@@ -83,7 +83,97 @@ function InviteFriendsModal({
   );
 }
 
+
 function GameWait() {
+  // var sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
+  // var stomp = Stomp.over(sock);
+
+  const [stomp, setStomp] = useState(null); // stomp 객체 상태 추가
+
+
+  // if(!stomp.connected){
+  //   stomp.connect(
+  //     {},
+  //     function() {
+  //       console.log("게임 페이지 안 웹소캣 연결.");
+  //       stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
+  //         console.log("video start");
+  //         alert("연결됨")
+  //         setGameStarted(true);
+  //       });
+  //       console.log(userSeq);
+  //       if (userSeq) {
+  //         stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
+  //           alert("게임 초대 요청 옴");
+  //         });
+  //       }
+  //     },
+  //     error => {
+  //       console.log("STOMP 연결 실패:", error);
+  //     }
+  //   );
+  // }
+  // useEffect(() => {
+  //   if (!stomp.connected) {
+  //     stomp.connect(
+  //       {},
+  //       function () {
+  //         console.log("게임 페이지 안 웹소켓 연결.");
+  //         stomp.subscribe(`/subscribe/song/${gameSeq}`, (message) => {
+  //           console.log("video start");
+  //           alert("연결됨");
+  //           setGameStarted(true);
+  //         });
+  //         console.log(userSeq);
+  //         if (userSeq) {
+  //           stomp.subscribe(
+  //             `/subscribe/friend/invite/${userSeq}`,
+  //             () => {
+  //               alert("게임 초대 요청 옴");
+  //             }
+  //           );
+  //         }
+  //       },
+  //       (error) => {
+  //         console.log("STOMP 연결 실패:", error);
+  //       }
+  //     );
+  //   }
+  // }, []);
+  useEffect(() => {
+    if (!stomp) { // stomp 객체가 없을 때만 초기화
+      const sock = new SockJS('https://i9b109.p.ssafy.io:8443/stomp/chat');
+      const stompClient = Stomp.over(sock);
+
+      stompClient.connect(
+        {},
+        function () {
+          console.log('게임 페이지 안 웹소켓 연결.');
+          stompClient.subscribe(`/subscribe/song/${gameSeq}`, (message) => {
+            console.log('video start');
+            alert('연결됨');
+            setGameStarted(true);
+          });
+          console.log(userSeq);
+          if (userSeq) {
+            stompClient.subscribe(
+              `/subscribe/friend/invite/${userSeq}`,
+              () => {
+                alert('게임 초대 요청 옴');
+              }
+            );
+          }
+        },
+        (error) => {
+          console.log('STOMP 연결 실패:', error);
+        }
+      );
+
+      setStomp(stompClient); // stomp 객체를 상태에 저장
+    }
+  }, [stomp]);
+  
+
   const location = useLocation();
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
   const dispatch = useDispatch(); // 리덕스 업데이트
@@ -164,24 +254,29 @@ function GameWait() {
     },
   });
 
-  useEffect(() => {
-    console.log("useeffect.");
-    console.log("stomp object:", stomp);
-    stomp.connect(
-      {},
-      () => {
-        console.log("게임 페이지 안 웹소캣 연결.");
-        if (userSeq) {
-          stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
-            alert("게임 초대 요청 옴");
-          });
-        }
-      },
-      error => {
-        console.log("STOMP 연결 실패:", error);
-      }
-    );
-  }, [userSeq]);
+  // useEffect(() => {
+  //   console.log("websocket subscribe 실행");
+  //   console.log("stomp object:", stomp);
+  //   stomp.connect(
+  //     {},
+  //     function() {
+  //       stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
+  //         console.log("video start");
+  //         setGameStarted(true);
+  //       });
+  //       console.log("게임 페이지 안 웹소캣 연결.");
+  //       console.log(userSeq);
+  //       if (userSeq) {
+  //         stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
+  //           alert("게임 초대 요청 옴");
+  //         });
+  //       }
+  //     },
+  //     error => {
+  //       console.log("STOMP 연결 실패:", error);
+  //     }
+  //   );
+  // }, [userSeq]);
 
   function InviteGame(toUserValue) {
     var request = {
@@ -234,7 +329,7 @@ function GameWait() {
 
   // 로그인 상태관리
   useEffect(() => {
-    connectWebSocket();
+    // connectWebSocket();
     userInfo()
       .then(res => {
         if (res.status === 200) {
@@ -341,6 +436,9 @@ function GameWait() {
 
   // --------------------------------------------------------------------------------------------------------------
   const joinSession = async () => {
+    console.log("--------------- join session begin -----------------")
+    
+
     try {
       if (connectSession) {
         console.log("이미 세션에 참여한 경우 중복 호출 방지");
@@ -408,23 +506,24 @@ function GameWait() {
     }
   };
 
-  useEffect(() => {
-    stomp.connect({}, () => {
-      console.log("video start");
-      // 특정 토픽 구독
-      stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
-        console.log("video start");
-        setGameStarted(true);
-      });
-    });
-    // 컴포넌트 unmount 시 웹소켓 연결 해제 및 구독 해제
-    return () => {
-      if (stomp.connected) {
-        stomp.unsubscribe(`/subscribe/song/${gameSeq}`);
-        stomp.disconnect();
-      }
-    };
-  }, []);
+  // useEffect(() => {
+  //   console.log("-----------before stomp connect --------")
+  //   stomp.connect({}, () => {
+  //     console.log("video start");
+  //     // 특정 토픽 구독
+  //     stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
+  //       console.log("video start");
+  //       setGameStarted(true);
+  //     });
+  //   });
+  //   // 컴포넌트 unmount 시 웹소켓 연결 해제 및 구독 해제
+  //   return () => {
+  //     if (stomp.connected) {
+  //       stomp.unsubscribe(`/subscribe/song/${gameSeq}`);
+  //       stomp.disconnect();
+  //     }
+  //   };
+  // }, []);
 
   // "친구 초대" 버튼을 눌렀을 때 동작 ------------------------------------------------------------------------------
   const handleAddFriend = () => {
@@ -440,22 +539,38 @@ function GameWait() {
       toUser: toUser,
       // roomNumber :
     };
+    
     if (stomp.connected) {
       stomp.send("/public/request", {}, JSON.stringify(request));
     }
   }
 
   // "게임 시작" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
+  // function handleGameReady() {
+  //   console.log("게임 시작 버튼 누름");
+  //   console.log(stomp)
+  //   // 게임 시작 메시지를 서버에 전송
+  //   if (stomp.connected) {
+  //     console.log("연결 후 자동 재생 요청");
+  //     const message = {
+  //       gameSeq: gameSeq,
+  //       // 필요한 경우 여기에 다른 데이터 추가
+  //     };
+  //     stomp.send("/public/song", {}, JSON.stringify(message));
+  //   }
+  // }
+
   function handleGameReady() {
-    console.log("게임 시작 버튼 누름");
+    console.log('게임 시작 버튼 누름');
+    console.log(stomp);
     // 게임 시작 메시지를 서버에 전송
-    if (stomp.connected) {
-      console.log("연결 후 자동 재생 요청");
+    if (stomp && stomp.connected) {
+      console.log('연결 후 자동 재생 요청');
       const message = {
         gameSeq: gameSeq,
         // 필요한 경우 여기에 다른 데이터 추가
       };
-      stomp.send("/public/song", {}, JSON.stringify(message));
+      stomp.send('/public/song', {}, JSON.stringify(message));
     }
   }
 
@@ -547,7 +662,7 @@ function GameWait() {
         backgroundImage: "url('/images/GameImage/GameList.jpg')",
       }}
     >
-      <Header />
+      {/* <Header /> */}
 
       <Grid container>
         {/* TOP : 게임 시작 전*/}
@@ -635,7 +750,7 @@ function GameWait() {
               {gameStarted ? null : ( // 시작하면 버튼 다 사라져랏
                 <Grid container spacing={2}>
                   {/* 친구 초대 버튼 */}
-                  {players.length !== 4 && (
+                  {players.length >= 1 && (
                     <Grid item xs={5} style={{ margin: "1px" }}>
                       <StyledIconButton
                         onClick={() => {
@@ -679,7 +794,7 @@ function GameWait() {
                   )}
 
                   {/* "게임 시작" 버튼 */}
-                  {players.length === 4 ? (
+                  {players.length >= 1 ? (
                     <Grid item xs={10} style={{ margin: "1px" }}>
                       <StyledIconButton
                         onClick={handleGameReady}
@@ -772,4 +887,19 @@ function GameWait() {
     </div>
   );
 }
+
+// function handleGameReady() {
+//   console.log("게임 시작 버튼 누름");
+//   console.log(stomp)
+//   // 게임 시작 메시지를 서버에 전송
+//   if (stomp.connected) {
+//     console.log("연결 후 자동 재생 요청");
+//     const message = {
+//       gameSeq: gameSeq,
+//       // 필요한 경우 여기에 다른 데이터 추가
+//     };
+//     stomp.send("/public/song", {}, JSON.stringify(message));
+//   }
+// }
+
 export default GameWait;
