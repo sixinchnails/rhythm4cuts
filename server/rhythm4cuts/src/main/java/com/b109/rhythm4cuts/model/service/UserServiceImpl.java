@@ -1,9 +1,13 @@
 package com.b109.rhythm4cuts.model.service;
 
 import com.b109.rhythm4cuts.config.jwt.TokenProvider;
+import com.b109.rhythm4cuts.model.domain.Category;
+import com.b109.rhythm4cuts.model.domain.PointLog;
 import com.b109.rhythm4cuts.model.domain.ProfileImage;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.*;
+import com.b109.rhythm4cuts.model.repository.CategoryRepository;
+import com.b109.rhythm4cuts.model.repository.LogRepository;
 import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +42,8 @@ public class UserServiceImpl implements UserService {
     private final JavaMailSender javaMailSender;
     private final TokenProvider tokenProvider;
     private final RedisTemplate redisTemplate;
+    private final CategoryRepository categoryRepository;
+    private final LogRepository logRepository;
 
     //id로 사용자 객체를 찾는 메서드
     public UserDto findById(Long userId) {
@@ -134,15 +140,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException());
 
-        ProfileImage profileImage = user.getProfileImage();
+        ProfileImage profileImage = profileImageRepository.findByProfileImageSeq(dto.getProfileImageSeq())
+                .orElseThrow(() -> new IllegalArgumentException("해당 프로필 이미지는 존재하지 않습니다."));
 
-        profileImage.setImageName(dto.getImageName());
-        profileImage.setProfileImageSeq(dto.getProfileImageSeq());
-        profileImage.setDescription(dto.getDescription());
-        profileImage.setFileName(dto.getFileName());
+        user.setProfileImage(profileImage);
 
         userRepository.save(user);
-        profileImageRepository.save(profileImage);
     }
 
     //닉네임 변경 메서드
@@ -235,6 +238,12 @@ public class UserServiceImpl implements UserService {
 
         //update
         userRepository.save(user);
+        PointLogDto pointLogDto = new PointLogDto();
+        pointLogDto.setUserSeq(user.getUserSeq());
+        pointLogDto.setRemainPoint(user.getPoint());
+        pointLogDto.setPointHistory(-payPoints);
+        pointLogDto.setCategorySeq(1);
+        setPointLog(pointLogDto);
 
         return user.getPoint();
     }
@@ -380,5 +389,35 @@ public class UserServiceImpl implements UserService {
         }
 
         return null;
+    }
+
+    public String findNicknameById(int userSeq) {
+        return userRepository.findByUserSeq(userSeq).getNickname();
+    }
+
+    public void setPointLog(PointLogDto pointLogDto) {
+        User user = userRepository.findByUserSeq(pointLogDto.getUserSeq());
+        Category category = categoryRepository.findByCode(pointLogDto.getCategorySeq());
+
+        PointLog pointLog = new PointLog();
+
+        pointLog.setUser(user);
+        pointLog.setCategory(category);
+        pointLog.setPointHistory(pointLogDto.getPointHistory());
+        pointLog.setRemainPoint(pointLogDto.getRemainPoint());
+
+        logRepository.save(pointLog);
+    }
+
+    public List<PointLogDto> getPointLogs(int userSeq) {
+        User user = userRepository.findByUserSeq(userSeq);
+        List<PointLog> logs = logRepository.findByUser(user);
+
+        List<PointLogDto> logsDto = new ArrayList<>();
+        logs.forEach((log)-> {
+            logsDto.add(log.getPointLogDto());
+        });
+
+        return logsDto;
     }
 }

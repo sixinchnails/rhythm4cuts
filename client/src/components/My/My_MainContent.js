@@ -4,8 +4,16 @@ import { useState } from "react";
 import AddFriend from "../Common/AddFriend";
 import React from "react";
 import "./My_MainContent.css";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
+import { useEffect } from "react";
 
 function MainContent() {
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
+
+  useEffect(() => {
+    // connectWebSocket();
+    console.log("WebSocket attempted to connect");
+  }, []);
   const location = useLocation();
 
   // 친구 추가
@@ -45,27 +53,6 @@ function MainContent() {
       >
         {title}
       </h1>
-      {isMyFriendPage && (
-        <span
-          className="add-friend"
-          onClick={handleOpenAddFriendModal}
-          style={{
-            fontFamily: "Pretendard-Regular",
-            fontWeight: "bold",
-            cursor: "pointer",
-            color: "white",
-            marginRight: "10%",
-          }}
-        >
-          친구 추가
-        </span>
-      )}
-
-      {/* '친구 추가' 모달 */}
-      <AddFriend
-        isOpen={isAddFriendModalOpen}
-        handleClose={handleCloseAddFriendModal}
-      />
     </div>
   );
 }

@@ -60,7 +60,7 @@ public class GameInfo {
     private String sessionId;
 
     public GameInfo() {
-        this.headCount = 1;
+        this.headCount = 0;
         this.isSecret = false;
         this.hasImage = false;
         this.roomStatus = RoomStatus.WAIT;
@@ -71,13 +71,14 @@ public class GameInfo {
 
         lobbyDto.setGameSeq(this.getGameSeq());
         lobbyDto.setTitle(this.getTitle());
-//        lobbyDto.setSongSeq(this.getSong().getSongSeq());
+        lobbyDto.setSongSeq(this.getSong().getSongSeq());
         lobbyDto.setHeadcount(this.getHeadCount());
         lobbyDto.setIsSecret(this.getIsSecret() ? 1 : 0);
         lobbyDto.setPassword(this.getPassword());
 //        lobbyDto.setStatus(this.getRoomStatus());
         lobbyDto.setSessionId(this.getSessionId());
         lobbyDto.setSongTitle(this.getSong().getTitle());
+        lobbyDto.setYoutubeId(this.getSong().getYoutubeId());
         return lobbyDto;
     }
 

@@ -13,11 +13,21 @@ export function WebSocketProvider({ children }) {
   const [connected, setConnected] = useState(false);
   const [messages, setMessages] = useState([]);
   const [hasNotification, setHasNotification] = useState(false); // 알림 상태 추가
+  const [friendRequest, setFriendRequest] = useState(null); // 친구 요청 정보 저장
+  const [videoVisible, setVideoVisible] = useState(false);
+
   let socket = null;
   let reconnectInterval;
 
-  const connectWebSocket = useCallback(() => {
-    if (!socket) {
+  const connectWebSocket = useCallback(gameSeq => {
+    if (socket && socket.connected) {
+      console.log("WebSocket is already connected");
+    } else {
+      console.log("Attempting to connect to WebSocket");
+      // ... (이후의 연결 코드)
+    }
+
+    if (!socket || !socket.connected) {
       // 먼저 사용자 정보를 가져옵니다.
       userInfo()
         .then(res => {
@@ -35,6 +45,7 @@ export function WebSocketProvider({ children }) {
             };
 
             stomp.connect({}, () => {
+              console.log("전역 설정");
               if (reconnectInterval) {
                 clearInterval(reconnectInterval);
                 reconnectInterval = null;
@@ -43,16 +54,16 @@ export function WebSocketProvider({ children }) {
               if (fromUser) {
                 stomp.subscribe(`/subscribe/friend/${fromUser}`, message => {
                   setMessages(prev => [...prev, message.body]);
-                  window.alert("친추옴");
-                  setHasNotification(true); // 알림 상태 업데이트
+                  setHasNotification(true);
+                  setFriendRequest(message.body); // 여기서 메시지 내용 저장
                 });
                 stomp.subscribe(`/subscribe/game/${fromUser}`, message => {
                   setMessages(prev => [...prev, message.body]);
                   setHasNotification(true); // 알림 상태 업데이트
                 });
-                stomp.subscribe(`/subscribe/startSong/${fromUser}`, message => {
-                  const songData = JSON.parse(message.body);
-                  startSongAt(songData.song, songData.timestamp);
+                stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
+                  setVideoVisible(true);
+                  window.alert("영상 다같이 시작할게");
                 });
               }
             });
@@ -69,16 +80,15 @@ export function WebSocketProvider({ children }) {
   }, []);
 
   // 노래 시작 함수
-  const startSongAt = (song, timestamp) => {
-    const currentTime = new Date().getTime();
-    const delay = timestamp - currentTime; // 서버가 지정한 시작 시간과 현재 시간의 차이를 계산
-
-    if (delay > 0) {
-      setTimeout(() => {
-        // playSong(song); // 노래 재생 로직 (이 부분은 별도로 구현해야 함)
-      }, delay);
-    } else {
-      // playSong(song); // 이미 시작 시간이 지났으면 즉시 노래 재생
+  const sendGameStartMessage = gameSeq => {
+    console.log(gameSeq + "웹소켓 연결 페이지에서");
+    if (socket && socket.connected) {
+      const stomp = Stomp.over(socket);
+      // gameSeq 값을 포함하여 서버에 메시지 전송
+      const message = {
+        gameSeq: gameSeq,
+      };
+      stomp.send("/public/song", {}, JSON.stringify(message));
     }
   };
 
@@ -106,6 +116,8 @@ export function WebSocketProvider({ children }) {
     disconnectWebSocket,
     hasNotification, // 알림 상태
     resetNotification, // 알림 초기화 함수
+    friendRequest,
+    sendGameStartMessage, // 추가
   };
 
   return (

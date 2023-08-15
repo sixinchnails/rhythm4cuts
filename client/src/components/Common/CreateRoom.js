@@ -1,4 +1,3 @@
-/* eslint-disable */
 import {
   Modal,
   Box,
@@ -15,13 +14,13 @@ import { createSession } from "../../openvidu/sessionInitialization";
 import { setSession, setGameseq } from "../../store";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { getCookie } from "../../utils/cookie";
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 
 function CreateRoom({ isOpen, handleClose }) {
-  const dispatch = useDispatch(); // Redux
+  const dispatch = useDispatch(); // 리덕스 넣기
   const navigate = useNavigate(); // 페이지 이동
   const [isSecret, setIsSecret] = useState("일반 방"); // 모드
   const [password, setPassword] = useState(""); // 비밀방 암호
@@ -39,10 +38,10 @@ function CreateRoom({ isOpen, handleClose }) {
           Authorization: "Bearer " + getCookie("access"),
         },
       })
-      .then(response => {
+      .then((response) => {
         setAllSongs(response.data.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
   }, []);
@@ -50,7 +49,7 @@ function CreateRoom({ isOpen, handleClose }) {
   // 검색어 변경 시 검색 결과 필터링
   useEffect(() => {
     if (searchTerm) {
-      const results = allSongs.filter(song =>
+      const results = allSongs.filter((song) =>
         song.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setSearchResults(results);
@@ -59,20 +58,20 @@ function CreateRoom({ isOpen, handleClose }) {
     }
   }, [searchTerm, allSongs]);
 
-  const handleSongChange = event => {
+  const handleSongChange = (event) => {
     setSongSeq(event.target.value);
     setSearchTerm(event.target.value);
   };
 
-  const handleModeChange = event => {
+  const handleModeChange = (event) => {
     setIsSecret(event.target.value);
   };
 
-  const handlePasswordChange = event => {
+  const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
-  const selectSong = song => {
+  const selectSong = (song) => {
     setSongSeq(song.songSeq);
     setSearchTerm(song.title); // 선택한 노래의 제목을 표시
     setSearchResults([]); // 검색 결과를 초기화하여 목록을 숨김
@@ -80,18 +79,28 @@ function CreateRoom({ isOpen, handleClose }) {
   };
 
   const handleCreateRoom = async () => {
+    // 1. 사용자가 선택한 노래 제목의 유효성 검사
+    const songExists = allSongs.some((song) => song.songSeq === songSeq);
+
+    if (!songExists) {
+      // 2. 유효성 검사가 실패하면 모달 알림창을 표시
+      alert("노래 제목을 확인해주세요!");
+      return;
+    }
+
+    // 3. 유효성 검사가 통과되면 방을 만듭니다.
     try {
-      const sessionResponse = await createSession(); // 세션 id 만들기
+      const sessionResponse = await createSession();
+      
       if (sessionResponse != null) {
-        // 방 정보를 서버로 전송하는 Axios 요청
         const response = await axios.post(
           "https://i9b109.p.ssafy.io:8443/lobby/room",
           {
-            title: title, // 방 제목
-            songSeq: songSeq, // 노래제목 (일련번호 : 검색 예정)
-            isSecret: isSecret === "비밀 방" ? 1 : 0, // 방 모드 (일반 vs 비밀)
-            password: password, // 비밀번호
-            sessionId: sessionResponse.id, // 세션 아이디
+            title: title,
+            songSeq: songSeq,
+            isSecret: isSecret === "비밀 방" ? 1 : 0,
+            password: password,
+            sessionId: sessionResponse.id,
           },
           {
             headers: {
@@ -101,11 +110,11 @@ function CreateRoom({ isOpen, handleClose }) {
         );
         console.log("방 만들어졌습니다~ 세션아이디 : " + sessionResponse.id);
         console.log("방 만들어졌습니다~ gameseq : ", response.data.data);
-        dispatch(setSession(sessionResponse.id)); // 방 session 정보를 넘기기위해
-        dispatch(setGameseq(response.data.data)); // 방 gameseq 정보를 넘기기위해
-
-        // 방 생성 후 해당 방으로 이동
-        navigate(`/GameWait/${response.data.data}`);
+        dispatch(setSession(sessionResponse.id));
+        dispatch(setGameseq(response.data.data));
+        navigate(`/GameWait/${response.data.data}`, {
+          state: { data: songSeq },
+        });
       }
     } catch (error) {
       console.error("세션을 받지 못했죠~", error);
@@ -147,7 +156,7 @@ function CreateRoom({ isOpen, handleClose }) {
             marginBottom: "20px",
             backgroundColor: "rgba(0, 128, 255, 0.1)",
           }}
-          onChange={event => setTitle(event.target.value)}
+          onChange={(event) => setTitle(event.target.value)}
           inputProps={{ style: { color: "#ffffff" } }}
           InputLabelProps={{ style: { color: "#ffffff" } }}
         />
@@ -164,7 +173,7 @@ function CreateRoom({ isOpen, handleClose }) {
           inputProps={{ style: { color: "#ffffff" } }}
           InputLabelProps={{ style: { color: "#ffffff" } }}
         />
-        {searchResults.map(song => (
+        {searchResults.map((song) => (
           <div
             key={song.songSeq}
             style={{ marginBottom: "3%", cursor: "pointer" }}
