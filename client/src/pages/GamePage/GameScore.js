@@ -21,6 +21,8 @@ import { userInfo } from "../../apis/userInfo";
 // import FlowerAnimation from "../../components/Game/FlowerAnimation";
 import Header from "../../components/Game/HeaderPlay";
 import "./GameScore.css";
+import LoginAlert from "../../components/Common/LoginAlert";
+import { useState } from "react";
 
 const Root = styled("div")({
   width: "100%",
@@ -48,23 +50,30 @@ function GameScore() {
   const navigate = useNavigate();
 
   //로그인 상태 확인
-  // const [isLogin, setIsLogin] = useState(false);
 
-  // try {
-  //   userInfo()
-  //     .then((res) => {
-  //       if (res.status === 200) {
-  //         console.log(res);
-  //         setIsLogin(true);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       window.alert("로그인을 해주세요!");
-  //       navigate("/");
-  //     });
-  // } catch (error) {
-  //   console.log(error);
-  // }
+  try {
+    userInfo()
+      .then((res) => {
+        if (res.status === 200) {
+        }
+      })
+      .catch((error) => {
+        handleOpenLoginAlert();
+      });
+  } catch (error) {
+    console.log(error);
+  }
+
+  const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
+
+  // 로그인 상태를 업데이트하는 함수
+  const handleOpenLoginAlert = () => {
+    setLoginAlertOpen(true);
+  };
+  const handleCloseLoginAlert = () => {
+    setLoginAlertOpen(false);
+    navigate("/Login");
+  };
 
   let Result = useSelector((state) => state.GameScore_Result);
 
@@ -148,6 +157,7 @@ function GameScore() {
           <Next />
         </Grid>
       </Container>
+      <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
     </Root>
   );
 }

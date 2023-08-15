@@ -11,6 +11,7 @@ import MainContent from "../../components/My/My_MainContent"; // MainContent 컴
 import UserInfo from "../../components/My/My_UserInfo"; // UserInfo 컴포넌트를 import
 import Button from "@mui/material/Button";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
+import LoginAlert from "../../components/Common/LoginAlert";
 
 const Mypage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,7 +43,7 @@ const Mypage = () => {
   // 로그인 상태 확인
   try {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           setNickName(res.data.nickname);
           setName(res.data.name);
@@ -50,9 +51,8 @@ const Mypage = () => {
           setPhoto(res.data.profile_img_seq);
         }
       })
-      .catch(error => {
-        navigate("/");
-        window.alert("로그인을 해주세요!");
+      .catch((error) => {
+        handleOpenLoginAlert();
       });
   } catch (error) {
     console.log(error);
@@ -62,6 +62,17 @@ const Mypage = () => {
     console.log("연결");
     connectWebSocket();
   }, []);
+
+  const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
+
+  // 로그인 상태를 업데이트하는 함수
+  const handleOpenLoginAlert = () => {
+    setLoginAlertOpen(true);
+  };
+  const handleCloseLoginAlert = () => {
+    setLoginAlertOpen(false);
+    navigate("/Login");
+  };
 
   return (
     <div
@@ -122,6 +133,7 @@ const Mypage = () => {
         isOpen={isModalOpen}
         handleClose={handleCloseSearchPasswordModal}
       />
+      <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
     </div>
   );
 };
