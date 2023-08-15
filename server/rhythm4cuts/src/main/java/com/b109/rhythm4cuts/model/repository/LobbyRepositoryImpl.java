@@ -32,7 +32,6 @@ public class LobbyRepositoryImpl implements LobbyRepository {
     @Override
     public GameInfo selectSeqLobby(int gameSeq) throws SQLException {
         // SELECT g FROM GameInfo AS g WHERE g.gameSeq = gameSeq
-        System.out.println("hihi");
         String jpql = "SELECT g FROM GameInfo g WHERE g.gameSeq = :gameSeq";
 
         return em.createQuery(jpql, GameInfo.class)
@@ -104,6 +103,7 @@ public class LobbyRepositoryImpl implements LobbyRepository {
     @Override
     public void deleteById(int gameSeq) throws SQLException {
         GameInfo gameInfo = em.find(GameInfo.class, gameSeq);
+        System.out.println(gameInfo);
         if (gameInfo != null) {
             em.remove(gameInfo);
         }
