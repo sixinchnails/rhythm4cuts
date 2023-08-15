@@ -28,6 +28,7 @@ import SockJS from "sockjs-client";
 var sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
 var stomp = Stomp.over(sock);
 
+
 function GamePlay() {
   const { gameSeq } = useParams(); // 여기서 gameSeq를 가져옴
   const navigate = useNavigate(); // 페이지 이동
@@ -39,7 +40,9 @@ function GamePlay() {
   const { connectWebSocket, sendGameStartMessage } = useWebSocket();
 
   useEffect(() => {
+    console.log("-------stomp not connect")
     stomp.connect({}, () => {
+      console.log("---------stomp connect")
       // 특정 토픽 구독
       stomp.subscribe(`/subscribe/song/${gameSeq}`, (message) => {
         console.log("video start");
