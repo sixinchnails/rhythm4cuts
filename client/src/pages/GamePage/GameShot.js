@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Header from "../../components/Game/HeaderPlay";
 import { createSession } from "../../openvidu/sessionInitialization";
 import { createConnection } from "../../openvidu/connectionInitialization";
+import LoginAlert from "../../components/Common/LoginAlert";
 // import Webcam from "../../components/Game/Webcam";
 import html2canvas from "html2canvas";
 import domtoimage from "dom-to-image";
@@ -56,23 +57,29 @@ const GameShot = () => {
   const navigate = useNavigate();
 
   //로그인 상태 확인
-  // const [isLogin, setIsLogin] = useState(false);
 
-  // try {
-  //   userInfo()
-  //     .then(res => {
-  //       if (res.status === 200) {
-  //         console.log(res);
-  //         setIsLogin(true);
-  //       }
-  //     })
-  //     .catch(error => {
-  //       window.alert("로그인을 해주세요!");
-  //       navigate("/");
-  //     });
-  // } catch (error) {
-  //   console.log(error);
-  // }
+  try {
+    userInfo()
+      .then((res) => {
+        if (res.status === 200) {
+        }
+      })
+      .catch((error) => {
+        handleOpenLoginAlert();
+      });
+  } catch (error) {
+    console.log(error);
+  }
+  const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
+
+  // 로그인 상태를 업데이트하는 함수
+  const handleOpenLoginAlert = () => {
+    setLoginAlertOpen(true);
+  };
+  const handleCloseLoginAlert = () => {
+    setLoginAlertOpen(false);
+    navigate("/Login");
+  };
 
   // 5초 타이머를 설정하기 위한 상태 변수
   const [seconds, setSeconds] = useState(5);
@@ -354,6 +361,8 @@ const GameShot = () => {
           Test Close
         </Button> */}
       </Container>
+      {/* '로그인 경고' 모달 */}
+      <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
     </Box>
   );
 };

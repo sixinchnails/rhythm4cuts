@@ -24,6 +24,7 @@ import {
 } from "@mui/material";
 import { createConnection } from "../../openvidu/connectionInitialization";
 import UserVideoComponent from "../../components/Game/UserVideoComponent";
+import UserComponent from "../../components/Game/UserComponent";
 import React, { Component, useState, useEffect } from "react";
 import LoginAlert from "../../components/Common/LoginAlert";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
@@ -37,6 +38,7 @@ import axios from "axios";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
+import UserInfo from "../../components/My/My_UserInfo";
 
 function InviteFriendsModal({
   isOpen,
@@ -82,7 +84,6 @@ function InviteFriendsModal({
 
 function GameWait() {
   const [stomp, setStomp] = useState(null); // stomp 객체 상태 추가
-  const [songSeq, setSongSeq] = useState(117);
 
   useEffect(() => {
     if (!stomp) {
@@ -96,6 +97,7 @@ function GameWait() {
           console.log("게임 페이지 안 웹소켓 연결.");
           stompClient.subscribe(`/subscribe/song/${gameSeq}`, message => {
             console.log("video start");
+            alert("연결됨");
             setGameStarted(true);
           });
           console.log(userSeq);
@@ -120,9 +122,8 @@ function GameWait() {
   const navigate = useNavigate(); // 페이지 이동
   const [userSeq, setUserSeq] = useState("");
   const [toUser, setToUser] = useState("");
+  const [songSeq, setSongSeq] = useState(0);
 
-  //GameList에서 전달받은 해당 방의 데이터
-  // const songSeq = location.state?.data;
   {
     console.log(songSeq);
   }
@@ -141,6 +142,9 @@ function GameWait() {
   const [players, setPlayers] = useState([]); // 통합
   const [gameStarted, setGameStarted] = useState(false); // 게임 시작 여부 상태
   const access = getCookie("access");
+  const [musicUrl, setMusicUrl] = useState(""); // 해당 노래 url
+
+  const [playerFix, setPlayerFix] = useState([]); // 배열 순서 고정
 
   // 상태 추가
   const [isInviteModalOpen, setInviteModalOpen] = useState(false);
@@ -194,6 +198,25 @@ function GameWait() {
     },
   });
 
+  // useEffect(() => {
+  //   console.log("useeffect.");
+  //   console.log("stomp object:", stomp);
+  //   stomp.connect(
+  //     {},
+  //     () => {
+  //       console.log("게임 페이지 안 웹소캣 연결.");
+  //       if (userSeq) {
+  //         stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
+  //           alert("게임 초대 요청 옴");
+  //         });
+  //       }
+  //     },
+  //     (error) => {
+  //       console.log("STOMP 연결 실패:", error);
+  //     }
+  //   );
+  // }, [userSeq]);
+
   function InviteGame(toUserValue) {
     var request = {
       fromUser: userSeq,
@@ -245,7 +268,7 @@ function GameWait() {
 
   // 로그인 상태관리
   useEffect(() => {
-    // connectWebSocket();
+    connectWebSocket();
     userInfo()
       .then(res => {
         if (res.status === 200) {
@@ -331,7 +354,6 @@ function GameWait() {
           },
         }
       );
-
       dispatch(userSession(response.data.data.sessionId));
     } catch (error) {
       console.error("DB에서 세션 id 불러오기 실패:", error);
@@ -352,8 +374,6 @@ function GameWait() {
 
   // --------------------------------------------------------------------------------------------------------------
   const joinSession = async () => {
-    console.log("--------------- join session begin -----------------");
-
     try {
       if (connectSession) {
         console.log("이미 세션에 참여한 경우 중복 호출 방지");
@@ -433,12 +453,33 @@ function GameWait() {
     var request = {
       fromUser: fromUser,
       toUser: toUser,
+      // roomNumber :
     };
-
     if (stomp.connected) {
       stomp.send("/public/request", {}, JSON.stringify(request));
     }
   }
+
+  // "게임 시작" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
+  // function handleGameReady() {
+  //   setGameStarted(true);
+  //   setPlayerFix([...players]); // player 배열 복사
+
+  // axios 보내기
+  // console.log("access : " + access);
+
+  // axios.post(`https://i9b109.p.ssafy.io:8443/wait/enter`,
+  //   {
+  //     headers: {
+  //       Authorization: "Bearer " + access,
+  //     }
+  //   },
+  //   {
+  //     "gameSeq": gameSeq,
+  //     "userSeq": userseq
+  //   }
+  // )
+  // }
 
   function handleGameReady() {
     console.log("게임 시작 버튼 누름");
@@ -511,8 +552,28 @@ function GameWait() {
       });
   };
 
-  //선택된 노래에 맞는 해당 영상 가져오기
-  const [musicUrl, setMusicUrl] = useState("");
+  // 해당 노래 번호 가져오기
+  const bringSongSeq = async () => {
+    try {
+      const response = await axios.get(
+        `https://i9b109.p.ssafy.io:8443/wait/info/${gameSeq}`,
+        {
+          headers: {
+            Authorization: "Bearer " + access,
+          },
+        }
+      );
+      console.log(response.data.data.songSeq);
+      setSongSeq(response.data.data.songSeq);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    bringSongSeq();
+  }, []);
+  // //선택된 노래에 맞는 해당 영상 가져오기
 
   const bringUrl = async () => {
     const headers = {
@@ -530,7 +591,8 @@ function GameWait() {
 
   useEffect(() => {
     bringUrl();
-  }, []);
+  }, [songSeq]);
+
   return (
     <div
       style={{
@@ -556,10 +618,11 @@ function GameWait() {
                 borderRadius: "30px",
               }}
             >
+              {/* 대기중 비디오 */}
               {gameStarted && (
                 <video
-                  controls={false}
                   src={musicUrl}
+                  controls={false}
                   autoPlay
                   loop
                   style={{
@@ -572,6 +635,7 @@ function GameWait() {
             </Card>
           </Grid>
         ) : (
+          // 게임 시작 하기 전 춤추는 동영상 ----------------------------------------------------------------------
           <Grid container>
             {/* Top : LEFT */}
             <Grid
@@ -589,7 +653,19 @@ function GameWait() {
                   background: "transparent",
                   borderRadius: "30px",
                 }}
-              ></Card>
+              >
+                {/* 대기중 비디오 */}
+                <video
+                  src="/images/GameImage/Dance.mp4"
+                  autoPlay
+                  loop
+                  style={{
+                    width: "100%",
+                    height: "40vh",
+                    objectFit: "cover",
+                  }}
+                />
+              </Card>
             </Grid>
 
             {/* Top : RIGHT */}
@@ -600,130 +676,169 @@ function GameWait() {
               alignItems="center"
               justifyContent="center"
             >
-              {gameStarted ? null : ( // 시작하면 버튼 다 사라져랏
-                <Grid container spacing={2}>
-                  {/* 친구 초대 버튼 */}
-                  {players.length >= 1 && (
-                    <Grid item xs={5} style={{ margin: "1px" }}>
-                      <StyledIconButton
-                        onClick={() => {
-                          handleOpenInviteModal();
+              <Grid container spacing={2}>
+                {/* 친구 초대 버튼 */}
+                {players.length !== 4 && (
+                  <Grid item xs={5} style={{ margin: "1px" }}>
+                    <StyledIconButton
+                      onClick={() => {
+                        handleOpenInviteModal();
+                      }}
+                      style={{ width: "12vw" }}
+                    >
+                      <PersonAddIcon />
+                      <Typography
+                        style={{
+                          fontFamily: "Pretendard-Regular",
+                          fontSize: "20px",
+                          padding: "15px",
                         }}
-                        style={{ width: "12vw" }}
                       >
-                        <PersonAddIcon />
-                        <Typography
-                          style={{
-                            fontFamily: "Pretendard-Regular",
-                            fontSize: "20px",
-                            padding: "15px",
-                          }}
-                        >
-                          친구 초대
-                        </Typography>
-                      </StyledIconButton>
-                    </Grid>
-                  )}
-
-                  {/* "나가기" 버튼 */}
-                  {players.length !== 4 && (
-                    <Grid item xs={5} style={{ margin: "1px" }}>
-                      <StyledIconButton
-                        onClick={handleExit}
-                        style={{ width: "12vw" }}
+                        친구 초대
+                      </Typography>
+                    </StyledIconButton>
+                  </Grid>
+                )}
+                {/* "나가기" 버튼 */}
+                {players.length !== 4 && (
+                  <Grid item xs={5} style={{ margin: "1px" }}>
+                    <StyledIconButton
+                      onClick={handleExit}
+                      style={{ width: "12vw" }}
+                    >
+                      <ExitToAppIcon />
+                      <Typography
+                        style={{
+                          fontFamily: "Pretendard-Regular",
+                          fontSize: "20px",
+                          padding: "15px",
+                        }}
                       >
-                        <ExitToAppIcon />
-                        <Typography
-                          style={{
-                            fontFamily: "Pretendard-Regular",
-                            fontSize: "20px",
-                            padding: "15px",
-                          }}
-                        >
-                          나가기
-                        </Typography>
-                      </StyledIconButton>
-                    </Grid>
-                  )}
-
-                  {/* "게임 시작" 버튼 */}
-                  {players.length >= 1 ? (
-                    <Grid item xs={10} style={{ margin: "1px" }}>
-                      <StyledIconButton
-                        onClick={handleGameReady}
-                        style={{ width: "30vw" }}
+                        나가기
+                      </Typography>
+                    </StyledIconButton>
+                  </Grid>
+                )}
+                {/* "게임 시작" 버튼 : 4명이 차면 뜬다!! */}
+                {players.length === 4 ? (
+                  <Grid item xs={10} style={{ margin: "1px" }}>
+                    <StyledIconButton
+                      onClick={handleGameReady}
+                      style={{ width: "30vw" }}
+                    >
+                      <CheckIcon />
+                      <Typography
+                        style={{
+                          fontFamily: "Pretendard-Regular",
+                          fontSize: "20px",
+                          padding: "15px",
+                        }}
                       >
-                        <CheckIcon />
-                        <Typography
-                          style={{
-                            fontFamily: "Pretendard-Regular",
-                            fontSize: "20px",
-                            padding: "15px",
-                          }}
-                        >
-                          게임 시작
-                        </Typography>
-                      </StyledIconButton>
-                    </Grid>
-                  ) : null}
-                </Grid>
-              )}
+                        게임 시작
+                      </Typography>
+                    </StyledIconButton>
+                  </Grid>
+                ) : null}
+              </Grid>
             </Grid>
           </Grid>
         )}
-
         {/* Bottom */}
         <Grid container>
-          {/* Bottom */}
-          <Grid
-            style={{
-              height: "25vh",
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              margin: "50px",
-            }}
-          >
-            {/* 각 플레이어별로 Grid 아이템 생성 */}
-            {[0, 1, 2, 3].map(index => (
-              <Grid
-                key={index}
-                item
-                xs={3}
-                style={{
-                  backgroundColor: "transparent",
-                  height: "34vh",
-                  padding: "2px",
-                  margin: "20px",
-                  borderRadius: "20px",
-                }}
-              >
-                {/* players 배열에 해당 인덱스의 스트림이 있는 경우 플레이어 정보 표시 */}
-                {players[index] ? (
-                  <UserVideoComponent
-                    streamManager={players[index]}
-                    gameStarted={gameStarted}
-                  />
-                ) : (
-                  // 빈 자리 표시
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    style={{
-                      width: "80%", // 비디오 크기 조정
-                      height: "80%", // 비디오 크기 조정
-                      objectFit: "cover",
-                      borderRadius: "20px",
-                    }}
-                  >
-                    <source src="/videos/33.mp4" type="video/mp4" />
-                  </video>
-                )}
-              </Grid>
-            ))}
-          </Grid>
+          {gameStarted ? (
+            // 게임시작 버튼 클릭 후 후 후! -------------------------------------------------------------------------------------
+            <Grid
+              style={{
+                height: "25vh",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                margin: "50px",
+              }}
+            >
+              {playerFix.map((player, index) => (
+                <Grid
+                  key={index}
+                  item
+                  xs={3}
+                  style={{
+                    backgroundColor: "transparent",
+                    height: "34vh",
+                    padding: "2px",
+                    margin: "20px",
+                    borderRadius: "20px",
+                  }}
+                >
+                  {player ? (
+                    <UserVideoComponent streamManager={player} />
+                  ) : (
+                    // 빈 자리 표시
+                    <video
+                      autoPlay
+                      loop
+                      muted
+                      style={{
+                        width: "80%", // 비디오 크기 조정
+                        height: "80%", // 비디오 크기 조정
+                        objectFit: "cover",
+                        borderRadius: "20px",
+                      }}
+                    >
+                      <source src="/videos/33.mp4" type="video/mp4" />
+                    </video>
+                  )}
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            // 게임시작 버튼 클릭 전 전 전! --------------------------------------------------------------------------------
+            <Grid
+              style={{
+                height: "25vh",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                margin: "50px",
+              }}
+            >
+              {/* 각 플레이어별로 Grid 아이템 생성 */}
+              {[0, 1, 2, 3].map(index => (
+                <Grid
+                  key={index}
+                  item
+                  xs={3}
+                  style={{
+                    backgroundColor: "transparent",
+                    height: "34vh",
+                    padding: "2px",
+                    margin: "20px",
+                    borderRadius: "20px",
+                  }}
+                >
+                  {players[index] ? (
+                    <UserComponent streamManager={players[index]} />
+                  ) : (
+                    // 빈 자리 표시
+                    <video
+                      autoPlay
+                      loop
+                      muted
+                      style={{
+                        width: "80%", // 비디오 크기 조정
+                        height: "80%", // 비디오 크기 조정
+                        objectFit: "cover",
+                        borderRadius: "20px",
+                      }}
+                    >
+                      <source src="/videos/33.mp4" type="video/mp4" />
+                    </video>
+                  )}
+                </Grid>
+              ))}
+            </Grid>
+          )}
         </Grid>
       </Grid>
 
@@ -740,5 +855,4 @@ function GameWait() {
     </div>
   );
 }
-
 export default GameWait;

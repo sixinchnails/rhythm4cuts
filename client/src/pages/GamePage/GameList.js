@@ -193,7 +193,9 @@ function GameList() {
 
   // 방 입장
   const handleOpenGameWait = (room) => {
-    navigate(`/GameWait/${room.gameSeq}`);
+    navigate(`/GameWait/${room.gameSeq}`, {
+      state: { data: room.songSeq },
+    });
   };
 
   return (
