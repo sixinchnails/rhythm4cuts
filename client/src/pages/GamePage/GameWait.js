@@ -69,8 +69,8 @@ function InviteFriendsModal({
               <Button
                 onClick={() => {
                   setToUser(friend.userSeq); // 친구 선택 시 toUser 상태 업데이트
-                  console.log(friend.user);
-                  InviteGame();
+                  console.log(friend.userSeq);
+                  InviteGame(friend.userSeq);
                 }}
               >
                 초대
@@ -162,26 +162,38 @@ function GameWait() {
     },
   });
 
-  function InviteGame() {
+  useEffect(() => {
+    console.log("useeffect.");
+    console.log("stomp object:", stomp);
+    stomp.connect(
+      {},
+      () => {
+        console.log("게임 페이지 안 웹소캣 연결.");
+        if (userSeq) {
+          stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
+            alert("게임 초대 요청 옴");
+          });
+        }
+      },
+      error => {
+        console.log("STOMP 연결 실패:", error);
+      }
+    );
+  }, [userSeq]);
+
+  function InviteGame(toUserValue) {
     var request = {
       fromUser: userSeq,
-      toUser: toUser,
+      toUser: toUserValue,
       gameSeq: gameSeq,
     };
+    console.log(request.fromUser);
+    console.log(request.toUser);
+    console.log(request.gameSeq);
     if (stomp.connected) {
       stomp.send("/public/invite", {}, JSON.stringify(request));
     }
   }
-
-  useEffect(() => {
-    stomp.connect({}, () => {
-      if (userSeq) {
-        stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
-          alert("게임 초대 요청 옴");
-        });
-      }
-    });
-  }, [userSeq]);
 
   // 로그인 상태관리
   useEffect(() => {
