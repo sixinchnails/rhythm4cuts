@@ -509,6 +509,8 @@ function GameWait() {
       });
   };
 
+
+
   return (
     <div
       style={{
@@ -524,30 +526,32 @@ function GameWait() {
 
       <Grid container>
         {/* TOP : 게임 시작 전*/}
-        {gameStarted ? (
-          <Grid container alignItems="center" justifyContent="center">
-            <Card
-              style={{
-                width: "55vw",
-                height: "40vh",
-                background: "transparent",
-                borderRadius: "30px",
-              }}
-            >
-              {/* 대기중 비디오 */}
-              <video
-                src="/images/GameImage/WaitSong.mp4"
-                autoPlay
-                loop
+        {gameStarted ?
+          (
+            <Grid container alignItems="center" justifyContent="center">
+              <Card
                 style={{
-                  width: "100%",
+                  width: "55vw",
                   height: "40vh",
-                  objectFit: "cover",
+                  background: "transparent",
+                  borderRadius: "30px",
                 }}
-              />
-            </Card>
-          </Grid>
-        )
+              >
+                {/* 대기중 비디오 */}
+                <video
+                  src="/images/GameImage/WaitSong.mp4"
+                  autoPlay
+                  loop
+                  style={{
+                    width: "100%",
+                    height: "40vh",
+                    objectFit: "cover",
+                  }}
+                />
+              </Card>
+            </Grid>
+
+          )
           : ( // 게임 시작 하기 전 춤추는 동영상 ----------------------------------------------------------------------
             <Grid container>
               {/* Top : LEFT */}
