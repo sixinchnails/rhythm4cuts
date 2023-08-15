@@ -1,11 +1,9 @@
 package com.b109.rhythm4cuts.model.service;
 
 import com.b109.rhythm4cuts.config.jwt.TokenProvider;
-import com.b109.rhythm4cuts.model.domain.ProfileImage;
-import com.b109.rhythm4cuts.model.domain.User;
+import com.b109.rhythm4cuts.model.domain.*;
 import com.b109.rhythm4cuts.model.dto.*;
-import com.b109.rhythm4cuts.model.repository.ProfileImageRepository;
-import com.b109.rhythm4cuts.model.repository.UserRepository;
+import com.b109.rhythm4cuts.model.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -18,6 +16,8 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import javax.transaction.Transactional;
+import java.sql.SQLException;
 import java.util.*;
 
 import java.security.SecureRandom;
@@ -31,8 +31,12 @@ import static com.b109.rhythm4cuts.model.service.Utils.getRandomString;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final LogRepository logRepository;
+    private final LobbyRepository lobbyRepository;
+    private final CategoryRepository categoryRepository;
     private final ProfileImageRepository profileImageRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JavaMailSender javaMailSender;
@@ -134,15 +138,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException());
 
-        ProfileImage profileImage = user.getProfileImage();
+        Optional<ProfileImage> profileImage = profileImageRepository.findByProfileImageSeq(dto.getProfileImageSeq());
 
-        profileImage.setImageName(dto.getImageName());
-        profileImage.setProfileImageSeq(dto.getProfileImageSeq());
-        profileImage.setDescription(dto.getDescription());
-        profileImage.setFileName(dto.getFileName());
+        if (profileImage.isEmpty()) throw new IllegalArgumentException("해당 프로필 사진은 존재하지 않습니다.");
+        else user.setProfileImage(profileImage.get());
 
         userRepository.save(user);
-        profileImageRepository.save(profileImage);
     }
 
     //닉네임 변경 메서드
@@ -236,6 +237,12 @@ public class UserServiceImpl implements UserService {
         //update
         userRepository.save(user);
 
+        PointLogDto pointLogDto = new PointLogDto();
+        pointLogDto.setUserSeq(user.getUserSeq());
+        pointLogDto.setRemainPoint(user.getPoint());
+        pointLogDto.setPointHistory(-payPoints);
+        pointLogDto.setCagegorySeq(1);
+        setPointLog(pointLogDto);
         return user.getPoint();
     }
 
@@ -380,5 +387,44 @@ public class UserServiceImpl implements UserService {
         }
 
         return null;
+    }
+
+    @Override
+    public UserDto setUserState(int userSeq) {
+        User user = userRepository.findByUserSeq(userSeq);
+        int state = user.getState();
+        if(state == 0) user.setState(1);
+        else user.setState(0);
+
+        return user.getUserDto();
+    }
+
+    public void setPointLog(PointLogDto pointLogDto) {
+        User user = userRepository.findByUserSeq(pointLogDto.getUserSeq());
+        Category category = categoryRepository.findByCode(pointLogDto.getCagegorySeq());
+
+        PointLog pointLog = new PointLog();
+
+        pointLog.setUser(user);
+        pointLog.setCategory(category);
+        pointLog.setPointHistory(pointLogDto.getPointHistory());
+        pointLog.setRemainPoint(pointLogDto.getRemainPoint());
+
+        logRepository.save(pointLog);
+    }
+
+    public List<PointLogDto> getPointLogs(int userSeq) {
+        User user = userRepository.findByUserSeq(userSeq);
+        List<PointLog> logs = logRepository.findByUser(user);
+
+        List<PointLogDto> logsDto = new ArrayList<>();
+        logs.forEach((log)-> {
+            logsDto.add(log.getPointLogDto());
+        });
+
+        return logsDto;
+    }
+    public String findNicknameById(int userSeq) {
+        return userRepository.findByUserSeq(userSeq).getNickname();
     }
 }

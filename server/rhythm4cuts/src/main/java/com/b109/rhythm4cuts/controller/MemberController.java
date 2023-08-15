@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,7 +49,7 @@ public class MemberController {
         res.put("score_sum", userDto.getScoreSum());
         res.put("profile_img_seq", userDto.getProfileImageSeq());
         res.put("play_count", userDto.getPlayCount());
-
+        res.put("state", userDto.getState());
         return res;
     }
 
@@ -224,5 +225,33 @@ public class MemberController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    // API. 유저 닉네임 조회
+    @GetMapping("/info/nickname/{userSeq}")
+    public ResponseEntity<?> getNickname(@PathVariable("userSeq") int userSeq) throws SQLException {
+
+        String nickname = userService.findNicknameById(userSeq);
+
+        Map<String, Object> res = new HashMap<>();
+
+        res.put("message", "Success");
+        res.put("statusCode", 200);
+        res.put("data", nickname);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @PutMapping("/user/state/{userSeq}")
+    public ResponseEntity<?> setState(@PathVariable int userSeq) throws IOException {
+        UserDto userDto = userService.setUserState(userSeq);
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{userSeq}/logs")
+    public ResponseEntity<?> getLogs(@PathVariable int userSeq) throws Exception {
+        List<PointLogDto> pointLogDtoList = userService.getPointLogs(userSeq);
+
+        return new ResponseEntity<>(pointLogDtoList, HttpStatus.OK);
     }
 }

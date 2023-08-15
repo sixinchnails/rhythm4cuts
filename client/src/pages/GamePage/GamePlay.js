@@ -92,7 +92,7 @@ function GamePlay() {
       console.log("연결 후 자동 재생 요청");
       const message = {
         gameSeq: gameSeq,
-        // 필요한 경우 여기에 다른 데이터 추가dd
+        // 필요한 경우 여기에 다른 데이터 추가
       };
       stomp.send("/public/song", {}, JSON.stringify(message));
     }
