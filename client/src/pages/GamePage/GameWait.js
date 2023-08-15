@@ -97,14 +97,14 @@ function GameWait() {
           console.log("게임 페이지 안 웹소켓 연결.");
           stompClient.subscribe(`/subscribe/song/${gameSeq}`, message => {
             console.log("video start");
-            alert("연결됨");
             setGameStarted(true);
           });
           console.log(userSeq);
           if (userSeq) {
-            stompClient.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
-              alert("게임 초대 요청 옴");
-            });
+            stompClient.subscribe(
+              `/subscribe/friend/invite/${userSeq}`,
+              () => {}
+            );
           }
         },
         error => {
@@ -223,9 +223,6 @@ function GameWait() {
       toUser: toUserValue,
       gameSeq: gameSeq,
     };
-    console.log(request.fromUser);
-    console.log(request.toUser);
-    console.log(request.gameSeq);
     if (stomp.connected) {
       stomp.send("/public/invite", {}, JSON.stringify(request));
     }
