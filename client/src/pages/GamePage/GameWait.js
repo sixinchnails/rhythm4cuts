@@ -81,61 +81,9 @@ function InviteFriendsModal({
 }
 
 function GameWait() {
-  // var sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
-  // var stomp = Stomp.over(sock);
-
   const [stomp, setStomp] = useState(null); // stomp 객체 상태 추가
   const [songSeq, setSongSeq] = useState(117);
 
-  // if(!stomp.connected){
-  //   stomp.connect(
-  //     {},
-  //     function() {
-  //       console.log("게임 페이지 안 웹소캣 연결.");
-  //       stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
-  //         console.log("video start");
-  //         alert("연결됨")
-  //         setGameStarted(true);
-  //       });
-  //       console.log(userSeq);
-  //       if (userSeq) {
-  //         stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
-  //           alert("게임 초대 요청 옴");
-  //         });
-  //       }
-  //     },
-  //     error => {
-  //       console.log("STOMP 연결 실패:", error);
-  //     }
-  //   );
-  // }
-  // useEffect(() => {
-  //   if (!stomp.connected) {
-  //     stomp.connect(
-  //       {},
-  //       function () {
-  //         console.log("게임 페이지 안 웹소켓 연결.");
-  //         stomp.subscribe(`/subscribe/song/${gameSeq}`, (message) => {
-  //           console.log("video start");
-  //           alert("연결됨");
-  //           setGameStarted(true);
-  //         });
-  //         console.log(userSeq);
-  //         if (userSeq) {
-  //           stomp.subscribe(
-  //             `/subscribe/friend/invite/${userSeq}`,
-  //             () => {
-  //               alert("게임 초대 요청 옴");
-  //             }
-  //           );
-  //         }
-  //       },
-  //       (error) => {
-  //         console.log("STOMP 연결 실패:", error);
-  //       }
-  //     );
-  //   }
-  // }, []);
   useEffect(() => {
     if (!stomp) {
       // stomp 객체가 없을 때만 초기화
@@ -148,7 +96,6 @@ function GameWait() {
           console.log("게임 페이지 안 웹소켓 연결.");
           stompClient.subscribe(`/subscribe/song/${gameSeq}`, message => {
             console.log("video start");
-            alert("연결됨");
             setGameStarted(true);
           });
           console.log(userSeq);
@@ -246,30 +193,6 @@ function GameWait() {
       backgroundColor: "#1976d2", // 마우스 오버 시 배경색 변경
     },
   });
-
-  // useEffect(() => {
-  //   console.log("websocket subscribe 실행");
-  //   console.log("stomp object:", stomp);
-  //   stomp.connect(
-  //     {},
-  //     function() {
-  //       stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
-  //         console.log("video start");
-  //         setGameStarted(true);
-  //       });
-  //       console.log("게임 페이지 안 웹소캣 연결.");
-  //       console.log(userSeq);
-  //       if (userSeq) {
-  //         stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
-  //           alert("게임 초대 요청 옴");
-  //         });
-  //       }
-  //     },
-  //     error => {
-  //       console.log("STOMP 연결 실패:", error);
-  //     }
-  //   );
-  // }, [userSeq]);
 
   function InviteGame(toUserValue) {
     var request = {
@@ -498,25 +421,6 @@ function GameWait() {
     }
   };
 
-  // useEffect(() => {
-  //   console.log("-----------before stomp connect --------")
-  //   stomp.connect({}, () => {
-  //     console.log("video start");
-  //     // 특정 토픽 구독
-  //     stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
-  //       console.log("video start");
-  //       setGameStarted(true);
-  //     });
-  //   });
-  //   // 컴포넌트 unmount 시 웹소켓 연결 해제 및 구독 해제
-  //   return () => {
-  //     if (stomp.connected) {
-  //       stomp.unsubscribe(`/subscribe/song/${gameSeq}`);
-  //       stomp.disconnect();
-  //     }
-  //   };
-  // }, []);
-
   // "친구 초대" 버튼을 눌렀을 때 동작 ------------------------------------------------------------------------------
   const handleAddFriend = () => {
     console.log("친구 초대 버튼 클릭!");
@@ -529,28 +433,12 @@ function GameWait() {
     var request = {
       fromUser: fromUser,
       toUser: toUser,
-      // roomNumber :
     };
 
     if (stomp.connected) {
       stomp.send("/public/request", {}, JSON.stringify(request));
     }
   }
-
-  // "게임 시작" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
-  // function handleGameReady() {
-  //   console.log("게임 시작 버튼 누름");
-  //   console.log(stomp)
-  //   // 게임 시작 메시지를 서버에 전송
-  //   if (stomp.connected) {
-  //     console.log("연결 후 자동 재생 요청");
-  //     const message = {
-  //       gameSeq: gameSeq,
-  //       // 필요한 경우 여기에 다른 데이터 추가
-  //     };
-  //     stomp.send("/public/song", {}, JSON.stringify(message));
-  //   }
-  // }
 
   function handleGameReady() {
     console.log("게임 시작 버튼 누름");
@@ -668,21 +556,6 @@ function GameWait() {
                 borderRadius: "30px",
               }}
             >
-              {/* 대기중 비디오 */}
-              {/* {videoVisible && (
-              <video
-                controls
-                autoPlay
-                loop
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-                src={musicUrl}
-                type="video/mp4"
-              ></video>
-            )} */}
               {gameStarted && (
                 <video
                   controls={false}
@@ -716,31 +589,7 @@ function GameWait() {
                   background: "transparent",
                   borderRadius: "30px",
                 }}
-              >
-                {/* 대기중 비디오 */}
-                {/* <video
-                  src="/images/GameImage/Dance.mp4"
-                  autoPlay
-                  loop
-                  style={{
-                    width: "100%",
-                    height: "40vh",
-                    objectFit: "cover",
-                  }}
-                /> */}
-                {/* <video
-                  controls={false}
-                  autoPlay
-                  loop
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                  src={musicUrl}
-                  type="video/mp4"
-                ></video> */}
-              </Card>
+              ></Card>
             </Grid>
 
             {/* Top : RIGHT */}
@@ -891,19 +740,5 @@ function GameWait() {
     </div>
   );
 }
-
-// function handleGameReady() {
-//   console.log("게임 시작 버튼 누름");
-//   console.log(stomp)
-//   // 게임 시작 메시지를 서버에 전송
-//   if (stomp.connected) {
-//     console.log("연결 후 자동 재생 요청");
-//     const message = {
-//       gameSeq: gameSeq,
-//       // 필요한 경우 여기에 다른 데이터 추가
-//     };
-//     stomp.send("/public/song", {}, JSON.stringify(message));
-//   }
-// }
 
 export default GameWait;
