@@ -99,13 +99,4 @@ public class LobbyRepositoryImpl implements LobbyRepository {
 
         user.setConnectionId(userDto.getConnectionId());
     }
-
-    @Override
-    public void deleteById(int gameSeq) throws SQLException {
-        GameInfo gameInfo = em.find(GameInfo.class, gameSeq);
-        System.out.println(gameInfo);
-        if (gameInfo != null) {
-            em.remove(gameInfo);
-        }
-    }
 }
