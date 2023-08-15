@@ -343,7 +343,6 @@ function GameWait() {
   const handleExit = () => {
     onBeforeUnload();
     console.log("방 나갈거야 ~");
-    navigate(`/GameList`);
   };
 
   const onBeforeUnload = () => {
@@ -353,15 +352,6 @@ function GameWait() {
   // 방에서 나갈때 ㅣ 수정 필요
   const leaveSession = () => {
     console.log("--------------------leave session");
-
-    // 방 인원수 줄이는 요청 보내기
-    axios.get(`https://i9b109.p.ssafy.io:8443/lobby/room/exit/${gameSeq}`, {
-      headers: {
-        Authorization: "Bearer " + access,
-      },
-    });
-
-    navigate(`/GameList`);
 
     // 나가는 플레이어를 배열에서 제거하고 상태 업데이트
     const updatedPlayers = players.filter((player) => player !== publisher);
@@ -386,6 +376,22 @@ function GameWait() {
     if (connectSession) {
       connectSession.disconnect();
     }
+
+    // 방 인원수 줄이는 요청 보내기
+    axios.get(`https://i9b109.p.ssafy.io:8443/lobby/room/exit/` + gameSeq, {
+      headers: {
+        Authorization: "Bearer " + access,
+      },
+    })
+      .then(response => {
+        // navigate(`/GameList`)
+      })
+      .catch(error => {
+        // Handle error if needed
+        console.error("Error:", error);
+      });
+
+
   };
 
   return (
@@ -402,16 +408,12 @@ function GameWait() {
       <Header />
 
       <Grid container>
-        {/* TOP */}
-        <Grid container>
-          {/* Top : LEFT */}
+        {/* TOP : 게임 시작 전*/}
+        {gameStarted ?
           <Grid
-            item
-            xs={8}
             container
             alignItems="center"
             justifyContent="center"
-            paddingLeft={"150px"}
           >
             <Card
               style={{
@@ -423,7 +425,7 @@ function GameWait() {
             >
               {/* 대기중 비디오 */}
               <video
-                src="/images/GameImage/Dance.mp4"
+                src="/images/GameImage/WaitSong.mp4"
                 autoPlay
                 loop
                 style={{
@@ -434,99 +436,124 @@ function GameWait() {
               />
             </Card>
           </Grid>
-
-          {/* Top : RIGHT */}
-          <Grid
-            item
-            xs={4}
-            container
-            alignItems="center"
-            justifyContent="center"
-          >
-            {gameStarted ? null : (
-              <Grid container spacing={2}>
-                {/* 친구 초대 버튼 */}
-                <Grid item xs={5} style={{ margin: "1px" }}>
-                  <StyledIconButton
-                    onClick={handleAddFriend}
-                    style={{ width: "12vw" }}
-                  >
-                    <PersonAddIcon />
-                    <Typography
-                      style={{
-                        fontFamily: "Pretendard-Regular",
-                        fontSize: "20px",
-                        padding: "15px",
-                      }}
-                    >
-                      친구 초대
-                    </Typography>
-                  </StyledIconButton>
-                </Grid>
-
-
-                {/* "채팅" 버튼 */}
-                <Grid item xs={5} style={{ margin: "1px" }}>
-                  <StyledIconButton
-                    onClick={handleChat}
-                    style={{ width: "12vw" }}
-                  >
-                    <ChatIcon />
-                    <Typography
-                      style={{
-                        fontFamily: "Pretendard-Regular",
-                        fontSize: "20px",
-                        padding: "15px",
-                      }}
-                    >
-                      채팅
-                    </Typography>
-                  </StyledIconButton>
-                </Grid>
-
-                {/* "나가기" 버튼 */}
-                <Grid item xs={5} style={{ margin: "1px" }}>
-                  <StyledIconButton
-                    onClick={handleExit}
-                    style={{ width: "12vw" }}
-                  >
-                    <ExitToAppIcon />
-                    <Typography
-                      style={{
-                        fontFamily: "Pretendard-Regular",
-                        fontSize: "20px",
-                        padding: "15px",
-                      }}
-                    >
-                      나가기
-                    </Typography>
-                  </StyledIconButton>
-                </Grid>
-
-                {/* "게임 시작" 버튼 */}
-                {players.length === 4 && (
-                  <Grid item xs={5} style={{ margin: "1px" }}>
-                    <StyledIconButton
-                      onClick={handleGameReady}
-                      style={{ width: "12vw" }}
-                    >
-                      <CheckIcon />
-                      <Typography
-                        style={{
-                          fontFamily: "Pretendard-Regular",
-                          fontSize: "20px",
-                          padding: "15px",
-                        }}
-                      >
-                        게임 시작
-                      </Typography>
-                    </StyledIconButton>
-                  </Grid>
-                )}
+          : (
+            <Grid container>
+              {/* Top : LEFT */}
+              <Grid
+                item
+                xs={8}
+                container
+                alignItems="center"
+                justifyContent="center"
+                paddingLeft={"150px"}
+              >
+                <Card
+                  style={{
+                    width: "55vw",
+                    height: "40vh",
+                    background: "transparent",
+                    borderRadius: "30px",
+                  }}
+                >
+                  {/* 대기중 비디오 */}
+                  <video
+                    src="/images/GameImage/Dance.mp4"
+                    autoPlay
+                    loop
+                    style={{
+                      width: "100%",
+                      height: "40vh",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Card>
               </Grid>
-            )}
-          </Grid>
-        </Grid>
+
+              {/* Top : RIGHT */}
+              <Grid
+                item
+                xs={4}
+                container
+                alignItems="center"
+                justifyContent="center"
+              >
+                {gameStarted
+                  ? null // 시작하면 버튼 다 사라져랏
+                  : (
+                    <Grid container spacing={2}>
+
+                      {/* 친구 초대 버튼 */}
+                      {players.length !== 4 && (
+                        <Grid item xs={5} style={{ margin: "1px" }}>
+                          <StyledIconButton
+                            onClick={handleAddFriend}
+                            style={{ width: "12vw" }}
+                          >
+                            <PersonAddIcon />
+                            <Typography
+                              style={{
+                                fontFamily: "Pretendard-Regular",
+                                fontSize: "20px",
+                                padding: "15px",
+                              }}
+                            >
+                              친구 초대
+                            </Typography>
+                          </StyledIconButton>
+                        </Grid>
+                      )}
+                      
+                      {/* "나가기" 버튼 */}
+                      {players.length !== 4 && (
+                        <Grid item xs={5} style={{ margin: "1px" }}>
+                          <StyledIconButton
+                            onClick={handleExit}
+                            style={{ width: "12vw" }}
+                          >
+                            <ExitToAppIcon />
+                            <Typography
+                              style={{
+                                fontFamily: "Pretendard-Regular",
+                                fontSize: "20px",
+                                padding: "15px",
+                              }}
+                            >
+                              나가기
+                            </Typography>
+                          </StyledIconButton>
+                        </Grid>
+                      )}
+
+                      {/* "게임 시작" 버튼 */}
+                      {players.length === 4
+                        ? (
+                          <Grid item xs={10} style={{ margin: "1px" }}>
+                            <StyledIconButton
+                              onClick={handleGameReady}
+                              style={{ width: "30vw" }}
+                            >
+                              <CheckIcon />
+                              <Typography
+                                style={{
+                                  fontFamily: "Pretendard-Regular",
+                                  fontSize: "20px",
+                                  padding: "15px",
+                                }}
+                              >
+                                게임 시작
+                              </Typography>
+                            </StyledIconButton>
+                          </Grid>
+                        )
+                        : null
+                      }
+                    </Grid>
+                  )
+                }
+              </Grid>
+
+            </Grid>
+          )}
 
         {/* Bottom */}
         <Grid container>
@@ -557,7 +584,7 @@ function GameWait() {
               >
                 {/* players 배열에 해당 인덱스의 스트림이 있는 경우 플레이어 정보 표시 */}
                 {players[index] ? (
-                  <UserVideoComponent streamManager={players[index]} />
+                  <UserVideoComponent streamManager={players[index]} gameStarted={gameStarted} />
                 ) : (
                   // 빈 자리 표시
                   <video
@@ -578,6 +605,8 @@ function GameWait() {
             ))}
           </Grid>
         </Grid>
+
+
       </Grid>
 
       {/* '로그인 경고' 모달 */}
