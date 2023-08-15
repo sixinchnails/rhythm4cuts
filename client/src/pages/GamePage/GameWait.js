@@ -408,24 +408,6 @@ function GameWait() {
     }
   };
 
-  useEffect(() => {
-    stomp.connect({}, () => {
-      console.log("video start");
-      // 특정 토픽 구독
-      stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
-        console.log("video start");
-        setGameStarted(true);
-      });
-    });
-    // 컴포넌트 unmount 시 웹소켓 연결 해제 및 구독 해제
-    return () => {
-      if (stomp.connected) {
-        stomp.unsubscribe(`/subscribe/song/${gameSeq}`);
-        stomp.disconnect();
-      }
-    };
-  }, []);
-
   // "친구 초대" 버튼을 눌렀을 때 동작 ------------------------------------------------------------------------------
   const handleAddFriend = () => {
     console.log("친구 초대 버튼 클릭!");
@@ -445,12 +427,28 @@ function GameWait() {
     }
   }
 
+  useEffect(() => {
+    stomp.connect({}, () => {
+      // 특정 토픽 구독
+      stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
+        console.log("Game start message received");
+        setGameStarted(true);
+      });
+    });
+    // 컴포넌트 unmount 시 웹소켓 연결 해제 및 구독 해제
+    return () => {
+      if (stomp.connected) {
+        stomp.unsubscribe(`/subscribe/song/${gameSeq}`);
+        stomp.disconnect();
+      }
+    };
+  }, []);
+
   // "게임 시작" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
   function handleGameReady() {
-    console.log("게임 시작 버튼 누름");
-    // 게임 시작 메시지를 서버에 전송
+    setGameStarted(true);
     if (stomp.connected) {
-      console.log("연결 후 자동 재생 요청");
+      console.log("게임 시작 버튼 누르고 stomp연결");
       const message = {
         gameSeq: gameSeq,
         // 필요한 경우 여기에 다른 데이터 추가
@@ -562,33 +560,17 @@ function GameWait() {
               }}
             >
               {/* 대기중 비디오 */}
-              {/* {videoVisible && (
               <video
-                controls
+                controls={false}
+                src={musicUrl}
                 autoPlay
                 loop
                 style={{
                   width: "100%",
-                  height: "100%",
+                  height: "40vh",
                   objectFit: "cover",
                 }}
-                src={musicUrl}
-                type="video/mp4"
-              ></video>
-            )} */}
-              {gameStarted && (
-                <video
-                  controls={false}
-                  src={musicUrl}
-                  autoPlay
-                  loop
-                  style={{
-                    width: "100%",
-                    height: "40vh",
-                    objectFit: "cover",
-                  }}
-                />
-              )}
+              />
             </Card>
           </Grid>
         ) : (
