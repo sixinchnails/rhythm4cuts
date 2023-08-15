@@ -46,10 +46,9 @@ public class FilmController {
     // API 3. 인생네컷 사진 촬영
     @PostMapping(value = "/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> photoShoot(@ModelAttribute FilmDto filmInfo) throws IOException {
-        System.out.println("a");
         // 넘어온 사진 정보를 DB에 저장할 예정
         filmService.saveFilm(filmInfo);
-        System.out.println("b");
+
         return ResponseEntity.ok("File uploaded success");
     }
 
@@ -57,8 +56,6 @@ public class FilmController {
     public ResponseEntity<List<FilmResponseDto>> getPhotos(@RequestParam String email) throws IOException {
         int userSeq = userService.findByEmail(email).getUserSeq();
         List<FilmResponseDto> filmUrls = filmService.getUserPhotoList(userSeq);
-
-        System.out.println(filmUrls);
 
         return ResponseEntity.status(200).body(filmUrls);
     }

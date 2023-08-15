@@ -25,11 +25,6 @@ public class S3UploadService {
     private String bucket;
 
     public String saveFile(MultipartFile multipartFile, String fileName) throws IOException {
-        System.out.println("[Amazon Test]");
-        System.out.println(bucket);
-        System.out.println(amazonS3.getRegion());
-        System.out.println(amazonS3.getRegionName());
-
         String originalFilename = multipartFile.getOriginalFilename();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());

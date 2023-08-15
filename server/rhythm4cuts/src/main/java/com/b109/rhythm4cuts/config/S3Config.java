@@ -27,15 +27,11 @@ public class S3Config {
     public AmazonS3Client amazonS3Client() {
         BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
 
-        System.out.println("AmazonS3Client Region : " + region);
-
         AmazonS3Client amazonS3Client = (AmazonS3Client) AmazonS3ClientBuilder
                 .standard()
                 .withRegion(region)
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .build();
-
-        System.out.println("Region of : " + amazonS3Client.getRegionName());
 
         return amazonS3Client;
     }
