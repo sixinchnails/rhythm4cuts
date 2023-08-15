@@ -28,7 +28,9 @@ public class LobbyServiceImpl implements LobbyService {
         List<LobbyDto> res = new ArrayList<>();
 
         gameInfos.forEach(gameInfo -> {
-            res.add(gameInfo.getLobbyDto());
+            if(gameInfo.getHeadCount() > 0) {
+                res.add(gameInfo.getLobbyDto());
+            }
         });
 
         return res;
@@ -47,7 +49,9 @@ public class LobbyServiceImpl implements LobbyService {
         List<LobbyDto> res = new ArrayList<>();
 
         gameInfos.forEach(gameInfo -> {
-            res.add(gameInfo.getLobbyDto());
+            if(gameInfo.getHeadCount() > 0) {
+                res.add(gameInfo.getLobbyDto());
+            }
         });
 
         return res;
@@ -97,9 +101,6 @@ public class LobbyServiceImpl implements LobbyService {
         GameInfo gameInfo = lobbyRepository.selectSeqLobby(gameSeq);
         int headCount = gameInfo.getHeadCount();
         gameInfo.setHeadCount(headCount - 1);
-        if(gameInfo.getHeadCount() == 0) {
-            lobbyRepository.deleteById(gameSeq);
-        }
 
     }
 }
