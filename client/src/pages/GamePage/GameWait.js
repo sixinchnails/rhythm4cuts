@@ -496,7 +496,7 @@ function GameWait() {
   }
 
   // "채팅" 버튼을 클릭했을 때 동작 ---------------------------------------------------------------------------------
-  const handleChat = () => {};
+  const handleChat = () => { };
 
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
   const handleExit = () => {
@@ -550,6 +550,8 @@ function GameWait() {
         // Handle error if needed
         console.error("Error:", error);
       });
+
+    navigate("/GameList")
   };
 
   // 해당 노래 번호 가져오기
@@ -757,7 +759,7 @@ function GameWait() {
                 margin: "50px",
               }}
             >
-              {playerFix.map((player, index) => (
+              {[0, 1, 2, 3].map(index => (
                 <Grid
                   key={index}
                   item
@@ -770,8 +772,8 @@ function GameWait() {
                     borderRadius: "20px",
                   }}
                 >
-                  {player ? (
-                    <UserVideoComponent streamManager={player} />
+                  {players[index] ? (
+                    <UserVideoComponent streamManager={players[index]} userSeq={userSeq} cnt = {players.length}/>
                   ) : (
                     // 빈 자리 표시
                     <video
@@ -790,6 +792,7 @@ function GameWait() {
                   )}
                 </Grid>
               ))}
+
             </Grid>
           ) : (
             // 게임시작 버튼 클릭 전 전 전! --------------------------------------------------------------------------------
