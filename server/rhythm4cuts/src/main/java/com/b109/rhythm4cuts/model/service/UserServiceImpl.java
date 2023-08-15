@@ -391,7 +391,8 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    public String findNicknameById(Long userSeq) {
+    @Override
+    public String findNicknameById(int userSeq) {
         return userRepository.findByUserSeq(userSeq).getNickname();
     }
 
