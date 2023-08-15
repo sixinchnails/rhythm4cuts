@@ -27,7 +27,7 @@ def calculate_fingerprints(filename):
         f.close()
     else:
         print("Calculating fingerprint by fpcalc for %s" % (filename))
-        fpcalc_out = str(subprocess.check_output(['fpcalc', '-raw', '-length', str(sample_time), filename])).strip().replace('\\n', '').replace("'", "")
+        fpcalc_out = str(subprocess.check_output(['fpcalc', '-raw', '-length', str(sample_time), filename])).strip().replace('\\n', '').replace("'", "").replace("\\r", "")
 
     fingerprint_index = fpcalc_out.find('FINGERPRINT=') + 12
     # convert fingerprint to list of integers
@@ -103,9 +103,13 @@ def get_max_corr(corr, source, target):
         print('Match with correlation of %.2f%% at offset %i'
              % (corr[max_corr_index] * 100.0, max_corr_offset))
 
+        return corr[max_corr_index] * 100
+
 def correlate(source, target):
     fingerprint_source = calculate_fingerprints(source)
     fingerprint_target = calculate_fingerprints(target)
 
     corr = compare(fingerprint_source, fingerprint_target, span, step)
     max_corr_offset = get_max_corr(corr, source, target)
+
+    return max_corr_offset
