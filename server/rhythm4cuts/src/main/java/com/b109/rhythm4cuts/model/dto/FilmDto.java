@@ -21,8 +21,6 @@ public class FilmDto {
     private LocalDateTime createDate;
     private String totalFileName;
     private Boolean downloadState;
-    private String email;
-
     private MultipartFile commonFilm;
     private MultipartFile privateFilm;
 }
