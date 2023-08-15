@@ -19,6 +19,7 @@ function RoomList({ room, onRoomClick }) {
 
   const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
   const [password, setPassword] = useState("");
+  const imgUrl = "https://img.youtube.com/vi/" + room.youtubeId + "/0.jpg"; // 유튜브 img url
 
   const handleCardClick = () => {
     if (room.isSecret === 1) {
@@ -91,7 +92,8 @@ function RoomList({ room, onRoomClick }) {
             <CardMedia
               component="img" // 이미지를 보여주기 위해 img 태그 사용
               // image={room.image}
-              image="/images/잔나비.jfif"
+              // image="/images/잔나비.jfif"
+              image={imgUrl}
               style={{
                 padding: "5%",
                 objectFit: "cover",
@@ -173,7 +175,7 @@ function RoomList({ room, onRoomClick }) {
       <Modal
         open={isPasswordModalOpen}
         onClose={() => setPasswordModalOpen(false)}
-        onClick={(event) => event.stopPropagation()}
+        onClick={event => event.stopPropagation()}
       >
         <Box
           sx={{
@@ -193,7 +195,7 @@ function RoomList({ room, onRoomClick }) {
             label="비밀번호"
             variant="outlined"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             fullWidth
             type="password"
             sx={{ my: 2 }}

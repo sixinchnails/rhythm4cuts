@@ -1,8 +1,10 @@
 package com.b109.rhythm4cuts.model.service;
 
 import com.b109.rhythm4cuts.model.domain.GameInfo;
+import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.domain.UserGameInfo;
 import com.b109.rhythm4cuts.model.dto.LobbyDto;
+import com.b109.rhythm4cuts.model.dto.WaitGameRequestDto;
 import com.b109.rhythm4cuts.model.repository.GameRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import com.b109.rhythm4cuts.model.repository.WaitRoomRepository;
@@ -10,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -65,4 +69,5 @@ public class WaitRoomServiceImpl implements WaitRoomService {
 
         return order;
     }
+
 }

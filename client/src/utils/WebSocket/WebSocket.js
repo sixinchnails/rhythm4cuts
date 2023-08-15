@@ -31,7 +31,7 @@ export function WebSocketProvider({ children }) {
       // 먼저 사용자 정보를 가져옵니다.
       userInfo()
         .then(res => {
-          console.log(res.data.user_seq);
+          // console.log(res.data.user_seq);
           // 사용자 정보가 존재하면 웹소켓을 연결합니다.
           if (res.data.user_seq !== null) {
             socket = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
@@ -57,14 +57,23 @@ export function WebSocketProvider({ children }) {
                   setHasNotification(true);
                   setFriendRequest(message.body); // 여기서 메시지 내용 저장
                 });
-                stomp.subscribe(`/subscribe/game/${fromUser}`, message => {
-                  setMessages(prev => [...prev, message.body]);
-                  setHasNotification(true); // 알림 상태 업데이트
-                });
+                // stomp.subscribe(`/subscribe/game/${fromUser}`, message => {
+                //   setMessages(prev => [...prev, message.body]);
+                //   setHasNotification(true); // 알림 상태 업데이트
+                // });
                 stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
                   setVideoVisible(true);
                   window.alert("영상 다같이 시작할게");
                 });
+                if (fromUser) {
+                  console.log("전역 웹소캣 연결 확인");
+                  stomp.subscribe(
+                    `/subscribe/friend/invite/${fromUser}`,
+                    () => {
+                      alert("게임 초대 요청 옴");
+                    }
+                  );
+                }
               }
             });
 
