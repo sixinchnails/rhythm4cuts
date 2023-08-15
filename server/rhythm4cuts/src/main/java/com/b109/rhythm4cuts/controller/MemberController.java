@@ -245,7 +245,7 @@ public class MemberController {
     // API. 유저 정보 조회 (userSeq)
     @GetMapping("/info/{userSeq}")
     public ResponseEntity<?> getUserInfo(@PathVariable("userSeq") int userSeq) throws SQLException {
-        UserDto userDto = userService.findById((long) userSeq);
+        UserDto userDto = userService.findById(userSeq);
 
         Map<String, Object> res = new HashMap<>();
 

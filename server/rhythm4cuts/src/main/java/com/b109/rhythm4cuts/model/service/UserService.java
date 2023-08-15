@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface UserService {
     // Find a user by their ID
-    UserDto findById(Long userId);
+    UserDto findById(int userId);
     // Find a user by their nickname
     UserDto findByNickname(String nickname);
     boolean duplicateNickname(String nickname);
