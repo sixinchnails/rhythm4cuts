@@ -24,6 +24,7 @@ import {
 } from "@mui/material";
 import { createConnection } from "../../openvidu/connectionInitialization";
 import UserVideoComponent from "../../components/Game/UserVideoComponent";
+import UserComponent from "../../components/Game/UserComponent";
 import React, { Component, useState, useEffect } from "react";
 import LoginAlert from "../../components/Common/LoginAlert";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
@@ -37,6 +38,7 @@ import axios from "axios";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
+import UserInfo from "../../components/My/My_UserInfo";
 
 var sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
 var stomp = Stomp.over(sock);
@@ -111,6 +113,8 @@ function GameWait() {
   const [players, setPlayers] = useState([]); // 통합
   const [gameStarted, setGameStarted] = useState(false); // 게임 시작 여부 상태
   const access = getCookie("access");
+
+  const [playerFix, setPlayerFix] = useState([]); // 배열 순서 고정
 
   // 상태 추가
   const [isInviteModalOpen, setInviteModalOpen] = useState(false);
@@ -430,6 +434,7 @@ function GameWait() {
   // "게임 시작" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
   function handleGameReady() {
     setGameStarted(true);
+    setPlayerFix([...players]); // player 배열 복사
 
     // axios 보내기
     // console.log("access : " + access);
@@ -448,7 +453,7 @@ function GameWait() {
   }
 
   // "채팅" 버튼을 클릭했을 때 동작 ---------------------------------------------------------------------------------
-  const handleChat = () => {};
+  const handleChat = () => { };
 
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
   const handleExit = () => {
@@ -542,48 +547,48 @@ function GameWait() {
               />
             </Card>
           </Grid>
-        ) : (
-          <Grid container>
-            {/* Top : LEFT */}
-            <Grid
-              item
-              xs={8}
-              container
-              alignItems="center"
-              justifyContent="center"
-              paddingLeft={"150px"}
-            >
-              <Card
-                style={{
-                  width: "55vw",
-                  height: "40vh",
-                  background: "transparent",
-                  borderRadius: "30px",
-                }}
+        )
+          : ( // 게임 시작 하기 전 춤추는 동영상 ----------------------------------------------------------------------
+            <Grid container>
+              {/* Top : LEFT */}
+              <Grid
+                item
+                xs={8}
+                container
+                alignItems="center"
+                justifyContent="center"
+                paddingLeft={"150px"}
               >
-                {/* 대기중 비디오 */}
-                <video
-                  src="/images/GameImage/Dance.mp4"
-                  autoPlay
-                  loop
+                <Card
                   style={{
-                    width: "100%",
+                    width: "55vw",
                     height: "40vh",
-                    objectFit: "cover",
+                    background: "transparent",
+                    borderRadius: "30px",
                   }}
-                />
-              </Card>
-            </Grid>
+                >
+                  {/* 대기중 비디오 */}
+                  <video
+                    src="/images/GameImage/Dance.mp4"
+                    autoPlay
+                    loop
+                    style={{
+                      width: "100%",
+                      height: "40vh",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Card>
+              </Grid>
 
-            {/* Top : RIGHT */}
-            <Grid
-              item
-              xs={4}
-              container
-              alignItems="center"
-              justifyContent="center"
-            >
-              {gameStarted ? null : ( // 시작하면 버튼 다 사라져랏
+              {/* Top : RIGHT */}
+              <Grid
+                item
+                xs={4}
+                container
+                alignItems="center"
+                justifyContent="center"
+              >
                 <Grid container spacing={2}>
                   {/* 친구 초대 버튼 */}
                   {players.length !== 4 && (
@@ -607,7 +612,6 @@ function GameWait() {
                       </StyledIconButton>
                     </Grid>
                   )}
-
                   {/* "나가기" 버튼 */}
                   {players.length !== 4 && (
                     <Grid item xs={5} style={{ margin: "1px" }}>
@@ -628,8 +632,7 @@ function GameWait() {
                       </StyledIconButton>
                     </Grid>
                   )}
-
-                  {/* "게임 시작" 버튼 */}
+                  {/* "게임 시작" 버튼 : 4명이 차면 뜬다!! */}
                   {players.length === 4 ? (
                     <Grid item xs={10} style={{ margin: "1px" }}>
                       <StyledIconButton
@@ -650,63 +653,112 @@ function GameWait() {
                     </Grid>
                   ) : null}
                 </Grid>
-              )}
+              </Grid>
             </Grid>
-          </Grid>
-        )}
-
+          )}
         {/* Bottom */}
         <Grid container>
-          {/* Bottom */}
-          <Grid
-            style={{
-              height: "25vh",
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              margin: "50px",
-            }}
-          >
-            {/* 각 플레이어별로 Grid 아이템 생성 */}
-            {[0, 1, 2, 3].map(index => (
+          {gameStarted
+            // 게임시작 버튼 클릭 후 후 후! -------------------------------------------------------------------------------------
+            ? (
               <Grid
-                key={index}
-                item
-                xs={3}
                 style={{
-                  backgroundColor: "transparent",
-                  height: "34vh",
-                  padding: "2px",
-                  margin: "20px",
-                  borderRadius: "20px",
+                  height: "25vh",
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  margin: "50px",
                 }}
               >
-                {/* players 배열에 해당 인덱스의 스트림이 있는 경우 플레이어 정보 표시 */}
-                {players[index] ? (
-                  <UserVideoComponent
-                    streamManager={players[index]}
-                    gameStarted={gameStarted}
-                  />
-                ) : (
-                  // 빈 자리 표시
-                  <video
-                    autoPlay
-                    loop
-                    muted
+                {playerFix.map((player, index) => (
+                  <Grid
+                    key={index}
+                    item
+                    xs={3}
                     style={{
-                      width: "80%", // 비디오 크기 조정
-                      height: "80%", // 비디오 크기 조정
-                      objectFit: "cover",
+                      backgroundColor: "transparent",
+                      height: "34vh",
+                      padding: "2px",
+                      margin: "20px",
                       borderRadius: "20px",
                     }}
                   >
-                    <source src="/videos/33.mp4" type="video/mp4" />
-                  </video>
-                )}
+                    {player ? (
+                      <UserVideoComponent
+                        streamManager={player}
+                      />
+                    ) : (
+                      // 빈 자리 표시
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        style={{
+                          width: "80%", // 비디오 크기 조정
+                          height: "80%", // 비디오 크기 조정
+                          objectFit: "cover",
+                          borderRadius: "20px",
+                        }}
+                      >
+                        <source src="/videos/33.mp4" type="video/mp4" />
+                      </video>
+                    )}
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
+            ) : (
+              // 게임시작 버튼 클릭 전 전 전! --------------------------------------------------------------------------------
+              <Grid
+                style={{
+                  height: "25vh",
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  margin: "50px",
+                }}
+              >
+                {/* 각 플레이어별로 Grid 아이템 생성 */}
+                {[0, 1, 2, 3].map(index => (
+                  <Grid
+                    key={index}
+                    item
+                    xs={3}
+                    style={{
+                      backgroundColor: "transparent",
+                      height: "34vh",
+                      padding: "2px",
+                      margin: "20px",
+                      borderRadius: "20px",
+                    }}
+                  >
+                    {players[index] ? (
+                      <UserComponent
+                        streamManager={players[index]}
+                      />
+                    ) : (
+                      // 빈 자리 표시
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        style={{
+                          width: "80%", // 비디오 크기 조정
+                          height: "80%", // 비디오 크기 조정
+                          objectFit: "cover",
+                          borderRadius: "20px",
+                        }}
+                      >
+                        <source src="/videos/33.mp4" type="video/mp4" />
+                      </video>
+                    )}
+                  </Grid>
+                ))}
+              </Grid>
+            )
+          }
+
         </Grid>
       </Grid>
 
