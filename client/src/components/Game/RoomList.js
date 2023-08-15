@@ -99,7 +99,7 @@ function RoomList({ room, onRoomClick }) {
               style={{
                 padding: "5%",
                 objectFit: "cover",
-                width: "100%",
+                width: "200px",
                 height: "100%",
                 borderRadius: "20px",
                 fontFamily: 'Ramche',
