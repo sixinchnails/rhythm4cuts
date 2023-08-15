@@ -103,12 +103,14 @@ function GameWait() {
 
   const session = useSelector(state => state.roomState.session);
 
-  const [myUserName, setMyUserName] = useState(undefined);
+  // const [myUserName, setMyUserName] = useState(undefined);
   const [connectSession, setConnectSession] = useState(undefined);
   const [mainStreamManager, setMainStreamManager] = useState(undefined); // 방장
   const [publisher, setPublisher] = useState(undefined); // 자신
   const [subscribers, setSubscribers] = useState([]); // 구독자
   const [players, setPlayers] = useState([]); // 통합
+  const [gameStarted, setGameStarted] = useState(false); // 게임 시작 여부 상태
+  const access = getCookie("access");
 
   // 상태 추가
   const [isInviteModalOpen, setInviteModalOpen] = useState(false);
@@ -195,6 +197,41 @@ function GameWait() {
     }
   }
 
+  useEffect(() => {
+    axios
+      .get("https://i9b109.p.ssafy.io:8443/member/info", {
+        params: {
+          email: getCookie("email"),
+        },
+        headers: {
+          Authorization: `Bearer ${getCookie("access")}`,
+        },
+      })
+      .then(res => {
+        const param = {
+          userSeq: String(res.data.user_seq),
+          gameSeq: String(gameSeq),
+        };
+        console.log("체크하자 1 " + param.userSeq);
+        console.log("체크하자 2 " + param.gameSeq);
+
+        return axios.post("https://i9b109.p.ssafy.io:8443/wait/enter", param, {
+          headers: {
+            // 'Content-Type': 'application/json',
+            Authorization: `Bearer ${getCookie("access")}`,
+          },
+        });
+      })
+      .then(postRes => {
+        // 이곳에서 post 요청에 대한 응답 처리
+        console.log("POST 요청 응답:", postRes);
+      })
+      .catch(error => {
+        // 에러 처리
+        console.error("에러 발생:", error);
+      });
+  }, []);
+
   // 로그인 상태관리
   useEffect(() => {
     connectWebSocket();
@@ -254,8 +291,6 @@ function GameWait() {
     }
   }
 
-  const access = getCookie("access");
-
   // 방 세션 가져오기
   async function fetchSession() {
     try {
@@ -298,7 +333,7 @@ function GameWait() {
       // 세션에 참여하지 않았을 때만 실행
       const joinSessionTimeout = setTimeout(() => {
         joinSession();
-      }, 2000);
+      }, 3000);
 
       return () => clearTimeout(joinSessionTimeout);
     }
@@ -337,11 +372,11 @@ function GameWait() {
 
       const token = await getToken(); // Implement getToken function
       const userData = await userInfo();
+      // console.log("유저 데이터가 뭐냐 : " + userData.data.user_seq);
 
       newSession
         .connect(token, { clientData: userData })
         .then(async () => {
-          console.log(userData);
           const newPublisher = await ov.initPublisherAsync(undefined, {
             audioSource: undefined,
             videoSource: undefined,
@@ -353,31 +388,6 @@ function GameWait() {
             mirror: false,
           });
 
-          //--------------------------
-
-          // <<Before>>
-          //   newSession.publish(newPublisher);
-
-          //   const devices = await ov.getDevices();
-          //   const videoDevices = devices.filter(
-          //     device => device.kind === "videoinput"
-          //   );
-          //   const currentVideoDeviceId = newPublisher.stream
-          //     .getMediaStream()
-          //     .getVideoTracks()[0]
-          //     .getSettings().deviceId;
-          //   const currentVideoDevice = videoDevices.find(
-          //     device => device.deviceId === currentVideoDeviceId
-          //   );
-
-          //   setMainStreamManager(newPublisher);
-          //   setPublisher(newPublisher);
-
-          //   if (players.length === 0) { // 방장을 플레이어 스트림 추가
-          //     setPlayers(prevPlayers => [...prevPlayers, newPublisher]);
-          //   }
-
-          // <<After>>
           newSession.publish(newPublisher);
 
           setPublisher(newPublisher);
@@ -405,10 +415,36 @@ function GameWait() {
   };
 
   // "게임 준비" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
+  // 친구 초대
+  function InviteFriend() {
+    var request = {
+      fromUser: fromUser,
+      toUser: toUser,
+      // roomNumber :
+    };
+    if (stomp.connected) {
+      stomp.send("/public/request", {}, JSON.stringify(request));
+    }
+  }
+
+  // "게임 시작" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
   function handleGameReady() {
-    dispatch(userSession(session));
-    dispatch(setConnection(connection));
-    navigate(`/GamePlay/${gameSeq}`);
+    setGameStarted(true);
+
+    // axios 보내기
+    // console.log("access : " + access);
+
+    // axios.post(`https://i9b109.p.ssafy.io:8443/wait/enter`,
+    //   {
+    //     headers: {
+    //       Authorization: "Bearer " + access,
+    //     }
+    //   },
+    //   {
+    //     "gameSeq": gameSeq,
+    //     "userSeq": userseq
+    //   }
+    // )
   }
 
   // "채팅" 버튼을 클릭했을 때 동작 ---------------------------------------------------------------------------------
@@ -418,7 +454,6 @@ function GameWait() {
   const handleExit = () => {
     onBeforeUnload();
     console.log("방 나갈거야 ~");
-    navigate(`/GameList`);
   };
 
   const onBeforeUnload = () => {
@@ -428,15 +463,6 @@ function GameWait() {
   // 방에서 나갈때 ㅣ 수정 필요
   const leaveSession = () => {
     console.log("--------------------leave session");
-
-    // 방 인원수 줄이는 요청 보내기
-    axios.get(`https://i9b109.p.ssafy.io:8443/lobby/room/exit/${gameSeq}`, {
-      headers: {
-        Authorization: "Bearer " + access,
-      },
-    });
-
-    navigate(`/GameList`);
 
     // 나가는 플레이어를 배열에서 제거하고 상태 업데이트
     const updatedPlayers = players.filter(player => player !== publisher);
@@ -448,12 +474,34 @@ function GameWait() {
     // }
 
     // 구독 중인 스트림 해제
-    subscribers.forEach(subscriber => subscriber.unsubscribe());
+    subscribers.forEach(subscriber => {
+      if (typeof subscriber.unsubscribe === "function") {
+        subscriber.unsubscribe(); // 구독자 해제
+        if (subscriber.streamManager) {
+          subscriber.streamManager.stream.dispose(); // streamManager에 있는 stream 해제
+        }
+      }
+    });
 
     // 현재 유저 커넥션 연결 끊기
     if (connectSession) {
       connectSession.disconnect();
     }
+
+    // 방 인원수 줄이는 요청 보내기
+    axios
+      .get(`https://i9b109.p.ssafy.io:8443/lobby/room/exit/` + gameSeq, {
+        headers: {
+          Authorization: "Bearer " + access,
+        },
+      })
+      .then(response => {
+        // navigate(`/GameList`)
+      })
+      .catch(error => {
+        // Handle error if needed
+        console.error("Error:", error);
+      });
   };
 
   return (
@@ -470,17 +518,9 @@ function GameWait() {
       <Header />
 
       <Grid container>
-        {/* TOP */}
-        <Grid container>
-          {/* Top : LEFT */}
-          <Grid
-            item
-            xs={8}
-            container
-            alignItems="center"
-            justifyContent="center"
-            paddingLeft={"150px"}
-          >
+        {/* TOP : 게임 시작 전*/}
+        {gameStarted ? (
+          <Grid container alignItems="center" justifyContent="center">
             <Card
               style={{
                 width: "55vw",
@@ -491,7 +531,7 @@ function GameWait() {
             >
               {/* 대기중 비디오 */}
               <video
-                src="/images/GameImage/Dance.mp4"
+                src="/images/GameImage/WaitSong.mp4"
                 autoPlay
                 loop
                 style={{
@@ -502,96 +542,118 @@ function GameWait() {
               />
             </Card>
           </Grid>
-
-          {/* Top : RIGHT */}
-          <Grid
-            item
-            xs={4}
-            container
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Grid container spacing={2}>
-              {/* 친구 초대 버튼 */}
-              <Grid item xs={5} style={{ margin: "1px" }}>
-                <StyledIconButton
-                  onClick={() => {
-                    handleOpenInviteModal();
+        ) : (
+          <Grid container>
+            {/* Top : LEFT */}
+            <Grid
+              item
+              xs={8}
+              container
+              alignItems="center"
+              justifyContent="center"
+              paddingLeft={"150px"}
+            >
+              <Card
+                style={{
+                  width: "55vw",
+                  height: "40vh",
+                  background: "transparent",
+                  borderRadius: "30px",
+                }}
+              >
+                {/* 대기중 비디오 */}
+                <video
+                  src="/images/GameImage/Dance.mp4"
+                  autoPlay
+                  loop
+                  style={{
+                    width: "100%",
+                    height: "40vh",
+                    objectFit: "cover",
                   }}
-                  style={{ width: "12vw" }}
-                >
-                  <PersonAddIcon />
-                  <Typography
-                    style={{
-                      fontFamily: "Pretendard-Regular",
-                      fontSize: "20px",
-                      padding: "15px",
-                    }}
-                  >
-                    친구 초대
-                  </Typography>
-                </StyledIconButton>
-              </Grid>
+                />
+              </Card>
+            </Grid>
 
-              {/* "게임준비" 버튼 */}
-              <Grid item xs={5} style={{ margin: "1px" }}>
-                <StyledIconButton
-                  onClick={handleGameReady}
-                  style={{ width: "12vw" }}
-                >
-                  <CheckIcon />
-                  <Typography
-                    style={{
-                      fontFamily: "Pretendard-Regular",
-                      fontSize: "20px",
-                      padding: "15px",
-                    }}
-                  >
-                    게임 준비
-                  </Typography>
-                </StyledIconButton>
-              </Grid>
+            {/* Top : RIGHT */}
+            <Grid
+              item
+              xs={4}
+              container
+              alignItems="center"
+              justifyContent="center"
+            >
+              {gameStarted ? null : ( // 시작하면 버튼 다 사라져랏
+                <Grid container spacing={2}>
+                  {/* 친구 초대 버튼 */}
+                  {players.length !== 4 && (
+                    <Grid item xs={5} style={{ margin: "1px" }}>
+                      <StyledIconButton
+                        onClick={() => {
+                          handleOpenInviteModal();
+                        }}
+                        style={{ width: "12vw" }}
+                      >
+                        <PersonAddIcon />
+                        <Typography
+                          style={{
+                            fontFamily: "Pretendard-Regular",
+                            fontSize: "20px",
+                            padding: "15px",
+                          }}
+                        >
+                          친구 초대
+                        </Typography>
+                      </StyledIconButton>
+                    </Grid>
+                  )}
 
-              {/* "채팅" 버튼 */}
-              <Grid item xs={5} style={{ margin: "1px" }}>
-                <StyledIconButton
-                  onClick={handleChat}
-                  style={{ width: "12vw" }}
-                >
-                  <ChatIcon />
-                  <Typography
-                    style={{
-                      fontFamily: "Pretendard-Regular",
-                      fontSize: "20px",
-                      padding: "15px",
-                    }}
-                  >
-                    채팅
-                  </Typography>
-                </StyledIconButton>
-              </Grid>
+                  {/* "나가기" 버튼 */}
+                  {players.length !== 4 && (
+                    <Grid item xs={5} style={{ margin: "1px" }}>
+                      <StyledIconButton
+                        onClick={handleExit}
+                        style={{ width: "12vw" }}
+                      >
+                        <ExitToAppIcon />
+                        <Typography
+                          style={{
+                            fontFamily: "Pretendard-Regular",
+                            fontSize: "20px",
+                            padding: "15px",
+                          }}
+                        >
+                          나가기
+                        </Typography>
+                      </StyledIconButton>
+                    </Grid>
+                  )}
 
-              {/* "나가기" 버튼 */}
-              <Grid item xs={5} style={{ margin: "1px" }}>
-                <StyledIconButton
-                  onClick={handleExit}
-                  style={{ width: "12vw" }}
-                >
-                  <ExitToAppIcon />
-                  <Typography
-                    style={{
-                      fontFamily: "Pretendard-Regular",
-                      fontSize: "20px",
-                      padding: "15px",
-                    }}
-                  >
-                    나가기
-                  </Typography>
-                </StyledIconButton>
-              </Grid>
+                  {/* "게임 시작" 버튼 */}
+                  {players.length === 4 ? (
+                    <Grid item xs={10} style={{ margin: "1px" }}>
+                      <StyledIconButton
+                        onClick={handleGameReady}
+                        style={{ width: "30vw" }}
+                      >
+                        <CheckIcon />
+                        <Typography
+                          style={{
+                            fontFamily: "Pretendard-Regular",
+                            fontSize: "20px",
+                            padding: "15px",
+                          }}
+                        >
+                          게임 시작
+                        </Typography>
+                      </StyledIconButton>
+                    </Grid>
+                  ) : null}
+                </Grid>
+              )}
             </Grid>
           </Grid>
-        </Grid>
+        )}
 
         {/* Bottom */}
         <Grid container>
@@ -622,15 +684,19 @@ function GameWait() {
               >
                 {/* players 배열에 해당 인덱스의 스트림이 있는 경우 플레이어 정보 표시 */}
                 {players[index] ? (
-                  <UserVideoComponent streamManager={players[index]} />
+                  <UserVideoComponent
+                    streamManager={players[index]}
+                    gameStarted={gameStarted}
+                  />
                 ) : (
+                  // 빈 자리 표시
                   <video
                     autoPlay
                     loop
                     muted
                     style={{
-                      width: "100%",
-                      height: "100%",
+                      width: "80%", // 비디오 크기 조정
+                      height: "80%", // 비디오 크기 조정
                       objectFit: "cover",
                       borderRadius: "20px",
                     }}

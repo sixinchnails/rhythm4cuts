@@ -49,7 +49,7 @@ public class MemberController {
         res.put("score_sum", userDto.getScoreSum());
         res.put("profile_img_seq", userDto.getProfileImageSeq());
         res.put("play_count", userDto.getPlayCount());
-        res.put("state", userDto.getState());
+
         return res;
     }
 
@@ -240,12 +240,6 @@ public class MemberController {
         res.put("data", nickname);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
-    }
-
-    @PutMapping("/user/state/{userSeq}")
-    public ResponseEntity<?> setState(@PathVariable int userSeq) throws IOException {
-        UserDto userDto = userService.setUserState(userSeq);
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
     @GetMapping("/user/{userSeq}/logs")
