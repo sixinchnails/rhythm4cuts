@@ -26,6 +26,7 @@ function UserInfo(props) {
   // 비밀번호 확인 관련 상태 변수 추가
   const [nickname, setNickname] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  // eslint-disable-next-line
   const [isMatchPassword, setIsMatchPassword] = useState(false);
   const [photo, setPhoto] = useState("");
   const fileInput = useRef();
@@ -41,6 +42,7 @@ function UserInfo(props) {
   };
 
   // 모달을 열기 위한 핸들러
+  // eslint-disable-next-line
   const openModal = () => {
     setShowModal(true);
   };
@@ -175,6 +177,7 @@ function UserInfo(props) {
     setIsMatchPassword(password === confirmPassword);
   }, [password, confirmPassword]);
 
+  // eslint-disable-next-line
   function ImageSelectModal({ onSelect, onClose }) {
     const images = ["1.png", "2.png", "3.png", "4.png"];
 
@@ -212,7 +215,7 @@ function UserInfo(props) {
               <span className="modify-value">{props.nickName}</span>
               <Button
                 className="modify-value-button"
-                style={{ left: "170px", fontWeight: "bolder" }}
+                style={{ left: "100px", fontWeight: "bolder" }}
                 sx={{ color: "white", ":hover": { color: "blue" } }}
                 onClick={() => setNicknameEdit(!nicknameEdit)}
               >
@@ -274,7 +277,7 @@ function UserInfo(props) {
 
               <Button
                 className="modify-value-button"
-                style={{ left: "160px", fontWeight: "bolder" }}
+                style={{ left: "90px", fontWeight: "bolder" }}
                 sx={{ color: "white", ":hover": { color: "blue" } }}
                 onClick={() => setPasswordEdit(!passwordEdit)}
               >
@@ -312,7 +315,9 @@ function UserInfo(props) {
                     width: "600px",
                   }}
                 >
-                  <span className="modify-password-name">새 비밀번호</span>
+                  <span className="modify-password-name">
+                    &nbsp;&nbsp;새 비밀번호&nbsp;&nbsp;
+                  </span>
                   <input
                     type="password"
                     className="modify-input"

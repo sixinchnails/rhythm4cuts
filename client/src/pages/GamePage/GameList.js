@@ -24,8 +24,10 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import RoomList from "../../components/Game/RoomList";
 import Header from "../../components/Game/HeaderWait";
 import axios from "axios";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 function GameList() {
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
   const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate();
   const [isCreateRoomModalOpen, setCreateRoomModalOpen] = useState(false); //  '방 만들기' 모달의 상태를 관리
@@ -67,6 +69,7 @@ function GameList() {
 
   // 로그인 상태관리
   useEffect(() => {
+    connectWebSocket();
     userInfo()
       .then((res) => {
         if (res.status === 200) {
@@ -166,6 +169,32 @@ function GameList() {
     };
     fetchNickname();
   }, []);
+
+  // 빠른 입장 버튼을 클릭했을 때 실행되는 함수
+  const handleQuickJoin = async () => {
+    // 현재 입장 가능한 방 중에서 조건에 맞는 방을 찾아 입장
+    const joinableRooms = filteredRooms.filter(
+      (room) => room.headcount >= 1 && room.headcount <= 3 && !room.isSecret
+    );
+
+    if (joinableRooms.length > 0) {
+      try {
+        // 여기에 입장 로직을 작성
+        // 입장 요청이 성공하면 게임 대기실 페이지로 이동
+        navigate(`/GameWait/${joinableRooms[0].gameSeq}`);
+      } catch (error) {
+        console.error("방 입장 중 오류 발생:", error);
+      }
+    } else {
+      console.log("입장할 수 있는 방이 없습니다.");
+      // 예: 알림 메시지 표시 등의 처리
+    }
+  };
+
+  // 방 입장
+  const handleOpenGameWait = (room) => {
+    navigate(`/GameWait/${room.gameSeq}`);
+  };
 
   return (
     <div
@@ -277,6 +306,7 @@ function GameList() {
                 fontSize: "20px",
               }}
               variant="contained"
+              onClick={handleQuickJoin}
             >
               빠른 입장
             </Button>
@@ -289,9 +319,13 @@ function GameList() {
               .map((room, gameSeq) => (
                 <Grid item xs={6} key={gameSeq}>
                   {/* 방 누르면 입장 */}
-                  <Link to={`/GameWait/${room.gameSeq}`}>
-                    <RoomList key={gameSeq} room={room} />
-                  </Link>
+                  <Button>
+                    <RoomList
+                      key={gameSeq}
+                      room={room}
+                      onRoomClick={handleOpenGameWait}
+                    />
+                  </Button>
                 </Grid>
               ))}
 

@@ -1,5 +1,5 @@
 // Mypage.js
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/My/My_SideBar";
 import "./Mypage.css";
@@ -10,9 +10,12 @@ import LoginMypageHeader from "../../components/Home/BlackHeader";
 import MainContent from "../../components/My/My_MainContent"; // MainContent 컴포넌트를 import
 import UserInfo from "../../components/My/My_UserInfo"; // UserInfo 컴포넌트를 import
 import Button from "@mui/material/Button";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 
 const Mypage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
 
   const handleOpenSearchPasswordModal = () => {
     setIsModalOpen(true);
@@ -54,6 +57,11 @@ const Mypage = () => {
   } catch (error) {
     console.log(error);
   }
+
+  useEffect(() => {
+    console.log("연결");
+    connectWebSocket();
+  }, []);
 
   return (
     <div
