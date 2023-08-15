@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     private final LogRepository logRepository;
 
     //id로 사용자 객체를 찾는 메서드
-    public UserDto findById(Long userId) {
+    public UserDto findById(int userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("id: " + userId + " 사용자를 찾을 수 없습니다."));
 
@@ -341,7 +341,7 @@ public class UserServiceImpl implements UserService {
 
         //레디스에서 기존 액세스 토큰(키)과 리프레쉬 토큰(밸류)를 삭제
         if (redisTemplate.hasKey(redisATKKey)) redisTemplate.delete(redisATKKey);
-        //해당 토큰을 키로 가진 매핑이 없는데요? 이미 리프레쉬 한번하는데 쓴 액세스 토큰을 다시 보냈을 때 발생.
+            //해당 토큰을 키로 가진 매핑이 없는데요? 이미 리프레쉬 한번하는데 쓴 액세스 토큰을 다시 보냈을 때 발생.
         else throw new JwtException("Invalid access token. Possible reason is the access token provided was previously used for refresh.");
 
         //RefreshToken이 없을 때 실행
@@ -391,6 +391,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
     public String findNicknameById(int userSeq) {
         return userRepository.findByUserSeq(userSeq).getNickname();
     }

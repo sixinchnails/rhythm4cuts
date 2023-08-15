@@ -82,4 +82,20 @@ public class GameInfo {
         return lobbyDto;
     }
 
+    @Override
+    public String toString() {
+        return "GameInfo{" +
+                "gameSeq=" + gameSeq +
+                ", title='" + title + '\'' +
+                ", song=" + song +
+                ", headCount=" + headCount +
+                ", isSecret=" + isSecret +
+                ", password='" + password + '\'' +
+                ", roomStatus=" + roomStatus +
+                ", hasImage=" + hasImage +
+                ", gameImages=" + gameImages +
+                ", createDate=" + createDate +
+                ", sessionId='" + sessionId + '\'' +
+                '}';
+    }
 }
