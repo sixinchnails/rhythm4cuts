@@ -89,7 +89,7 @@ const Login = () => {
           <input
             type="text"
             ref={emailRef}
-            placeholder="ID(이메일)"
+            placeholder="이메일"
             value={id}
             onChange={onChangeId}
             onKeyPress={onKeyPress}
@@ -111,15 +111,15 @@ const Login = () => {
         </div>
         <div className="searchAndJoin">
           <button onClick={handleOpenSearchPasswordModal}>PW찾기</button>
-          <div style={{ color: "white" }}>|</div>
+          <div style={{ color: "white", margin: "7px" }}>|</div>
           <Link to="/Join" style={{ color: "white" }}>
             회원가입
           </Link>
         </div>
-        <div className="apiLogin">
+        {/* <div className="apiLogin">
           <div className="naver-logo"></div>
           <div className="kakao-logo"></div>
-        </div>
+        </div> */}
       </div>
 
       <SearchPassword
