@@ -12,7 +12,6 @@ import LockIcon from "@mui/icons-material/Lock";
 import React, { useState } from "react";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
-import { useEffect } from 'react';
 
 function RoomList({ room, onRoomClick }) {
   // 방 인원수 파악
@@ -176,7 +175,7 @@ function RoomList({ room, onRoomClick }) {
       <Modal
         open={isPasswordModalOpen}
         onClose={() => setPasswordModalOpen(false)}
-        onClick={(event) => event.stopPropagation()}
+        onClick={event => event.stopPropagation()}
       >
         <Box
           sx={{
@@ -196,7 +195,7 @@ function RoomList({ room, onRoomClick }) {
             label="비밀번호"
             variant="outlined"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             fullWidth
             type="password"
             sx={{ my: 2 }}

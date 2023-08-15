@@ -42,7 +42,7 @@ const Mypage = () => {
   // 로그인 상태 확인
   try {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           setNickName(res.data.nickname);
           setName(res.data.name);
@@ -50,7 +50,7 @@ const Mypage = () => {
           setPhoto(res.data.profile_img_seq);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         navigate("/");
         window.alert("로그인을 해주세요!");
       });
