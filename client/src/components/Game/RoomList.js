@@ -93,13 +93,11 @@ function RoomList({ room, onRoomClick }) {
           >
             <CardMedia
               component="img" // 이미지를 보여주기 위해 img 태그 사용
-              // image={room.image}
-              // image="/images/잔나비.jfif"
               image={imgUrl}
               style={{
                 padding: "5%",
                 objectFit: "cover",
-                width: "200px",
+                width: "100%",
                 height: "100%",
                 borderRadius: "20px",
                 fontFamily: 'Ramche',
