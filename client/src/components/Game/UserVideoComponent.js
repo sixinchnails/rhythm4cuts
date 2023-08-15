@@ -8,8 +8,9 @@ import axios from 'axios';
 import { getCookie } from '../../utils/cookie';
 import { useParams } from 'react-router-dom';
 
-const UserVideoComponent = ({ streamManager, userSeq, cnt }) => {
+const UserVideoComponent = ({ streamManager }) => {
 
+  const userSeq = getUserInfo().data.user_seq;
   const [userOrders, setUserOrders] = useState({});
   var { gameSeq } = useParams(); // url에서 추출
   useEffect(() => {
@@ -44,7 +45,6 @@ const UserVideoComponent = ({ streamManager, userSeq, cnt }) => {
     console.log(JSON.parse(streamManager.stream.connection.data).clientData);
     return JSON.parse(streamManager.stream.connection.data).clientData;
   }
-
   // 서버데이터 가져올 것
   function getProfilePic(pointSum) {
     if (pointSum <= 2000) {
@@ -89,12 +89,12 @@ const UserVideoComponent = ({ streamManager, userSeq, cnt }) => {
             xs={7}
             style={{ fontFamily: "Pretendard-Regular", fontSize: "20px" }}
           >
-            {/* {getUserInfo().data.nickname} */}
+            {/* {getUserInfo().data.user_seq}  */}
             {userOrders[userSeq] ? (
               <>
                 Order : {userOrders[userSeq]}
               </>
-            ) : (
+            ) : ( 
               "Loading..."
             )}
 
