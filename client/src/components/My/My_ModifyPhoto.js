@@ -1,14 +1,12 @@
 import { Modal, Box, Button, Stack, Grid } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import React from "react";
 import "./My_ModifyPhoto.css";
-import axios from "axios";
-import { getCookie } from "../../utils/cookie";
 
 function SelectImageModal({ isOpen, handleClose, onSelect }) {
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const images = [1, 2, 3, 4];
+  const images = ["1", "2", "3", "4"];
 
   const handleImageClick = (imageName) => {
     setSelectedImage(imageName);
@@ -20,31 +18,6 @@ function SelectImageModal({ isOpen, handleClose, onSelect }) {
       handleClose();
     }
   };
-
-  //사진 변경 반영
-  const changeProfileImage = async () => {
-    const headers = {
-      Authorization: "Bearer " + getCookie("access"),
-    };
-    const email = getCookie("email");
-    const profileImageSeq = selectedImage;
-    try {
-      console.log(email);
-      console.log(profileImageSeq);
-      const response = await axios.patch(
-        "https://i9b109.p.ssafy.io:8443/member/profile",
-        { email, profileImageSeq },
-        { headers }
-      );
-      console.log(response);
-    } catch (error) {
-      console.error("Error fetching point logs:", error);
-    }
-  };
-
-  useEffect(() => {
-    changeProfileImage();
-  }, [selectedImage]);
 
   return (
     <Modal open={isOpen} onClose={handleClose}>

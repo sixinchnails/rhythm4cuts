@@ -6,10 +6,23 @@ import { getCookie, removeCookie } from "../../utils/cookie";
 import { useState } from "react";
 import { userInfo } from "../../apis/userInfo";
 import axios from "axios";
+import { useWebSocket } from "../../utils/WebSocket/WebSocket";
+import YourModalComponent from "../Common/ConfirmFriend";
 
-// 액세스토큰을 헤더와 바디에 바디에는 email 도
 const LoginHeader = () => {
   const access = getCookie("access");
+  const { hasNotification, resetNotification, friendRequest } = useWebSocket();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const onNotificationClick = () => {
+    if (!hasNotification) {
+      window.alert("알림이 없습니다!"); // 알림 상태가 false일 때 메시지 표시
+    } else {
+      resetNotification();
+      setIsModalOpen(true); // 모달 열기
+    }
+  };
+
   const checkLogin = async () => {
     try {
       const response = await axios.post(
@@ -41,7 +54,7 @@ const LoginHeader = () => {
 
   const [nickName, setNickName] = useState("");
   const [point, setPoint] = useState(0);
-  userInfo().then((res) => {
+  userInfo().then(res => {
     setNickName(res.data.nickname);
     setPoint(res.data.point);
   });
@@ -58,7 +71,12 @@ const LoginHeader = () => {
         <span style={{ color: "white", marginRight: 20, fontWeight: "bold" }}>
           {point}point
         </span>
-        <Badge color="error" variant="dot" style={{ marginRight: "20px" }}>
+        <Badge
+          color="error"
+          variant={hasNotification ? "dot" : "standard"}
+          onClick={onNotificationClick}
+          style={{ marginRight: "20px" }}
+        >
           <NotificationsIcon />
         </Badge>
         <Link className="Header_Login1" to="/Mypage">
@@ -68,6 +86,12 @@ const LoginHeader = () => {
           Logout
         </Link>
       </div>
+      {isModalOpen && friendRequest && (
+        <YourModalComponent
+          friendRequest={friendRequest}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

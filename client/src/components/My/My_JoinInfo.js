@@ -1,9 +1,9 @@
-import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
 import { React, useEffect, useState } from "react";
-import TextField from "@mui/material/TextField";
+import "./My_JoinInfo.css";
 import Button from "@mui/material/Button";
 import axios from "axios";
-import "./My_JoinInfo.css";
+import TextField from "@mui/material/TextField";
+import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
 
 const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
   const [name, setName] = useState("");
@@ -103,8 +103,8 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
     if (emailCodeStatus) {
       return (
         <img
-          alt="확인 사진"
           src={"/images/체크.png"}
+          alt="확인 사진"
           style={{
             width: "40px",
             height: "40px",
@@ -143,8 +143,8 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
     if (nickNameStatus) {
       return (
         <img
-          alt="확인 사진"
           src={"/images/체크.png"}
+          alt="확인 사진"
           style={{
             width: "40px",
             height: "40px",

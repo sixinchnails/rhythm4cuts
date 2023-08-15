@@ -26,12 +26,12 @@ public class WaitRoomRepositoryImpl implements WaitRoomRepository {
 
     @Override
     public void insertUserGameInfo(UserGameInfo userGameInfo) {
-        em.persist(userGameInfo);
-
         System.out.println("Debugging Time");
         System.out.println(userGameInfo.getGameInfo().getGameSeq());
         System.out.println(userGameInfo.getUser().getUserSeq());
         System.out.println(userGameInfo.getGameOrder());
+
+        em.persist(userGameInfo);
     }
 
     @Override

@@ -32,17 +32,14 @@ function GamePlay() {
   const { gameSeq } = useParams(); // 여기서 gameSeq를 가져옴
   const navigate = useNavigate(); // 페이지 이동
   const dispatch = useDispatch(); // 리덕스 넣기
-  const session = useSelector((state) => state.roomState.session);
-  const connectionToken = useSelector(
-    (state) => state.roomState.connectionToken
-  );
+  const session = useSelector(state => state.roomState.session);
+  const connectionToken = useSelector(state => state.roomState.connectionToken);
   const { connectWebSocket, sendGameStartMessage } = useWebSocket();
 
   useEffect(() => {
     stomp.connect({}, () => {
-      console.log("GamePlay connected to WebSocket");
       // 특정 토픽 구독
-      stomp.subscribe(`/subscribe/song/${gameSeq}`, (message) => {
+      stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
         console.log("video start");
         setVideoVisible(true);
       });
@@ -128,7 +125,7 @@ function GamePlay() {
             <button onClick={handleButtonClick}>Music Start</button>
             {videoVisible && (
               <video
-                controls={false}
+                controls
                 autoPlay
                 loop
                 style={{

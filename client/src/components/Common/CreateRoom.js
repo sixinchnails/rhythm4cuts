@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   Modal,
   Box,
@@ -14,13 +15,13 @@ import { createSession } from "../../openvidu/sessionInitialization";
 import { setSession, setGameseq } from "../../store";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { getCookie } from "../../utils/cookie";
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import axios from "axios";
 
 function CreateRoom({ isOpen, handleClose }) {
-  const dispatch = useDispatch(); // 리덕스 넣기
+  const dispatch = useDispatch(); // Redux
   const navigate = useNavigate(); // 페이지 이동
   const [isSecret, setIsSecret] = useState("일반 방"); // 모드
   const [password, setPassword] = useState(""); // 비밀방 암호
@@ -91,6 +92,7 @@ function CreateRoom({ isOpen, handleClose }) {
     // 3. 유효성 검사가 통과되면 방을 만듭니다.
     try {
       const sessionResponse = await createSession();
+      
       if (sessionResponse != null) {
         const response = await axios.post(
           "https://i9b109.p.ssafy.io:8443/lobby/room",

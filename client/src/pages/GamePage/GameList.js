@@ -96,7 +96,6 @@ function GameList() {
           },
         }
       );
-      console.log(response.data.data);
       return response.data.data;
     } catch (error) {
       console.error("방 리스트 가져오는데 실패 뽝!! : ", error);
@@ -171,6 +170,28 @@ function GameList() {
     fetchNickname();
   }, []);
 
+  // 빠른 입장 버튼을 클릭했을 때 실행되는 함수
+  const handleQuickJoin = async () => {
+    // 현재 입장 가능한 방 중에서 조건에 맞는 방을 찾아 입장
+    const joinableRooms = filteredRooms.filter(
+      (room) => room.headcount >= 1 && room.headcount <= 3 && !room.isSecret
+    );
+
+    if (joinableRooms.length > 0) {
+      try {
+        // 여기에 입장 로직을 작성
+        // 입장 요청이 성공하면 게임 대기실 페이지로 이동
+        navigate(`/GameWait/${joinableRooms[0].gameSeq}`);
+      } catch (error) {
+        console.error("방 입장 중 오류 발생:", error);
+      }
+    } else {
+      console.log("입장할 수 있는 방이 없습니다.");
+      // 예: 알림 메시지 표시 등의 처리
+    }
+  };
+
+  // 방 입장
   const handleOpenGameWait = (room) => {
     navigate(`/GameWait/${room.gameSeq}`);
   };
@@ -285,6 +306,7 @@ function GameList() {
                 fontSize: "20px",
               }}
               variant="contained"
+              onClick={handleQuickJoin}
             >
               빠른 입장
             </Button>
