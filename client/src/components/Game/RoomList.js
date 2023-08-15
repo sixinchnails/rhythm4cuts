@@ -1,9 +1,17 @@
-import { Grid, CardMedia, Typography, Box, Modal, TextField, Button } from "@mui/material";
+import {
+  Grid,
+  CardMedia,
+  Typography,
+  Box,
+  Modal,
+  TextField,
+  Button,
+} from "@mui/material";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LockIcon from "@mui/icons-material/Lock";
 import React, { useState } from "react";
-import axios from 'axios';
-import { getCookie } from '../../utils/cookie';
+import axios from "axios";
+import { getCookie } from "../../utils/cookie";
 
 function RoomList({ room, onRoomClick }) {
   // 방 인원수 파악
@@ -14,19 +22,16 @@ function RoomList({ room, onRoomClick }) {
   const imgUrl = "https://img.youtube.com/vi/" + room.youtubeId + "/0.jpg"; // 유튜브 img url
 
   const handleCardClick = () => {
-
     if (room.isSecret === 1) {
       setPasswordModalOpen(true);
     } else if (room.isSecret === 0) {
       onRoomClick(room);
     } else {
-      console.log("비밀방 체크가 안된듯")
+      console.log("비밀방 체크가 안된듯");
     }
-
   };
 
   const handlePasswordSubmit = async () => {
-
     try {
       const response = await axios.get(
         `https://i9b109.p.ssafy.io:8443/wait/info/${room.gameSeq}`,
@@ -100,7 +105,10 @@ function RoomList({ room, onRoomClick }) {
           </Grid>
           {/* 오른쪽 : 방번호, 방이름, 노래제목, 방인원수, 모드(비밀방) */}
           <Grid
-            item xs={8} container style={{
+            item
+            xs={8}
+            container
+            style={{
               padding: "5px",
               height: "20vh",
             }}
@@ -112,7 +120,10 @@ function RoomList({ room, onRoomClick }) {
               >
                 Num : {room.gameSeq}
                 <br />
-                Title : {room.title.length > 20 ? room.title.substring(0, 20) + "  . . ." : room.title}
+                Title :{" "}
+                {room.title.length > 20
+                  ? room.title.substring(0, 20) + "  . . ."
+                  : room.title}
               </Typography>
             </Grid>
 
@@ -133,30 +144,39 @@ function RoomList({ room, onRoomClick }) {
               </Typography>
             </Grid>
 
-            <Grid container justifyContent="space-between" alignItems="center" >
+            <Grid container justifyContent="space-between" alignItems="center">
               <Grid item>
                 <Box
                   style={{
                     border: "1px solid",
                     color: isFull ? "red" : "green",
-                    margin: "1px"
+                    margin: "1px",
                   }}
                 >
                   <Typography variant="body2">
-                    {isFull ? 'FULL' : `방 인원수: ${room.headcount} / 4`}
+                    {isFull ? "FULL" : `방 인원수: ${room.headcount} / 4`}
                   </Typography>
                 </Box>
               </Grid>
               <Grid item>
-                {room.isSecret ? <Box color="red"><LockIcon /> </Box> : <LockOpenIcon />}
+                {room.isSecret ? (
+                  <Box color="red">
+                    <LockIcon />{" "}
+                  </Box>
+                ) : (
+                  <LockOpenIcon />
+                )}
               </Grid>
             </Grid>
           </Grid>
         </Grid>
       </div>
 
-      <Modal open={isPasswordModalOpen} onClose={() => setPasswordModalOpen(false)}
-        onClick={(event) => event.stopPropagation()}>
+      <Modal
+        open={isPasswordModalOpen}
+        onClose={() => setPasswordModalOpen(false)}
+        onClick={event => event.stopPropagation()}
+      >
         <Box
           sx={{
             position: "absolute",
@@ -175,7 +195,7 @@ function RoomList({ room, onRoomClick }) {
             label="비밀번호"
             variant="outlined"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             fullWidth
             type="password"
             sx={{ my: 2 }}
@@ -183,11 +203,14 @@ function RoomList({ room, onRoomClick }) {
           <Button onClick={handlePasswordSubmit} variant="contained">
             확인
           </Button>
-          <Button onClick={() => setPasswordModalOpen(false)} variant="outlined" sx={{ mx: 1 }}>
+          <Button
+            onClick={() => setPasswordModalOpen(false)}
+            variant="outlined"
+            sx={{ mx: 1 }}
+          >
             취소
           </Button>
         </Box>
-
       </Modal>
     </Grid>
   );

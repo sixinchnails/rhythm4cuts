@@ -17,6 +17,4 @@ public interface LobbyRepository {
     List<Song> selectSongTitleList(String title) throws SQLException;
     GameInfo selectPw(int gameSeq) throws SQLException;
     void putConnectionId(UserDto userDto) throws SQLException;
-    void deleteById(int gameSeq) throws SQLException;
-
 }
