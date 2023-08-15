@@ -60,7 +60,7 @@ function InviteFriendsModal({
       >
         <h3>친구 초대하기</h3>
         <List>
-          {friends.map(friend => (
+          {friends.map((friend) => (
             <ListItem key={friend.email}>
               <ListItemText
                 primary={friend.nickname}
@@ -101,7 +101,7 @@ function GameWait() {
 
   dispatch(setGameseq(gameSeq));
 
-  const session = useSelector(state => state.roomState.session);
+  const session = useSelector((state) => state.roomState.session);
 
   // const [myUserName, setMyUserName] = useState(undefined);
   const [connectSession, setConnectSession] = useState(undefined);
@@ -138,7 +138,7 @@ function GameWait() {
   };
 
   //친구 목록 가져오는 함수
-  const fetchFriendList = async userSeq => {
+  const fetchFriendList = async (userSeq) => {
     const headers = {
       Authorization: "Bearer " + getCookie("access"),
     };
@@ -177,7 +177,7 @@ function GameWait() {
           });
         }
       },
-      error => {
+      (error) => {
         console.log("STOMP 연결 실패:", error);
       }
     );
@@ -207,7 +207,7 @@ function GameWait() {
           Authorization: `Bearer ${getCookie("access")}`,
         },
       })
-      .then(res => {
+      .then((res) => {
         const param = {
           userSeq: String(res.data.user_seq),
           gameSeq: String(gameSeq),
@@ -222,11 +222,11 @@ function GameWait() {
           },
         });
       })
-      .then(postRes => {
+      .then((postRes) => {
         // 이곳에서 post 요청에 대한 응답 처리
         console.log("POST 요청 응답:", postRes);
       })
-      .catch(error => {
+      .catch((error) => {
         // 에러 처리
         console.error("에러 발생:", error);
       });
@@ -236,7 +236,7 @@ function GameWait() {
   useEffect(() => {
     connectWebSocket();
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           setUserSeq(res.data.user_seq);
         } else {
@@ -244,7 +244,7 @@ function GameWait() {
           handleOpenLoginAlert();
         }
       })
-      .catch(error => {
+      .catch((error) => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -252,13 +252,13 @@ function GameWait() {
 
   useEffect(() => {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status !== 200) {
           window.alert("로그인을 해주세요!");
           navigate("/");
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("유저 정보 불러오기 실패:", error);
         window.alert("로그인을 해주세요!");
         navigate("/");
@@ -351,22 +351,22 @@ function GameWait() {
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
-      newSession.on("streamCreated", event => {
+      newSession.on("streamCreated", (event) => {
         const subscriber = newSession.subscribe(event.stream, undefined);
-        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+        setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
 
-        setPlayers(prevPlayers => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
+        setPlayers((prevPlayers) => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
 
         if (!mainStreamManager) {
           setMainStreamManager(subscriber);
         }
       });
 
-      newSession.on("streamDestroyed", event => {
+      newSession.on("streamDestroyed", (event) => {
         deleteSubscriber(event.stream.streamManager);
       });
 
-      newSession.on("exception", exception => {
+      newSession.on("exception", (exception) => {
         console.warn(exception);
       });
 
@@ -392,11 +392,11 @@ function GameWait() {
 
           setPublisher(newPublisher);
           setMainStreamManager(newPublisher);
-          setPlayers(prevPlayers => [...prevPlayers, newPublisher]);
+          setPlayers((prevPlayers) => [...prevPlayers, newPublisher]);
 
           //--------------------------
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(
             "There was an error connecting to the session:",
             error.code,
@@ -465,7 +465,7 @@ function GameWait() {
     console.log("--------------------leave session");
 
     // 나가는 플레이어를 배열에서 제거하고 상태 업데이트
-    const updatedPlayers = players.filter(player => player !== publisher);
+    const updatedPlayers = players.filter((player) => player !== publisher);
     setPlayers(updatedPlayers);
 
     // // 자신의 스트림 해제
@@ -474,7 +474,7 @@ function GameWait() {
     // }
 
     // 구독 중인 스트림 해제
-    subscribers.forEach(subscriber => {
+    subscribers.forEach((subscriber) => {
       if (typeof subscriber.unsubscribe === "function") {
         subscriber.unsubscribe(); // 구독자 해제
         if (subscriber.streamManager) {
@@ -495,15 +495,35 @@ function GameWait() {
           Authorization: "Bearer " + access,
         },
       })
-      .then(response => {
+      .then((response) => {
         // navigate(`/GameList`)
       })
-      .catch(error => {
+      .catch((error) => {
         // Handle error if needed
         console.error("Error:", error);
       });
   };
 
+  //선택된 노래에 맞는 해당 영상 가져오기
+  const [musicUrl, setMusicUrl] = useState("");
+
+  const bringUrl = async () => {
+    const headers = {
+      Authorization: "Bearer " + getCookie("access"),
+    };
+    const result = await axios.get(
+      `https://i9b109.p.ssafy.io:8443/music/play/${songSeq}`,
+      {
+        headers,
+      }
+    );
+    console.log(result.data.data.url);
+    setMusicUrl(result.data.data.url);
+  };
+
+  useEffect(() => {
+    bringUrl();
+  }, []);
   return (
     <div
       style={{
@@ -531,7 +551,8 @@ function GameWait() {
             >
               {/* 대기중 비디오 */}
               <video
-                src="/images/GameImage/WaitSong.mp4"
+                controls={false}
+                src={musicUrl}
                 autoPlay
                 loop
                 style={{
@@ -669,7 +690,7 @@ function GameWait() {
             }}
           >
             {/* 각 플레이어별로 Grid 아이템 생성 */}
-            {[0, 1, 2, 3].map(index => (
+            {[0, 1, 2, 3].map((index) => (
               <Grid
                 key={index}
                 item
