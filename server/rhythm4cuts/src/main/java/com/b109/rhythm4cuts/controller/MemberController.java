@@ -242,6 +242,20 @@ public class MemberController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    // API. 유저 정보 조회 (userSeq)
+    @GetMapping("/info/{userSeq}")
+    public ResponseEntity<?> getUserInfo(@PathVariable("userSeq") Long userSeq) throws SQLException {
+        UserDto userDto = userService.findById(userSeq);
+
+        Map<String, Object> res = new HashMap<>();
+
+        res.put("message", "Success");
+        res.put("statusCode", 200);
+        res.put("data", userDto);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
     @GetMapping("/user/{userSeq}/logs")
     public ResponseEntity<?> getLogs(@PathVariable int userSeq) throws Exception {
         List<PointLogDto> pointLogDtoList = userService.getPointLogs(userSeq);
