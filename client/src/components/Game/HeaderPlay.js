@@ -39,15 +39,13 @@ const LoginMypageHeader = () => {
 
   return (
     <div style={headerStyle}>
-      <a href="/GameList">
-        <div style={logoStyle}>
-          <img
-            src="/images/GameImage/HeaderLogo.png"
-            style={imgStyle}
-            alt="Logo"
-          ></img>
-        </div>
-      </a>
+      <div style={logoStyle}>
+        <img
+          src="/images/GameImage/HeaderLogo.png"
+          style={imgStyle}
+          alt="Logo"
+        ></img>
+      </div>
       <div>
         <Badge
           color="error"
