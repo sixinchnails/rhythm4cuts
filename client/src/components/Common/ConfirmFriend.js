@@ -34,7 +34,7 @@ const YourModalComponent = ({ friendRequest, onClose }) => {
 
   useEffect(() => {
     // userSeq 값을 사용하여 닉네임을 가져오는 함수
-    const getNickname = async userSeq => {
+    const getNickname = async (userSeq) => {
       try {
         const response = await axios.get(
           `https://i9b109.p.ssafy.io:8443/member/info/nickname/${userSeq}`,
@@ -52,7 +52,7 @@ const YourModalComponent = ({ friendRequest, onClose }) => {
     };
 
     // fromUser와 toUser의 닉네임을 가져와 상태를 업데이트
-    getNickname(requestData.fromUser).then(nickname =>
+    getNickname(requestData.fromUser).then((nickname) =>
       setFromUserName(nickname)
     );
   }, [requestData.fromUser]);
@@ -62,7 +62,7 @@ const YourModalComponent = ({ friendRequest, onClose }) => {
   const acceptFriendRequest = async () => {
     // 이미 친구 상태인지 확인
     const isAlreadyFriend = friendList.some(
-      friend => friend.userSeq === requestData.fromUser
+      (friend) => friend.userSeq === requestData.fromUser
     );
 
     if (isAlreadyFriend) {
