@@ -8,6 +8,6 @@ import java.util.List;
 @Getter
 @Setter
 public class WaitGameRequestDto {
-    private String gameSeq;
-    private List<String> playerSeq;
+    private int gameSeq;
+    private List<Integer> playerSeq;
 }
