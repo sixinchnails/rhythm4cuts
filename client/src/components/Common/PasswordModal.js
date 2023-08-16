@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Modal, Box, TextField, Button, Snackbar } from '@mui/material';
+import React, { useState } from "react";
+import { Modal, Box, TextField, Button, Snackbar } from "@mui/material";
 
 function PasswordModal({ isOpen, handleClose, onPasswordSubmit }) {
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const [showSnackbar, setShowSnackbar] = useState(false);
 
   // 비밀번호 입력 변경 처리 함수
@@ -21,23 +21,24 @@ function PasswordModal({ isOpen, handleClose, onPasswordSubmit }) {
   };
 
   // 비밀번호 확인 결과에 따라 알림 메시지 설정
-  const snackbarMessage = '비밀번호가 틀렸습니다. 다시 확인해주세요.';
+  const snackbarMessage = "비밀번호가 틀렸습니다. 다시 확인해주세요.";
 
   return (
     <Modal open={isOpen} onClose={handleClose} aria-labelledby="password-modal">
       <Box
         sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          bgcolor: 'white',
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          bgcolor: "white",
           boxShadow: 24,
           p: 4,
           minWidth: 300,
+          fontFamily: 'Ramche',
         }}
       >
-        <h2>비밀번호 입력</h2>
+        <h2 style={{fontFamily: 'Ramche',}}>비밀번호 입력</h2>
         <TextField
           label="비밀번호"
           type="password"
@@ -45,8 +46,9 @@ function PasswordModal({ isOpen, handleClose, onPasswordSubmit }) {
           value={password}
           onChange={handlePasswordChange}
           fullWidth
+          style={{fontFamily: 'Ramche',}}
         />
-        <Button variant="contained" onClick={handleSubmit} fullWidth>
+        <Button variant="contained" onClick={handleSubmit} fullWidth style={{fontFamily: 'Ramche',}}>
           확인
         </Button>
       </Box>

@@ -46,7 +46,7 @@ function MainContent() {
     >
       <h1
         style={{
-          fontFamily: "Pretendard-Regular",
+          fontFamily: 'Ramche',
           fontWeight: "bold",
           color: "white",
         }}

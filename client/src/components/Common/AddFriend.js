@@ -134,9 +134,10 @@ function AddFriend({ isOpen, handleClose }) {
           color: "#ffffff",
           padding: "50px",
           width: "500px",
+          fontFamily: 'Ramche',
         }}
       >
-        <h2 style={{ textAlign: "center" }}>친구 추가</h2>
+        <h2 style={{ textAlign: "center", fontFamily: 'Ramche', }}>친구 추가</h2>
 
         <TextField
           label="닉네임 입력"
@@ -144,9 +145,9 @@ function AddFriend({ isOpen, handleClose }) {
           fullWidth
           value={friendNickname}
           onChange={handleNameChange}
-          style={{ marginBottom: "30px" }}
-          inputProps={{ style: { color: "#ffffff" } }}
-          InputLabelProps={{ style: { color: "#ffffff" } }}
+          style={{ marginBottom: "30px", fontFamily: 'Ramche', }}
+          inputProps={{ style: { color: "#ffffff", fontFamily: 'Ramche', } }}
+          InputLabelProps={{ style: { color: "#ffffff", fontFamily: 'Ramche', } }}
         />
         <List>
           {UserInfo.nickname && UserInfo.email && (
@@ -164,6 +165,7 @@ function AddFriend({ isOpen, handleClose }) {
             style={{
               backgroundColor: "rgba(0, 128, 255, 0.1)",
               width: "100px",
+              fontFamily: 'Ramche',
             }}
             onClick={() => {
               handleClose();
@@ -177,6 +179,7 @@ function AddFriend({ isOpen, handleClose }) {
             style={{
               backgroundColor: "rgba(0, 128, 255, 0.1)",
               width: "100px",
+              fontFamily: 'Ramche',
             }}
             onClick={handleClose}
           >

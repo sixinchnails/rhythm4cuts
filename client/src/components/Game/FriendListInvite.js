@@ -35,6 +35,7 @@ function FriendList({ friends }) {
               variant="contained"
               color="primary"
               onClick={() => handleInviteClick(friend)}
+              style={{fontFamily: 'Ramche',}}
             >
               Direct Invite
             </Button>

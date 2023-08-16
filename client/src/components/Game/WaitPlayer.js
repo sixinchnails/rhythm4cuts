@@ -17,6 +17,7 @@ function WaitPlayer({ playerId, gameSeq }) {
           width: "15vw",
           height: "32vh",
           position: "relative",
+          fontFamily: 'Ramche',
         }}
       >
         {isReady && (
@@ -32,6 +33,7 @@ function WaitPlayer({ playerId, gameSeq }) {
                 "linear-gradient(to top right, transparent 50%, green 50%)",
               opacity: 0.7,
               zIndex: 1,
+              fontFamily: 'Ramche',
             }}
           >
             <Box
@@ -43,6 +45,7 @@ function WaitPlayer({ playerId, gameSeq }) {
                 fontSize: "2em",
                 color: "white",
                 fontWeight: "bold",
+                fontFamily: 'Ramche',
               }}
             >
               READY
@@ -54,6 +57,7 @@ function WaitPlayer({ playerId, gameSeq }) {
             sx={{
               height: "15vh",
               margin: "2%",
+              fontFamily: 'Ramche',
             }}
           >
             {/* Webcam 컴포넌트를 사용하여 웹캠 스트림을 표시합니다. */}
@@ -61,13 +65,13 @@ function WaitPlayer({ playerId, gameSeq }) {
               <Webcam stream={webcamStream} />
             ) : (
               // 웹캠 스트림이 없을 경우 로딩 또는 기본 이미지 표시
-              <div>Loading...</div>
+              <div style={{fontFamily: 'Ramche',}}>Loading...</div>
             )}
           </Card>
         </CardContent>
         <Box sx={{ p: 1 }}>
-          <Box>닉네임</Box>
-          <Box>1 Player : 90% </Box>
+          <Box style={{fontFamily: 'Ramche',}}>닉네임</Box>
+          <Box style={{fontFamily: 'Ramche',}}>1 Player : 90% </Box>
         </Box>
       </Card>
     </Box>

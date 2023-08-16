@@ -30,9 +30,7 @@ function InviteFriendsModal({ isOpen, onClose, friends }) {
   useEffect(() => {
     stomp.connect({}, () => {
       if (fromUser) {
-        stomp.subscribe(`/subscribe/friend/invite/${fromUser}`, () => {
-          alert("게임 초대 요청 옴");
-        });
+        stomp.subscribe(`/subscribe/friend/invite/${fromUser}`, () => {});
       }
     });
   }, [fromUser]);
@@ -56,9 +54,10 @@ function InviteFriendsModal({ isOpen, onClose, friends }) {
           margin: "100px auto",
           padding: "20px",
           backgroundColor: "#fff",
+          fontFamily: 'Ramche',
         }}
       >
-        <h3>친구 초대하기</h3>
+        <h3 style={{fontFamily: 'Ramche',}}>친구 초대하기</h3>
         <List>
           {friends.map(friend => (
             <ListItem key={friend.email}>

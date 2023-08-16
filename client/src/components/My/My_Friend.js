@@ -45,9 +45,10 @@ function FriendInfo() {
         height: "100vh",
         marginLeft: "5%", // 마진을 조정하여 중앙에 위치하게 함
         marginRight: "5%",
+        fontFamily: 'Ramche',
       }}
     >
-      <Grid container style={{ marginLeft: "10%" }}>
+      <Grid container style={{ marginLeft: "10%", fontFamily: 'Ramche', }}>
         <Grid item xs={12} padding={"20px"}>
           <Box display="flex" justifyContent="flex-end" marginBottom="1%"></Box>
           <Grid container spacing={3}>
@@ -63,23 +64,24 @@ function FriendInfo() {
                       gap: "10px",
                       backgroundColor: "rgba(0, 0, 0, 0.8)",
                       width: "400px",
+                      fontFamily: 'Ramche',
                     }}
                   >
                     <Avatar
                       src={getProfilePic(item.point)}
-                      style={{ width: "80px", height: "80px", flexShrink: 0 }}
+                      style={{ width: "80px", height: "80px", flexShrink: 0, fontFamily: 'Ramche', }}
                     />
                     <div style={{ flex: 1 }}>
-                      <Typography variant="h6" style={{ color: "#ffffff" }}>
+                      <Typography variant="h6" style={{ color: "#ffffff", fontFamily: 'Ramche', }}>
                         이름: {item.name}
                       </Typography>
                       <Typography
                         variant="subtitle1"
-                        style={{ color: "#ffffff" }}
+                        style={{ color: "#ffffff", fontFamily: 'Ramche', }}
                       >
                         포인트: {item.point}
                       </Typography>
-                      <Typography variant="body2" style={{ color: "#ffffff" }}>
+                      <Typography variant="body2" style={{ color: "#ffffff", fontFamily: 'Ramche', }}>
                         상태: {item.playing}
                       </Typography>
                     </div>
@@ -87,7 +89,7 @@ function FriendInfo() {
                       variant="contained"
                       color="secondary"
                       onClick={deleteFriend}
-                      style={{ flexShrink: 0 }}
+                      style={{ flexShrink: 0, fontFamily: 'Ramche', }}
                     >
                       삭제
                     </Button>
@@ -104,7 +106,7 @@ function FriendInfo() {
             color="primary"
             size="large"
             shape="rounded"
-            sx={{ display: "flex", justifyContent: "center", margin: "1rem 0" }}
+            sx={{ display: "flex", justifyContent: "center", margin: "1rem 0", fontFamily: 'Ramche', }}
           />
         </Grid>
 

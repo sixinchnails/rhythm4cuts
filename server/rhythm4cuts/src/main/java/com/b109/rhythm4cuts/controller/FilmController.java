@@ -2,13 +2,13 @@ package com.b109.rhythm4cuts.controller;
 
 import com.b109.rhythm4cuts.model.dto.FilmDto;
 import com.b109.rhythm4cuts.model.dto.FilmResponseDto;
-import com.b109.rhythm4cuts.model.dto.UserDto;
 import com.b109.rhythm4cuts.model.service.FilmService;
 import com.b109.rhythm4cuts.model.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,11 +44,11 @@ public class FilmController {
     }
 
     // API 3. 인생네컷 사진 촬영
-    @PostMapping("/photo")
-    public ResponseEntity<String> photoShoot(@RequestBody FilmDto filmInfo) throws IOException {
-
+    @PostMapping(value = "/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> photoShoot(@ModelAttribute FilmDto filmInfo) throws IOException {
         // 넘어온 사진 정보를 DB에 저장할 예정
         filmService.saveFilm(filmInfo);
+
         return ResponseEntity.ok("File uploaded success");
     }
 
@@ -56,8 +56,6 @@ public class FilmController {
     public ResponseEntity<List<FilmResponseDto>> getPhotos(@RequestParam String email) throws IOException {
         int userSeq = userService.findByEmail(email).getUserSeq();
         List<FilmResponseDto> filmUrls = filmService.getUserPhotoList(userSeq);
-
-        System.out.println(filmUrls);
 
         return ResponseEntity.status(200).body(filmUrls);
     }
