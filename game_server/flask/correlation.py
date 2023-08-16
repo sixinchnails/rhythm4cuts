@@ -20,9 +20,9 @@ threshold = 0.5
 # calculate fingerprint
 # Generate file.mp3.fpcalc by "fpcalc -raw -length 500 file.mp3"
 def calculate_fingerprints(filename):
-    if os.path.exists(filename + './fpcalc'):
+    if os.path.exists(filename + 'fpcalc'):
         print("Found precalculated fingerprint for %s" % (filename))
-        f = open(filename + './fpcalc', "r")
+        f = open(filename + 'fpcalc', "r")
         fpcalc_out = ''.join(f.readlines())
         f.close()
     else:
