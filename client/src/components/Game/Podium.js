@@ -2,7 +2,7 @@ import { useSpring, animated } from "react-spring";
 import { Box, Paper } from "@mui/material";
 import React from "react";
 
-function Podium({ rank, src, color, crownWidth }) {
+function Podium({ rank, src, color, podiumHeight }) {
   const props = useSpring({
     from: { transform: "translate3d(0,0px,0)", opacity: 1 },
     to: async (next) => {
@@ -17,7 +17,7 @@ function Podium({ rank, src, color, crownWidth }) {
   });
 
   return (
-    <animated.div style={props}>
+    <animated.div style={{ ...props, height: podiumHeight }}>
       <Paper
         sx={{
           display: "flex",
@@ -26,7 +26,7 @@ function Podium({ rank, src, color, crownWidth }) {
           backgroundImage: `linear-gradient(45deg, ${color} 30%, #FF8E53 90%)`,
           height: "100%",
           width: "100%",
-          textAlign: "center",
+          textAlign: "center", 
           transform: "perspective(500px) rotateY(20deg)",
           boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
           borderRadius: "15px", // Rounded corners
@@ -34,7 +34,7 @@ function Podium({ rank, src, color, crownWidth }) {
           marginBottom: 2,
         }}
       >
-        <Box sx={{ width: "100%", height: "50%" }}>
+        <Box sx={{ width: "100%",height: "100%" }}>
           <img
             src={src}
             alt={`${rank}등`}
@@ -44,7 +44,7 @@ function Podium({ rank, src, color, crownWidth }) {
         <img
           src={`/images/${rank}.png`}
           alt={`${rank}등`}
-          style={{ width: crownWidth, height: "50%" }}
+          style={{ width: "50%" }}
         />
       </Paper>
     </animated.div>

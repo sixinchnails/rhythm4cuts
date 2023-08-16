@@ -77,30 +77,32 @@ function GameScore() {
     navigate("/Login");
   };
 
-  // 프로필 이미지
-  // const profileImagePath = `/images/${ }.png`;
-
   return (
     <Root>
       <Header />
-      <Container>
+
+      <Container >
         <Title
           color={"white"}
           fontWeight={"bolder"}
           variant="h3"
-          style={{ marginBottom: "10%" }}
+          style={{ marginBottom: "50px" }}
         >
           Score Board
         </Title>
-        <Grid container spacing={3}>
+
+        {/* Middle */}
+        <Grid container spacing={5} style={{ padding: "5px" }}>
+
+          {/* Middle_Left : 시상대 */}
           <Grid item xs={12} md={5}>
-            <PodiumContainer>
+            <PodiumContainer style={{margin: "10px"}}>
               {gameResults.length >= 2 && (
                 <Podium
                   rank="Silver"
                   src={`/images/${gameResults[1].profile_img_seq}.png`}
                   color="#C0C0C0"
-                  height="40vh"
+                  podiumHeight="35vh"
                   crownWidth="80%"
                 />
               )}
@@ -109,8 +111,7 @@ function GameScore() {
                   rank="Gold"
                   src={`/images/${gameResults[0].profile_img_seq}.png`}
                   color="#FFD700"
-                  height="50vh"
-                  crownWidth="100%"
+                  podiumHeight="45vh"
                 />
               )}
               {gameResults.length >= 3 && (
@@ -118,52 +119,48 @@ function GameScore() {
                   rank="Bronze"
                   src={`/images/${gameResults[2].profile_img_seq}.png`}
                   color="#CD7F32"
-                  height="25vh"
-                  crownWidth="50%"
+                  podiumHeight="30vh"
                 />
               )}
             </PodiumContainer>
           </Grid>
 
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TableContainer component={Paper}>
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell style={{ fontWeight: "bold" }} align="center">
-                    순위
-                  </TableCell>
-                  <TableCell style={{ fontWeight: "bold" }} align="center">
-                    NickName
-                  </TableCell>
-                  <TableCell style={{ fontWeight: "bold" }} align="center">
-                    Score
-                  </TableCell>
-                  <TableCell style={{ fontWeight: "bold" }} align="center">
-                    Reward
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {gameResults.map((result, index) => (
-                  <TableRow key={result.userSeq}>
-                    <TableCell align="center" component="th" scope="row">
-                      {index + 1}
+          {/* Middle_Right : 점수판 */}
+          <Grid item xs={12} md={7} >
+            <TableContainer component={Paper}>
+              <Table aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell style={{ fontWeight: "bold" }} align="center">
+                      순위
                     </TableCell>
-                    <TableCell align="center">{result.nickname}</TableCell>
-                    <TableCell align="center">{result.score}</TableCell>
-                    <TableCell align="center">{result.reward}</TableCell>
+                    <TableCell style={{ fontWeight: "bold" }} align="center">
+                      NickName
+                    </TableCell>
+                    <TableCell style={{ fontWeight: "bold" }} align="center">
+                      Score
+                    </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Grid>
-        <Grid item xs={12}>
+                </TableHead>
+                <TableBody>
+                  {gameResults.map((result, index) => (
+                    <TableRow key={result.userSeq}>
+                      <TableCell align="center" component="th" scope="row">
+                        {index + 1}
+                      </TableCell>
+                      <TableCell align="center">{result.nickname}</TableCell>
+                      <TableCell align="center">{result.score}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+
           <Next gameSeq={gameSeq} />
         </Grid>
       </Container>
+      
       <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
     </Root>
   );

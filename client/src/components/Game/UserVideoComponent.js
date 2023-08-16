@@ -25,9 +25,13 @@ const UserVideoComponent = ({ streamManager }) => {
             },
           }
         );
-        console.log(response.data)
-        console.log(response.data.order)
 
+        const sortedOrderList = response.data.slice().sort((a, b) => a.userSeq - b.userSeq);
+        const orderMap = {};
+        sortedOrderList.forEach((item, index) => {
+          orderMap[item.userSeq] = index + 1; // +1을 해서 1부터 시작하는 order 값 부여
+        });
+        setUserOrders(orderMap);
       } catch (error) {
         console.error("Error fetching order:", error);
       }
@@ -90,7 +94,7 @@ const UserVideoComponent = ({ streamManager }) => {
               <>
                 {userOrders[userSeq]} 번째
               </>
-            ) : (
+            ) : ( 
               "Loading..."
             )}
 

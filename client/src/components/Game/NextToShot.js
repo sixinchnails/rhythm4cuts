@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function NextToShot({ gameSeq }) {
   const navigate = useNavigate();
-  const [seconds, setSeconds] = useState(10);
+  const [seconds, setSeconds] = useState(10000);
 
   useEffect(() => {
     const countdown = setInterval(() => {
