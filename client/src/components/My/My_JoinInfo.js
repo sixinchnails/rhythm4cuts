@@ -161,16 +161,17 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
     <div className="Join-info-container">
       <div className="Join-info" style={{ width: "60vw" }}>
         <div className="Join-item">
-          <span className="Join-name Join-name-topline">이름</span>
+          <span className="Join-name Join-name-topline" style={{fontFamily: 'Ramche',}}>이름</span>
           <TextField
             fullWidth
             value={name}
             onChange={(e) => setName(e.target.value)}
             variant="outlined"
-            style={{ marginLeft: "40%", height: "40px" }}
+            style={{ marginLeft: "40%", height: "40px", fontFamily: 'Ramche', }}
             InputProps={{
               style: {
                 height: "40px",
+                fontFamily: 'Ramche',
               },
             }}
             InputLabelProps={{
@@ -179,19 +180,20 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               style: {
                 fontSize: "0.8rem",
                 transform: "scale(1) translate(14px, 10px)",
+                fontFamily: 'Ramche',
               },
             }}
           />
         </div>
         <div className="Join-item">
-          <span className="Join-name">성별</span>
+          <span className="Join-name" style={{fontFamily: 'Ramche',}}>성별</span>
           <RadioGroup
             row
             aria-label="gender"
             name="gender"
             value={gender}
             onChange={(e) => setgender(e.target.value)}
-            style={{ marginLeft: "40%" }}
+            style={{ marginLeft: "40%", fontFamily: 'Ramche', }}
           >
             <FormControlLabel
               value="M"
@@ -206,7 +208,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
           </RadioGroup>
         </div>
         <div className="Join-item">
-          <span className="Join-name">닉네임</span>
+          <span className="Join-name" style={{fontFamily: 'Ramche',}}>닉네임</span>
           <TextField
             fullWidth
             value={nickname}
@@ -215,11 +217,12 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               setNickNameStatus(false);
             }}
             variant="outlined"
-            style={{ marginLeft: "40%", height: "40px" }}
+            style={{ marginLeft: "40%", height: "40px", fontFamily: 'Ramche', }}
             InputProps={{
               style: {
                 height: "40px",
                 padding: "10px 14px",
+                fontFamily: 'Ramche',
               },
             }}
             InputLabelProps={{
@@ -227,6 +230,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               style: {
                 fontSize: "0.8rem",
                 transform: "scale(1) translate(14px, 10px)",
+                fontFamily: 'Ramche',
               },
             }}
           />
@@ -234,24 +238,25 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
             variant="contained"
             color="primary"
             onClick={nickNameCheck}
-            style={{ width: "45%" }}
+            style={{ width: "45%", fontFamily: 'Ramche', }}
           >
             중복 확인
           </Button>
           {showNickNameImage()}
         </div>
         <div className="Join-item">
-          <span className="Join-name">이메일</span>
+          <span className="Join-name" style={{fontFamily: 'Ramche',}}>이메일</span>
           <TextField
             fullWidth
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             variant="outlined"
-            style={{ marginLeft: "40%", height: "40px" }}
+            style={{ marginLeft: "40%", height: "40px", fontFamily: 'Ramche', }}
             InputProps={{
               style: {
                 height: "40px",
                 padding: "10px 14px",
+                fontFamily: 'Ramche',
               },
             }}
             InputLabelProps={{
@@ -259,15 +264,16 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               style: {
                 fontSize: "0.8rem",
                 transform: "scale(1) translate(14px, 10px)",
+                fontFamily: 'Ramche',
               },
             }}
           />
-          <Button variant="contained" color="primary" onClick={emailCheck}>
+          <Button variant="contained" color="primary" onClick={emailCheck} style={{fontFamily: 'Ramche',}}>
             인증
           </Button>
         </div>
         <div className="Join-item">
-          <span className="Join-name">이메일 인증</span>
+          <span className="Join-name" style={{fontFamily: 'Ramche',}}>이메일 인증</span>
           <TextField
             fullWidth
             value={emailCode}
@@ -276,11 +282,12 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               setEmailCodeStatus(false);
             }}
             variant="outlined"
-            style={{ marginLeft: "40%", height: "40px" }}
+            style={{ marginLeft: "40%", height: "40px", fontFamily: 'Ramche', }}
             InputProps={{
               style: {
                 height: "40px",
                 padding: "10px 14px",
+                fontFamily: 'Ramche',
               },
             }}
             InputLabelProps={{
@@ -288,6 +295,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               style: {
                 fontSize: "0.8rem",
                 transform: "scale(1) translate(14px, 10px)",
+                fontFamily: 'Ramche',
               },
             }}
           />
@@ -295,14 +303,14 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
             variant="contained"
             color="primary"
             onClick={emailCodeCheck}
-            style={{ width: "45%" }}
+            style={{ width: "45%", fontFamily: 'Ramche', }}
           >
             인증 확인
           </Button>
           {showEmailImage()}
         </div>
         <div className="Join-item">
-          <span className="Join-name">비밀 번호</span>
+          <span className="Join-name" style={{fontFamily: 'Ramche',}}>비밀 번호</span>
           <TextField
             fullWidth
             type="password"
@@ -310,11 +318,12 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
             onChange={(e) => setPassword(e.target.value)}
             variant="outlined"
             helperText="영어, 숫자, 특수기호 포함 8자리 이상"
-            style={{ marginLeft: "40%", height: "40px" }}
+            style={{ marginLeft: "40%", height: "40px", fontFamily: 'Ramche', }}
             InputProps={{
               style: {
                 height: "40px",
                 padding: "10px 14px",
+                fontFamily: 'Ramche',
               },
             }}
             InputLabelProps={{
@@ -322,6 +331,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               style: {
                 fontSize: "0.8rem",
                 transform: "scale(1) translate(14px, 10px)",
+                fontFamily: 'Ramche',
               },
             }}
           />
@@ -330,33 +340,34 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               src={"/images/체크.png"}
               alt="Check"
               className="Join-check"
-              style={{ width: "40px", height: "40px" }}
+              style={{ width: "40px", height: "40px", fontFamily: 'Ramche', }}
             />
           )}
           {!isPasswordValid && password && (
-            <span className="Join-warning" style={{ color: "red" }}>
+            <span className="Join-warning" style={{ color: "red", fontFamily: 'Ramche', }}>
               <img
                 src={"/images/오답.png"}
                 alt="Check"
                 className="Join-check password-check"
-                style={{ width: "40px", height: "40px", marginRight: "-15px" }}
+                style={{ width: "40px", height: "40px", marginRight: "-15px", fontFamily: 'Ramche', }}
               />
             </span>
           )}
         </div>
         <div className="Join-item">
-          <span className="Join-name">비밀 번호 확인</span>
+          <span className="Join-name" style={{fontFamily: 'Ramche',}}>비밀 번호 확인</span>
           <TextField
             fullWidth
             type="password"
             value={passwordConfirm}
             onChange={(e) => setPasswordConfirm(e.target.value)}
             variant="outlined"
-            style={{ flexBasis: "40%", height: "40px" }}
+            style={{ flexBasis: "40%", height: "40px", fontFamily: 'Ramche', }}
             InputProps={{
               style: {
                 height: "40px",
                 padding: "10px 14px",
+                fontFamily: 'Ramche',
               },
             }}
             InputLabelProps={{
@@ -364,6 +375,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               style: {
                 fontSize: "0.8rem",
                 transform: "scale(1) translate(14px, 10px)",
+                fontFamily: 'Ramche',
               },
             }}
           />

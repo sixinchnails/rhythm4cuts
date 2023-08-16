@@ -5,13 +5,13 @@ function MusicRank({ music }) {
   return (
     <Grid container textAlign="center" marginTop={"7px"}>
       <Grid item xs={1}>
-        <span>{music.ranking}</span>
+        <span style={{fontFamily: 'Ramche',}}>{music.ranking}</span>
       </Grid>
       <Grid item xs={7}>
-        <span>{music.title}</span>
+        <span style={{fontFamily: 'Ramche',}}>{music.title}</span>
       </Grid>
       <Grid item xs={4}>
-        <span>{music.singer}</span>
+        <span style={{fontFamily: 'Ramche',}}>{music.singer}</span>
       </Grid>
     </Grid>
   );

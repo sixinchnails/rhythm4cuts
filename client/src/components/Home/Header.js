@@ -54,10 +54,10 @@ const Header = () => {
             horizontal: "center",
           }}
         >
-          <div>{popoverMessage}</div>
+          <div style={{fontFamily: 'Ramche',}}>{popoverMessage}</div>
         </Popover>
 
-        <Link className="Header_Login1" to="/Login">
+        <Link className="Header_Login1" to="/Login" style={{fontFamily: 'Ramche',}}>
           Login
         </Link>
       </div>

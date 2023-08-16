@@ -75,6 +75,7 @@ function RoomList({ room, onRoomClick }) {
           border: "1px solid white", // 테두리를 흰색으로 설정
           height: "19vh",
           borderRadius: "20px",
+          fontFamily: 'Ramche',
         }}
         onClick={handleCardClick}
       >
@@ -87,12 +88,11 @@ function RoomList({ room, onRoomClick }) {
               display: "flex",
               alignItems: "center",
               padding: "15px",
+              fontFamily: 'Ramche',
             }}
           >
             <CardMedia
               component="img" // 이미지를 보여주기 위해 img 태그 사용
-              // image={room.image}
-              // image="/images/잔나비.jfif"
               image={imgUrl}
               style={{
                 padding: "5%",
@@ -100,6 +100,7 @@ function RoomList({ room, onRoomClick }) {
                 width: "100%",
                 height: "100%",
                 borderRadius: "20px",
+                fontFamily: 'Ramche',
               }}
             />
           </Grid>
@@ -111,12 +112,13 @@ function RoomList({ room, onRoomClick }) {
             style={{
               padding: "5px",
               height: "20vh",
+              fontFamily: 'Ramche',
             }}
           >
             <Grid item xs={12}>
               <Typography
                 variant="subtitle1"
-                style={{ fontFamily: "Pretendard-Regular", textAlign: "left" }}
+                style={{ fontFamily: 'Ramche', textAlign: "left" }}
               >
                 Num : {room.gameSeq}
                 <br />
@@ -132,6 +134,7 @@ function RoomList({ room, onRoomClick }) {
                 onMouseEnter={handleMouseEnterTitle}
                 onMouseLeave={handleMouseLeaveTitle}
                 style={{
+                  fontFamily: 'Ramche',
                   textAlign: "center",
                   overflow: "hidden",
                   whiteSpace: "nowrap",
@@ -148,12 +151,15 @@ function RoomList({ room, onRoomClick }) {
               <Grid item>
                 <Box
                   style={{
+                    fontFamily: 'Ramche',
                     border: "1px solid",
                     color: isFull ? "red" : "green",
                     margin: "1px",
+                    width: "105px",
+                    height: "20px",
                   }}
                 >
-                  <Typography variant="body2">
+                  <Typography variant="body2" style={{fontFamily: 'Ramche',}}>
                     {isFull ? "FULL" : `방 인원수: ${room.headcount} / 4`}
                   </Typography>
                 </Box>
@@ -179,6 +185,7 @@ function RoomList({ room, onRoomClick }) {
       >
         <Box
           sx={{
+            fontFamily: 'Ramche',
             position: "absolute",
             top: "50%",
             left: "50%",

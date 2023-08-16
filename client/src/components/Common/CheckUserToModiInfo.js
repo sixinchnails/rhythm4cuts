@@ -37,7 +37,7 @@ function CheckUserToModiInfo({ isOpen, handleClose }) {
   return (
     <Modal open={isOpen} onClose={handleClose}>
       <Box
-        style={{ textAlign: "center" }}
+        style={{ textAlign: "center", fontFamily: 'Ramche', }}
         sx={{
           position: "absolute",
           top: "50%",
@@ -48,9 +48,10 @@ function CheckUserToModiInfo({ isOpen, handleClose }) {
           border: "2px solid #000",
           boxShadow: 24,
           p: 4,
+          fontFamily: 'Ramche',
         }}
       >
-        <h3 style={{ textAlign: "center" }}>비밀번호 확인</h3>
+        <h3 style={{ textAlign: "center", fontFamily: 'Ramche', }}>비밀번호 확인</h3>
         <TextField
           type="password"
           label="비밀번호 입력"
@@ -59,7 +60,7 @@ function CheckUserToModiInfo({ isOpen, handleClose }) {
           value={pw}
           onChange={onChangePW}
           sx={{ width: 3 / 4 }}
-          style={{ marginBottom: "20px" }}
+          style={{ marginBottom: "20px", fontFamily: 'Ramche', }}
           onKeyDown={onKeyPress}
         />
         <Button

@@ -5,6 +5,7 @@ import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.domain.UserGameInfo;
 import com.b109.rhythm4cuts.model.dto.LobbyDto;
 import com.b109.rhythm4cuts.model.dto.WaitGameRequestDto;
+import com.b109.rhythm4cuts.model.dto.WaitGameResponseDto;
 import com.b109.rhythm4cuts.model.repository.GameRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import com.b109.rhythm4cuts.model.repository.WaitRoomRepository;
@@ -30,6 +31,31 @@ public class WaitRoomServiceImpl implements WaitRoomService {
     public LobbyDto getWaitRoomInfo(int gameSeq) {
         GameInfo gameInfo = waitRoomRepository.selectWaitRoom(gameSeq);
         return gameInfo.getLobbyDto();
+    }
+
+    @Override
+    public List<WaitGameResponseDto> getWaitRoomOrder(int gameSeq) {
+        List<WaitGameResponseDto> waitGameResponseDtoList = new ArrayList<>();
+
+        List<UserGameInfo> userGameInfoList = waitRoomRepository.selectAll(gameSeq);
+
+        for(int i = 0; i < userGameInfoList.size(); i++) {
+            UserGameInfo userGameInfo = userGameInfoList.get(i);
+
+            WaitGameResponseDto waitGameResponseDto = new WaitGameResponseDto();
+
+            waitGameResponseDto.setUserSeq(userGameInfo.getUser().getUserSeq());
+            waitGameResponseDto.setOrder(userGameInfo.getGameOrder());
+            waitGameResponseDto.setScore(userGameInfo.getGameScore());
+
+            User user = userRepository.findByUserSeq(userGameInfo.getUser().getUserSeq());
+            waitGameResponseDto.setNickname(user.getNickname());
+            waitGameResponseDto.setProfile_img_seq(user.getProfileImage().getProfileImageSeq());
+
+            waitGameResponseDtoList.add(waitGameResponseDto);
+        }
+
+        return waitGameResponseDtoList;
     }
 
     @Override

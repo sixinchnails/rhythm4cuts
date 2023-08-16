@@ -8,6 +8,10 @@ import java.util.List;
 @Getter
 @Setter
 public class WaitGameResponseDto {
-    private String userSeq;
+    private int userSeq;
     private int order;
+    private int score;
+    private int profile_img_seq;
+    private String nickname;
+
 }

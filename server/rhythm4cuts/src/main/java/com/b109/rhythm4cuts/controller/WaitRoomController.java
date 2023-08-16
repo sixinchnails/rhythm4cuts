@@ -51,14 +51,18 @@ public class WaitRoomController {
     // API 3. 대기방 친구 초대
 
     // API 4. 대기방 준비 완료
+    @GetMapping("/order/{gameSeq}")
+    public ResponseEntity<List<WaitGameResponseDto>> waitRoomOrder(@PathVariable int gameSeq) {
+        return ResponseEntity.status(200).body(waitRoomService.getWaitRoomOrder(gameSeq));
+    }
 
     // API 5. 대기방 (방장 권한) 게임 시작
     @PostMapping("/ready")
     public ResponseEntity<?> gameWaitReady(@RequestBody WaitGameRequestDto waitGameRequestDto) {
-        String gameSeq = waitGameRequestDto.getGameSeq();
-        List<String> playerSeq = waitGameRequestDto.getPlayerSeq();
+        int gameSeq = waitGameRequestDto.getGameSeq();
+        List<Integer> playerSeq = waitGameRequestDto.getPlayerSeq();
         List<Integer> orderList = new ArrayList<>(List.of(1, 2, 3, 4));
-        List<String> responseList = new ArrayList<>(List.of("-1", "-1", "-1", "-1"));
+        List<Integer> responseList = new ArrayList<>(List.of(-1, -1, -1, -1));
         Collections.shuffle(orderList);
         List<WaitGameResponseDto> waitGameResponseDtos = new ArrayList<>();
 

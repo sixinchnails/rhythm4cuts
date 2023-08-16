@@ -10,6 +10,7 @@ function PlayPlayer() {
           width: "15vw",
           height: "32vh",
           marginBottom: 2,
+          fontFamily: 'Ramche',
         }}
       >
         <CardContent>
@@ -17,6 +18,7 @@ function PlayPlayer() {
             sx={{
               height: "15vh",
               margin: 2,
+              fontFamily: 'Ramche',
             }}
           >
             {/* 사용자 카메라 */}
@@ -24,8 +26,8 @@ function PlayPlayer() {
           </Card>
         </CardContent>
         <Box>
-          <Typography variant="body1">닉네임</Typography>
-          <Typography variant="body1">1 Player : 80% </Typography>
+          <Typography variant="body1" style={{fontFamily: 'Ramche',}}>닉네임</Typography>
+          <Typography variant="body1" style={{fontFamily: 'Ramche',}}>1 Player : 80% </Typography>
         </Box>
       </Card>
     </div>

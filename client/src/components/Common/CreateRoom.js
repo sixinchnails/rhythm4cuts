@@ -136,6 +136,7 @@ function CreateRoom({ isOpen, handleClose }) {
           width: "500px", // 여기서 너비를 설정합니다.
           height: "500px", // 여기서 높이를 설정합니다.
           overflowY: "auto", // 내용이 너무 많으면 스크롤바가 생깁니다.
+          fontFamily: 'Ramche',
         }}
       >
         <img
@@ -146,6 +147,7 @@ function CreateRoom({ isOpen, handleClose }) {
             display: "block",
             margin: "auto",
             padding: "3%",
+            fontFamily: 'Ramche',
           }}
         />
 
@@ -156,10 +158,11 @@ function CreateRoom({ isOpen, handleClose }) {
           style={{
             marginBottom: "20px",
             backgroundColor: "rgba(0, 128, 255, 0.1)",
+            fontFamily: 'Ramche',
           }}
           onChange={(event) => setTitle(event.target.value)}
-          inputProps={{ style: { color: "#ffffff" } }}
-          InputLabelProps={{ style: { color: "#ffffff" } }}
+          inputProps={{ style: { color: "#ffffff", fontFamily: 'Ramche', } }}
+          InputLabelProps={{ style: { color: "#ffffff", fontFamily: 'Ramche', } }}
         />
         <TextField
           label="노래 제목"
@@ -168,16 +171,17 @@ function CreateRoom({ isOpen, handleClose }) {
           style={{
             marginBottom: "20px",
             backgroundColor: "rgba(0, 128, 255, 0.1)",
+            fontFamily: 'Ramche',
           }}
           value={searchTerm}
           onChange={handleSongChange}
-          inputProps={{ style: { color: "#ffffff" } }}
-          InputLabelProps={{ style: { color: "#ffffff" } }}
+          inputProps={{ style: { color: "#ffffff", fontFamily: 'Ramche', } }}
+          InputLabelProps={{ style: { color: "#ffffff", fontFamily: 'Ramche', } }}
         />
         {searchResults.map((song) => (
           <div
             key={song.songSeq}
-            style={{ marginBottom: "3%", cursor: "pointer" }}
+            style={{ marginBottom: "3%", cursor: "pointer", fontFamily: 'Ramche', }}
             onClick={() => selectSong(song)}
           >
             {song.title} - {song.singer}
@@ -185,9 +189,9 @@ function CreateRoom({ isOpen, handleClose }) {
         ))}
         <FormControl
           component="fieldset"
-          style={{ marginBottom: "20px", marginLeft: "10px" }}
+          style={{ marginBottom: "20px", marginLeft: "10px", fontFamily: 'Ramche', }}
         >
-          <FormLabel component="legend" style={{ color: "#ffffff" }}>
+          <FormLabel component="legend" style={{ color: "#ffffff", fontFamily: 'Ramche', }}>
             모드
           </FormLabel>
           <RadioGroup
@@ -199,13 +203,13 @@ function CreateRoom({ isOpen, handleClose }) {
           >
             <FormControlLabel
               value="일반 방"
-              control={<Radio style={{ color: "#ffffff" }} />}
-              label="일반 방"
+              control={<Radio style={{ color: "#ffffff", fontFamily: 'Ramche', }} />}
+              label={<span style={{ color: "#ffffff", fontFamily: 'Ramche' }}>일반 방</span>}
             />
             <FormControlLabel
               value="비밀 방"
-              control={<Radio style={{ color: "#ffffff" }} />}
-              label="비밀 방"
+              control={<Radio style={{ color: "#ffffff", fontFamily: 'Ramche', }} />}
+              label={<span style={{ color: "#ffffff", fontFamily: 'Ramche' }}>비밀 방</span>}
             />
           </RadioGroup>
         </FormControl>
@@ -217,23 +221,23 @@ function CreateRoom({ isOpen, handleClose }) {
             fullWidth
             value={password}
             onChange={handlePasswordChange}
-            style={{ marginBottom: "20px" }}
-            inputProps={{ style: { color: "#ffffff" } }} // 입력 텍스트의 색상을 흰색으로 설정
-            InputLabelProps={{ style: { color: "#ffffff" } }} // 라벨 텍스트의 색상을 흰색으로 설정
+            style={{ marginBottom: "20px", fontFamily: 'Ramche', }}
+            inputProps={{ style: { color: "#ffffff", fontFamily: 'Ramche', } }} // 입력 텍스트의 색상을 흰색으로 설정
+            InputLabelProps={{ style: { color: "#ffffff", fontFamily: 'Ramche', } }} // 라벨 텍스트의 색상을 흰색으로 설정
           />
         )}
         <Stack direction="row" spacing={2} justifyContent="center">
           <Button
             variant="contained"
             onClick={handleCreateRoom}
-            style={{ backgroundColor: "rgba(0, 128, 255, 0.1)" }}
+            style={{ backgroundColor: "rgba(0, 128, 255, 0.1)", fontFamily: 'Ramche', }}
           >
             방 만들기
           </Button>
           <Button
             variant="contained"
             onClick={handleClose}
-            style={{ backgroundColor: "rgba(0, 128, 255, 0.1)" }}
+            style={{ backgroundColor: "rgba(0, 128, 255, 0.1)", fontFamily: 'Ramche', }}
           >
             취소
           </Button>
