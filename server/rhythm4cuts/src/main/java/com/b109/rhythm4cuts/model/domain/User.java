@@ -86,6 +86,10 @@ public class User implements UserDetails {
     @Column(name = "connection_id")
     private String connectionId;
 
+    // 온라인 상태 여부 (0: 오프라인 / 1: 온라인)
+    @Column(name = "is_online")
+    private int isOnline;
+
     @Column(name="state")
     private int state;
 
