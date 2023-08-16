@@ -101,7 +101,8 @@ def getLyricsScore(song_seq, song_order, file):
 
 def getMelodyScore(filename):
     answerFile = ".//0_naul.wav"
-
+    
+    print("[getMelodyScore] 시작")
     score = correlate(filename, answerFile)
 
     return {
