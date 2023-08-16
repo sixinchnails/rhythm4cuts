@@ -252,7 +252,7 @@ function GameList() {
             >
               <MenuItem value={"gameSeq"}>방 번호</MenuItem>
               <MenuItem value={"title"}>방 이름</MenuItem>
-              <MenuItem value={"songSeq"}>노래 일련번호</MenuItem>
+              <MenuItem value={"songSeq"}>노래 제목</MenuItem>
             </Select>
 
             <TextField
