@@ -28,15 +28,12 @@ import SockJS from "sockjs-client";
 var sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
 var stomp = Stomp.over(sock);
 
-
 function GamePlay() {
   const { gameSeq } = useParams(); // 여기서 gameSeq를 가져옴
   const navigate = useNavigate(); // 페이지 이동
   const dispatch = useDispatch(); // 리덕스 넣기
-  const session = useSelector((state) => state.roomState.session);
-  const connectionToken = useSelector(
-    (state) => state.roomState.connectionToken
-  );
+  const session = useSelector(state => state.roomState.session);
+  const connectionToken = useSelector(state => state.roomState.connectionToken);
   const { connectWebSocket, sendGameStartMessage } = useWebSocket();
 
   // Record 기능을 위한 코드 Start
@@ -54,20 +51,22 @@ function GamePlay() {
       setIsRecording(false);
     } else {
       // Start recording
-      const streamPromise = navigator.mediaDevices.getUserMedia({ audio: true });
-      streamPromise.then((stream) => {
+      const streamPromise = navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
+      streamPromise.then(stream => {
         setIsRecording(true);
         setAudioChunks([]);
         const mediaRecorder = new MediaRecorder(stream);
 
-        mediaRecorder.ondataavailable = (e) => {
+        mediaRecorder.ondataavailable = e => {
           if (e.data.size > 0) {
-            setAudioChunks((chunks) => [...chunks, e.data]);
+            setAudioChunks(chunks => [...chunks, e.data]);
           }
         };
 
         mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+          const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
           setAudioBlob(audioBlob);
         };
 
@@ -93,7 +92,12 @@ function GamePlay() {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(-1); // 현재 인덱스 상태 추가
-  const timeRanges = [[5, 32], [33, 61], [62, 91], [106, 134]]; // 예시 시간 범위 배열 (여기 부분을 lyrics에서 시작시간, 끝시간 가져와야함)
+  const timeRanges = [
+    [5, 32],
+    [33, 61],
+    [62, 91],
+    [106, 134],
+  ]; // 예시 시간 범위 배열 (여기 부분을 lyrics에서 시작시간, 끝시간 가져와야함)
 
   const handlePlayButtonClick = () => {
     setIsPlaying(true);
@@ -127,11 +131,9 @@ function GamePlay() {
   // 가사 순서 변화 실행을 위한 코드 End
 
   useEffect(() => {
-    console.log("-------stomp not connect")
     stomp.connect({}, () => {
-      console.log("---------stomp connect")
       // 특정 토픽 구독
-      stomp.subscribe(`/subscribe/song/${gameSeq}`, (message) => {
+      stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
         console.log("video start");
         setVideoVisible(true);
       });
@@ -150,7 +152,7 @@ function GamePlay() {
   }, [gameSeq]);
 
   // 해당 노래 영상 가져오기
-  const [songSeq, setSongSeq] = useState(117);
+  const [songSeq, setSongSeq] = useState(116);
   const [musicUrl, setMusicUrl] = useState("");
 
   const bringUrl = async () => {
@@ -210,12 +212,11 @@ function GamePlay() {
               borderRadius: "30px",
             }}
           >
-
             {/* Record 기능을 위한 코드 Start */}
             {/*  */}
             <div>
               <button onClick={handleToggleRecording}>
-                {isRecording ? 'Stop Recording' : 'Start Recording'}
+                {isRecording ? "Stop Recording" : "Start Recording"}
               </button>
               <button onClick={handlePlayAudio} disabled={!audioBlob}>
                 Play Recorded Audio
@@ -224,8 +225,18 @@ function GamePlay() {
             {/*  */}
             {/* Record 기능을 위한 코드 End */}
 
-            <button onClick={() => { handleButtonClick(); handlePlayButtonClick(); }} disabled={isPlaying}>Music Start</button>
-            {currentIndex !== -1 && <p style={{color:"white"}}>노래 순서: {currentIndex + 1}</p>}
+            <button
+              onClick={() => {
+                handleButtonClick();
+                handlePlayButtonClick();
+              }}
+              disabled={isPlaying}
+            >
+              Music Start
+            </button>
+            {currentIndex !== -1 && (
+              <p style={{ color: "white" }}>노래 순서: {currentIndex + 1}</p>
+            )}
             {videoVisible && (
               <video
                 controls={false}

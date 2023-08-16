@@ -87,7 +87,7 @@ const LoginHeader = () => {
         </span>
         <Badge
           color="error"
-          variant={hasNotification ? "dot" : "standard"}
+          variant={hasNotification || gameInvite ? "dot" : "standard"}
           onClick={onNotificationClick}
           style={{ marginRight: "20px" }}
         >

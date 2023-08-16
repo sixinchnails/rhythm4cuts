@@ -198,25 +198,6 @@ function GameWait() {
     },
   });
 
-  // useEffect(() => {
-  //   console.log("useeffect.");
-  //   console.log("stomp object:", stomp);
-  //   stomp.connect(
-  //     {},
-  //     () => {
-  //       console.log("게임 페이지 안 웹소캣 연결.");
-  //       if (userSeq) {
-  //         stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
-  //           alert("게임 초대 요청 옴");
-  //         });
-  //       }
-  //     },
-  //     (error) => {
-  //       console.log("STOMP 연결 실패:", error);
-  //     }
-  //   );
-  // }, [userSeq]);
-
   function InviteGame(toUserValue) {
     var request = {
       fromUser: userSeq,
@@ -265,7 +246,7 @@ function GameWait() {
 
   // 로그인 상태관리
   useEffect(() => {
-    connectWebSocket();
+    // connectWebSocket();
     userInfo()
       .then(res => {
         if (res.status === 200) {
@@ -457,27 +438,6 @@ function GameWait() {
     }
   }
 
-  // "게임 시작" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
-  // function handleGameReady() {
-  //   setGameStarted(true);
-  //   setPlayerFix([...players]); // player 배열 복사
-
-  // axios 보내기
-  // console.log("access : " + access);
-
-  // axios.post(`https://i9b109.p.ssafy.io:8443/wait/enter`,
-  //   {
-  //     headers: {
-  //       Authorization: "Bearer " + access,
-  //     }
-  //   },
-  //   {
-  //     "gameSeq": gameSeq,
-  //     "userSeq": userseq
-  //   }
-  // )
-  // }
-
   function handleGameReady() {
     console.log("게임 시작 버튼 누름");
     console.log(stomp);
@@ -491,9 +451,6 @@ function GameWait() {
       stomp.send("/public/song", {}, JSON.stringify(message));
     }
   }
-
-  // "채팅" 버튼을 클릭했을 때 동작 ---------------------------------------------------------------------------------
-  const handleChat = () => { };
 
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
   const handleExit = () => {
@@ -548,7 +505,7 @@ function GameWait() {
         console.error("Error:", error);
       });
 
-    navigate("/GameList")
+    navigate("/GameList");
   };
 
   // 해당 노래 번호 가져오기
@@ -770,7 +727,11 @@ function GameWait() {
                   }}
                 >
                   {players[index] ? (
-                    <UserVideoComponent streamManager={players[index]} userSeq={userSeq} cnt = {players.length}/>
+                    <UserVideoComponent
+                      streamManager={players[index]}
+                      userSeq={userSeq}
+                      cnt={players.length}
+                    />
                   ) : (
                     // 빈 자리 표시
                     <video
@@ -789,7 +750,6 @@ function GameWait() {
                   )}
                 </Grid>
               ))}
-
             </Grid>
           ) : (
             // 게임시작 버튼 클릭 전 전 전! --------------------------------------------------------------------------------
