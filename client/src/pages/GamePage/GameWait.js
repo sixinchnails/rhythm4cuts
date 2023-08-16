@@ -1,9 +1,5 @@
 /* eslint-disable */
-import {
-  setSession as userSession,
-  setConnection,
-  setGameseq,
-} from "../../store";
+import { setSession as userSession, setGameseq } from "../../store";
 import {
   Chat as ChatIcon,
   Check as CheckIcon,
@@ -27,11 +23,10 @@ import UserVideoComponent from "../../components/Game/UserVideoComponent";
 import UserComponent from "../../components/Game/UserComponent";
 import React, { Component, useState, useEffect } from "react";
 import LoginAlert from "../../components/Common/LoginAlert";
-import BoomAlert from '../../components/Common/BoomAlert';
+import BoomAlert from "../../components/Common/BoomAlert";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../../components/Game/HeaderPlay";
-import Next from "../../components/Game/NextToPlay";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from "../../apis/userInfo";
 import { OpenVidu } from "openvidu-browser";
@@ -39,7 +34,6 @@ import axios from "axios";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
-import UserInfo from "../../components/My/My_UserInfo";
 
 function InviteFriendsModal({
   isOpen,
@@ -60,7 +54,7 @@ function InviteFriendsModal({
       >
         <h3>친구 초대하기</h3>
         <List>
-          {friends.map((friend) => (
+          {friends.map(friend => (
             <ListItem key={friend.email}>
               <ListItemText
                 primary={friend.nickname}
@@ -96,19 +90,23 @@ function GameWait() {
         {},
         function () {
           console.log("게임 페이지 안 웹소켓 연결.");
-          stompClient.subscribe(`/subscribe/song/${gameSeq}`, (message) => {
-            console.log("video start");
-            setGameStarted(true);
+          stompClient.subscribe(`/subscribe/song/${gameSeq}`, message => {
+            const receivedMessage = JSON.parse(message.body);
+            // 서버로부터 받은 메시지에 'START_GAME' 신호가 포함되어 있으면
+            if (receivedMessage.action === "START_GAME") {
+              console.log("video start");
+              setGameStarted(true);
+            }
           });
           console.log(userSeq);
           if (userSeq) {
             stompClient.subscribe(
               `/subscribe/friend/invite/${userSeq}`,
-              () => { }
+              () => {}
             );
           }
         },
-        (error) => {
+        error => {
           console.log("STOMP 연결 실패:", error);
         }
       );
@@ -117,7 +115,6 @@ function GameWait() {
     }
   }, [stomp]);
 
-  const location = useLocation();
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
   const [isBoomAlertOpen, setBoomAlertOpen] = useState(false); // 방 폭파 알람
   const dispatch = useDispatch(); // 리덕스 업데이트
@@ -134,15 +131,89 @@ function GameWait() {
 
   dispatch(setGameseq(gameSeq));
 
-  const session = useSelector((state) => state.roomState.session);
+  const session = useSelector(state => state.roomState.session);
 
-  // const [myUserName, setMyUserName] = useState(undefined);
   const [connectSession, setConnectSession] = useState(undefined);
   const [mainStreamManager, setMainStreamManager] = useState(undefined); // 방장
   const [publisher, setPublisher] = useState(undefined); // 자신
   const [subscribers, setSubscribers] = useState([]); // 구독자
   const [players, setPlayers] = useState([]); // 통합
   const [gameStarted, setGameStarted] = useState(false); // 게임 시작 여부 상태
+  const [stream, setStream] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+
+  // 게임 시작 여부에 따른 녹음 시작/종료 처리
+  useEffect(() => {
+    // 게임이 시작되면 녹음 시작
+    if (gameStarted && !isRecording) {
+      startRecording();
+    }
+    // 게임이 종료되면 녹음 종료
+    else if (!gameStarted && isRecording) {
+      stopRecording();
+    }
+  }, [gameStarted]);
+
+  const startRecording = () => {
+    setIsRecording(true);
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: true,
+      })
+      .then(stream => {
+        if (stream && stream instanceof MediaStream) {
+          setStream(stream);
+          setIsRecording(true);
+          setAudioChunks([]);
+          const mediaRecorder = new MediaRecorder(stream);
+
+          mediaRecorderRef.current = mediaRecorder;
+
+          // 녹음 데이터가 생성될 때마다 chunks 배열에 추가
+          mediaRecorderRef.current.ondataavailable = e => {
+            if (e.data.size > 0) {
+              setAudioChunks(chunks => [...chunks, e.data]);
+            }
+          };
+
+          // 녹음이 종료되면 호출되는 이벤트 핸들러
+          mediaRecorderRef.current.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+            setAudioBlob(audioBlob);
+
+            const formData = new FormData();
+            formData.append("audio", audioBlob, "recorded-audio.wav");
+            formData.append("gameSeq", gameSeq);
+            formData.append("userSeq", userSeq);
+
+            try {
+              const response = await axios.post(
+                "https://i9b109.p.ssafy.io:8443/upload/user/audio",
+                formData,
+                {
+                  headers: {
+                    Authorization: `Bearer ${getCookie("access")}`,
+                    "Content-Type": "multipart/form-data",
+                  },
+                }
+              );
+              console.log("Audio URL:", response.data);
+            } catch (error) {
+              console.error("Error saving audio:", error);
+            }
+          };
+
+          // 녹음을 시작합니다.
+          mediaRecorderRef.current.start();
+        } else {
+          console.error("Stream is not valid");
+        }
+      })
+      .catch(error => {
+        console.error("Error starting recording:", error);
+      });
+  };
+
   const access = getCookie("access");
   const [musicUrl, setMusicUrl] = useState(""); // 해당 노래 url
 
@@ -184,7 +255,7 @@ function GameWait() {
   };
 
   //친구 목록 가져오는 함수
-  const fetchFriendList = async (userSeq) => {
+  const fetchFriendList = async userSeq => {
     const headers = {
       Authorization: "Bearer " + getCookie("access"),
     };
@@ -196,7 +267,6 @@ function GameWait() {
     return response.data.data;
   };
 
-  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
   const [isSessionJoined, setSessionJoined] = useState(false); // 세션에 참여했는지 여부
 
   // Styled 버튼 ( css )
@@ -209,26 +279,6 @@ function GameWait() {
       backgroundColor: "#1976d2", // 마우스 오버 시 배경색 변경
     },
   });
-
-  // useEffect(() => {
-  //   console.log("useeffect.");
-  //   console.log("stomp object:", stomp);
-  //   stomp.connect(
-  //     {},
-  //     () => {
-  //       console.log("게임 페이지 안 웹소캣 연결.");
-  //       if (userSeq) {
-  //         stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
-  //           alert("게임 초대 요청 옴");
-  //         });
-  //       }
-  //     },
-  //     (error) => {
-  //       console.log("STOMP 연결 실패:", error);
-  //     }
-  //   );
-  // }, [userSeq]);
-
 
   // 친구 초대
   function InviteGame(toUserValue) {
@@ -252,7 +302,7 @@ function GameWait() {
           Authorization: `Bearer ${getCookie("access")}`,
         },
       })
-      .then((res) => {
+      .then(res => {
         const param = {
           userSeq: String(res.data.user_seq),
           gameSeq: String(gameSeq),
@@ -267,11 +317,11 @@ function GameWait() {
           },
         });
       })
-      .then((postRes) => {
+      .then(postRes => {
         // 이곳에서 post 요청에 대한 응답 처리
         console.log("POST 요청 응답:", postRes);
       })
-      .catch((error) => {
+      .catch(error => {
         // 에러 처리
         console.error("에러 발생:", error);
       });
@@ -279,9 +329,8 @@ function GameWait() {
 
   // 로그인 상태관리
   useEffect(() => {
-    connectWebSocket();
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           setUserSeq(res.data.user_seq);
         } else {
@@ -289,7 +338,7 @@ function GameWait() {
           handleOpenLoginAlert();
         }
       })
-      .catch((error) => {
+      .catch(error => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -297,18 +346,49 @@ function GameWait() {
 
   useEffect(() => {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status !== 200) {
           window.alert("로그인을 해주세요!");
           navigate("/");
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("유저 정보 불러오기 실패:", error);
         window.alert("로그인을 해주세요!");
         navigate("/");
       });
   }, [gameSeq]);
+
+  const stopRecording = () => {
+    setIsRecording(false);
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state !== "inactive"
+    ) {
+      mediaRecorderRef.current.stop();
+
+      const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "recorded-audio.wav");
+      formData.append("gameSeq", gameSeq); // 게임 일련번호 추가
+      formData.append("userSeq", userSeq); // 유저 일련번호 추가
+
+      axios
+        .post("https://i9b109.p.ssafy.io:8443/upload/user/audio", formData, {
+          headers: {
+            Authorization: `Bearer ${getCookie("access")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(response => {
+          console.log("Audio URL:", response.data);
+          // 응답으로 받은 오디오 URL 활용 가능
+        })
+        .catch(error => {
+          console.error("Error saving audio:", error);
+        });
+    }
+  };
 
   // 페이지 떠날 때 이벤트 리스너 등록 및 해제
   useEffect(() => {
@@ -318,6 +398,10 @@ function GameWait() {
       window.removeEventListener("beforeunload", onBeforeUnload);
     };
   }, []);
+
+  const onBeforeUnload = () => {
+    stopRecording();
+  };
 
   // 시작 -----------------------------------------------------------------------------------------------------
   // 유저 토큰 발급
@@ -395,11 +479,11 @@ function GameWait() {
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
-      newSession.on("streamCreated", (event) => {
+      newSession.on("streamCreated", event => {
         const subscriber = newSession.subscribe(event.stream, undefined);
-        setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
 
-        setPlayers((prevPlayers) => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
+        setPlayers(prevPlayers => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
 
         if (!mainStreamManager) {
           setMainStreamManager(subscriber);
@@ -415,20 +499,20 @@ function GameWait() {
             headers: {
               Authorization: "Bearer " + access,
             },
-          }).then(
-        ).then(
-          handleOpenBoomAlert(),
-          // navigate("/gameList")
-        )
+          })
+          .then()
+          .then(
+            handleOpenBoomAlert()
+            // navigate("/gameList")
+          );
       });
 
-      newSession.on("exception", (exception) => {
+      newSession.on("exception", exception => {
         console.warn(exception);
       });
 
       const token = await getToken(); // Implement getToken function
       const userData = await userInfo();
-      // console.log("유저 데이터가 뭐냐 : " + userData.data.user_seq);
 
       newSession
         .connect(token, { clientData: userData })
@@ -448,11 +532,11 @@ function GameWait() {
 
           setPublisher(newPublisher);
           setMainStreamManager(newPublisher);
-          setPlayers((prevPlayers) => [...prevPlayers, newPublisher]);
+          setPlayers(prevPlayers => [...prevPlayers, newPublisher]);
 
           //--------------------------
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(
             "There was an error connecting to the session:",
             error.code,
@@ -483,27 +567,6 @@ function GameWait() {
     }
   }
 
-  // "게임 시작" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
-  // function handleGameReady() {
-  //   setGameStarted(true);
-  //   setPlayerFix([...players]); // player 배열 복사
-
-  // axios 보내기
-  // console.log("access : " + access);
-
-  // axios.post(`https://i9b109.p.ssafy.io:8443/wait/enter`,
-  //   {
-  //     headers: {
-  //       Authorization: "Bearer " + access,
-  //     }
-  //   },
-  //   {
-  //     "gameSeq": gameSeq,
-  //     "userSeq": userseq
-  //   }
-  // )
-  // }
-
   function handleGameReady() {
     console.log("게임 시작 버튼 누름");
     console.log(stomp);
@@ -512,6 +575,7 @@ function GameWait() {
       console.log("연결 후 자동 재생 요청");
       const message = {
         gameSeq: gameSeq,
+        action: "START_GAME", // 게임 시작 신호를 표시하는 필드 추가
         // 필요한 경우 여기에 다른 데이터 추가
       };
       stomp.send("/public/song", {}, JSON.stringify(message));
@@ -519,7 +583,7 @@ function GameWait() {
   }
 
   // "채팅" 버튼을 클릭했을 때 동작 ---------------------------------------------------------------------------------
-  const handleChat = () => { };
+  const handleChat = () => {};
 
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
   const handleExit = () => {
@@ -527,25 +591,16 @@ function GameWait() {
     console.log("방 나갈거야 ~");
   };
 
-  const onBeforeUnload = () => {
-    leaveSession();
-  };
-
   // 방에서 나갈때 ㅣ 수정 필요
   const leaveSession = () => {
     console.log("--------------------leave session");
 
     // 나가는 플레이어를 배열에서 제거하고 상태 업데이트
-    const updatedPlayers = players.filter((player) => player !== publisher);
+    const updatedPlayers = players.filter(player => player !== publisher);
     setPlayers(updatedPlayers);
 
-    // // 자신의 스트림 해제
-    // if (typeof publisher.stream.dispose === "function") {
-    //   publisher.stream.dispose();
-    // }
-
     // 구독 중인 스트림 해제
-    subscribers.forEach((subscriber) => {
+    subscribers.forEach(subscriber => {
       if (typeof subscriber.unsubscribe === "function") {
         subscriber.unsubscribe(); // 구독자 해제
         if (subscriber.streamManager) {
@@ -566,11 +621,8 @@ function GameWait() {
           Authorization: "Bearer " + access,
         },
       })
-      .then((response) => {
-        // navigate(`/GameList`)
-      })
-      .catch((error) => {
-        // Handle error if needed
+      .then(response => {})
+      .catch(error => {
         console.error("Error:", error);
       });
 
@@ -619,11 +671,9 @@ function GameWait() {
   }, [songSeq]);
 
   // 가사 순서 변화 실행을 위한 코드 Start
-  // ///////////////////////////
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(-1); // 현재 인덱스 상태 추가
-  // const timeRanges = [[5, 32], [33, 61], [62, 91], [106, 134]]; // 예시 시간 범위 배열 (여기 부분을 lyrics에서 시작시간, 끝시간 가져와야함)
 
   const [timeRanges, setTimeRanges] = useState([]);
 
@@ -643,7 +693,7 @@ function GameWait() {
 
       if (response.status === 200) {
         const data = response.data.data;
-        const newTimeRanges = data.map((item) => [
+        const newTimeRanges = data.map(item => [
           item.startTime + 3,
           item.endTime + 3,
         ]);
@@ -695,9 +745,6 @@ function GameWait() {
       }
     }, timerInterval);
   };
-
-  // ///////////////////////////
-  // 가사 순서 변화 실행을 위한 코드 End
 
   return (
     <div
@@ -755,7 +802,6 @@ function GameWait() {
         ) : (
           // 게임 시작 하기 전 춤추는 동영상 ----------------------------------------------------------------------
           <Grid container>
-            {/* Top : LEFT */}
             <Grid
               item
               xs={8}
@@ -875,7 +921,7 @@ function GameWait() {
                 margin: "50px",
               }}
             >
-              {[0, 1, 2, 3].map((index) => (
+              {[0, 1, 2, 3].map(index => (
                 <Grid
                   key={index}
                   item
@@ -926,7 +972,7 @@ function GameWait() {
               }}
             >
               {/* 각 플레이어별로 Grid 아이템 생성 */}
-              {[0, 1, 2, 3].map((index) => (
+              {[0, 1, 2, 3].map(index => (
                 <Grid
                   key={index}
                   item
