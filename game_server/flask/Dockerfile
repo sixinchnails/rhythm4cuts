@@ -18,9 +18,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # fpcalc 다운로드 및 설치
 RUN apt-get update 
 RUN apt-get -y install sudo
-RUN apt install wget
-RUN wget https://github.com/acoustid/chromaprint/releases/download/v1.4.3/chromaprint-fpcalc-1.4.3-linux-x86_64.tar.gz
-RUN tar -zxvf chromaprint-fpcalc-1.4.3-linux-x86_64.tar.gz && \
+RUN sudo apt install wget
+RUN sudo wget https://github.com/acoustid/chromaprint/releases/download/v1.4.3/chromaprint-fpcalc-1.4.3-linux-x86_64.tar.gz
+RUN sudo tar -zxvf chromaprint-fpcalc-1.4.3-linux-x86_64.tar.gz && \
     
 #rm -rf chromaprint-fpcalc-1.4.3-linux-x86_64 && \
 # rm chromaprint-fpcalc-1.4.3-linux-x86_64.tar.gz
