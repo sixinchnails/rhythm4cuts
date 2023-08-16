@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.controller;
 
+import com.b109.rhythm4cuts.model.dto.LyricsDto;
 import com.b109.rhythm4cuts.model.service.LyricsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,10 +23,12 @@ public class LyricsController {
     @GetMapping("/{songSeq}")
     public ResponseEntity<?> selectLyricTime(@PathVariable("songSeq") int songSeq) {
 
+        LyricsDto lyricsDto = lyricsService.selectLyricTime(songSeq);
+
         Map<String, Object> res = new HashMap<>();
         res.put("message", "Success");
         res.put("statusCode", 200);
-        res.put("data", res);
+        res.put("data", lyricsDto);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }

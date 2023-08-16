@@ -207,7 +207,6 @@ function GameList() {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/GameImage/GameList.jpg')",
-        fontFamily: 'Ramche',
       }}
     >
       <Header />

@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.model.service;
 
+import com.b109.rhythm4cuts.model.domain.Lyrics;
 import com.b109.rhythm4cuts.model.dto.LyricsDto;
 import com.b109.rhythm4cuts.model.repository.LyricsRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,10 @@ public class LyricsServiceImpl implements LyricsService {
 
     @Override
     public LyricsDto selectLyricTime(int songSeq) {
-        return null;
+
+        Lyrics lyrics = lyricsRepository.selectLyricBySongSeq(songSeq);
+        LyricsDto lyricsDto = lyrics.getLyricsDto();
+
+        return lyricsDto;
     }
 }
