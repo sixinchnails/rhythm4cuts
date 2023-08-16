@@ -21,4 +21,5 @@ public class UserDto {
     private String refreshToken;
     private String connectionId;
     private int state;
+    private int isOnline;
 }
