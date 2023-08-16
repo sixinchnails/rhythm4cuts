@@ -19,6 +19,8 @@ import { closeSession } from "../../store";
 import UserVideoComponent from "../../components/Game/UserVideoComponent";
 
 const GameShot = () => {
+  const [doState, setDoState] = useState(false);
+
   const dispatch = useDispatch();
 
   const handleTestClose = async () => {
@@ -81,8 +83,11 @@ const GameShot = () => {
     navigate("/Login");
   };
 
-  // 5초 타이머를 설정하기 위한 상태 변수
-  const [seconds, setSeconds] = useState(5);
+  // 사진을 찍는 타이머를 설정하기 위한 상태 변수
+  const [shotSeconds, setShotSeconds] = useState(12);
+
+  // 프레임 고르는 타이머를 설정하기 위한 상태 변수
+  const [frameSeconds, setFrameSeconds] = useState(5);
 
   // 캡처가 완료되었는지 여부를 확인하는 상태 변수
   const [captured, setCaptured] = useState(false);
@@ -135,19 +140,45 @@ const GameShot = () => {
   }, [webcamRef, captured]);
 
   // "captured" 상태가 변경될 때 메시지를 업데이트하는 useEffect 훅 추가
-  useEffect(() => {
-    if (captured) {
-      setSeconds(0); // "captured"가 true가 되면 "땡초 남았습니다~" 메시지를 강제로 "촬영이 완료되었습니다."로 변경합니다.
-    }
-  }, [captured]);
+  // useEffect(() => {
+  //   if (captured) {
+  //     setShotSeconds(0); // "captured"가 true가 되면 "땡초 남았습니다~" 메시지를 강제로 "촬영이 완료되었습니다."로 변경합니다.
+  //   }
+  // }, [captured]);
 
-  // 5초 타이머를 설정하고 타이머가 끝나면 촬영 함수를 호출하거나 자동 촬영 함수를 호출합니다.
+  //  타이머를 설정하고 타이머가 끝나면 촬영 함수를 호출하거나 자동 촬영 함수를 호출합니다.
   useEffect(() => {
     const timerId = setInterval(() => {
-      setSeconds((prevSeconds) => {
-        if (prevSeconds === 1) {
+      setShotSeconds((prevSeconds) => {
+        if (prevSeconds === 0) {
           handleCapture();
           clearInterval(timerId); // 타이머를 종료합니다.
+          setDoState(true);
+
+          return prevSeconds;
+        } else {
+          if (prevSeconds > 0) {
+            return prevSeconds - 1;
+          }
+          return prevSeconds;
+        }
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(timerId);
+    };
+  }, [handleCapture, captured]);
+
+  //frame timer
+
+  useEffect(() => {
+    const timerId = setInterval(() => {
+      setFrameSeconds((prevSeconds) => {
+        if (prevSeconds === 0) {
+          handleCapture();
+          clearInterval(timerId); // 타이머를 종료합니다.
+          setDoState(true);
 
           return prevSeconds;
         } else {
@@ -257,18 +288,19 @@ const GameShot = () => {
                 p={2}
               >
                 {/* 촬영 버튼 */}
-                <Typography variant="h6">
-                  {seconds == 0
-                    ? "촬영이 완료되었습니다."
-                    : `${seconds}초 남았습니다~`}
-                </Typography>
-                <Button
-                  variant={captured ? "outlined" : "contained"}
-                  color={captured ? "secondary" : "warning"}
-                  onClick={handleCapture}
-                >
-                  {captured ? "촬영 완료" : "촬영"}
-                </Button>
+                {doState === true ? (
+                  <Typography variant="h6">
+                    {shotSeconds === 0
+                      ? "촬영이 완료되었습니다."
+                      : `${shotSeconds}초 남았습니다~`}
+                  </Typography>
+                ) : (
+                  <Typography variant="h6">
+                    {frameSeconds === 0
+                      ? "프레임 선택이 완료되었습니다."
+                      : `${frameSeconds}초 남았습니다~`}
+                  </Typography>
+                )}
               </Box>
             </Box>
           </Grid>

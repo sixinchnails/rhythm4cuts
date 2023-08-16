@@ -120,21 +120,18 @@ const MyPhoto = () => {
   ]);
 
   const bringImages = async () => {
-    const params = {
-      email: getCookie("email"),
-    };
     const headers = {
-      Authorization: getCookie("access"),
+      Authorization: "Bearer " + getCookie("access"),
     };
-    const email = getCookie();
+    const email = getCookie("email");
     const result = await axios.get(
-      "https://i9b109.p.ssafy.io:8443/film/photo",
-      params,
-      headers,
-      { email }
+      `https://i9b109.p.ssafy.io:8443/film/photo?email=${email}`,
+      {
+        headers,
+      }
     );
     console.log(result);
-    // setImagesData(result);
+    setImagesData(result.data);
   };
 
   useEffect(() => {
@@ -204,9 +201,9 @@ const MyPhoto = () => {
           {imagesData.map((data, index) => (
             <ImageByMonth
               key={index}
-              month={data.month}
-              year={data.year}
-              images={data.images}
+              month={new Date(data.createDate).getMonth() + 1} // 월 정보 추출
+              year={new Date(data.createDate).getFullYear()} // 년 정보 추출
+              images={data.commonUrl}
               onDownloadClick={handleDownloadClick}
               style={{
                 background:
