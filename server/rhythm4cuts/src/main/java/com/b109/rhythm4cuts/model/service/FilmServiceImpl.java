@@ -82,7 +82,21 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public List<BackgroundDto> getBackgroundList() {
-        return null;
+
+        List<BackGround> backGroundList = backGroundRepository.findAll();
+        List<BackgroundDto> backGroundDtoList = new ArrayList<>();
+
+        backGroundList.forEach(background -> {
+            BackgroundDto backGroundDto = new BackgroundDto();
+
+            backGroundDto.setBackgroundName(background.getBackground_name());
+            backGroundDto.setBackgroundSeq(background.getBackgroundSeq());
+            backGroundDto.setFileName(background.getFileName());
+
+            backGroundDtoList.add(backGroundDto);
+        });
+
+        return backGroundDtoList;
     }
 
     @Override
@@ -156,6 +170,23 @@ public class FilmServiceImpl implements FilmService {
         return resources;
     }
 
+    public List<FilmResponseDto> getDailyPhotoList(int year, int month, int day, int page) {
+        Pageable pageable = PageRequest.of(page - 1, 10);
+        Page<GameImage> gameImages = filmRepository.findByDate(year, month, day, pageable);
+        List<FilmResponseDto> filmList = new ArrayList<>();
+
+        gameImages.forEach(gameImage -> {
+           FilmResponseDto filmResponseDto = new FilmResponseDto();
+
+           filmResponseDto.setPrivateUrl(gameImage.getPrivateUrl());
+           filmResponseDto.setCommonUrl(gameImage.getCommonUrl());
+           filmResponseDto.setCreateDate(gameImage.getCreateDate());
+
+           filmList.add(filmResponseDto);
+        });
+
+        return filmList;
+    }
 
     public String generateFileName(String originalFilename) {
         // 현재 시간 정보

@@ -2,9 +2,9 @@ import { Button, Typography, Container, Grid } from "@mui/material";
 import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function NextToShot() {
+function NextToShot({ gameSeq }) {
   const navigate = useNavigate();
-  const [seconds, setSeconds] = useState(1000);
+  const [seconds, setSeconds] = useState(10000);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -12,7 +12,7 @@ function NextToShot() {
     }, 1000);
 
     if (seconds === 0) {
-      navigate("/GameShot");
+      navigate(`/GameShot/` + gameSeq);
       clearInterval(countdown);
     }
 

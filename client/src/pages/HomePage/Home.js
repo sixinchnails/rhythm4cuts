@@ -26,23 +26,23 @@ function Home() {
   //로그인 상태 확인 및 유저 정보 불러오는 부분
   try {
     userInfo()
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         setIsLogin(true);
       })
-      .catch(error => {
+      .catch((error) => {
         setIsLogin(false);
         console.log(error);
         if (error.response.status !== 200) {
           console.log("accessToken이 만료되었습니다.");
           renewAccessToken()
-            .then(res => {
+            .then((res) => {
               setCookie("access", res.accessToken);
               console.log(res);
               console.log("accessToken 재발급 완료");
               window.location.reload();
             })
-            .catch(error => {
+            .catch((error) => {
               console.log("refresh토큰이 에러");
               console.log(error);
               checkLogin();
@@ -106,6 +106,7 @@ function Home() {
   useEffect(() => {
     connectWebSocket();
     fetchMusicRank();
+    fetchUserRank();
   }, []);
 
   // 음악 개수 컨트롤러
@@ -148,7 +149,7 @@ function Home() {
   const noOfUserPages = Math.ceil(userData.length / userPerPage);
 
   useEffect(() => {
-    const wheelHandler = e => {
+    const wheelHandler = (e) => {
       e.preventDefault();
       const { deltaY } = e;
       const { scrollTop } = outerDivRef.current; // 스크롤 위쪽 끝부분 위치
@@ -423,7 +424,7 @@ function Home() {
                 dateFormat="yyyy.MM.dd" // 날짜 형태
                 shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
                 selected={startDate}
-                onChange={date => setStartDate(date)}
+                onChange={(date) => setStartDate(date)}
               />
             </div>
           </div>
