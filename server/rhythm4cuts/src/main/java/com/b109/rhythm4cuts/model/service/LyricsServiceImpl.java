@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -16,11 +18,15 @@ public class LyricsServiceImpl implements LyricsService {
     private final LyricsRepository lyricsRepository;
 
     @Override
-    public LyricsDto selectLyricTime(int songSeq) {
+    public List<LyricsDto> selectLyricTime(int songSeq) {
 
-        Lyrics lyrics = lyricsRepository.selectLyricBySongSeq(songSeq);
-        LyricsDto lyricsDto = lyrics.getLyricsDto();
+        List<Lyrics> lyrics = lyricsRepository.selectLyricBySongSeq(songSeq);
+        List<LyricsDto> lyricsDtos = new ArrayList<>();
 
-        return lyricsDto;
+        lyrics.forEach(lyric -> {
+            lyricsDtos.add(lyric.getLyricsDto());
+        });
+
+        return lyricsDtos;
     }
 }

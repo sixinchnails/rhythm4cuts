@@ -2,7 +2,9 @@ package com.b109.rhythm4cuts.model.repository;
 
 import com.b109.rhythm4cuts.model.domain.Lyrics;
 
+import java.util.List;
+
 public interface LyricsRepository {
 
-    Lyrics selectLyricBySongSeq(int songSeq);
+    List<Lyrics> selectLyricBySongSeq(int songSeq);
 }
