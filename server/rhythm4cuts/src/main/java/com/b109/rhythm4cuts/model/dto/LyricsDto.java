@@ -8,4 +8,8 @@ public class LyricsDto {
 
     private int lyricsSeq;
     private int startTime;
+    private int endTime;
+    private int songOrder;
+    private String lyric;
+    private int songSeq;
 }
