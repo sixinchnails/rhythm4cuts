@@ -1,15 +1,5 @@
 /*eslint-disable*/
-import {
-  Grid,
-  Pagination,
-  Box,
-  Button,
-  Paper,
-  TextField,
-  IconButton,
-  Select,
-  MenuItem,
-} from "@mui/material";
+import { Grid, Pagination, Box, Button, Paper, TextField, IconButton, Select, MenuItem } from "@mui/material";
 import { React, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
