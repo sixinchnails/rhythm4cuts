@@ -93,8 +93,6 @@ function RoomList({ room, onRoomClick }) {
           >
             <CardMedia
               component="img" // 이미지를 보여주기 위해 img 태그 사용
-              // image={room.image}
-              // image="/images/잔나비.jfif"
               image={imgUrl}
               style={{
                 padding: "5%",
@@ -161,7 +159,7 @@ function RoomList({ room, onRoomClick }) {
                     height: "20px",
                   }}
                 >
-                  <Typography variant="body2">
+                  <Typography variant="body2" style={{fontFamily: 'Ramche',}}>
                     {isFull ? "FULL" : `방 인원수: ${room.headcount} / 4`}
                   </Typography>
                 </Box>

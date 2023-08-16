@@ -51,7 +51,7 @@ const LoginMypageHeader = () => {
           color="error"
           variant={hasNotification ? "dot" : "standard"} // Set the variant conditionally based on the hasNotification state
           onClick={onNotificationClick} // Set the onClick handler
-          style={{ marginRight: "50px" }}
+          style={{ marginRight: "50px", fontFamily: 'Ramche', }}
         >
           <NotificationsIcon />
         </Badge>

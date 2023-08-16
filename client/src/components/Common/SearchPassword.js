@@ -83,7 +83,7 @@ function SearchPassword({ isOpen, handleClose }) {
   return (
     <Modal open={isOpen} onClose={handleClose}>
       <Box
-        style={{ textAlign: "center" }}
+        style={{ textAlign: "center", fontFamily: 'Ramche', }}
         sx={{
           position: "absolute",
           top: "50%",
@@ -94,9 +94,10 @@ function SearchPassword({ isOpen, handleClose }) {
           border: "2px solid #000",
           boxShadow: 24,
           p: 4,
+          fontFamily: 'Ramche',
         }}
       >
-        <h3 style={{ textAlign: "center" }}>비밀번호 찾기</h3>
+        <h3 style={{ textAlign: "center", fontFamily: 'Ramche', }}>비밀번호 찾기</h3>
         <TextField
           label="이메일 입력"
           variant="outlined"
@@ -104,13 +105,14 @@ function SearchPassword({ isOpen, handleClose }) {
           value={email}
           onChange={handleEmailChange}
           sx={{ width: 3 / 4 }}
-          style={{ marginBottom: "20px" }}
+          style={{ marginBottom: "20px", fontFamily: 'Ramche', }}
         />
         <Button
           variant="contained"
           color="primary"
           sx={{ mx: 2, my: 1 }}
           onClick={emailCheck}
+          style={{fontFamily: 'Ramche',}}
         >
           인증
         </Button>
@@ -121,17 +123,18 @@ function SearchPassword({ isOpen, handleClose }) {
           value={emailCode}
           onChange={handleEmailCodeChange}
           sx={{ width: 3 / 4 }}
-          style={{ marginBottom: "20px" }}
+          style={{ marginBottom: "20px", fontFamily: 'Ramche', }}
         />
         <Button
           variant="contained"
           color="primary"
           sx={{ mx: 2, my: 1 }}
           onClick={emailCodeCheck}
+          style={{fontFamily: 'Ramche',}}
         >
           확인
         </Button>
-        <Button variant="contained" color="primary" onClick={resetPW}>
+        <Button variant="contained" color="primary" onClick={resetPW} style={{fontFamily: 'Ramche',}}>
           비밀번호 재설정
         </Button>
       </Box>

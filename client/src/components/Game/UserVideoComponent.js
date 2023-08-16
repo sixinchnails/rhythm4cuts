@@ -2,14 +2,13 @@ import { React } from "react";
 import OpenViduVideoComponent from "./OvVideo";
 
 import { Avatar, Grid } from "@mui/material";
-import { useState } from 'react';
-import { useEffect } from 'react';
-import axios from 'axios';
-import { getCookie } from '../../utils/cookie';
-import { useParams } from 'react-router-dom';
+import { useState } from "react";
+import { useEffect } from "react";
+import axios from "axios";
+import { getCookie } from "../../utils/cookie";
+import { useParams } from "react-router-dom";
 
 const UserVideoComponent = ({ streamManager }) => {
-
   const userSeq = getUserInfo().data.user_seq;
   const [userOrders, setUserOrders] = useState({});
   var { gameSeq } = useParams(); // url에서 추출
@@ -26,7 +25,9 @@ const UserVideoComponent = ({ streamManager }) => {
           }
         );
 
-        const sortedOrderList = response.data.slice().sort((a, b) => a.userSeq - b.userSeq);
+        const sortedOrderList = response.data
+          .slice()
+          .sort((a, b) => a.userSeq - b.userSeq);
         const orderMap = {};
         sortedOrderList.forEach((item, index) => {
           orderMap[item.userSeq] = index + 1; // +1을 해서 1부터 시작하는 order 값 부여
@@ -97,7 +98,6 @@ const UserVideoComponent = ({ streamManager }) => {
             ) : ( 
               "Loading..."
             )}
-
           </Grid>
         </div>
       </div>

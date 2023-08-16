@@ -207,7 +207,7 @@ function GameList() {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/GameImage/GameList.jpg')",
-        fontFamily: 'Ramche',
+        fontFamily: "Ramche",
       }}
     >
       <Header />
@@ -220,12 +220,12 @@ function GameList() {
             <IconButton
               onClick={handleRefresh}
               style={{
-                marginRight: "1em",
+                // marginRight: "1em",
                 marginBottom: "0.5em",
-                fontFamily: 'Ramche',
+                fontFamily: "Ramche",
               }}
             >
-              <RefreshIcon style={{ color: "#ffffff", fontFamily: 'Ramche', }} />
+              <RefreshIcon style={{ color: "#ffffff", fontFamily: "Ramche" }} />
             </IconButton>
 
             {/* 검색 카테고리 추가 */}
@@ -239,7 +239,7 @@ function GameList() {
                 color: "#ffffff",
                 borderColor: "#ffffff", // 테두리 색상을 흰색으로 설정
                 height: "7vh",
-                fontFamily: 'Ramche',
+                fontFamily: "Ramche",
               }}
               // 검색 카테고리의 드롭다운 메뉴 스타일 변경
               MenuProps={{
@@ -248,7 +248,7 @@ function GameList() {
                     backgroundColor: "#333", // 드롭다운 메뉴 배경색 변경
                     color: "#ffffff", // 드롭다운 메뉴 텍스트 색상 변경
                     border: "1px solid #ffffff", // 드롭다운 메뉴 테두리 색상을 흰색으로 설정
-                    fontFamily: 'Ramche',
+                    fontFamily: "Ramche",
                   },
                 },
               }}
@@ -268,7 +268,7 @@ function GameList() {
                 marginRight: "1em",
                 backgroundColor: "rgba(0, 128, 255, 0.1)",
                 height: "7vh",
-                fontFamily: 'Ramche',
+                fontFamily: "Ramche",
               }}
               InputProps={{
                 style: {
@@ -276,14 +276,16 @@ function GameList() {
                   height: "7vh",
                   fontFamily: "Pretendard-Regular",
                   fontSize: "20px",
-                  fontFamily: 'Ramche',
+                  fontFamily: "Ramche",
                 },
-                inputProps: { style: { color: "#ffffff", fontFamily: 'Ramche', } },
+                inputProps: {
+                  style: { color: "#ffffff", fontFamily: "Ramche" },
+                },
               }}
               InputLabelProps={{
                 style: {
                   color: "#ffffff",
-                  fontFamily: 'Ramche',
+                  fontFamily: "Ramche",
                 },
               }}
             />
@@ -297,7 +299,7 @@ function GameList() {
                 fontFamily: "Pretendard-Regular",
                 fontWeight: "bold",
                 fontSize: "20px",
-                fontFamily: 'Ramche',
+                fontFamily: "Ramche",
               }}
               variant="contained"
               onClick={handleOpenCreateRoomModal}
@@ -314,7 +316,7 @@ function GameList() {
                 fontFamily: "Pretendard-Regular",
                 fontWeight: "bold",
                 fontSize: "20px",
-                fontFamily: 'Ramche',
+                fontFamily: "Ramche",
               }}
               variant="contained"
               onClick={handleQuickJoin}
@@ -350,7 +352,7 @@ function GameList() {
                 marginTop: "1%",
                 width: "100%", // 너비를 100%로 설정
                 height: "5vh",
-                fontFamily: 'Ramche',
+                fontFamily: "Ramche",
               }}
             >
               <Pagination
@@ -382,7 +384,11 @@ function GameList() {
         <Grid item xs={3} padding={"15px"}>
           <Paper
             elevation={10}
-            style={{ backgroundColor: "rgba(0, 0, 0, 0.8)", height: "81vh", fontFamily: 'Ramche', }}
+            style={{
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              height: "81vh",
+              fontFamily: "Ramche",
+            }}
           >
             <Box padding={"20px"}>
               <Grid direction="column" container>
@@ -394,7 +400,7 @@ function GameList() {
                       fontFamily: "Pretendard-Regular",
                       fontWeight: "bold",
                       fontSize: "25px",
-                      fontFamily: 'Ramche',
+                      fontFamily: "Ramche",
                     }}
                   >
                     친구 목록
@@ -407,7 +413,7 @@ function GameList() {
                       justifyContent: "center",
                       height: "50vh",
                       overflow: "auto",
-                      fontFamily: 'Ramche',
+                      fontFamily: "Ramche",
                     }}
                   >
                     <FriendList friends={friends} />
@@ -429,7 +435,7 @@ function GameList() {
                         height: "5vh",
                         fontFamily: "Pretendard-Regular",
                         fontSize: "15px",
-                        fontFamily: 'Ramche',
+                        fontFamily: "Ramche",
                       }}
                     >
                       Add

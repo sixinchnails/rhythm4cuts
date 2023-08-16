@@ -32,13 +32,14 @@ function Podium({ rank, src, color, podiumHeight }) {
           borderRadius: "15px", // Rounded corners
           padding: 2,
           marginBottom: 2,
+          fontFamily: 'Ramche',
         }}
       >
-        <Box sx={{ width: "100%",height: "100%" }}>
+        <Box sx={{ width: "100%", height: "100%" }}>
           <img
             src={src}
             alt={`${rank}등`}
-            style={{ width: "100%", height: "100%" }}
+            style={{ width: "80%", height: "80%", fontFamily: 'Ramche', }}
           />
         </Box>
         <img

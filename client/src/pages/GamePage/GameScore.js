@@ -83,7 +83,7 @@ function GameScore() {
 
       <Container >
         <Title
-          color={"white"}
+          color={"Black"}
           fontWeight={"bolder"}
           variant="h3"
           style={{ marginBottom: "50px" }}
