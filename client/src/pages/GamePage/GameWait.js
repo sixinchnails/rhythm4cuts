@@ -1,14 +1,11 @@
 /* eslint-disable */
-import {
-  setSession as userSession,
-  setConnection,
-  setGameseq,
-} from "../../store";
+import { setSession as userSession, setGameseq } from "../../store";
 import {
   Chat as ChatIcon,
   Check as CheckIcon,
   ExitToApp as ExitToAppIcon,
   PersonAdd as PersonAddIcon,
+  Tune,
 } from "@mui/icons-material";
 import {
   styled,
@@ -25,13 +22,12 @@ import {
 import { createConnection } from "../../openvidu/connectionInitialization";
 import UserVideoComponent from "../../components/Game/UserVideoComponent";
 import UserComponent from "../../components/Game/UserComponent";
-import React, { Component, useState, useEffect } from "react";
+import React, { Component, useState, useEffect, useRef } from "react";
 import LoginAlert from "../../components/Common/LoginAlert";
-import BoomAlert from '../../components/Common/BoomAlert';
+import BoomAlert from "../../components/Common/BoomAlert";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../../components/Game/HeaderPlay";
-import Next from "../../components/Game/NextToPlay";
 import { getCookie } from "../../utils/cookie";
 import { userInfo } from "../../apis/userInfo";
 import { OpenVidu } from "openvidu-browser";
@@ -39,7 +35,6 @@ import axios from "axios";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
-import UserInfo from "../../components/My/My_UserInfo";
 
 function InviteFriendsModal({
   isOpen,
@@ -97,8 +92,12 @@ function GameWait() {
         function () {
           console.log("게임 페이지 안 웹소켓 연결.");
           stompClient.subscribe(`/subscribe/song/${gameSeq}`, (message) => {
-            console.log("video start");
-            setGameStarted(true);
+            const receivedMessage = JSON.parse(message.body);
+            // 서버로부터 받은 메시지에 'START_GAME' 신호가 포함되어 있으면
+            if (receivedMessage.action === "START_GAME") {
+              console.log("video start");
+              setGameStarted(true);
+            }
           });
           console.log(userSeq);
           if (userSeq) {
@@ -117,7 +116,6 @@ function GameWait() {
     }
   }, [stomp]);
 
-  const location = useLocation();
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
   const [isBoomAlertOpen, setBoomAlertOpen] = useState(false); // 방 폭파 알람
   const dispatch = useDispatch(); // 리덕스 업데이트
@@ -126,27 +124,100 @@ function GameWait() {
   const [toUser, setToUser] = useState("");
   const [songSeq, setSongSeq] = useState(0);
 
-  {
-    console.log(songSeq);
-  }
-
   var { gameSeq } = useParams(); // url에서 추출
 
   dispatch(setGameseq(gameSeq));
 
   const session = useSelector((state) => state.roomState.session);
 
-  // const [myUserName, setMyUserName] = useState(undefined);
   const [connectSession, setConnectSession] = useState(undefined);
   const [mainStreamManager, setMainStreamManager] = useState(undefined); // 방장
   const [publisher, setPublisher] = useState(undefined); // 자신
   const [subscribers, setSubscribers] = useState([]); // 구독자
   const [players, setPlayers] = useState([]); // 통합
+  // 녹음 관련 상태
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioChunks, setAudioChunks] = useState([]);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const mediaRecorderRef = useRef(null);
+  const [gameReadyed, setGameReadyed] = useState(false); // 게임 준비 여부 상태
   const [gameStarted, setGameStarted] = useState(false); // 게임 시작 여부 상태
+  const [stream, setStream] = useState(null);
+
+  // 게임 시작 여부에 따른 녹음 시작/종료 처리
+  useEffect(() => {
+    // 게임이 시작되면 녹음 시작
+    if (gameStarted && !isRecording) {
+      startRecording();
+    }
+    // 게임이 종료되면 녹음 종료
+    else if (!gameStarted && isRecording) {
+      stopRecording();
+    }
+  }, [gameStarted]);
+
+  const startRecording = () => {
+    setIsRecording(true);
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: true,
+      })
+      .then((stream) => {
+        if (stream && stream instanceof MediaStream) {
+          setStream(stream);
+          setIsRecording(true);
+          setAudioChunks([]);
+          const mediaRecorder = new MediaRecorder(stream);
+
+          mediaRecorderRef.current = mediaRecorder;
+
+          // 녹음 데이터가 생성될 때마다 chunks 배열에 추가
+          mediaRecorderRef.current.ondataavailable = (e) => {
+            if (e.data.size > 0) {
+              setAudioChunks((chunks) => [...chunks, e.data]);
+            }
+          };
+
+          // 녹음이 종료되면 호출되는 이벤트 핸들러
+          mediaRecorderRef.current.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+            setAudioBlob(audioBlob);
+
+            const formData = new FormData();
+            formData.append("audio", audioBlob, "recorded-audio.wav");
+            formData.append("gameSeq", gameSeq);
+            formData.append("userSeq", userSeq);
+
+            try {
+              const response = await axios.post(
+                "https://i9b109.p.ssafy.io:8443/upload/user/audio",
+                formData,
+                {
+                  headers: {
+                    Authorization: `Bearer ${getCookie("access")}`,
+                    "Content-Type": "multipart/form-data",
+                  },
+                }
+              );
+              console.log("Audio URL:", response.data);
+            } catch (error) {
+              console.error("Error saving audio:", error);
+            }
+          };
+
+          // 녹음을 시작합니다.
+          mediaRecorderRef.current.start();
+        } else {
+          console.error("Stream is not valid");
+        }
+      })
+      .catch((error) => {
+        console.error("Error starting recording:", error);
+      });
+  };
+
   const access = getCookie("access");
   const [musicUrl, setMusicUrl] = useState(""); // 해당 노래 url
-
-  const [playerFix, setPlayerFix] = useState([]); // 배열 순서 고정
 
   // 상태 추가
   const [isInviteModalOpen, setInviteModalOpen] = useState(false);
@@ -196,39 +267,31 @@ function GameWait() {
     return response.data.data;
   };
 
-  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
   const [isSessionJoined, setSessionJoined] = useState(false); // 세션에 참여했는지 여부
 
   // Styled 버튼 ( css )
   const StyledIconButton = styled(IconButton)({
     color: "white",
     margin: "20px",
-    boxShadow: "10px 5px 5px rgba(0, 0, 0, 0.8)",
-    borderRadius: "10px",
+    boxShadow: "10px 10px 10px rgba(0, 0, 0, 0.8)",
+    borderRadius: "20px",
+
     "&:hover": {
-      backgroundColor: "#1976d2", // 마우스 오버 시 배경색 변경
+      color: "black",
+      backgroundColor: "white", // Darker background color on hover
+      transform: "scale(1.1)", // Enlarge the button on hover
+    },
+
+    "&:active": {
+      backgroundColor: "#0d47a1", // Even darker background color on click
+      transform: "scale(0.9)", // Slightly shrink the button on click
+      boxShadow: "none", // Remove the shadow on click
+    },
+
+    "& .MuiSvgIcon-root": {
+      fontSize: "2rem", // Adjust the icon size
     },
   });
-
-  // useEffect(() => {
-  //   console.log("useeffect.");
-  //   console.log("stomp object:", stomp);
-  //   stomp.connect(
-  //     {},
-  //     () => {
-  //       console.log("게임 페이지 안 웹소캣 연결.");
-  //       if (userSeq) {
-  //         stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
-  //           alert("게임 초대 요청 옴");
-  //         });
-  //       }
-  //     },
-  //     (error) => {
-  //       console.log("STOMP 연결 실패:", error);
-  //     }
-  //   );
-  // }, [userSeq]);
-
 
   // 친구 초대
   function InviteGame(toUserValue) {
@@ -279,7 +342,6 @@ function GameWait() {
 
   // 로그인 상태관리
   useEffect(() => {
-    connectWebSocket();
     userInfo()
       .then((res) => {
         if (res.status === 200) {
@@ -310,6 +372,37 @@ function GameWait() {
       });
   }, [gameSeq]);
 
+  const stopRecording = () => {
+    setIsRecording(false);
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state !== "inactive"
+    ) {
+      mediaRecorderRef.current.stop();
+
+      const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "recorded-audio.wav");
+      formData.append("gameSeq", gameSeq); // 게임 일련번호 추가
+      formData.append("userSeq", userSeq); // 유저 일련번호 추가
+
+      axios
+        .post("https://i9b109.p.ssafy.io:8443/upload/user/audio", formData, {
+          headers: {
+            Authorization: `Bearer ${getCookie("access")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          console.log("Audio URL:", response.data);
+          // 응답으로 받은 오디오 URL 활용 가능
+        })
+        .catch((error) => {
+          console.error("Error saving audio:", error);
+        });
+    }
+  };
+
   // 페이지 떠날 때 이벤트 리스너 등록 및 해제
   useEffect(() => {
     // beforeunload는 웹 브라우저에서 발생하는 이벤트 중 하나로, 사용자가 현재 페이지를 떠날 때 발생하는 이벤트
@@ -318,6 +411,10 @@ function GameWait() {
       window.removeEventListener("beforeunload", onBeforeUnload);
     };
   }, []);
+
+  const onBeforeUnload = () => {
+    stopRecording();
+  };
 
   // 시작 -----------------------------------------------------------------------------------------------------
   // 유저 토큰 발급
@@ -407,7 +504,7 @@ function GameWait() {
       });
 
       // 방 폭파 시키기
-      newSession.on("streamDestroyed", event => {
+      newSession.on("streamDestroyed", (event) => {
         // deleteSubscriber(event.stream.streamManager);
         // 방 인원수 줄이는 요청 보내기
         axios
@@ -415,11 +512,12 @@ function GameWait() {
             headers: {
               Authorization: "Bearer " + access,
             },
-          }).then(
-        ).then(
-          handleOpenBoomAlert(),
-          // navigate("/gameList")
-        )
+          })
+          .then()
+          .then(
+            handleOpenBoomAlert()
+            // navigate("/gameList")
+          );
       });
 
       newSession.on("exception", (exception) => {
@@ -428,7 +526,6 @@ function GameWait() {
 
       const token = await getToken(); // Implement getToken function
       const userData = await userInfo();
-      // console.log("유저 데이터가 뭐냐 : " + userData.data.user_seq);
 
       newSession
         .connect(token, { clientData: userData })
@@ -483,31 +580,32 @@ function GameWait() {
     }
   }
 
-  function handleGameReady() {
-    console.log("게임 시작 버튼 누름");
-    console.log(stomp);
+  // "게임 시작" 버튼을 눌렀을 때 동작 ---------------------------------------------------------------------------------
+  function handleGamePlay() {
+    // console.log("게임 시작 버튼 누름");
+    // console.log(stomp);
     // 게임 시작 메시지를 서버에 전송
     if (stomp && stomp.connected) {
-      console.log("연결 후 자동 재생 요청");
+      setGameStarted(true);
+      // console.log("연결 후 자동 재생 요청");
       const message = {
         gameSeq: gameSeq,
+        action: "START_GAME", // 게임 시작 신호를 표시하는 필드 추가
         // 필요한 경우 여기에 다른 데이터 추가
       };
       stomp.send("/public/song", {}, JSON.stringify(message));
     }
   }
-
-  // "채팅" 버튼을 클릭했을 때 동작 ---------------------------------------------------------------------------------
-  const handleChat = () => { };
+  // "게임 준비" 버튼을 눌렀을 때 동작
+  function handleGameReady() {
+    console.log("게임 준비 버튼 누름");
+    setGameReadyed(true);
+  }
 
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
   const handleExit = () => {
     onBeforeUnload();
     console.log("방 나갈거야 ~");
-  };
-
-  const onBeforeUnload = () => {
-    leaveSession();
   };
 
   // 방에서 나갈때 ㅣ 수정 필요
@@ -517,11 +615,6 @@ function GameWait() {
     // 나가는 플레이어를 배열에서 제거하고 상태 업데이트
     const updatedPlayers = players.filter((player) => player !== publisher);
     setPlayers(updatedPlayers);
-
-    // // 자신의 스트림 해제
-    // if (typeof publisher.stream.dispose === "function") {
-    //   publisher.stream.dispose();
-    // }
 
     // 구독 중인 스트림 해제
     subscribers.forEach((subscriber) => {
@@ -545,11 +638,8 @@ function GameWait() {
           Authorization: "Bearer " + access,
         },
       })
-      .then((response) => {
-        // navigate(`/GameList`)
-      })
+      .then((response) => { })
       .catch((error) => {
-        // Handle error if needed
         console.error("Error:", error);
       });
 
@@ -567,8 +657,8 @@ function GameWait() {
           },
         }
       );
-      console.log(response.data.data.songSeq);
       setSongSeq(response.data.data.songSeq);
+      console.log(songSeq);
     } catch (error) {
       console.log(error);
     }
@@ -598,11 +688,9 @@ function GameWait() {
   }, [songSeq]);
 
   // 가사 순서 변화 실행을 위한 코드 Start
-  // ///////////////////////////
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(-1); // 현재 인덱스 상태 추가
-  // const timeRanges = [[5, 32], [33, 61], [62, 91], [106, 134]]; // 예시 시간 범위 배열 (여기 부분을 lyrics에서 시작시간, 끝시간 가져와야함)
 
   const [timeRanges, setTimeRanges] = useState([]);
 
@@ -627,56 +715,70 @@ function GameWait() {
           item.endTime + 3,
         ]);
         setTimeRanges(newTimeRanges);
-        console.log(1);
+        console.log(timeRanges);
       }
-      console.log(timeRanges);
     } catch (error) {
       console.error("Error fetching time ranges:", error);
     }
   };
 
-  const [content, setContent] = useState("1번의 차례입니다.");
+  const [content, setContent] = useState("");
+  useEffect(() => {
+    if (currentIndex % 4 === 0) {
+      setContent("1번의 차례입니다.");
+    } else if (currentIndex % 4 === 1) {
+      setContent("2번의 차례입니다.");
+    } else if (currentIndex % 4 === 2) {
+      setContent("3번의 차례입니다.");
+    } else if (currentIndex % 4 === 3) {
+      setContent("4번의 차례입니다.");
+    } else if (currentIndex === -1) {
+      setContent("");
+    }
+  }, [currentIndex]);
 
-  if (currentIndex % 4 === 0) {
-    setContent("1번의 차례입니다.");
-  } else if (currentIndex % 4 === 1) {
-    setContent("2번의 차례입니다.");
-  } else if (currentIndex % 4 === 2) {
-    setContent("3번의 차례입니다.");
-  } else if (currentIndex % 4 === 3) {
-    setContent("4번의 차례입니다.");
-  }
+  // const handlePlayButtonClick = () => {
+  //   setCurrentIndex(0); // 처음 인덱스로 값을 초기화
+  //   setIsPlaying(true);
+  //   startTimer();
+  // };
 
-  const handlePlayButtonClick = () => {
-    setIsPlaying(true);
-    startTimer();
-    setCurrentIndex(0); // 처음 인덱스로 값을 초기화
-  };
+  // useEffect(() => {
+  //   handlePlayButtonClick();
+  // }, [handleGamePlay]);
 
-  const startTimer = () => {
-    const timerInterval = 1000; // 1초마다 타이머 업데이트
-    let currentTime = 0;
+  // const startTimer = () => {
+  //   const timerInterval = 1000; // 1초마다 타이머 업데이트
+  //   let currentTime = 0;
 
-    const timer = setInterval(() => {
-      currentTime += timerInterval / 1000; // 초 단위로 업데이트
+  //   const timer = setInterval(() => {
+  //     currentTime += timerInterval / 1000; // 초 단위로 업데이트
 
-      timeRanges.forEach(([startTime, endTime], index) => {
-        if (currentTime >= startTime && currentTime <= endTime) {
-          console.log(`Dynamic change at time ${currentTime}`);
-          setCurrentIndex(index); // 현재 인덱스 업데이트
-        }
-      });
+  //     timeRanges.forEach(([startTime, endTime], index) => {
+  //       if (
+  //         currentTime >= startTime &&
+  //         currentTime <= endTime &&
+  //         index != timeRanges.length - 1
+  //       ) {
+  //         console.log(`Dynamic change at time ${currentTime}`);
+  //         console.log(index);
+  //         console.log(startTime);
+  //         console.log(endTime);
+  //         console.log(currentTime);
+  //         setCurrentIndex(index); // 현재 인덱스 업데이트
+  //       } else if (endTime === currentTime && index == timeRanges.length - 1) {
+  //         console.log("종료");
+  //       }
+  //     });
 
-      if (currentTime >= timeRanges[timeRanges.length - 1][1]) {
-        clearInterval(timer);
-        setIsPlaying(false);
-        setCurrentIndex(-1); // 인덱스 초기화
-      }
-    }, timerInterval);
-  };
+  //     if (currentTime >= timeRanges[timeRanges.length - 1][1]) {
+  //       clearInterval(timer);
+  //       setIsPlaying(false);
+  //       setCurrentIndex(-1); // 인덱스 초기화
+  //     }
+  //   }, timerInterval);
+  // };
 
-  // ///////////////////////////
-  // 가사 순서 변화 실행을 위한 코드 End
 
   return (
     <div
@@ -692,19 +794,18 @@ function GameWait() {
       <Header />
 
       <Grid container>
-        {/* TOP : 게임 시작 전*/}
+        {/* TOP : 게임 시작 후 / 전*/}
         {gameStarted ? (
           <Grid container alignItems="center" justifyContent="center">
             <Card
               style={{
                 width: "55vw",
-                height: "40vh",
+                height: "45vh",
                 background: "transparent",
                 borderRadius: "30px",
               }}
             >
-              {/* 대기중 비디오 */}
-              {gameStarted && (
+              <div>
                 <video
                   src={musicUrl}
                   controls={false}
@@ -716,25 +817,22 @@ function GameWait() {
                     objectFit: "cover",
                   }}
                 />
-              )}
+                <div
+                  style={{
+                    justifyContent: "center",
+                    display: "flex",
+                    alignContent: "center",
+                    color: "white",
+                  }}
+                >
+                  {content}
+                </div>
+              </div>
             </Card>
-            <div
-              style={{
-                width: "20vw",
-                height: "5vh",
-                marginLeft: "5%",
-                backgroundColor: "none",
-                color: "gray",
-                fontWeight: "bolder",
-              }}
-            >
-              {content}
-            </div>
           </Grid>
         ) : (
           // 게임 시작 하기 전 춤추는 동영상 ----------------------------------------------------------------------
           <Grid container>
-            {/* Top : LEFT */}
             <Grid
               item
               xs={8}
@@ -775,7 +873,7 @@ function GameWait() {
             >
               <Grid container spacing={2}>
                 {/* 친구 초대 버튼 */}
-                {players.length !== 4 && (
+                {players.length !== 4 ? (
                   <Grid item xs={5} style={{ margin: "1px" }}>
                     <StyledIconButton
                       onClick={() => {
@@ -795,9 +893,10 @@ function GameWait() {
                       </Typography>
                     </StyledIconButton>
                   </Grid>
-                )}
+                ) : null}
+
                 {/* "나가기" 버튼 */}
-                {players.length !== 4 && (
+                {players.length !== 4 ? (
                   <Grid item xs={5} style={{ margin: "1px" }}>
                     <StyledIconButton
                       onClick={handleExit}
@@ -815,35 +914,64 @@ function GameWait() {
                       </Typography>
                     </StyledIconButton>
                   </Grid>
-                )}
-                {/* "게임 시작" 버튼 : 4명이 차면 뜬다!! */}
-                {players.length === 4 ? (
-                  <Grid item xs={10} style={{ margin: "1px" }}>
-                    <StyledIconButton
-                      onClick={handleGameReady}
-                      style={{ width: "30vw" }}
-                    >
-                      <CheckIcon />
-                      <Typography
-                        style={{
-                          fontFamily: "Pretendard-Regular",
-                          fontSize: "20px",
-                          padding: "15px",
-                        }}
-                      >
-                        게임 시작
-                      </Typography>
-                    </StyledIconButton>
-                  </Grid>
                 ) : null}
+
+                {/* "게임 준비" 버튼 : 플레이어 4명 & 게임 준비완료 전 */}
+                {players.length === 4 && !gameReadyed
+                  ? (
+                    <Grid item xs={10} style={{ margin: "1px" }}>
+                      <StyledIconButton
+                        onClick={handleGameReady}
+                        style={{ width: "30vw" }}
+                      >
+                        <CheckIcon />
+                        <Typography
+                          style={{
+                            fontFamily: "Pretendard-Regular",
+                            fontSize: "20px",
+                            padding: "15px",
+                          }}
+                        >
+                          게임 준비
+                        </Typography>
+                      </StyledIconButton>
+                    </Grid>
+                  ) : null}
+
+                {/* "게임 시작" 버튼 : 플레이어 4명 & 게임 준비완료 후 */}
+                {players.length === 4 && gameReadyed
+                  ? (
+                    <Grid item xs={10} style={{ margin: "1px" }}>
+                      <StyledIconButton
+                        // onClick={handleGamePlay && handlePlayButtonClick}
+                        onClick={() => {
+                          handleGamePlay();
+                          // handlePlayButtonClick();
+                        }}
+                        style={{ width: "30vw" }}
+                      >
+                        <CheckIcon />
+                        <Typography
+                          style={{
+                            fontFamily: "Pretendard-Regular",
+                            fontSize: "20px",
+                            padding: "15px",
+                          }}
+                        >
+                          게임 시작
+                        </Typography>
+                      </StyledIconButton>
+                    </Grid>
+                  ) : null}
               </Grid>
             </Grid>
           </Grid>
         )}
+        {/* 아래 4개의 유저 박스 -----------------------------------------------------------------------------------------*/}
         {/* Bottom */}
         <Grid container>
-          {gameStarted ? (
-            // 게임시작 버튼 클릭 후 후 후! -------------------------------------------------------------------------------------
+          {gameReadyed ? (
+            // 게임준비 버튼 클릭 후 후 후! -------------------------------------------------------------------------------------
             <Grid
               style={{
                 height: "25vh",
@@ -892,8 +1020,10 @@ function GameWait() {
                 </Grid>
               ))}
             </Grid>
-          ) : (
-            // 게임시작 버튼 클릭 전 전 전! --------------------------------------------------------------------------------
+          ) : null}
+          
+          {/* 게임준비 버튼 클릭 전 전 전! -------------------------------------------------------------------------------- */}
+          {!gameReadyed ? (
             <Grid
               style={{
                 height: "25vh",
@@ -939,7 +1069,7 @@ function GameWait() {
                 </Grid>
               ))}
             </Grid>
-          )}
+          ) : null}
         </Grid>
       </Grid>
 
