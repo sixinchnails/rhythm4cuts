@@ -159,7 +159,7 @@ function RoomList({ room, onRoomClick }) {
                     height: "20px",
                   }}
                 >
-                  <Typography variant="body2">
+                  <Typography variant="body2" style={{fontFamily: 'Ramche',}}>
                     {isFull ? "FULL" : `방 인원수: ${room.headcount} / 4`}
                   </Typography>
                 </Box>

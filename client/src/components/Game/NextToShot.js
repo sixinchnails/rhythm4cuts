@@ -30,7 +30,7 @@ function NextToShot() {
         marginTop={5}
       >
         <Grid item>
-          <Typography variant="h5">
+          <Typography variant="h5" style={{fontFamily: 'Ramche',}}>
             {seconds}초 후 사진 촬영 화면으로 넘어갑니다.&nbsp;&nbsp;
           </Typography>
         </Grid>
@@ -39,6 +39,7 @@ function NextToShot() {
             variant="contained"
             color="warning"
             onClick={() => navigate("/")}
+            style={{fontFamily: 'Ramche',}}
           >
             나가기
           </Button>

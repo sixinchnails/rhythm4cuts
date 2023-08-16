@@ -43,21 +43,21 @@ function Sidebar() {
 
   return (
     <ThemeProvider theme={theme}>
-      <List style={{ marginTop: "10%" }}>
+      <List style={{ marginTop: "10%", fontFamily: 'Ramche', }}>
         {menus.map((menu, index) => (
           <div key={index}>
-            <Divider sx={{ backgroundColor: "blue" }} />
+            <Divider sx={{ backgroundColor: "blue", fontFamily: 'Ramche', }} />
             <Link
               to={menu.path}
-              style={{ textDecoration: "none", color: "inherit" }}
+              style={{ textDecoration: "none", color: "inherit", fontFamily: 'Ramche', }}
             >
               <ListItem button selected={pathName === menu.path}>
                 {menu.icon && (
                   <ListItemIcon
                     style={{
-                      fontFamily: "Pretendard-Regular",
                       fontWeight: "bold",
                       color: "white",
+                      fontFamily: 'Ramche',
                     }}
                   >
                     {menu.icon}
@@ -67,7 +67,7 @@ function Sidebar() {
                   primary={menu.name}
                   primaryTypographyProps={{
                     style: {
-                      fontFamily: "Pretendard-Regular",
+                      fontFamily: 'Ramche',
                       fontWeight: "bold",
                       color: pathName === menu.path ? "black" : "white", // 현재 위치가 메뉴 항목의 경로와 일치하면 글자색을 검정색으로 설정합니다.
                       fontSize: "larger",
@@ -80,7 +80,7 @@ function Sidebar() {
               menu.subMenu.map((subItem, subIndex) => (
                 <Link
                   to={subItem.path}
-                  style={{ textDecoration: "none", color: "inherit" }}
+                  style={{ textDecoration: "none", color: "inherit", fontFamily: 'Ramche', }}
                 >
                   <ListItem
                     button
@@ -94,7 +94,7 @@ function Sidebar() {
                   </ListItem>
                 </Link>
               ))}
-            <Divider sx={{ backgroundColor: "blue" }} />
+            <Divider sx={{ backgroundColor: "blue", fontFamily: 'Ramche', }} />
           </div>
         ))}
       </List>

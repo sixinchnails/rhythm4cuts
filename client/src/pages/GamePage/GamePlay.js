@@ -92,7 +92,7 @@ function GamePlay() {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(-1); // 현재 인덱스 상태 추가
-  const timeRanges = [[2, 5], [6, 11], [11, 14], [15, 18]]; // 예시 시간 범위 배열
+  const timeRanges = [[5, 32], [33, 61], [62, 91], [106, 134]]; // 예시 시간 범위 배열 (여기 부분을 lyrics에서 시작시간, 끝시간 가져와야함)
 
   const handlePlayButtonClick = () => {
     setIsPlaying(true);
@@ -109,8 +109,6 @@ function GamePlay() {
 
       timeRanges.forEach(([startTime, endTime], index) => {
         if (currentTime >= startTime && currentTime <= endTime) {
-          // 해당 시간 범위에 들어왔을 때 동적인 변화를 적용
-          // 예를 들어 스타일 변경이나 컴포넌트 렌더링 등
           console.log(`Dynamic change at time ${currentTime}`);
           setCurrentIndex(index); // 현재 인덱스 업데이트
         }
@@ -147,10 +145,6 @@ function GamePlay() {
   useEffect(() => {
     // connectWebSocket(gameSeq);
   }, [gameSeq]);
-
-  // console.log("GameSeq: " + gameSeq);
-  // console.log("play session: " + session);
-  // console.log("connectionToken: " + connectionToken);
 
   // 해당 노래 영상 가져오기
   const [songSeq, setSongSeq] = useState(117);
@@ -228,10 +222,10 @@ function GamePlay() {
             {/* Record 기능을 위한 코드 End */}
 
             <button onClick={() => { handleButtonClick(); handlePlayButtonClick(); }} disabled={isPlaying}>Music Start</button>
-            {currentIndex !== -1 && <p style={{color:"white"}}>Current index: {currentIndex + 1}</p>}
+            {currentIndex !== -1 && <p style={{color:"white"}}>노래 순서: {currentIndex + 1}</p>}
             {videoVisible && (
               <video
-                controls={true} // false로 바꿔주자\
+                controls={false}
                 autoPlay
                 loop
                 style={{

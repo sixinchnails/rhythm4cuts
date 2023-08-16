@@ -22,7 +22,7 @@ function SidebarItem({ menu, isActive, isSub, lastSubItem }) {
   // lastSubItem가 true면 "last-subitem" 클래스를 적용.
   return (
     <div
-      style={{ fontFamily: "Pretendard-Regular", fontWeight: "bold" }}
+      style={{ fontFamily: "Pretendard-Regular", fontWeight: "bold", fontFamily: 'Ramche', }}
       className={`sidebar-item ${isSub ? "sidebar-item-sub" : ""} ${
         isTitle ? "sidebar-item-title" : ""
       } ${
@@ -42,6 +42,7 @@ function SidebarItem({ menu, isActive, isSub, lastSubItem }) {
           to={menu.path}
           style={{
             textDecoration: "none",
+            fontFamily: 'Ramche',
             color:
               isActive || (menu.name === "가입 정보" && isMyModifyPage)
                 ? "black"

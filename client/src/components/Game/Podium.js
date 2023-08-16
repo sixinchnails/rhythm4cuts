@@ -32,19 +32,20 @@ function Podium({ rank, src, color, crownWidth }) {
           borderRadius: "15px", // Rounded corners
           padding: 2,
           marginBottom: 2,
+          fontFamily: 'Ramche',
         }}
       >
-        <Box sx={{ width: "100%", height: "50%" }}>
+        <Box sx={{ width: "100%", height: "50%", fontFamily: 'Ramche', }}>
           <img
             src={src}
             alt={`${rank}등`}
-            style={{ width: "100%", height: "100%" }}
+            style={{ width: "100%", height: "100%", fontFamily: 'Ramche', }}
           />
         </Box>
         <img
           src={`/images/${rank}.png`}
           alt={`${rank}등`}
-          style={{ width: crownWidth, height: "50%" }}
+          style={{ width: crownWidth, height: "50%", fontFamily: 'Ramche', }}
         />
       </Paper>
     </animated.div>

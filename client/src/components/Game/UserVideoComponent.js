@@ -36,7 +36,7 @@ const UserVideoComponent = ({ streamManager, gameStarted }) => {
         {gameStarted ? null : (
           <div
             style={{
-              fontFamily: "Pretendard-Regular",
+              fontFamily: 'Ramche',
               fontSize: "20px",
               color: "white",
               margin: "20px",
@@ -45,17 +45,17 @@ const UserVideoComponent = ({ streamManager, gameStarted }) => {
               justifyContent: "center",
             }}
           >
-            <Grid item xs={3} style={{ marginRight: "10px" }}>
+            <Grid item xs={3} style={{ marginRight: "10px", fontFamily: 'Ramche', }}>
               <Avatar
                 src={getProfilePic(getUserInfo().data.score_sum)}
-                style={{ width: "40px", height: "40px", flexShrink: 0 }}
+                style={{ width: "40px", height: "40px", flexShrink: 0, fontFamily: 'Ramche', }}
               />
             </Grid>
 
             <Grid
               item
               xs={7}
-              style={{ fontFamily: "Pretendard-Regular", fontSize: "20px" }}
+              style={{ fontSize: "20px", fontFamily: 'Ramche', }}
             >
               {getUserInfo().data.nickname}
             </Grid>

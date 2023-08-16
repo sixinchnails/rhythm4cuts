@@ -57,9 +57,10 @@ function UserVideo({ roomSession, userToken }) {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        fontFamily: 'Ramche',
       }}
     >
-      <h2 style={{ color: "white" }}> 나와라 얍 </h2>
+      <h2 style={{ color: "white", fontFamily: 'Ramche', }}> 나와라 얍 </h2>
       <video ref={videoRef} style={{ width: "100%", height: "100%" }} />
     </div>
   );

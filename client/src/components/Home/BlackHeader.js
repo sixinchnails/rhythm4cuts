@@ -68,11 +68,11 @@ const LoginMypageHeader = () => {
           color="error"
           variant={hasNotification ? "dot" : "standard"}
           onClick={onNotificationClick}
-          style={{ marginRight: "20px" }}
+          style={{ marginRight: "20px", fontFamily: 'Ramche', }}
         >
           <NotificationsIcon />
         </Badge>
-        <Link className="Header_Login2" to="/" onClick={checkLogin}>
+        <Link className="Header_Login2" to="/" onClick={checkLogin} style={{fontFamily: 'Ramche',}}>
           Logout
         </Link>
       </div>
