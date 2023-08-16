@@ -119,7 +119,7 @@ function GameWait() {
 
   const location = useLocation();
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
-  const [isBoomAlertOpen, setBoomAlertOpen] = useState(false); // 로그인 알람
+  const [isBoomAlertOpen, setBoomAlertOpen] = useState(false); // 방 폭파 알람
   const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate(); // 페이지 이동
   const [userSeq, setUserSeq] = useState("");
@@ -179,8 +179,8 @@ function GameWait() {
   };
   const handleCloseBoomAlert = () => {
     setBoomAlertOpen(false);
+    connectSession.disconnect();
     navigate("/GameList");
-
   };
 
   //친구 목록 가져오는 함수
@@ -229,6 +229,8 @@ function GameWait() {
   //   );
   // }, [userSeq]);
 
+
+  // 친구 초대
   function InviteGame(toUserValue) {
     var request = {
       fromUser: userSeq,
@@ -414,9 +416,7 @@ function GameWait() {
               Authorization: "Bearer " + access,
             },
           }).then(
-
         ).then(
-
           handleOpenBoomAlert(),
           // navigate("/gameList")
         )

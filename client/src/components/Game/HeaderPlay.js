@@ -3,14 +3,18 @@ import Badge from "@mui/material/Badge";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket"; // Import the useWebSocket hook
 import { useState } from "react";
 import YourModalComponent from "../Common/ConfirmFriend";
+import MessageAlert from "../Common/MessageAlert";
 
-const LoginMypageHeader = () => {
+function LoginMypageHeader() {
   const { hasNotification, resetNotification, friendRequest } = useWebSocket(); // Get the required states and functions from the hook
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+  const [isMessageModalOpen, setMessageModalOpen] = useState(false);
+
 
   const onNotificationClick = () => {
     if (!hasNotification) {
-      window.alert("알림이 없습니다!"); // 알림 상태가 false일 때 메시지 표시
+      setMessageModalOpen(true);
+      // window.alert("알림이 없습니다!"); // 알림 상태가 false일 때 메시지 표시
     } else {
       resetNotification();
       setIsModalOpen(true); // 모달 열기
@@ -64,6 +68,13 @@ const LoginMypageHeader = () => {
           onClose={() => setIsModalOpen(false)}
         />
       )}
+
+      {/* 알림 모달 */}
+      <MessageAlert
+        isOpen={isMessageModalOpen}
+        onClose={() => setMessageModalOpen(false)}
+      />
+
     </div>
   );
 };
