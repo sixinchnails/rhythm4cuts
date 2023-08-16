@@ -2,9 +2,35 @@ import { List, ListItem, Typography } from "@mui/material";
 import React from "react";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
+import { useEffect, useState } from 'react';
 
-function FriendList({ friends }) {
-  // 먼저 "온라인 상태"에 따라 정렬하고, 같은 "온라인 상태"를 가진 친구들 사이에서 "이름"에 따라 정렬합니다
+function FriendList({ userSeq, refreshCounter }) {
+
+  //친구 목록 가져오는 함수
+  const [friends, setFriends] = useState([]);
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const response = await axios.get(
+          `https://i9b109.p.ssafy.io:8443/friend/list/` + userSeq, {
+          headers: {
+            Authorization: "Bearer " + getCookie("access"),
+          },
+        });
+
+        const fetchedFriends = response.data.data;
+        setFriends(fetchedFriends);
+
+      } catch (error) {
+        console.error("친구목록 가져오는데 에러생김 :", error);
+      }
+    };
+
+    fetchFriends();
+  }, [userSeq, refreshCounter]);
+
+  // 친구를 온라인 상태와 이름으로 정렬합니다
   const sortedFriends = [...friends].sort((a, b) => {
     if (a.isOnline === b.isOnline) {
       // 두 친구의 온라인 상태가 동일한 경우 이름으로 정렬합니다
@@ -27,19 +53,7 @@ function FriendList({ friends }) {
             style={{ color: "#ffffff", fontFamily: "Ramche" }}
             component="span"
           >
-            {friend.isOnline ? "🟢" : "⚫"}
-          </Typography>
-          <Typography
-            variant="body1"
-            style={{
-              color: "#ffffff",
-              paddingLeft: "10px",
-              padding: "5px",
-              fontFamily: "Ramche",
-            }}
-            component="span"
-          >
-            {friend.name}
+            {friend.isOnline ? "🟢" : "⚫"} {friend.name}
           </Typography>
         </ListItem>
       ))}

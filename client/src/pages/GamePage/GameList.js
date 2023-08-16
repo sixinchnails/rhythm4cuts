@@ -36,8 +36,9 @@ function GameList() {
   const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
   const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
   const [page, setPage] = useState(1); // 페이지 상태
-  const friends = useSelector(state => state.GameList_Friend); // 친구 리스트
   const itemsPerPage = 6; // 한 페이지당 표시할 방 수
+  const [userSeq, setUserSeq] = useState(""); // 유저시퀀스
+  const [refreshCounter, setRefreshCounter] = useState(0); // 새로고침 카운터 추가
 
   // 친구 추가
   const [isAddFriendModalOpen, setAddFriendModalOpen] = useState(false);
@@ -73,6 +74,7 @@ function GameList() {
     userInfo()
       .then(res => {
         if (res.status === 200) {
+          setUserSeq(res.data.user_seq);
         } else {
           // 로그인 상태가 아니라면 알림.
           handleOpenLoginAlert();
@@ -107,7 +109,6 @@ function GameList() {
     const getRooms = async () => {
       const roomsData = await fetchRooms();
       setRooms(roomsData);
-     
     };
     getRooms();
   }, []);
@@ -116,6 +117,7 @@ function GameList() {
   const handleRefresh = async () => {
     const roomsData = await fetchRooms();
     setRooms(roomsData);
+    setRefreshCounter(prevCounter => prevCounter + 1); // 새로고침 카운터 증가
   };
 
   // 검색어에 따라 방 리스트 필터링
@@ -131,7 +133,7 @@ function GameList() {
       case "songSeq":
         return room.songSeq
           .toString()
-          .toLowerCase() 
+          .toLowerCase()
           .includes(searchTerm.toLowerCase()); // 노래 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
       default:
         return true; // 검색 카테고리가 설정되지 않은 경우, 모든 방을 표시
@@ -216,7 +218,7 @@ function GameList() {
         <Grid item xs={9} padding={"20px"}>
           {/* Left : Top */}
           <Box display="flex" justifyContent="flex-end" marginBottom="1%">
-            {/* 새로고침 아이콘 : 기능 추가예정 */}
+            {/* 새로고침 아이콘 */}
             <IconButton
               onClick={handleRefresh}
               style={{
@@ -411,7 +413,7 @@ function GameList() {
                       fontFamily: "Ramche",
                     }}
                   >
-                    <FriendList friends={friends} />
+                    <FriendList userSeq={userSeq} refreshCounter={refreshCounter} />
                   </Box>
 
                   <Box
