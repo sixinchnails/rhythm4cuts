@@ -65,14 +65,15 @@ class SplitWavAudioMubin():
 # 곡명, 파트로 매개변수 변경 필요
 def getLyricsScore(song_seq, song_order, file):
     try:
-        OPENAI_API_KEY = "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"
+        OPENAI_API_KEY = "#"
         openai.api_key = OPENAI_API_KEY
 
         global conn
         cur = conn.cursor()
 
-        cur.execute("SELECT lyric FROM LYRICS WHERE song_seq = %s AND song_order = %s", (song_seq, song_order))
+        cur.execute("SELECT lyric FROM lyrics WHERE song_seq = %s AND song_order = %s", (song_seq, song_order))
         lyricsAnswer = cur.fetchone()
+        print(lyricsAnswer)
         #
         #     #lyricsAnswer =
         #     lyricsSize = len(lyricsAnswer)
@@ -81,11 +82,13 @@ def getLyricsScore(song_seq, song_order, file):
         # 음성 인식
         # transcript = openai.Audio.transcribe("whisper-1", audio_file)
         transcript = openai.Audio.transcribe("whisper-1", file)
-
+        print("transcript" + transcript['text'])
         # 사용자 입력 가사
         userLyrics = transcript['text']
 
         lyricsAccuracy = SequenceMatcher(None, lyricsAnswer[0], userLyrics)
+
+        print(lyricsAccuracy)
 
         # 파일을 원하는 방식으로 처리하는 로직을 작성합니다.
         # 여기에서는 가사 정확도를 간단히 리턴하는 예제를 보여줍니다.
@@ -98,7 +101,8 @@ def getLyricsScore(song_seq, song_order, file):
 
 def getMelodyScore(filename):
     answerFile = ".//0_naul.wav"
-
+    
+    print("[getMelodyScore] 시작")
     score = correlate(filename, answerFile)
 
     return {

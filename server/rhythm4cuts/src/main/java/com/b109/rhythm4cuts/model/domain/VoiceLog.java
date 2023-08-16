@@ -21,18 +21,13 @@ public class VoiceLog {
     @JoinColumn(name = "game_log_seq")
     private GameLog gameLog;
 
-    //가사 일련번호
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lyrics_seq")
-    private Lyrics lyrics;
-
     //음성 파일 이름
     @Column(name = "voice_file")
     private String voiceFile;
 
-    //해당 부분을 부른 후 얻은 점수
-    @Column(name = "game_score")
-    private Integer gameScore;
+    //음성 파일 url
+    @Column(name = "voice_url", length = 500)
+    private String voiceUrl;
 
     //로그 생성일시
     @CreationTimestamp

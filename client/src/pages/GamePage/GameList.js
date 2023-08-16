@@ -1,15 +1,5 @@
 /*eslint-disable*/
-import {
-  Grid,
-  Pagination,
-  Box,
-  Button,
-  Paper,
-  TextField,
-  IconButton,
-  Select,
-  MenuItem,
-} from "@mui/material";
+import { Grid, Pagination, Box, Button, Paper, TextField, IconButton, Select, MenuItem } from "@mui/material";
 import { React, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
@@ -36,8 +26,9 @@ function GameList() {
   const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
   const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
   const [page, setPage] = useState(1); // 페이지 상태
-  const friends = useSelector(state => state.GameList_Friend); // 친구 리스트
   const itemsPerPage = 6; // 한 페이지당 표시할 방 수
+  const [userSeq, setUserSeq] = useState(""); // 유저시퀀스
+  const [refreshCounter, setRefreshCounter] = useState(0); // 새로고침 카운터 추가
 
   // 친구 추가
   const [isAddFriendModalOpen, setAddFriendModalOpen] = useState(false);
@@ -73,6 +64,7 @@ function GameList() {
     userInfo()
       .then(res => {
         if (res.status === 200) {
+          setUserSeq(res.data.user_seq);
         } else {
           // 로그인 상태가 아니라면 알림.
           handleOpenLoginAlert();
@@ -115,6 +107,7 @@ function GameList() {
   const handleRefresh = async () => {
     const roomsData = await fetchRooms();
     setRooms(roomsData);
+    setRefreshCounter(prevCounter => prevCounter + 1); // 새로고침 카운터 증가
   };
 
   // 검색어에 따라 방 리스트 필터링
@@ -215,7 +208,7 @@ function GameList() {
         <Grid item xs={9} padding={"20px"}>
           {/* Left : Top */}
           <Box display="flex" justifyContent="flex-end" marginBottom="1%">
-            {/* 새로고침 아이콘 : 기능 추가예정 */}
+            {/* 새로고침 아이콘 */}
             <IconButton
               onClick={handleRefresh}
               style={{
@@ -252,7 +245,7 @@ function GameList() {
             >
               <MenuItem value={"gameSeq"}>방 번호</MenuItem>
               <MenuItem value={"title"}>방 이름</MenuItem>
-              <MenuItem value={"songSeq"}>노래 일련번호</MenuItem>
+              <MenuItem value={"songSeq"}>노래 제목</MenuItem>
             </Select>
 
             <TextField
@@ -410,7 +403,7 @@ function GameList() {
                       fontFamily: "Ramche",
                     }}
                   >
-                    <FriendList friends={friends} />
+                    <FriendList userSeq={userSeq} refreshCounter={refreshCounter} />
                   </Box>
 
                   <Box
