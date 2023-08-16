@@ -22,4 +22,5 @@ public interface FilmService {
     public Resource downFilm(String filmName) throws Exception;
     public List<Resource> downDailyFilm(int year, int month, int day, int page);
     public List<FilmResponseDto> getUserPhotoList(int userSeq);
+    public List<FilmResponseDto> getDailyPhotoList(int year, int month, int day, int page);
 }
