@@ -17,7 +17,7 @@ import { fetchToken, closeSession, setSession } from "../../store"; // 추가된
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import UserVideo from "../../components/Game/UserVideo";
+import UserVideoShot from "../../components/Game/UserVideoShot";
 import Header from "../../components/Game/HeaderPlay";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
@@ -92,12 +92,19 @@ function GamePlay() {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(-1); // 현재 인덱스 상태 추가
-  const timeRanges = [
-    [5, 32],
-    [33, 61],
-    [62, 91],
-    [106, 134],
-  ]; // 예시 시간 범위 배열 (여기 부분을 lyrics에서 시작시간, 끝시간 가져와야함)
+  // const timeRanges = []; // 예시 시간 범위 배열 (여기 부분을 lyrics에서 시작시간, 끝시간 가져와야함)
+  const [timeRanges, setTimeRanges] = useState([]);
+  const bringTimeRanges = async () => {
+    try {
+      const headers = {
+        Authorization: "Bearer " + getCookie("access"),
+      };
+      const response = await axios.get(
+        `https://i9b109.p.ssafy.io:8443/lyrics/118`,
+        { headers }
+      );
+    } catch (error) {}
+  };
 
   const handlePlayButtonClick = () => {
     setIsPlaying(true);
@@ -131,7 +138,9 @@ function GamePlay() {
   // 가사 순서 변화 실행을 위한 코드 End
 
   useEffect(() => {
+    console.log("-------stomp not connect");
     stomp.connect({}, () => {
+      console.log("---------stomp connect");
       // 특정 토픽 구독
       stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
         console.log("video start");

@@ -1,38 +1,25 @@
-/* eslint-disable */
-import {
-  Container,
-  Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Box,
-  Typography,
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Container, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import Next from "../../components/Game/NextToShot";
-import { useSelector } from "react-redux";
 import Podium from "../../components/Game/Podium";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import LoginAlert from "../../components/Common/LoginAlert";
 import { userInfo } from "../../apis/userInfo";
-// import FlowerAnimation from "../../components/Game/FlowerAnimation";
 import Header from "../../components/Game/HeaderPlay";
 import "./GameScore.css";
-import LoginAlert from "../../components/Common/LoginAlert";
-import { useState } from "react";
+import { getCookie } from '../../utils/cookie';
 
 const Root = styled("div")({
   width: "100%",
   height: "100vh",
-  position: "relative", // 배경 이미지를 감싸는 레이아웃 컨테이너를 상대적으로 설정
+  position: "relative",
   backgroundPosition: "center",
   backgroundSize: "cover",
   backgroundRepeat: "no-repeat",
-  backgroundImage: "url('/images/Game_Shot.png')", // 배경 이미지 URL
-  zIndex: 0, // 위치확인
+  backgroundImage: "url('/images/Game_Shot.png')",
+  zIndex: 0,
 });
 
 const Title = styled(Typography)({
@@ -47,24 +34,39 @@ const PodiumContainer = styled(Box)({
 });
 
 function GameScore() {
+
   const navigate = useNavigate();
+  const [isLoginAlertOpen, setLoginAlertOpen] = useState(false);
+  const [gameResults, setGameResults] = useState([]);
+  var { gameSeq } = useParams(); // url에서 추출
 
-  //로그인 상태 확인
-
-  try {
+  // 로그인 상태 확인
+  useEffect(() => {
     userInfo()
       .then((res) => {
         if (res.status === 200) {
+          // 로그인 상태일 때 axios로 데이터를 가져옴
+          axios.get(`https://i9b109.p.ssafy.io:8443/wait/order/${gameSeq}`, {
+            headers: {
+              Authorization: "Bearer " + getCookie("access"),
+            },
+          })
+            .then((response) => {
+              // 가져온 데이터를 score 순서로 정렬하여 저장
+              const sortedResults = response.data.sort((a, b) => b.score - a.score);
+              setGameResults(sortedResults);
+            })
+            .catch((error) => {
+              console.error("Error fetching game results:", error);
+            });
         }
       })
       .catch((error) => {
         handleOpenLoginAlert();
       });
-  } catch (error) {
-    console.log(error);
-  }
+  }, []);
 
-  const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
+
 
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {
@@ -75,50 +77,56 @@ function GameScore() {
     navigate("/Login");
   };
 
-  let Result = useSelector((state) => state.GameScore_Result);
-
   return (
     <Root>
       <Header />
-      {/* <FlowerAnimation />{" "} */}
-      {/* FlowerAnimation 컴포넌트를 Root 컴포넌트로 감싸줍니다 */}
-      <Container>
+
+      <Container >
         <Title
-          color={"white"}
+          color={"Black"}
           fontWeight={"bolder"}
           variant="h3"
-          style={{ marginBottom: "10%" }}
+          style={{ marginBottom: "50px" }}
         >
           Score Board
         </Title>
-        <Grid container spacing={3}>
+
+        {/* Middle */}
+        <Grid container spacing={5} style={{ padding: "5px" }}>
+
+          {/* Middle_Left : 시상대 */}
           <Grid item xs={12} md={5}>
-            <PodiumContainer>
-              <Podium
-                rank="Silver"
-                src={Result[1].imgSrc}
-                color="#C0C0C0"
-                height="40vh"
-                crownWidth="80%"
-              />
-              <Podium
-                rank="Gold"
-                src={Result[0].imgSrc}
-                color="#FFD700"
-                height="50vh"
-                crownWidth="100%"
-              />
-              <Podium
-                rank="Bronze"
-                src={Result[2].imgSrc}
-                color="#CD7F32"
-                height="25vh"
-                crownWidth="50%"
-              />
+            <PodiumContainer style={{margin: "10px"}}>
+              {gameResults.length >= 2 && (
+                <Podium
+                  rank="Silver"
+                  src={`/images/${gameResults[1].profile_img_seq}.png`}
+                  color="#C0C0C0"
+                  podiumHeight="35vh"
+                  crownWidth="80%"
+                />
+              )}
+              {gameResults.length >= 1 && (
+                <Podium
+                  rank="Gold"
+                  src={`/images/${gameResults[0].profile_img_seq}.png`}
+                  color="#FFD700"
+                  podiumHeight="45vh"
+                />
+              )}
+              {gameResults.length >= 3 && (
+                <Podium
+                  rank="Bronze"
+                  src={`/images/${gameResults[2].profile_img_seq}.png`}
+                  color="#CD7F32"
+                  podiumHeight="30vh"
+                />
+              )}
             </PodiumContainer>
           </Grid>
-          <Grid xs={12} md={1}></Grid>
-          <Grid item xs={12} md={6}>
+
+          {/* Middle_Right : 점수판 */}
+          <Grid item xs={12} md={7} >
             <TableContainer component={Paper}>
               <Table aria-label="simple table">
                 <TableHead>
@@ -132,31 +140,27 @@ function GameScore() {
                     <TableCell style={{ fontWeight: "bold" }} align="center">
                       Score
                     </TableCell>
-                    <TableCell style={{ fontWeight: "bold" }} align="center">
-                      Reward
-                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Result.map((result) => (
-                    <TableRow key={result.rank}>
+                  {gameResults.map((result, index) => (
+                    <TableRow key={result.userSeq}>
                       <TableCell align="center" component="th" scope="row">
-                        {result.rank}
+                        {index + 1}
                       </TableCell>
                       <TableCell align="center">{result.nickname}</TableCell>
                       <TableCell align="center">{result.score}</TableCell>
-                      <TableCell align="center">{result.reward}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
           </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          <Next />
+
+          <Next gameSeq={gameSeq} />
         </Grid>
       </Container>
+      
       <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
     </Root>
   );
