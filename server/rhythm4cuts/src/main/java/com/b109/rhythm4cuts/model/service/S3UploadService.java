@@ -21,8 +21,11 @@ public class S3UploadService {
         this.amazonS3 = amazonS3Client;
     }
 
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${cloud.aws.s3.bucket.img}")
     private String bucket;
+
+    @Value("${cloud.aws.s3.bucket.voice}")
+    private String voiceBucket;
 
     public String saveFile(MultipartFile multipartFile, String fileName) throws IOException {
         String originalFilename = multipartFile.getOriginalFilename();
@@ -31,6 +34,17 @@ public class S3UploadService {
         metadata.setContentType(multipartFile.getContentType());
 
         amazonS3.putObject(bucket, fileName, multipartFile.getInputStream(), metadata);
+
+        return amazonS3.getUrl(bucket, originalFilename).toString();
+    }
+
+    public String saveVoiceFile(MultipartFile multipartFile, String fileName) throws IOException {
+        String originalFilename = multipartFile.getOriginalFilename();
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(multipartFile.getSize());
+        metadata.setContentType(multipartFile.getContentType());
+
+        amazonS3.putObject(voiceBucket, fileName, multipartFile.getInputStream(), metadata);
 
         return amazonS3.getUrl(bucket, originalFilename).toString();
     }
