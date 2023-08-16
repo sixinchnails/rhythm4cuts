@@ -100,7 +100,7 @@ const HeaderWait = () => {
     textDecoration: "none",
     color: "white",
     fontWeight: "bold",
-    fontFamily: 'Ramche',
+    fontFamily: "Ramche",
   };
 
   return (
@@ -114,14 +114,13 @@ const HeaderWait = () => {
       </div>
       <div
         style={{
-          fontFamily: 'Ramche',
+          fontFamily: "Ramche",
           fontWeight: "bold",
           fontSize: "20px",
         }}
       >
-        <Badge
-          color="error">
-          variant={hasNotification || gameInvite ? "dot" : "standard"} // 게임 초대 알림 상태에 따라 dot 표시
+        <Badge color="error">
+          variant={hasNotification || gameInvite ? "dot" : "standard"}
           onClick={onNotificationClick}
           style={{ marginRight: "30px" }}
           <NotificationsIcon />
