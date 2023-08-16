@@ -91,18 +91,20 @@ function RoomList({ room, onRoomClick }) {
               fontFamily: 'Ramche',
             }}
           >
-            <CardMedia
-              component="img" // 이미지를 보여주기 위해 img 태그 사용
-              image={imgUrl}
-              style={{
-                padding: "5%",
-                objectFit: "cover",
-                width: "100%",
-                height: "100%",
-                borderRadius: "20px",
-                fontFamily: 'Ramche',
-              }}
-            />
+            <div style={{ width: "30vw", height: "15vh", }}>
+              <CardMedia
+                component="img" // 이미지를 보여주기 위해 img 태그 사용
+                image={imgUrl}
+                style={{
+                  padding: "5%",
+                  objectFit: "cover",
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "20px",
+                  fontFamily: 'Ramche',
+                }}
+              />
+            </div>
           </Grid>
           {/* 오른쪽 : 방번호, 방이름, 노래제목, 방인원수, 모드(비밀방) */}
           <Grid
@@ -159,7 +161,7 @@ function RoomList({ room, onRoomClick }) {
                     height: "20px",
                   }}
                 >
-                  <Typography variant="body2" style={{fontFamily: 'Ramche',}}>
+                  <Typography variant="body2" style={{ fontFamily: 'Ramche', }}>
                     {isFull ? "FULL" : `방 인원수: ${room.headcount} / 4`}
                   </Typography>
                 </Box>
