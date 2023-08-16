@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . /app
 
 # 파일의 실행 권한을 설정 (fpcalc.exe 파일에 실행 권한을 부여합니다)
-RUN chmod +x fpcalc.exe
+RUN chmod +x fpcalc
 
 # Flask 앱을 실행하기 위한 종속성 설치
 RUN pip install --no-cache-dir -r requirements.txt
