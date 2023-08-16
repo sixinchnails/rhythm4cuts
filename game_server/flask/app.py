@@ -98,4 +98,4 @@ def upload():
 
 if __name__ == '__main__':
     # 포트를 8000으로 변경하려면 아래와 같이 port 매개변수를 추가합니다.
-    app.run(host='0.0.0.0', port=8081)
+    app.run(host='0.0.0.0', port=8081, ssl_context=('cert.pem', 'privkey.pem'))
