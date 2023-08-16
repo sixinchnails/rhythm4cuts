@@ -120,17 +120,10 @@ const HeaderWait = () => {
         }}
       >
         <Badge
-          color="error"
-<<<<<<< HEAD
-          variant={hasNotification ? "dot" : "standard"} // Set the variant conditionally based on the hasNotification state
-          onClick={onNotificationClick} // Set the onClick handler
-          style={{ marginRight: "30px", fontFamily: 'Ramche', }}
-=======
+          color="error">
           variant={hasNotification || gameInvite ? "dot" : "standard"} // 게임 초대 알림 상태에 따라 dot 표시
           onClick={onNotificationClick}
           style={{ marginRight: "30px" }}
->>>>>>> abcdf4fcf3d09104b461b9ea09d7e4b17c18b48b
-        >
           <NotificationsIcon />
         </Badge>
         <Link style={loginStyle} onClick={() => setLogoutModalOpen(true)}>
