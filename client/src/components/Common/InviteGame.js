@@ -30,9 +30,7 @@ function InviteFriendsModal({ isOpen, onClose, friends }) {
   useEffect(() => {
     stomp.connect({}, () => {
       if (fromUser) {
-        stomp.subscribe(`/subscribe/friend/invite/${fromUser}`, () => {
-          alert("게임 초대 요청 옴");
-        });
+        stomp.subscribe(`/subscribe/friend/invite/${fromUser}`, () => {});
       }
     });
   }, [fromUser]);

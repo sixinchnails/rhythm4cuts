@@ -8,18 +8,32 @@ import { userInfo } from "../../apis/userInfo";
 import axios from "axios";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 import YourModalComponent from "../Common/ConfirmFriend";
+import GameInviteModal from "../Common/InviteGameModal";
 
 const LoginHeader = () => {
   const access = getCookie("access");
-  const { hasNotification, resetNotification, friendRequest } = useWebSocket();
+  const {
+    hasNotification,
+    resetNotification,
+    friendRequest,
+    gameInvite,
+    resetGameInvite,
+  } = useWebSocket();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onNotificationClick = () => {
-    if (!hasNotification) {
-      window.alert("알림이 없습니다!"); // 알림 상태가 false일 때 메시지 표시
+    if (!hasNotification && !gameInvite) {
+      window.alert("알림이 없습니다!");
     } else {
-      resetNotification();
-      setIsModalOpen(true); // 모달 열기
+      if (isModalOpen) {
+        // 모달이 이미 열려있는 상태라면 모달을 닫고 알림 상태를 초기화합니다.
+        setIsModalOpen(false);
+        resetGameInvite();
+        resetNotification();
+      } else {
+        // 모달이 닫혀있는 상태라면 모달을 엽니다.
+        setIsModalOpen(true);
+      }
     }
   };
 
@@ -86,10 +100,25 @@ const LoginHeader = () => {
           Logout
         </Link>
       </div>
-      {isModalOpen && friendRequest && (
+      {/* Friend request modal */}
+      {isModalOpen && hasNotification && (
         <YourModalComponent
           friendRequest={friendRequest}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            resetNotification();
+          }}
+        />
+      )}
+
+      {/* 게임 초대 요청 모달 */}
+      {isModalOpen && gameInvite && (
+        <GameInviteModal
+          gameInvite={gameInvite}
+          onClose={() => {
+            setIsModalOpen(false);
+            resetGameInvite();
+          }}
         />
       )}
     </div>

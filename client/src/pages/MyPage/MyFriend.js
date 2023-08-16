@@ -1,6 +1,6 @@
 // MyFriend.js
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { userInfo } from "../../apis/userInfo";
 import LoginMypageHeader from "../../components/Home/BlackHeader";
 import MainContent from "../../components/My/My_MainContent";
@@ -9,6 +9,7 @@ import Sidebar from "../../components/My/My_SideBar";
 import React from "react";
 import "./MyFriend.css";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
+import LoginAlert from "../../components/Common/LoginAlert";
 
 const MyFriend = () => {
   const navigate = useNavigate();
@@ -22,18 +23,27 @@ const MyFriend = () => {
 
   try {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           console.log(res);
         }
       })
-      .catch(error => {
-        window.alert("로그인을 해주세요!");
-        navigate("/");
+      .catch((error) => {
+        handleOpenLoginAlert();
       });
   } catch (error) {
     console.log(error);
   }
+  const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
+
+  // 로그인 상태를 업데이트하는 함수
+  const handleOpenLoginAlert = () => {
+    setLoginAlertOpen(true);
+  };
+  const handleCloseLoginAlert = () => {
+    setLoginAlertOpen(false);
+    navigate("/Login");
+  };
 
   return (
     <div
@@ -52,6 +62,8 @@ const MyFriend = () => {
           <FriendInfo></FriendInfo>
         </div>
       </div>
+      {/* '로그인 경고' 모달 */}
+      <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
     </div>
   );
 };

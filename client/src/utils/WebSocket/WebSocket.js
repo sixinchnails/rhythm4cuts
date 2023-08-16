@@ -15,6 +15,7 @@ export function WebSocketProvider({ children }) {
   const [hasNotification, setHasNotification] = useState(false); // 알림 상태 추가
   const [friendRequest, setFriendRequest] = useState(null); // 친구 요청 정보 저장
   const [videoVisible, setVideoVisible] = useState(false);
+  const [gameInvite, setGameInvite] = useState(null); // 게임 초대 알림 정보를 저장할 상태
 
   let socket = null;
   let reconnectInterval;
@@ -65,13 +66,18 @@ export function WebSocketProvider({ children }) {
                   setVideoVisible(true);
                   window.alert("영상 다같이 시작할게");
                 });
+                stomp.subscribe(
+                  `/subscribe/friend/invite/${fromUser}`,
+                  message => {
+                    // alert("게임 초대 요청 옴");
+                    setGameInvite(message.body); // 게임 초대 메시지 내용 저장
+                  }
+                );
                 if (fromUser) {
                   console.log("전역 웹소캣 연결 확인");
                   stomp.subscribe(
                     `/subscribe/friend/invite/${fromUser}`,
-                    () => {
-                      alert("게임 초대 요청 옴");
-                    }
+                    () => {}
                   );
                 }
               }
@@ -101,6 +107,10 @@ export function WebSocketProvider({ children }) {
     }
   };
 
+  const resetGameInvite = () => {
+    // 게임 초대 알림 상태를 초기화하는 함수
+    setGameInvite(null);
+  };
   const resetNotification = () => {
     // 알림 초기화 함수
     setHasNotification(false);
@@ -127,6 +137,8 @@ export function WebSocketProvider({ children }) {
     resetNotification, // 알림 초기화 함수
     friendRequest,
     sendGameStartMessage, // 추가
+    gameInvite, // 게임 초대 알림 상태
+    resetGameInvite, // 게임 초대 알림 상태 초기화 함수
   };
 
   return (
