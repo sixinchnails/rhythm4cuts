@@ -25,7 +25,7 @@ import {
 import { createConnection } from "../../openvidu/connectionInitialization";
 import UserVideoComponent from "../../components/Game/UserVideoComponent";
 import UserComponent from "../../components/Game/UserComponent";
-import React, { Component, useState, useEffect } from "react";
+import React, { Component, useState, useEffect, useRef } from "react";
 import LoginAlert from "../../components/Common/LoginAlert";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -140,7 +140,58 @@ function GameWait() {
   const [publisher, setPublisher] = useState(undefined); // 자신
   const [subscribers, setSubscribers] = useState([]); // 구독자
   const [players, setPlayers] = useState([]); // 통합
+  // 녹음 관련 상태
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioChunks, setAudioChunks] = useState([]);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const mediaRecorderRef = useRef(null);
   const [gameStarted, setGameStarted] = useState(false); // 게임 시작 여부 상태
+  // 게임 시작 여부에 따른 녹음 시작/종료 처리
+  useEffect(() => {
+    // 게임이 시작되면 녹음 시작
+    if (gameStarted && !isRecording) {
+      startRecording();
+    }
+    // 게임이 종료되면 녹음 종료
+    else if (!gameStarted && isRecording) {
+      stopRecording();
+    }
+  }, [gameStarted]);
+
+  // 녹음 시작 함수
+  const startRecording = () => {
+    const streamPromise = navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
+
+    streamPromise.then(stream => {
+      setIsRecording(true);
+      setAudioChunks([]);
+      const mediaRecorder = new MediaRecorder(stream);
+
+      mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) {
+          setAudioChunks(chunks => [...chunks, e.data]);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+        setAudioBlob(audioBlob);
+      };
+
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start();
+    });
+  };
+
+  // 녹음 종료 함수
+  const stopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
   const access = getCookie("access");
   const [musicUrl, setMusicUrl] = useState(""); // 해당 노래 url
 
@@ -575,19 +626,16 @@ function GameWait() {
               }}
             >
               {/* 대기중 비디오 */}
-              {gameStarted && (
-                <video
-                  src={musicUrl}
-                  controls={false}
-                  autoPlay
-                  loop
-                  style={{
-                    width: "100%",
-                    height: "40vh",
-                    objectFit: "cover",
-                  }}
-                />
-              )}
+              <video
+                src="/images/GameImage/Dance.mp4"
+                autoPlay
+                loop
+                style={{
+                  width: "100%",
+                  height: "40vh",
+                  objectFit: "cover",
+                }}
+              />
             </Card>
           </Grid>
         ) : (

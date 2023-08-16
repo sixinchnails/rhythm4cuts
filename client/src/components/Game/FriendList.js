@@ -1,5 +1,7 @@
 import { List, ListItem, Typography } from "@mui/material";
 import React from "react";
+import axios from "axios";
+import { getCookie } from "../../utils/cookie";
 
 function FriendList({ friends }) {
   // 먼저 "온라인 상태"에 따라 정렬하고, 같은 "온라인 상태"를 가진 친구들 사이에서 "이름"에 따라 정렬합니다
@@ -22,14 +24,19 @@ function FriendList({ friends }) {
         <ListItem key={index}>
           <Typography
             variant="body1"
-            style={{ color: "#ffffff", fontFamily: 'Ramche', }}
+            style={{ color: "#ffffff", fontFamily: "Ramche" }}
             component="span"
           >
             {friend.isOnline ? "🟢" : "⚫"}
           </Typography>
           <Typography
             variant="body1"
-            style={{ color: "#ffffff", paddingLeft: "10px", padding: "5px", fontFamily: 'Ramche', }}
+            style={{
+              color: "#ffffff",
+              paddingLeft: "10px",
+              padding: "5px",
+              fontFamily: "Ramche",
+            }}
             component="span"
           >
             {friend.name}

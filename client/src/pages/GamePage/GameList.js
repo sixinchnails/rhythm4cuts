@@ -207,7 +207,6 @@ function GameList() {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/GameImage/GameList.jpg')",
-        fontFamily: 'Ramche',
       }}
     >
       <Header />
@@ -222,7 +221,6 @@ function GameList() {
               style={{
                 marginRight: "1em",
                 marginBottom: "0.5em",
-                fontFamily: 'Ramche',
               }}
             >
               <RefreshIcon style={{ color: "#ffffff", fontFamily: 'Ramche', }} />
@@ -248,7 +246,6 @@ function GameList() {
                     backgroundColor: "#333", // 드롭다운 메뉴 배경색 변경
                     color: "#ffffff", // 드롭다운 메뉴 텍스트 색상 변경
                     border: "1px solid #ffffff", // 드롭다운 메뉴 테두리 색상을 흰색으로 설정
-                    fontFamily: 'Ramche',
                   },
                 },
               }}
@@ -274,7 +271,6 @@ function GameList() {
                 style: {
                   color: "#ffffff",
                   height: "7vh",
-                  fontFamily: "Pretendard-Regular",
                   fontSize: "20px",
                   fontFamily: 'Ramche',
                 },
@@ -294,7 +290,6 @@ function GameList() {
                 marginBottom: "0.5em",
                 marginRight: "0.5em",
                 backgroundColor: "rgba(0, 128, 255, 0.3)",
-                fontFamily: "Pretendard-Regular",
                 fontWeight: "bold",
                 fontSize: "20px",
                 fontFamily: 'Ramche',
@@ -311,7 +306,6 @@ function GameList() {
                 marginBottom: "0.5em",
                 marginRight: "0.5em",
                 backgroundColor: "rgba(0, 128, 255, 0.3)",
-                fontFamily: "Pretendard-Regular",
                 fontWeight: "bold",
                 fontSize: "20px",
                 fontFamily: 'Ramche',
@@ -427,7 +421,6 @@ function GameList() {
                         backgroundColor: "rgba(0, 128, 255, 0.3)",
                         width: "30%",
                         height: "5vh",
-                        fontFamily: "Pretendard-Regular",
                         fontSize: "15px",
                         fontFamily: 'Ramche',
                       }}
