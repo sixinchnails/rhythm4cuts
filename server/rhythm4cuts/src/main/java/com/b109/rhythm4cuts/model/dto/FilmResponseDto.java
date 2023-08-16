@@ -11,5 +11,6 @@ import java.time.LocalDateTime;
 @Getter
 public class FilmResponseDto {
     private LocalDateTime createDate;
-    private String url;
+    private String commonUrl;
+    private String privateUrl;
 }
