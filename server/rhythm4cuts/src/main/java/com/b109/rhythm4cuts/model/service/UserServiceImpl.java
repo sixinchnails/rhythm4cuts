@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 import java.security.SecureRandom;
@@ -35,6 +36,7 @@ import static com.b109.rhythm4cuts.model.service.Utils.getRandomString;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ProfileImageRepository profileImageRepository;
@@ -205,10 +207,10 @@ public class UserServiceImpl implements UserService {
     public UserDto login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException());
-        user.setIsOnline(1); // 온라인 상태로 변경
 
         if (!bCryptPasswordEncoder.matches(loginDto.getPassword(), user.getPassword())) throw new IllegalArgumentException();
 
+        user.setIsOnline(1); // 온라인 상태로 변경
         UserDto userDto = Utils.dtoSetter(user);
 
         return userDto;
