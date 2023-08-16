@@ -21,6 +21,7 @@ public class Utils {
         userDto.setPlayCount(user.getPlayCount());
         userDto.setScoreSum(user.getScoreSum());
         userDto.setProfileImageSeq(user.getProfileImage().getProfileImageSeq());
+        userDto.setIsOnline(user.getIsOnline());
 
         return userDto;
     }

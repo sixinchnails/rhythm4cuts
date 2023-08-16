@@ -25,6 +25,10 @@ public class VoiceLog {
     @Column(name = "voice_file")
     private String voiceFile;
 
+    //음성 파일 url
+    @Column(name = "voice_url", length = 500)
+    private String voiceUrl;
+
     //로그 생성일시
     @CreationTimestamp
     @Column(name = "create_date")

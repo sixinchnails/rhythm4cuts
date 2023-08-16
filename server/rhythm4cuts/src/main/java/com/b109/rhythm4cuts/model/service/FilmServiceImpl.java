@@ -188,7 +188,7 @@ public class FilmServiceImpl implements FilmService {
         return filmList;
     }
 
-    private String generateFileName(String originalFilename) {
+    public String generateFileName(String originalFilename) {
         // 현재 시간 정보
         LocalDateTime now = LocalDateTime.now();
 
@@ -210,7 +210,7 @@ public class FilmServiceImpl implements FilmService {
         return dateTimeStr + randomStr + fileExtension;
     }
 
-    private String generateRandomString(int length) {
+    public String generateRandomString(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder randomString = new StringBuilder();
         Random random = new Random();

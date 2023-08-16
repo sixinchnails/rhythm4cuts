@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 import java.security.SecureRandom;
@@ -35,6 +36,7 @@ import static com.b109.rhythm4cuts.model.service.Utils.getRandomString;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ProfileImageRepository profileImageRepository;
@@ -208,6 +210,7 @@ public class UserServiceImpl implements UserService {
 
         if (!bCryptPasswordEncoder.matches(loginDto.getPassword(), user.getPassword())) throw new IllegalArgumentException();
 
+        user.setIsOnline(1); // 온라인 상태로 변경
         UserDto userDto = Utils.dtoSetter(user);
 
         return userDto;
@@ -217,6 +220,7 @@ public class UserServiceImpl implements UserService {
     public void logout(LogoutDto logoutDto) {
         User user = userRepository.findByEmail(logoutDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+        user.setIsOnline(0); // 오프라인 상태로 변경
 
         long expiryMilliSeconds = tokenProvider.getExpirationDateFromToken(logoutDto.getAccessToken()).getTime() - new Date().getTime();
 
