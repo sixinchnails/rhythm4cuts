@@ -98,7 +98,6 @@ public class User implements UserDetails {
         this.playCount = 0;
         this.scoreSum = 0;
         this.state = 0;
-        this.isOnline = 0;
     }
 
     @Override
