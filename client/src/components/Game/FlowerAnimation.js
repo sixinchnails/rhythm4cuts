@@ -12,6 +12,7 @@ const FlowerAnimation = () => {
         width: "100%",
         height: "100vh",
         zIndex: -1,
+        fontFamily: 'Ramche',
       }}
     >
       {/* 원하는 꽃가루 개수 넣어 헿 */}
@@ -25,6 +26,7 @@ const FlowerAnimation = () => {
             animation: "fallingFlower 3s linear infinite", // 'fallingFlower'라는 애니메이션을 적용합니다.
             top: `${Math.random() * 100}vh`, // 꽃가루의 시작 위치는 랜덤하게 설정됩니다.
             left: `${Math.random() * 100}%`, // 꽃가루의 시작 위치는 랜덤하게 설정됩니다.
+            fontFamily: 'Ramche',
             color: `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${
               Math.random() * 255
             })`, // 꽃가루의 색상은 랜덤하게 설정됩니다.

@@ -74,15 +74,15 @@ const LoginHeader = () => {
   });
 
   return (
-    <div className="Header_outer1" style={{ color: "white" }}>
+    <div className="Header_outer1" style={{ color: "white", fontFamily: 'Ramche', }}>
       <div className="Header_logo1">
         <img src="images/Home_Logo.png" alt="헤더 사진"></img>
       </div>
       <div>
-        <span style={{ color: "white", marginRight: 20, fontWeight: "bold" }}>
+        <span style={{ color: "white", marginRight: 20, fontWeight: "bold", fontFamily: 'Ramche', }}>
           {nickName}님 반갑습니다.
         </span>
-        <span style={{ color: "white", marginRight: 20, fontWeight: "bold" }}>
+        <span style={{ color: "white", marginRight: 20, fontWeight: "bold", fontFamily: 'Ramche', }}>
           {point}point
         </span>
         <Badge
@@ -93,10 +93,10 @@ const LoginHeader = () => {
         >
           <NotificationsIcon />
         </Badge>
-        <Link className="Header_Login1" to="/Mypage">
+        <Link className="Header_Login1" to="/Mypage" style={{fontFamily: 'Ramche',}}>
           MyPage
         </Link>
-        <Link className="Header_Login1" onClick={checkLogin}>
+        <Link className="Header_Login1" onClick={checkLogin} style={{fontFamily: 'Ramche',}}>
           Logout
         </Link>
       </div>

@@ -58,9 +58,10 @@ function SelectImageModal({ isOpen, handleClose, onSelect }) {
           color: "#ffffff",
           padding: "50px",
           width: "500px",
+          fontFamily: 'Ramche',
         }}
       >
-        <h2 style={{ textAlign: "center" }}>이미지 선택</h2>
+        <h2 style={{ textAlign: "center", fontFamily: 'Ramche', }}>이미지 선택</h2>
 
         <Grid container spacing={2} justifyContent="center">
           {images.map((image, index) => (

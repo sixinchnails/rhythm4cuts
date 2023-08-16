@@ -25,7 +25,7 @@ function NextToPlay() {
     <Container>
       <Grid container justifyContent="flex-end" alignItems="center" spacing={2}>
         <Grid item>
-          <Typography variant="h5" style={{ color: "white" }}>
+          <Typography variant="h5" style={{ color: "white", fontFamily: 'Ramche', }}>
             게임이 {seconds}초 후 시작합니다!!
           </Typography>
         </Grid>

@@ -6,7 +6,7 @@ import "./My_Image.css";
 const ImageByMonth = ({ month, year, images, onDownloadClick }) => {
   return (
     <div className="image-container">
-      <h2>
+      <h2 style={{ fontFamily: "Ramche" }}>
         {year}년 {month}월
       </h2>
       <div className="images">

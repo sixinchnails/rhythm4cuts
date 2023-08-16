@@ -13,14 +13,15 @@ function LoginAlert({ isOpen, onClose }) {
     <Dialog
       open={isOpen}
       onClose={onClose}
-      style={{ backgroundColor: "rgba(0, 0, 0, 0.8)" }}
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.8)", fontFamily: 'Ramche', }}
     >
-      <div style={{ backgroundColor: "rgba(0, 128, 255, 0.3)", width: "25vw" }}>
+      <div style={{ backgroundColor: "rgba(0, 128, 255, 0.3)", width: "25vw", fontFamily: 'Ramche', }}>
         <DialogTitle
           style={{
             backgroundColor: "rgba(0, 128, 255, 0.2)",
             display: "flex",
             justifyContent: "center",
+            fontFamily: 'Ramche',
           }}
         >
           <WarningIcon />
@@ -29,12 +30,13 @@ function LoginAlert({ isOpen, onClose }) {
           style={{
             display: "flex",
             justifyContent: "center",
+            fontFamily: 'Ramche',
           }}
         >
-          <p>로그인 후 이용 가능한 서비스입니다.</p>
+          <p style={{fontFamily: 'Ramche',}}>로그인 후 이용 가능한 서비스입니다.</p>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} color="primary" autoFocus>
+          <Button onClick={onClose} color="primary" autoFocus style={{fontFamily: 'Ramche',}}>
             확인
           </Button>
         </DialogActions>

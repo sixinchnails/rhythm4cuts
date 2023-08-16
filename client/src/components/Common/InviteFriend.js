@@ -45,27 +45,29 @@ function CreateRoom({ isOpen, handleClose }) {
             justifyContent: "center",
             height: "100vh",
             overflow: "auto",
+            fontFamily: 'Ramche',
           }}
         >
           <CustomCard>
             {/* 친구추가 모달연결 */}
-            <CardActions sx={{ justifyContent: "center" }}>
+            <CardActions sx={{ justifyContent: "center", fontFamily: 'Ramche', }}>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleOpenAddFriendModal}
+                style={{fontFamily: 'Ramche',}}
               >
                 친구 추가
               </Button>
             </CardActions>
 
             {/* 친구 리스트 */}
-            <StyledCardContent sx={{ height: "70%", margin: "5%" }}>
+            <StyledCardContent sx={{ height: "70%", margin: "5%", fontFamily: 'Ramche', }}>
               <FriendListInvite friends={friends} />
             </StyledCardContent>
 
             {/* 나가기 */}
-            <CardActions sx={{ justifyContent: "flex-end" }}>
+            <CardActions sx={{ justifyContent: "flex-end", fontFamily: 'Ramche', }}>
               <Button variant="contained" color="primary" onClick={handleClose}>
                 Close
               </Button>

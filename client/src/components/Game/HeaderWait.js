@@ -100,6 +100,7 @@ const HeaderWait = () => {
     textDecoration: "none",
     color: "white",
     fontWeight: "bold",
+    fontFamily: "Ramche",
   };
 
   return (
@@ -113,7 +114,7 @@ const HeaderWait = () => {
       </div>
       <div
         style={{
-          fontFamily: "Pretendard-Regular",
+          fontFamily: "Ramche",
           fontWeight: "bold",
           fontSize: "20px",
         }}
