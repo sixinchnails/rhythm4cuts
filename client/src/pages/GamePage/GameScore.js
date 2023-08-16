@@ -18,7 +18,6 @@ import { useSelector } from "react-redux";
 import Podium from "../../components/Game/Podium";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
-// import FlowerAnimation from "../../components/Game/FlowerAnimation";
 import Header from "../../components/Game/HeaderPlay";
 import "./GameScore.css";
 import LoginAlert from "../../components/Common/LoginAlert";
@@ -64,6 +63,7 @@ function GameScore() {
     console.log(error);
   }
 
+  
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
 
   // 로그인 상태를 업데이트하는 함수
@@ -77,10 +77,10 @@ function GameScore() {
 
   let Result = useSelector((state) => state.GameScore_Result);
 
+
   return (
     <Root>
       <Header />
-      {/* <FlowerAnimation />{" "} */}
       {/* FlowerAnimation 컴포넌트를 Root 컴포넌트로 감싸줍니다 */}
       <Container>
         <Title

@@ -34,8 +34,8 @@ function App() {
           <Route path="/GameList" element={<GameList />} />
           <Route path="/GameWait/:gameSeq" element={<GameWait />} />
           <Route path="/GamePlay/:gameSeq" element={<GamePlay />} />
-          <Route path="/GameScore" element={<GameScore />} />
-          <Route path="/GameShot" element={<GameShot />} />
+          <Route path="/GameScore/:gameSeq" element={<GameScore />} />
+          <Route path="/GameShot/:gameSeq" element={<GameShot />} />
 
           <Route path="/MyPage" element={<MyPage />} />
           <Route path="/MyFriend" element={<MyFriend />} />
