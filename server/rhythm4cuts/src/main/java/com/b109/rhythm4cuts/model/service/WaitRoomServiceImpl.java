@@ -1,11 +1,13 @@
 package com.b109.rhythm4cuts.model.service;
 
 import com.b109.rhythm4cuts.model.domain.GameInfo;
+import com.b109.rhythm4cuts.model.domain.GameLog;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.domain.UserGameInfo;
 import com.b109.rhythm4cuts.model.dto.LobbyDto;
 import com.b109.rhythm4cuts.model.dto.WaitGameRequestDto;
 import com.b109.rhythm4cuts.model.dto.WaitGameResponseDto;
+import com.b109.rhythm4cuts.model.repository.GameLogRepository;
 import com.b109.rhythm4cuts.model.repository.GameRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import com.b109.rhythm4cuts.model.repository.WaitRoomRepository;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +29,7 @@ public class WaitRoomServiceImpl implements WaitRoomService {
     private final WaitRoomRepository waitRoomRepository;
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
+    private final GameLogRepository gameLogRepository;
 
     @Override
     public LobbyDto getWaitRoomInfo(int gameSeq) {
@@ -61,6 +65,7 @@ public class WaitRoomServiceImpl implements WaitRoomService {
     @Override
     public int insertUserGameInfo(Map<String, Object> param) {
 
+        // 1. UserGameInfo 삽입 Start
         int userSeq = Integer.parseInt((String) param.get("userSeq"));
         int gameSeq = Integer.parseInt((String) param.get("gameSeq"));
 
@@ -92,6 +97,16 @@ public class WaitRoomServiceImpl implements WaitRoomService {
         }
         userGameInfo.setGameOrder(order);
         waitRoomRepository.insertUserGameInfo(userGameInfo);
+        // 1. UserGameInfo 삽입 End
+        
+        // 2. GameLog 삽입 Start
+        GameLog gameLog = new GameLog();
+        gameLog.setGameInfo(waitRoomRepository.selectWaitRoom(gameSeq));
+        gameLog.setUser(userRepository.findByUserSeq(userSeq));
+        gameLog.setCreateDate(LocalDateTime.now());
+
+        gameLogRepository.save(gameLog);
+        // 2. GameLog 삽입 End
 
         return order;
     }

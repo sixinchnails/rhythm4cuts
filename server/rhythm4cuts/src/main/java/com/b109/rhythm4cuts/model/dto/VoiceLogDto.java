@@ -9,4 +9,5 @@ public class VoiceLogDto {
     private int voiceLogSeq;
     private int gameLogSeq;
     private String voiceFile;
+    private String voiceUrl;
 }
