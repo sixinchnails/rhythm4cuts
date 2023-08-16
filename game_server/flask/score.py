@@ -5,7 +5,21 @@ from difflib import SequenceMatcher
 from correlation import correlate
 import pymysql
 
-conn = pymysql.connect(host='127.0.0.1', user='9ithubB109_simons', password='zlwhsalsrnrWid7991', db="rhythm", charset='utf8')
+# MySQL database properties
+host = 'i9b109.p.ssafy.io'
+user = '9ithubB109_simons'
+password = 'zlwhsalsrnrWid7991'
+db = 'rhythm'
+charset = 'utf8'
+
+# Establishing a connection
+conn = pymysql.connect(
+    host=host,
+    user=user,
+    password=password,
+    db=db,
+    charset=charset
+)
 
 """
 만일 필요한 경우, 쓰게 될 파일 쪼개는 클래스
