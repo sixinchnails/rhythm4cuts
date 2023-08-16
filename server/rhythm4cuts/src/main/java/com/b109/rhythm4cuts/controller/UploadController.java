@@ -19,9 +19,13 @@ public class UploadController {
     private final UploadService uploadService;
 
     @PostMapping("/user/audio")
-    public ResponseEntity<String> saveUserAudio(@RequestParam("audio")MultipartFile multipartFile) {
+    public ResponseEntity<String> saveUserAudio(
+            @RequestParam("audio") MultipartFile multipartFile,
+            @RequestParam("gameSeq") int gameSeq,
+            @RequestParam("userSeq") int userSeq
+    ) {
         try {
-            uploadService.saveUserAudio(multipartFile);
+            uploadService.saveUserAudio(multipartFile, gameSeq, userSeq);
             return ResponseEntity.ok("Audio saved successfully");
         } catch (Exception e) {
             e.printStackTrace();

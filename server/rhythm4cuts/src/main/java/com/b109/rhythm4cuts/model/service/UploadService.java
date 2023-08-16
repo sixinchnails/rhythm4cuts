@@ -9,5 +9,5 @@ import java.io.IOException;
 @Service
 @Transactional
 public interface UploadService {
-    void saveUserAudio(MultipartFile multipartFile) throws IOException;
+    void saveUserAudio(MultipartFile multipartFile, int gameSeq, int userSeq) throws IOException;
 }
