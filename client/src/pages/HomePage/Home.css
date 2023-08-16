@@ -142,6 +142,7 @@ body {
 .Home3 > .content > .rank2 > h1 {
   text-align: center;
   color: white;
+  
 }
 
 .Home3 > .content {
@@ -173,7 +174,7 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 95%;
+  width: 100%;
   height: 50%;
   /* background-color: #14006d; */
   border-radius: 10px;
@@ -193,6 +194,7 @@ body {
 
 .Home3 > .content > .rank1 > .rt_sing_rank > .music_rank > .rank {
   width: 100%;
+  margin-top: 30px;
   justify-content: center;
   align-items: center;
 }
@@ -239,6 +241,7 @@ body {
 .Home3 > .content > .rank2 > .top100 {
   height: 40%;
   width: 35vw;
+  padding-top: 10px;
   background-image: url("../../../public/images/6.jpg");
   background-size: cover;
   background-position: center;

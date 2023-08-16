@@ -483,27 +483,6 @@ function GameWait() {
     }
   }
 
-  // "게임 시작" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
-  // function handleGameReady() {
-  //   setGameStarted(true);
-  //   setPlayerFix([...players]); // player 배열 복사
-
-  // axios 보내기
-  // console.log("access : " + access);
-
-  // axios.post(`https://i9b109.p.ssafy.io:8443/wait/enter`,
-  //   {
-  //     headers: {
-  //       Authorization: "Bearer " + access,
-  //     }
-  //   },
-  //   {
-  //     "gameSeq": gameSeq,
-  //     "userSeq": userseq
-  //   }
-  // )
-  // }
-
   function handleGameReady() {
     console.log("게임 시작 버튼 누름");
     console.log(stomp);
