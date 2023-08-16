@@ -27,6 +27,7 @@ import UserVideoComponent from "../../components/Game/UserVideoComponent";
 import UserComponent from "../../components/Game/UserComponent";
 import React, { Component, useState, useEffect } from "react";
 import LoginAlert from "../../components/Common/LoginAlert";
+import BoomAlert from '../../components/Common/BoomAlert';
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../../components/Game/HeaderPlay";
@@ -103,7 +104,7 @@ function GameWait() {
           if (userSeq) {
             stompClient.subscribe(
               `/subscribe/friend/invite/${userSeq}`,
-              () => {}
+              () => { }
             );
           }
         },
@@ -118,6 +119,7 @@ function GameWait() {
 
   const location = useLocation();
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
+  const [isBoomAlertOpen, setBoomAlertOpen] = useState(false); // 로그인 알람
   const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate(); // 페이지 이동
   const [userSeq, setUserSeq] = useState("");
@@ -169,6 +171,16 @@ function GameWait() {
   const handleCloseLoginAlert = () => {
     setLoginAlertOpen(false);
     navigate("/Login");
+  };
+
+  // 방 붕괴 상태를 업데이트하는 함수
+  const handleOpenBoomAlert = () => {
+    setBoomAlertOpen(true);
+  };
+  const handleCloseBoomAlert = () => {
+    setBoomAlertOpen(false);
+    navigate("/GameList");
+
   };
 
   //친구 목록 가져오는 함수
@@ -392,8 +404,22 @@ function GameWait() {
         }
       });
 
-      newSession.on("streamDestroyed", (event) => {
-        deleteSubscriber(event.stream.streamManager);
+      // 방 폭파 시키기
+      newSession.on("streamDestroyed", event => {
+        // deleteSubscriber(event.stream.streamManager);
+        // 방 인원수 줄이는 요청 보내기
+        axios
+          .get(`https://i9b109.p.ssafy.io:8443/lobby/room/exit/` + gameSeq, {
+            headers: {
+              Authorization: "Bearer " + access,
+            },
+          }).then(
+
+        ).then(
+
+          handleOpenBoomAlert(),
+          // navigate("/gameList")
+        )
       });
 
       newSession.on("exception", (exception) => {
@@ -493,7 +519,7 @@ function GameWait() {
   }
 
   // "채팅" 버튼을 클릭했을 때 동작 ---------------------------------------------------------------------------------
-  const handleChat = () => {};
+  const handleChat = () => { };
 
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
   const handleExit = () => {
@@ -940,6 +966,9 @@ function GameWait() {
 
       {/* '로그인 경고' 모달 */}
       <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
+      {/* '방 폭파 모달 */}
+      <BoomAlert isOpen={isBoomAlertOpen} onClose={handleCloseBoomAlert} />
+
       {/* 친구 초대 모달 추가 */}
       <InviteFriendsModal
         isOpen={isInviteModalOpen}

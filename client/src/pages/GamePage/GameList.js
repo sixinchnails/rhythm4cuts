@@ -107,6 +107,7 @@ function GameList() {
     const getRooms = async () => {
       const roomsData = await fetchRooms();
       setRooms(roomsData);
+     
     };
     getRooms();
   }, []);
@@ -130,7 +131,7 @@ function GameList() {
       case "songSeq":
         return room.songSeq
           .toString()
-          .toLowerCase()
+          .toLowerCase() 
           .includes(searchTerm.toLowerCase()); // 노래 번호를 문자열로 변환한 후 검색어를 포함하는지 확인
       default:
         return true; // 검색 카테고리가 설정되지 않은 경우, 모든 방을 표시
