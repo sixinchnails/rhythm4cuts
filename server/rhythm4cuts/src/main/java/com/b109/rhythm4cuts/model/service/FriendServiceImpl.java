@@ -23,10 +23,7 @@ public class FriendServiceImpl implements FriendService{
 
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
-
-
-
-
+    
     @Override
     public List<UserDto> getFriendList(int userSeq) throws Exception {
         List<User> users = friendRepository.selectFriendList(userSeq);
