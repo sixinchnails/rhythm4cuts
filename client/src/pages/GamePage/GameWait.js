@@ -136,13 +136,13 @@ function GameWait() {
   const [subscribers, setSubscribers] = useState([]); // 구독자
   const [players, setPlayers] = useState([]); // 통합
   // 녹음 관련 상태
+  const [isRecording, setIsRecording] = useState(false);
   const [audioChunks, setAudioChunks] = useState([]);
   const [audioBlob, setAudioBlob] = useState(null);
   const mediaRecorderRef = useRef(null);
   const [gameReadyed, setGameReadyed] = useState(false); // 게임 준비 여부 상태
   const [gameStarted, setGameStarted] = useState(false); // 게임 시작 여부 상태
   const [stream, setStream] = useState(null);
-  const [isRecording, setIsRecording] = useState(false);
 
   // 게임 시작 여부에 따른 녹음 시작/종료 처리
   useEffect(() => {
@@ -567,7 +567,8 @@ function GameWait() {
     }
   }
 
-  function handleGameReady() {
+  // "게임 시작" 버튼을 눌렀을 때 동작
+  function handleGamePlay() {
     console.log("게임 시작 버튼 누름");
     console.log(stomp);
     // 게임 시작 메시지를 서버에 전송
