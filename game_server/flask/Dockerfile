@@ -1,4 +1,3 @@
-
 # Base 이미지 설정
 FROM python:3.8-slim
 
