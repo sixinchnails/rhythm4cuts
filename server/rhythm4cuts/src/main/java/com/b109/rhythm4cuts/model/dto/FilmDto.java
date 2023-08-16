@@ -14,14 +14,13 @@ public class FilmDto {
 
     private int gameSeq;
     private int userSeq;
+    private String email;
     private int playerRank;
     private String fileName;
     private int backgroundSeq;
     private LocalDateTime createDate;
     private String totalFileName;
     private Boolean downloadState;
-
     private MultipartFile commonFilm;
     private MultipartFile privateFilm;
-
 }

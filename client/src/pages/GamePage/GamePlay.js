@@ -40,7 +40,6 @@ function GamePlay() {
 
   useEffect(() => {
     stomp.connect({}, () => {
-      console.log("GamePlay connected to WebSocket");
       // 특정 토픽 구독
       stomp.subscribe(`/subscribe/song/${gameSeq}`, (message) => {
         console.log("video start");
@@ -128,7 +127,7 @@ function GamePlay() {
             <button onClick={handleButtonClick}>Music Start</button>
             {videoVisible && (
               <video
-                controls
+                controls={false}
                 autoPlay
                 loop
                 style={{

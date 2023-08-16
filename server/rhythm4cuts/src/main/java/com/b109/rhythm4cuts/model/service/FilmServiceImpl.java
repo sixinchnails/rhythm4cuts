@@ -1,10 +1,15 @@
 package com.b109.rhythm4cuts.model.service;
 
+import com.b109.rhythm4cuts.model.domain.BackGround;
 import com.b109.rhythm4cuts.model.domain.GameImage;
+import com.b109.rhythm4cuts.model.domain.GameInfo;
 import com.b109.rhythm4cuts.model.domain.User;
 import com.b109.rhythm4cuts.model.dto.BackgroundDto;
 import com.b109.rhythm4cuts.model.dto.FilmDto;
+import com.b109.rhythm4cuts.model.dto.FilmResponseDto;
+import com.b109.rhythm4cuts.model.repository.BackGroundRepository;
 import com.b109.rhythm4cuts.model.repository.FilmRepository;
+import com.b109.rhythm4cuts.model.repository.GameRepository;
 import com.b109.rhythm4cuts.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 @Service
@@ -35,6 +41,9 @@ public class FilmServiceImpl implements FilmService {
 
     private final FilmRepository filmRepository;
     private final UserRepository userRepository;
+    private final S3UploadService s3UploadService;
+    private final GameRepository gameRepository;
+    private final BackGroundRepository backGroundRepository;
 
     @Value("${photo.storage.path}")
     private String imageStoragePath;
@@ -53,6 +62,25 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    public List<FilmResponseDto> getUserPhotoList(int userSeq) {
+        List<GameImage> gameImages = filmRepository.findByUserSeq(userSeq);
+        List<FilmResponseDto> filmResponseDtos = new ArrayList<>();
+
+        for(GameImage gameImage : gameImages) {
+            FilmResponseDto filmResponseDto = new FilmResponseDto();
+
+            filmResponseDto.setCommonUrl(gameImage.getCommonUrl());
+            filmResponseDto.setPrivateUrl(gameImage.getPrivateUrl());
+            filmResponseDto.setCreateDate(gameImage.getCreateDate());
+
+            filmResponseDtos.add(filmResponseDto);
+        }
+
+        return filmResponseDtos;
+    }
+
+
+    @Override
     public List<BackgroundDto> getBackgroundList() {
         return null;
     }
@@ -60,32 +88,45 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public void saveFilm(FilmDto filmInfo) throws IOException {
         GameImage gameImage = new GameImage();
-        //User user =  userRepository.findByUserSeq(filmInfo.getUserSeq());
-        //GameInfo gameInfo = gameRepository.findByGameSeq(filmDto.getGameSeq());
-        //BackGround backGround = backGroundRepository.findByBackGroundSeq(filmDto.getBackGroundSeq());
 
-//        gameImage.setUser(user);
-        //gameImage.setGameInfo(gameInfo);
-        //gameImage.setBackGround(backGround);
+        User user =  userRepository.findByUserSeq(filmInfo.getUserSeq());
+//        GameInfo gameInfo = gameRepository.findByGameSeq(filmInfo.getGameSeq());
+//        BackGround backGround = backGroundRepository.findByBackgroundSeq(filmInfo.getBackgroundSeq());
+        gameImage.setUser(user);
+//        gameImage.setGameInfo(gameInfo);
+//        gameImage.setBackGround(backGround);
         gameImage.setGameRank(filmInfo.getPlayerRank());
-        gameImage.setFileName(generateFileName(filmInfo.getPrivateFilm().getOriginalFilename()));
-        gameImage.setTotalFileName("total_" + generateFileName(filmInfo.getCommonFilm().getOriginalFilename()));
+        gameImage.setCreateDate(LocalDateTime.now());
 
+        //private & common 이미지 파일명 설정
+        String privateFilmName = generateFileName(filmInfo.getPrivateFilm().getOriginalFilename());
+        String commonFilmName = "total_" + generateFileName(Objects.requireNonNull(filmInfo.getCommonFilm().getOriginalFilename()));
+
+        gameImage.setFileName(privateFilmName);
+        gameImage.setTotalFileName(commonFilmName);
+
+//        byte[] privateFileData = filmInfo.getPrivateFilm().getBytes();
+//        byte[] commonFileDate = filmInfo.getCommonFilm().getBytes();
+        String commonUrl = s3UploadService.saveFile(filmInfo.getCommonFilm(), commonFilmName);
+        String privateUrl = s3UploadService.saveFile(filmInfo.getPrivateFilm(), privateFilmName);
+
+        gameImage.setCommonUrl(commonUrl);
+        gameImage.setPrivateUrl(privateUrl);
+
+        //s3 url 설정
         filmRepository.save(gameImage);
-        byte[] privateFileData = filmInfo.getPrivateFilm().getBytes();
-        byte[] commonFileDate = filmInfo.getCommonFilm().getBytes();
 
+//        File folder = new File(imageStoragePath);
+//        if (!folder.exists()) {
+//            folder.mkdirs();
+//        }
+//
+//        Path privateFilePath = Paths.get(imageStoragePath, gameImage.getFileName());
+//        Files.write(privateFilePath, privateFileData);
+//
+//        Path commonFilePath = Paths.get(imageStoragePath, gameImage.getTotalFileName());
+//        Files.write(commonFilePath, commonFileDate);
 
-        File folder = new File(imageStoragePath);
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-
-        Path privateFilePath = Paths.get(imageStoragePath, gameImage.getFileName());
-        Files.write(privateFilePath, privateFileData);
-
-        Path commonFilePath = Paths.get(imageStoragePath, gameImage.getTotalFileName());
-        Files.write(commonFilePath, commonFileDate);
     }
 
     @Override

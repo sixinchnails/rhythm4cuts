@@ -53,9 +53,18 @@ public class GameImage {
     @Column(name = "download_status")
     private Boolean downloadState;
 
+    @Column(name = "commonUrl")
+    private String commonUrl;
+
+    @Column(name = "privateUrl")
+    private String privateUrl;
+
     //사진을 구매한 일시
     @Column(name = "download_date")
     private LocalDateTime downloadDate;
+
+    @Column(name = "url")
+    private String url;
 
     public GameImage() {
         this.downloadState = false;

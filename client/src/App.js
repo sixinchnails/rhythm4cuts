@@ -7,6 +7,7 @@ import { WebSocketProvider } from "./utils/WebSocket/WebSocket";
 import Home from "./pages/HomePage/Home";
 import Join from "./pages/HomePage/Join";
 import Login from "./pages/HomePage/Login";
+import Temp from "./pages/HomePage/Temp";
 
 import GameList from "./pages/GamePage/GameList";
 import GameWait from "./pages/GamePage/GameWait";
@@ -28,6 +29,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/Join" element={<Join />} />
+          <Route path="/Temp" element={<Temp />} />
 
           <Route path="/GameList" element={<GameList />} />
           <Route path="/GameWait/:gameSeq" element={<GameWait />} />

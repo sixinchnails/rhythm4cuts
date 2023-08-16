@@ -12,7 +12,6 @@ import LockIcon from "@mui/icons-material/Lock";
 import React, { useState } from "react";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
-import { useEffect } from 'react';
 
 function RoomList({ room, onRoomClick }) {
   // 방 인원수 파악
@@ -76,6 +75,7 @@ function RoomList({ room, onRoomClick }) {
           border: "1px solid white", // 테두리를 흰색으로 설정
           height: "19vh",
           borderRadius: "20px",
+          fontFamily: 'Ramche',
         }}
         onClick={handleCardClick}
       >
@@ -88,6 +88,7 @@ function RoomList({ room, onRoomClick }) {
               display: "flex",
               alignItems: "center",
               padding: "15px",
+              fontFamily: 'Ramche',
             }}
           >
             <CardMedia
@@ -101,6 +102,7 @@ function RoomList({ room, onRoomClick }) {
                 width: "100%",
                 height: "100%",
                 borderRadius: "20px",
+                fontFamily: 'Ramche',
               }}
             />
           </Grid>
@@ -112,12 +114,13 @@ function RoomList({ room, onRoomClick }) {
             style={{
               padding: "5px",
               height: "20vh",
+              fontFamily: 'Ramche',
             }}
           >
             <Grid item xs={12}>
               <Typography
                 variant="subtitle1"
-                style={{ fontFamily: "Pretendard-Regular", textAlign: "left" }}
+                style={{ fontFamily: 'Ramche', textAlign: "left" }}
               >
                 Num : {room.gameSeq}
                 <br />
@@ -133,6 +136,7 @@ function RoomList({ room, onRoomClick }) {
                 onMouseEnter={handleMouseEnterTitle}
                 onMouseLeave={handleMouseLeaveTitle}
                 style={{
+                  fontFamily: 'Ramche',
                   textAlign: "center",
                   overflow: "hidden",
                   whiteSpace: "nowrap",
@@ -149,9 +153,12 @@ function RoomList({ room, onRoomClick }) {
               <Grid item>
                 <Box
                   style={{
+                    fontFamily: 'Ramche',
                     border: "1px solid",
                     color: isFull ? "red" : "green",
                     margin: "1px",
+                    width: "105px",
+                    height: "20px",
                   }}
                 >
                   <Typography variant="body2">
@@ -176,10 +183,11 @@ function RoomList({ room, onRoomClick }) {
       <Modal
         open={isPasswordModalOpen}
         onClose={() => setPasswordModalOpen(false)}
-        onClick={(event) => event.stopPropagation()}
+        onClick={event => event.stopPropagation()}
       >
         <Box
           sx={{
+            fontFamily: 'Ramche',
             position: "absolute",
             top: "50%",
             left: "50%",
@@ -196,7 +204,7 @@ function RoomList({ room, onRoomClick }) {
             label="비밀번호"
             variant="outlined"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             fullWidth
             type="password"
             sx={{ my: 2 }}

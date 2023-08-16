@@ -1,11 +1,11 @@
 import { removeCookie } from "../../utils/cookie";
+import "./BlackHeader.css";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "../../utils/cookie";
-import { Link } from "react-router-dom";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import axios from "axios";
 import Badge from "@mui/material/Badge";
-import "./BlackHeader.css";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 import { useState } from "react";
 import YourModalComponent from "../Common/ConfirmFriend";
@@ -17,9 +17,12 @@ const LoginMypageHeader = () => {
   const { hasNotification, resetNotification, friendRequest } = useWebSocket(); // 여기서 friendRequest 가져옴
 
   const onNotificationClick = () => {
-    // 알림을 클릭하면 알림 상태를 초기화
-    resetNotification();
-    setIsModalOpen(true); // 모달 열기
+    if (!hasNotification) {
+      window.alert("알림이 없습니다!"); // 알림 상태가 false일 때 메시지 표시
+    } else {
+      resetNotification();
+      setIsModalOpen(true); // 모달 열기
+    }
   };
 
   const checkLogin = async () => {

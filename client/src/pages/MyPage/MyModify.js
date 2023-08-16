@@ -24,12 +24,12 @@ const MyModify = () => {
   //로그인 상태 확인
   try {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           setNickName(res.data.nickname);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         window.alert("로그인을 해주세요!");
         navigate("/");
       });

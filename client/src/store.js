@@ -217,6 +217,7 @@ let GameShot_frameImage = createSlice({
     "/images/Blue.png",
     "/images/Green.png",
     "/images/Red.png",
+    "/images/기본네컷.jpg",
   ],
 });
 
