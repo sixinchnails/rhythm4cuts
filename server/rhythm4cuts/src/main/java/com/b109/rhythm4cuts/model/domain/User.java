@@ -98,6 +98,7 @@ public class User implements UserDetails {
         this.playCount = 0;
         this.scoreSum = 0;
         this.state = 0;
+        this.isOnline = 0;
     }
 
     @Override
@@ -145,6 +146,7 @@ public class User implements UserDetails {
 //        userDto.setBirthDate(this.getBirthDate());
         userDto.setGender(this.getGender());
         userDto.setState(this.getState());
+        userDto.setIsOnline(this.getIsOnline());
         return userDto;
     }
 }
