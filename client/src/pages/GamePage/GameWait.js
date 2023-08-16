@@ -622,13 +622,24 @@ function GameWait() {
           item.endTime + 3,
         ]);
         setTimeRanges(newTimeRanges);
-        console.log(1);
       }
       console.log(timeRanges);
     } catch (error) {
       console.error("Error fetching time ranges:", error);
     }
   };
+
+  const [content, setContent] = useState("1번의 차례입니다.");
+
+  if (currentIndex % 4 === 0) {
+    setContent("1번의 차례입니다.");
+  } else if (currentIndex % 4 === 1) {
+    setContent("2번의 차례입니다.");
+  } else if (currentIndex % 4 === 2) {
+    setContent("3번의 차례입니다.");
+  } else if (currentIndex % 4 === 3) {
+    setContent("4번의 차례입니다.");
+  }
 
   const handlePlayButtonClick = () => {
     setIsPlaying(true);
@@ -701,6 +712,18 @@ function GameWait() {
                 />
               )}
             </Card>
+            <div
+              style={{
+                width: "20vw",
+                height: "5vh",
+                marginLeft: "5%",
+                backgroundColor: "none",
+                color: "gray",
+                fontWeight: "bolder",
+              }}
+            >
+              {content}
+            </div>
           </Grid>
         ) : (
           // 게임 시작 하기 전 춤추는 동영상 ----------------------------------------------------------------------
