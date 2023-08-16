@@ -206,13 +206,14 @@ function UserInfo(props) {
                 display: "flex",
                 alignItems: "center",
                 position: "relative",
+                fontFamily: 'Ramche',
               }}
             >
-              <span className="modify-name">닉네임</span>
-              <span className="modify-value">{props.nickName}</span>
+              <span className="modify-name" style={{fontFamily: 'Ramche',}}>닉네임</span>
+              <span className="modify-value" style={{fontFamily: 'Ramche',}}>{props.nickName}</span>
               <Button
                 className="modify-value-button"
-                style={{ left: "100px", fontWeight: "bolder" }}
+                style={{ left: "100px", fontWeight: "bolder", fontFamily: 'Ramche', }}
                 sx={{ color: "white", ":hover": { color: "blue" } }}
                 onClick={() => setNicknameEdit(!nicknameEdit)}
               >
@@ -228,9 +229,10 @@ function UserInfo(props) {
                   top: "30px",
                   position: "absolute",
                   width: "600px",
+                  fontFamily: 'Ramche',
                 }}
               >
-                <span className="modify-nickName-name">닉네임 수정</span>
+                <span className="modify-nickName-name" style={{fontFamily: 'Ramche',}}>닉네임 수정</span>
                 <input
                   type="text"
                   className="modify-input"
@@ -246,8 +248,9 @@ function UserInfo(props) {
                     minWidth: "90px",
                     top: "20px",
                     fontWeight: "bolder",
+                    fontFamily: 'Ramche',
                   }}
-                  sx={{ color: "white", ":hover": { color: "blue" } }}
+                  sx={{ color: "white", ":hover": { color: "blue", fontFamily: 'Ramche', } }}
                   onClick={nickNameCheck}
                 >
                   중복 확인
@@ -259,7 +262,7 @@ function UserInfo(props) {
                     top: "20px",
                     fontWeight: "bolder",
                   }}
-                  sx={{ color: "white", ":hover": { color: "red" } }}
+                  sx={{ color: "white", ":hover": { color: "red", fontFamily: 'Ramche', } }}
                   onClick={nickNameModify}
                 >
                   완료
@@ -268,14 +271,14 @@ function UserInfo(props) {
             )}
           </div>
           <div className="modify-item">
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <span className="modify-name">비밀 번호</span>
-              <span className="modify-value">****</span>
+            <div style={{ display: "flex", alignItems: "center", fontFamily: 'Ramche', }}>
+              <span className="modify-name" style={{fontFamily: 'Ramche',}}>비밀 번호</span>
+              <span className="modify-value" style={{fontFamily: 'Ramche',}}>****</span>
 
               <Button
                 className="modify-value-button"
-                style={{ left: "90px", fontWeight: "bolder" }}
-                sx={{ color: "white", ":hover": { color: "blue" } }}
+                style={{ left: "90px", fontWeight: "bolder", fontFamily: 'Ramche', }}
+                sx={{ color: "white", ":hover": { color: "blue", fontFamily: 'Ramche', } }}
                 onClick={() => setPasswordEdit(!passwordEdit)}
               >
                 수정
@@ -291,9 +294,10 @@ function UserInfo(props) {
                     top: "30px",
                     position: "absolute",
                     width: "600px",
+                    fontFamily: 'Ramche',
                   }}
                 >
-                  <span className="modify-password-name">현재 비밀번호</span>
+                  <span className="modify-password-name" style={{fontFamily: 'Ramche',}}>현재 비밀번호</span>
                   <input
                     type="password"
                     className="modify-input"
@@ -310,9 +314,10 @@ function UserInfo(props) {
                     top: "90px",
                     position: "absolute",
                     width: "600px",
+                    fontFamily: 'Ramche',
                   }}
                 >
-                  <span className="modify-password-name">
+                  <span className="modify-password-name" style={{fontFamily: 'Ramche',}}>
                     &nbsp;&nbsp;새 비밀번호&nbsp;&nbsp;
                   </span>
                   <input
@@ -331,6 +336,7 @@ function UserInfo(props) {
                         width: "40px",
                         height: "40px",
                         marginTop: "35px",
+                        fontFamily: 'Ramche',
                       }}
                     />
                   )}
@@ -343,6 +349,7 @@ function UserInfo(props) {
                         width: "40px",
                         height: "40px",
                         marginTop: "35px",
+                        fontFamily: 'Ramche',
                       }}
                     />
                   )}
@@ -355,9 +362,10 @@ function UserInfo(props) {
                     top: "150px",
                     position: "absolute",
                     width: "600px",
+                    fontFamily: 'Ramche',
                   }}
                 >
-                  <span className="modify-password-name">비밀번호 확인</span>
+                  <span className="modify-password-name" style={{fontFamily: 'Ramche',}}>비밀번호 확인</span>
                   <input
                     type="password"
                     className="modify-input"
@@ -375,6 +383,7 @@ function UserInfo(props) {
                         width: "40px",
                         height: "40px",
                         marginTop: "35px",
+                        fontFamily: 'Ramche',
                       }}
                     />
                   )}
@@ -387,6 +396,7 @@ function UserInfo(props) {
                         width: "40px",
                         height: "40px",
                         marginTop: "35px",
+                        fontFamily: 'Ramche',
                       }}
                     />
                   )}
@@ -396,8 +406,9 @@ function UserInfo(props) {
                       minWidth: "50px",
                       top: "20px",
                       fontWeight: "bolder",
+                      fontFamily: 'Ramche',
                     }}
-                    sx={{ color: "white", ":hover": { color: "red" } }}
+                    sx={{ color: "white", ":hover": { color: "red", fontFamily: 'Ramche', } }}
                     onClick={changePW}
                   >
                     변경
@@ -422,6 +433,7 @@ function UserInfo(props) {
                 backgroundColor: "#F2BED1",
                 color: "#000000",
                 fontWeight: "bold",
+                fontFamily: 'Ramche',
               }}
               onClick={handleFileOpen}
             >
@@ -429,7 +441,7 @@ function UserInfo(props) {
             </Button>
             <input
               type="file"
-              style={{ display: "none" }}
+              style={{ display: "none", fontFamily: 'Ramche', }}
               ref={fileInput}
               // onChange={handleFileChange}
             />

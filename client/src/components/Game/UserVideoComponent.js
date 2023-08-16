@@ -84,6 +84,37 @@ const UserVideoComponent = ({ streamManager }) => {
             />
           </Grid>
 
+<<<<<<< HEAD
+        {/* 게임 시작 전 & 후 */}
+        {gameStarted ? null : (
+          <div
+            style={{
+              fontFamily: 'Ramche',
+              fontSize: "20px",
+              color: "white",
+              margin: "20px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Grid item xs={3} style={{ marginRight: "10px", fontFamily: 'Ramche', }}>
+              <Avatar
+                src={getProfilePic(getUserInfo().data.score_sum)}
+                style={{ width: "40px", height: "40px", flexShrink: 0, fontFamily: 'Ramche', }}
+              />
+            </Grid>
+
+            <Grid
+              item
+              xs={7}
+              style={{ fontSize: "20px", fontFamily: 'Ramche', }}
+            >
+              {getUserInfo().data.nickname}
+            </Grid>
+          </div>
+        )}
+=======
           <Grid
             item
             xs={7}
@@ -100,6 +131,7 @@ const UserVideoComponent = ({ streamManager }) => {
 
           </Grid>
         </div>
+>>>>>>> abcdf4fcf3d09104b461b9ea09d7e4b17c18b48b
       </div>
     </div>
   );

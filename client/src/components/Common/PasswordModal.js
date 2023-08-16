@@ -35,9 +35,10 @@ function PasswordModal({ isOpen, handleClose, onPasswordSubmit }) {
           boxShadow: 24,
           p: 4,
           minWidth: 300,
+          fontFamily: 'Ramche',
         }}
       >
-        <h2>비밀번호 입력</h2>
+        <h2 style={{fontFamily: 'Ramche',}}>비밀번호 입력</h2>
         <TextField
           label="비밀번호"
           type="password"
@@ -45,8 +46,9 @@ function PasswordModal({ isOpen, handleClose, onPasswordSubmit }) {
           value={password}
           onChange={handlePasswordChange}
           fullWidth
+          style={{fontFamily: 'Ramche',}}
         />
-        <Button variant="contained" onClick={handleSubmit} fullWidth>
+        <Button variant="contained" onClick={handleSubmit} fullWidth style={{fontFamily: 'Ramche',}}>
           확인
         </Button>
       </Box>

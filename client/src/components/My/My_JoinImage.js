@@ -15,16 +15,16 @@ const JoinImage = ({ initialImages, onImageSelect }) => {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", width: "60%" }}>
-      <h1 className="Join-Content">회원 가입</h1>
-      <div style={{ width: "100%", marginLeft: "80px" }}>
+    <div style={{ display: "flex", flexDirection: "column", width: "60%", fontFamily: 'Ramche', }}>
+      <h1 className="Join-Content" style={{fontFamily: 'Ramche',}}>회원 가입</h1>
+      <div style={{ width: "100%", marginLeft: "80px", fontFamily: 'Ramche', }}>
         <Carousel showStatus={false} onChange={handleImageChange}>
           {initialImages.map((img, index) => (
             <div key={index}>
               <img
                 src={img}
                 alt="User"
-                style={{ width: "100%", height: "auto" }}
+                style={{ width: "100%", height: "auto", fontFamily: 'Ramche', }}
               />
             </div>
           ))}

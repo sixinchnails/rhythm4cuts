@@ -107,19 +107,21 @@ const YourModalComponent = ({ friendRequest, onClose }) => {
           backgroundColor: "white",
           padding: "30px",
           boxShadow: 3,
+          fontFamily: 'Ramche',
         }}
       >
-        <p>{message}</p>
+        <p style={{fontFamily: 'Ramche',}}>{message}</p>
         <Button
           variant="contained"
           color="primary"
           onClick={acceptFriendRequest}
+          style={{fontFamily: 'Ramche',}}
         >
           {" "}
           {/* 여기에 클릭 이벤트 핸들러 추가 */}
           수락
         </Button>
-        <Button variant="outlined" color="secondary" onClick={onClose}>
+        <Button variant="outlined" color="secondary" onClick={onClose} style={{fontFamily: 'Ramche',}}>
           거절
         </Button>
       </Box>
