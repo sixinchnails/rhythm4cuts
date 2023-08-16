@@ -10,4 +10,8 @@ import java.util.List;
 public class WaitGameResponseDto {
     private int userSeq;
     private int order;
+    private int score;
+    private int profile_img_seq;
+    private String nickname;
+
 }
