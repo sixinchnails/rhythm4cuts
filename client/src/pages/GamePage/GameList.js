@@ -36,7 +36,7 @@ function GameList() {
   const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
   const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
   const [page, setPage] = useState(1); // 페이지 상태
-  const friends = useSelector((state) => state.GameList_Friend); // 친구 리스트
+  const friends = useSelector(state => state.GameList_Friend); // 친구 리스트
   const itemsPerPage = 6; // 한 페이지당 표시할 방 수
 
   // 친구 추가
@@ -71,7 +71,7 @@ function GameList() {
   useEffect(() => {
     connectWebSocket();
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
         } else {
           // 로그인 상태가 아니라면 알림.
@@ -79,7 +79,7 @@ function GameList() {
         }
       })
 
-      .catch((error) => {
+      .catch(error => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -118,7 +118,7 @@ function GameList() {
   };
 
   // 검색어에 따라 방 리스트 필터링
-  let filteredRooms = rooms.filter((room) => {
+  let filteredRooms = rooms.filter(room => {
     switch (searchCategory) {
       case "gameSeq":
         return room.gameSeq
@@ -144,7 +144,7 @@ function GameList() {
     setPage(value);
   };
   // 검색어 변경 이벤트 핸들러
-  const handleSearchChange = (event) => {
+  const handleSearchChange = event => {
     setSearchTerm(event.target.value);
   };
 
@@ -174,7 +174,7 @@ function GameList() {
   const handleQuickJoin = async () => {
     // 현재 입장 가능한 방 중에서 조건에 맞는 방을 찾아 입장
     const joinableRooms = filteredRooms.filter(
-      (room) => room.headcount >= 1 && room.headcount <= 3 && !room.isSecret
+      room => room.headcount >= 1 && room.headcount <= 3 && !room.isSecret
     );
 
     if (joinableRooms.length > 0) {
@@ -192,7 +192,7 @@ function GameList() {
   };
 
   // 방 입장
-  const handleOpenGameWait = (room) => {
+  const handleOpenGameWait = room => {
     navigate(`/GameWait/${room.gameSeq}`, {
       state: { data: room.songSeq },
     });
@@ -219,17 +219,17 @@ function GameList() {
             <IconButton
               onClick={handleRefresh}
               style={{
-                marginRight: "1em",
+                // marginRight: "1em",
                 marginBottom: "0.5em",
               }}
             >
-              <RefreshIcon style={{ color: "#ffffff", fontFamily: 'Ramche', }} />
+              <RefreshIcon style={{ color: "#ffffff", fontFamily: "Ramche" }} />
             </IconButton>
 
             {/* 검색 카테고리 추가 */}
             <Select
               value={searchCategory}
-              onChange={(e) => setSearchCategory(e.target.value)}
+              onChange={e => setSearchCategory(e.target.value)}
               style={{
                 backgroundColor: "rgba(0, 128, 255, 0.1)",
                 marginRight: "1em",
@@ -237,7 +237,7 @@ function GameList() {
                 color: "#ffffff",
                 borderColor: "#ffffff", // 테두리 색상을 흰색으로 설정
                 height: "7vh",
-                fontFamily: 'Ramche',
+                fontFamily: "Ramche",
               }}
               // 검색 카테고리의 드롭다운 메뉴 스타일 변경
               MenuProps={{
@@ -265,21 +265,23 @@ function GameList() {
                 marginRight: "1em",
                 backgroundColor: "rgba(0, 128, 255, 0.1)",
                 height: "7vh",
-                fontFamily: 'Ramche',
+                fontFamily: "Ramche",
               }}
               InputProps={{
                 style: {
                   color: "#ffffff",
                   height: "7vh",
                   fontSize: "20px",
-                  fontFamily: 'Ramche',
+                  fontFamily: "Ramche",
                 },
-                inputProps: { style: { color: "#ffffff", fontFamily: 'Ramche', } },
+                inputProps: {
+                  style: { color: "#ffffff", fontFamily: "Ramche" },
+                },
               }}
               InputLabelProps={{
                 style: {
                   color: "#ffffff",
-                  fontFamily: 'Ramche',
+                  fontFamily: "Ramche",
                 },
               }}
             />
@@ -292,7 +294,7 @@ function GameList() {
                 backgroundColor: "rgba(0, 128, 255, 0.3)",
                 fontWeight: "bold",
                 fontSize: "20px",
-                fontFamily: 'Ramche',
+                fontFamily: "Ramche",
               }}
               variant="contained"
               onClick={handleOpenCreateRoomModal}
@@ -308,7 +310,7 @@ function GameList() {
                 backgroundColor: "rgba(0, 128, 255, 0.3)",
                 fontWeight: "bold",
                 fontSize: "20px",
-                fontFamily: 'Ramche',
+                fontFamily: "Ramche",
               }}
               variant="contained"
               onClick={handleQuickJoin}
@@ -344,7 +346,7 @@ function GameList() {
                 marginTop: "1%",
                 width: "100%", // 너비를 100%로 설정
                 height: "5vh",
-                fontFamily: 'Ramche',
+                fontFamily: "Ramche",
               }}
             >
               <Pagination
@@ -376,7 +378,11 @@ function GameList() {
         <Grid item xs={3} padding={"15px"}>
           <Paper
             elevation={10}
-            style={{ backgroundColor: "rgba(0, 0, 0, 0.8)", height: "81vh", fontFamily: 'Ramche', }}
+            style={{
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              height: "81vh",
+              fontFamily: "Ramche",
+            }}
           >
             <Box padding={"20px"}>
               <Grid direction="column" container>
@@ -388,7 +394,7 @@ function GameList() {
                       fontFamily: "Pretendard-Regular",
                       fontWeight: "bold",
                       fontSize: "25px",
-                      fontFamily: 'Ramche',
+                      fontFamily: "Ramche",
                     }}
                   >
                     친구 목록
@@ -401,7 +407,7 @@ function GameList() {
                       justifyContent: "center",
                       height: "50vh",
                       overflow: "auto",
-                      fontFamily: 'Ramche',
+                      fontFamily: "Ramche",
                     }}
                   >
                     <FriendList friends={friends} />
@@ -422,7 +428,7 @@ function GameList() {
                         width: "30%",
                         height: "5vh",
                         fontSize: "15px",
-                        fontFamily: 'Ramche',
+                        fontFamily: "Ramche",
                       }}
                     >
                       Add

@@ -9,6 +9,7 @@ import {
   Check as CheckIcon,
   ExitToApp as ExitToAppIcon,
   PersonAdd as PersonAddIcon,
+  Tune,
 } from "@mui/icons-material";
 import {
   styled,
@@ -145,6 +146,7 @@ function GameWait() {
   const [audioChunks, setAudioChunks] = useState([]);
   const [audioBlob, setAudioBlob] = useState(null);
   const mediaRecorderRef = useRef(null);
+  const [gameReadyed, setGameReadyed] = useState(false); // 게임 준비 여부 상태
   const [gameStarted, setGameStarted] = useState(false); // 게임 시작 여부 상태
   // 게임 시작 여부에 따른 녹음 시작/종료 처리
   useEffect(() => {
@@ -194,8 +196,6 @@ function GameWait() {
   };
   const access = getCookie("access");
   const [musicUrl, setMusicUrl] = useState(""); // 해당 노래 url
-
-  const [playerFix, setPlayerFix] = useState([]); // 배열 순서 고정
 
   // 상태 추가
   const [isInviteModalOpen, setInviteModalOpen] = useState(false);
@@ -489,11 +489,13 @@ function GameWait() {
     }
   }
 
-  function handleGameReady() {
+  // "게임 시작" 버튼을 눌렀을 때 동작
+  function handleGamePlay() {
     console.log("게임 시작 버튼 누름");
     console.log(stomp);
     // 게임 시작 메시지를 서버에 전송
     if (stomp && stomp.connected) {
+      setGameStarted(true);
       console.log("연결 후 자동 재생 요청");
       const message = {
         gameSeq: gameSeq,
@@ -501,6 +503,11 @@ function GameWait() {
       };
       stomp.send("/public/song", {}, JSON.stringify(message));
     }
+  }
+  // "게임 준비" 버튼을 눌렀을 때 동작
+  function handleGameReady() {
+    console.log("게임 준비 버튼 누름");
+    setGameReadyed(true);
   }
 
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
@@ -600,6 +607,75 @@ function GameWait() {
     bringUrl();
   }, [songSeq]);
 
+  // 가사 순서 변화 실행을 위한 코드 Start
+  // ///////////////////////////
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(-1); // 현재 인덱스 상태 추가
+  // const timeRanges = [[5, 32], [33, 61], [62, 91], [106, 134]]; // 예시 시간 범위 배열 (여기 부분을 lyrics에서 시작시간, 끝시간 가져와야함)
+
+  const [timeRanges, setTimeRanges] = useState([]);
+
+  useEffect(() => {
+    bringTimeRanges();
+  }, [musicUrl]);
+
+  const bringTimeRanges = async () => {
+    try {
+      const headers = {
+        Authorization: "Bearer " + getCookie("access"),
+      };
+      const response = await axios.get(
+        `https://i9b109.p.ssafy.io:8443/lyrics/${songSeq}`,
+        { headers }
+      );
+
+      if (response.status === 200) {
+        const data = response.data.data;
+        const newTimeRanges = data.map(item => [
+          item.startTime + 3,
+          item.endTime + 3,
+        ]);
+        setTimeRanges(newTimeRanges);
+        console.log(1);
+      }
+      console.log(timeRanges);
+    } catch (error) {
+      console.error("Error fetching time ranges:", error);
+    }
+  };
+
+  const handlePlayButtonClick = () => {
+    setIsPlaying(true);
+    startTimer();
+    setCurrentIndex(0); // 처음 인덱스로 값을 초기화
+  };
+
+  const startTimer = () => {
+    const timerInterval = 1000; // 1초마다 타이머 업데이트
+    let currentTime = 0;
+
+    const timer = setInterval(() => {
+      currentTime += timerInterval / 1000; // 초 단위로 업데이트
+
+      timeRanges.forEach(([startTime, endTime], index) => {
+        if (currentTime >= startTime && currentTime <= endTime) {
+          console.log(`Dynamic change at time ${currentTime}`);
+          setCurrentIndex(index); // 현재 인덱스 업데이트
+        }
+      });
+
+      if (currentTime >= timeRanges[timeRanges.length - 1][1]) {
+        clearInterval(timer);
+        setIsPlaying(false);
+        setCurrentIndex(-1); // 인덱스 초기화
+      }
+    }, timerInterval);
+  };
+
+  // ///////////////////////////
+  // 가사 순서 변화 실행을 위한 코드 End
+
   return (
     <div
       style={{
@@ -626,16 +702,19 @@ function GameWait() {
               }}
             >
               {/* 대기중 비디오 */}
-              <video
-                src="/images/GameImage/Dance.mp4"
-                autoPlay
-                loop
-                style={{
-                  width: "100%",
-                  height: "40vh",
-                  objectFit: "cover",
-                }}
-              />
+              {gameReadyed && (
+                <video
+                  src={musicUrl}
+                  controls={false}
+                  autoPlay
+                  loop
+                  style={{
+                    width: "100%",
+                    height: "40vh",
+                    objectFit: "cover",
+                  }}
+                />
+              )}
             </Card>
           </Grid>
         ) : (
@@ -723,11 +802,31 @@ function GameWait() {
                     </StyledIconButton>
                   </Grid>
                 )}
-                {/* "게임 시작" 버튼 : 4명이 차면 뜬다!! */}
-                {players.length === 4 ? (
+                {/* "게임 준비" 버튼 : 4명이 차면 뜬다!! && 게임 준비가 아닌 상태면 */}
+                {players.length === 4 && !gameReadyed ? (
                   <Grid item xs={10} style={{ margin: "1px" }}>
                     <StyledIconButton
                       onClick={handleGameReady}
+                      style={{ width: "30vw" }}
+                    >
+                      <CheckIcon />
+                      <Typography
+                        style={{
+                          fontFamily: "Pretendard-Regular",
+                          fontSize: "20px",
+                          padding: "15px",
+                        }}
+                      >
+                        게임 준비
+                      </Typography>
+                    </StyledIconButton>
+                  </Grid>
+                ) : null}
+                {/* "게임 시작" 버튼 : 게임 준비가 true인 상태에 뜬다 */}
+                {gameReadyed ? (
+                  <Grid item xs={10} style={{ margin: "1px" }}>
+                    <StyledIconButton
+                      onClick={handleGamePlay}
                       style={{ width: "30vw" }}
                     >
                       <CheckIcon />
@@ -749,8 +848,8 @@ function GameWait() {
         )}
         {/* Bottom */}
         <Grid container>
-          {gameStarted ? (
-            // 게임시작 버튼 클릭 후 후 후! -------------------------------------------------------------------------------------
+          {gameReadyed ? (
+            // 게임준비 버튼 클릭 후 후 후! -------------------------------------------------------------------------------------
             <Grid
               style={{
                 height: "25vh",
@@ -800,7 +899,7 @@ function GameWait() {
               ))}
             </Grid>
           ) : (
-            // 게임시작 버튼 클릭 전 전 전! --------------------------------------------------------------------------------
+            // 게임준비 버튼 클릭 전 전 전! --------------------------------------------------------------------------------
             <Grid
               style={{
                 height: "25vh",
