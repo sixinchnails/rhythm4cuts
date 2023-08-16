@@ -92,8 +92,10 @@ const UserVideoComponent = ({ streamManager }) => {
           >
             {/* {getUserInfo().data.user_seq}  */}
             {userOrders[userSeq] ? (
-              <>{userOrders[userSeq]} 번째 입니다!</>
-            ) : (
+              <>
+                {userOrders[userSeq]} 번째
+              </>
+            ) : ( 
               "Loading..."
             )}
           </Grid>

@@ -36,7 +36,7 @@ function GameList() {
   const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
   const [rooms, setRooms] = useState([]); // 방 리스트 (초기값 빈 배열로 설정)
   const [page, setPage] = useState(1); // 페이지 상태
-  const friends = useSelector((state) => state.GameList_Friend); // 친구 리스트
+  const friends = useSelector(state => state.GameList_Friend); // 친구 리스트
   const itemsPerPage = 6; // 한 페이지당 표시할 방 수
 
   // 친구 추가
@@ -71,7 +71,7 @@ function GameList() {
   useEffect(() => {
     connectWebSocket();
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
         } else {
           // 로그인 상태가 아니라면 알림.
@@ -79,7 +79,7 @@ function GameList() {
         }
       })
 
-      .catch((error) => {
+      .catch(error => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -118,7 +118,7 @@ function GameList() {
   };
 
   // 검색어에 따라 방 리스트 필터링
-  let filteredRooms = rooms.filter((room) => {
+  let filteredRooms = rooms.filter(room => {
     switch (searchCategory) {
       case "gameSeq":
         return room.gameSeq
@@ -144,7 +144,7 @@ function GameList() {
     setPage(value);
   };
   // 검색어 변경 이벤트 핸들러
-  const handleSearchChange = (event) => {
+  const handleSearchChange = event => {
     setSearchTerm(event.target.value);
   };
 
@@ -174,7 +174,7 @@ function GameList() {
   const handleQuickJoin = async () => {
     // 현재 입장 가능한 방 중에서 조건에 맞는 방을 찾아 입장
     const joinableRooms = filteredRooms.filter(
-      (room) => room.headcount >= 1 && room.headcount <= 3 && !room.isSecret
+      room => room.headcount >= 1 && room.headcount <= 3 && !room.isSecret
     );
 
     if (joinableRooms.length > 0) {
@@ -192,7 +192,7 @@ function GameList() {
   };
 
   // 방 입장
-  const handleOpenGameWait = (room) => {
+  const handleOpenGameWait = room => {
     navigate(`/GameWait/${room.gameSeq}`, {
       state: { data: room.songSeq },
     });
@@ -207,7 +207,6 @@ function GameList() {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/GameImage/GameList.jpg')",
-        fontFamily: "Ramche",
       }}
     >
       <Header />
@@ -222,7 +221,6 @@ function GameList() {
               style={{
                 // marginRight: "1em",
                 marginBottom: "0.5em",
-                fontFamily: "Ramche",
               }}
             >
               <RefreshIcon style={{ color: "#ffffff", fontFamily: "Ramche" }} />
@@ -231,7 +229,7 @@ function GameList() {
             {/* 검색 카테고리 추가 */}
             <Select
               value={searchCategory}
-              onChange={(e) => setSearchCategory(e.target.value)}
+              onChange={e => setSearchCategory(e.target.value)}
               style={{
                 backgroundColor: "rgba(0, 128, 255, 0.1)",
                 marginRight: "1em",
@@ -248,7 +246,6 @@ function GameList() {
                     backgroundColor: "#333", // 드롭다운 메뉴 배경색 변경
                     color: "#ffffff", // 드롭다운 메뉴 텍스트 색상 변경
                     border: "1px solid #ffffff", // 드롭다운 메뉴 테두리 색상을 흰색으로 설정
-                    fontFamily: "Ramche",
                   },
                 },
               }}
@@ -274,7 +271,6 @@ function GameList() {
                 style: {
                   color: "#ffffff",
                   height: "7vh",
-                  fontFamily: "Pretendard-Regular",
                   fontSize: "20px",
                   fontFamily: "Ramche",
                 },
@@ -296,7 +292,6 @@ function GameList() {
                 marginBottom: "0.5em",
                 marginRight: "0.5em",
                 backgroundColor: "rgba(0, 128, 255, 0.3)",
-                fontFamily: "Pretendard-Regular",
                 fontWeight: "bold",
                 fontSize: "20px",
                 fontFamily: "Ramche",
@@ -313,7 +308,6 @@ function GameList() {
                 marginBottom: "0.5em",
                 marginRight: "0.5em",
                 backgroundColor: "rgba(0, 128, 255, 0.3)",
-                fontFamily: "Pretendard-Regular",
                 fontWeight: "bold",
                 fontSize: "20px",
                 fontFamily: "Ramche",
@@ -433,7 +427,6 @@ function GameList() {
                         backgroundColor: "rgba(0, 128, 255, 0.3)",
                         width: "30%",
                         height: "5vh",
-                        fontFamily: "Pretendard-Regular",
                         fontSize: "15px",
                         fontFamily: "Ramche",
                       }}

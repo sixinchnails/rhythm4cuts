@@ -46,6 +46,11 @@ public class WaitRoomServiceImpl implements WaitRoomService {
 
             waitGameResponseDto.setUserSeq(userGameInfo.getUser().getUserSeq());
             waitGameResponseDto.setOrder(userGameInfo.getGameOrder());
+            waitGameResponseDto.setScore(userGameInfo.getGameScore());
+
+            User user = userRepository.findByUserSeq(userGameInfo.getUser().getUserSeq());
+            waitGameResponseDto.setNickname(user.getNickname());
+            waitGameResponseDto.setProfile_img_seq(user.getProfileImage().getProfileImageSeq());
 
             waitGameResponseDtoList.add(waitGameResponseDto);
         }

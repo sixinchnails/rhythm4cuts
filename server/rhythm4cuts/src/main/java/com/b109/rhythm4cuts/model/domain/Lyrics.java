@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.model.domain;
 
+import com.b109.rhythm4cuts.model.dto.LyricsDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,5 +32,18 @@ public class Lyrics {
     public void setSong(Song song) {
         this.song = song;
         song.getLyrics().add(this);
+    }
+
+    public LyricsDto getLyricsDto() {
+        LyricsDto lyricsDto = new LyricsDto();
+
+        lyricsDto.setLyricsSeq(this.getLyricsSeq());
+        lyricsDto.setStartTime(this.getStartTime());
+        lyricsDto.setEndTime(this.getEndTime());
+        lyricsDto.setLyric(this.getLyric());
+        lyricsDto.setSongOrder(this.getSongOrder());
+        lyricsDto.setSongSeq(this.getSong().getSongSeq());
+
+        return lyricsDto;
     }
 }

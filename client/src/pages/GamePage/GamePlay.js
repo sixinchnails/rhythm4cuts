@@ -17,7 +17,7 @@ import { fetchToken, closeSession, setSession } from "../../store"; // 추가된
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import UserVideo from "../../components/Game/UserVideo";
+import UserVideoShot from "../../components/Game/UserVideoShot";
 import Header from "../../components/Game/HeaderPlay";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
@@ -32,10 +32,8 @@ function GamePlay() {
   const { gameSeq } = useParams(); // 여기서 gameSeq를 가져옴
   const navigate = useNavigate(); // 페이지 이동
   const dispatch = useDispatch(); // 리덕스 넣기
-  const session = useSelector((state) => state.roomState.session);
-  const connectionToken = useSelector(
-    (state) => state.roomState.connectionToken
-  );
+  const session = useSelector(state => state.roomState.session);
+  const connectionToken = useSelector(state => state.roomState.connectionToken);
   const { connectWebSocket, sendGameStartMessage } = useWebSocket();
 
   // Record 기능을 위한 코드 Start
@@ -56,14 +54,14 @@ function GamePlay() {
       const streamPromise = navigator.mediaDevices.getUserMedia({
         audio: true,
       });
-      streamPromise.then((stream) => {
+      streamPromise.then(stream => {
         setIsRecording(true);
         setAudioChunks([]);
         const mediaRecorder = new MediaRecorder(stream);
 
-        mediaRecorder.ondataavailable = (e) => {
+        mediaRecorder.ondataavailable = e => {
           if (e.data.size > 0) {
-            setAudioChunks((chunks) => [...chunks, e.data]);
+            setAudioChunks(chunks => [...chunks, e.data]);
           }
         };
 
@@ -144,7 +142,7 @@ function GamePlay() {
     stomp.connect({}, () => {
       console.log("---------stomp connect");
       // 특정 토픽 구독
-      stomp.subscribe(`/subscribe/song/${gameSeq}`, (message) => {
+      stomp.subscribe(`/subscribe/song/${gameSeq}`, message => {
         console.log("video start");
         setVideoVisible(true);
       });
@@ -163,7 +161,7 @@ function GamePlay() {
   }, [gameSeq]);
 
   // 해당 노래 영상 가져오기
-  const [songSeq, setSongSeq] = useState(117);
+  const [songSeq, setSongSeq] = useState(116);
   const [musicUrl, setMusicUrl] = useState("");
 
   const bringUrl = async () => {

@@ -80,7 +80,7 @@ const LoginMypageHeader = () => {
       <div>
         <Badge
           color="error"
-          variant={hasNotification ? "dot" : "standard"}
+          variant={hasNotification || gameInvite ? "dot" : "standard"}
           onClick={onNotificationClick}
           style={{ marginRight: "20px", fontFamily: 'Ramche', }}
         >
