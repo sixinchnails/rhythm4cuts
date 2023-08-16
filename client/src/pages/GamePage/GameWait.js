@@ -40,9 +40,6 @@ import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 import UserInfo from "../../components/My/My_UserInfo";
 
-var sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
-var stomp = Stomp.over(sock);
-
 function InviteFriendsModal({
   isOpen,
   onClose,
@@ -62,7 +59,7 @@ function InviteFriendsModal({
       >
         <h3>친구 초대하기</h3>
         <List>
-          {friends.map((friend) => (
+          {friends.map(friend => (
             <ListItem key={friend.email}>
               <ListItemText
                 primary={friend.nickname}
@@ -86,7 +83,40 @@ function InviteFriendsModal({
 }
 
 function GameWait() {
-  // const location = useLocation();
+  const [stomp, setStomp] = useState(null); // stomp 객체 상태 추가
+
+  useEffect(() => {
+    if (!stomp) {
+      // stomp 객체가 없을 때만 초기화
+      const sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
+      const stompClient = Stomp.over(sock);
+
+      stompClient.connect(
+        {},
+        function () {
+          console.log("게임 페이지 안 웹소켓 연결.");
+          stompClient.subscribe(`/subscribe/song/${gameSeq}`, message => {
+            console.log("video start");
+            setGameStarted(true);
+          });
+          console.log(userSeq);
+          if (userSeq) {
+            stompClient.subscribe(
+              `/subscribe/friend/invite/${userSeq}`,
+              () => {}
+            );
+          }
+        },
+        error => {
+          console.log("STOMP 연결 실패:", error);
+        }
+      );
+
+      setStomp(stompClient); // stomp 객체를 상태에 저장
+    }
+  }, [stomp]);
+
+  const location = useLocation();
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
   const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate(); // 페이지 이동
@@ -94,11 +124,15 @@ function GameWait() {
   const [toUser, setToUser] = useState("");
   const [songSeq, setSongSeq] = useState(0);
 
+  {
+    console.log(songSeq);
+  }
+
   var { gameSeq } = useParams(); // url에서 추출
 
   dispatch(setGameseq(gameSeq));
 
-  const session = useSelector((state) => state.roomState.session);
+  const session = useSelector(state => state.roomState.session);
 
   // const [myUserName, setMyUserName] = useState(undefined);
   const [connectSession, setConnectSession] = useState(undefined);
@@ -138,7 +172,7 @@ function GameWait() {
   };
 
   //친구 목록 가져오는 함수
-  const fetchFriendList = async (userSeq) => {
+  const fetchFriendList = async userSeq => {
     const headers = {
       Authorization: "Bearer " + getCookie("access"),
     };
@@ -164,24 +198,24 @@ function GameWait() {
     },
   });
 
-  useEffect(() => {
-    console.log("useeffect.");
-    console.log("stomp object:", stomp);
-    stomp.connect(
-      {},
-      () => {
-        console.log("게임 페이지 안 웹소캣 연결.");
-        if (userSeq) {
-          stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
-            alert("게임 초대 요청 옴");
-          });
-        }
-      },
-      (error) => {
-        console.log("STOMP 연결 실패:", error);
-      }
-    );
-  }, [userSeq]);
+  // useEffect(() => {
+  //   console.log("useeffect.");
+  //   console.log("stomp object:", stomp);
+  //   stomp.connect(
+  //     {},
+  //     () => {
+  //       console.log("게임 페이지 안 웹소캣 연결.");
+  //       if (userSeq) {
+  //         stomp.subscribe(`/subscribe/friend/invite/${userSeq}`, () => {
+  //           alert("게임 초대 요청 옴");
+  //         });
+  //       }
+  //     },
+  //     (error) => {
+  //       console.log("STOMP 연결 실패:", error);
+  //     }
+  //   );
+  // }, [userSeq]);
 
   function InviteGame(toUserValue) {
     var request = {
@@ -189,9 +223,6 @@ function GameWait() {
       toUser: toUserValue,
       gameSeq: gameSeq,
     };
-    console.log(request.fromUser);
-    console.log(request.toUser);
-    console.log(request.gameSeq);
     if (stomp.connected) {
       stomp.send("/public/invite", {}, JSON.stringify(request));
     }
@@ -207,7 +238,7 @@ function GameWait() {
           Authorization: `Bearer ${getCookie("access")}`,
         },
       })
-      .then((res) => {
+      .then(res => {
         const param = {
           userSeq: String(res.data.user_seq),
           gameSeq: String(gameSeq),
@@ -222,11 +253,11 @@ function GameWait() {
           },
         });
       })
-      .then((postRes) => {
+      .then(postRes => {
         // 이곳에서 post 요청에 대한 응답 처리
         console.log("POST 요청 응답:", postRes);
       })
-      .catch((error) => {
+      .catch(error => {
         // 에러 처리
         console.error("에러 발생:", error);
       });
@@ -236,7 +267,7 @@ function GameWait() {
   useEffect(() => {
     connectWebSocket();
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           setUserSeq(res.data.user_seq);
         } else {
@@ -244,7 +275,7 @@ function GameWait() {
           handleOpenLoginAlert();
         }
       })
-      .catch((error) => {
+      .catch(error => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -252,13 +283,13 @@ function GameWait() {
 
   useEffect(() => {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status !== 200) {
           window.alert("로그인을 해주세요!");
           navigate("/");
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("유저 정보 불러오기 실패:", error);
         window.alert("로그인을 해주세요!");
         navigate("/");
@@ -350,22 +381,22 @@ function GameWait() {
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
-      newSession.on("streamCreated", (event) => {
+      newSession.on("streamCreated", event => {
         const subscriber = newSession.subscribe(event.stream, undefined);
-        setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
 
-        setPlayers((prevPlayers) => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
+        setPlayers(prevPlayers => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
 
         if (!mainStreamManager) {
           setMainStreamManager(subscriber);
         }
       });
 
-      newSession.on("streamDestroyed", (event) => {
+      newSession.on("streamDestroyed", event => {
         deleteSubscriber(event.stream.streamManager);
       });
 
-      newSession.on("exception", (exception) => {
+      newSession.on("exception", exception => {
         console.warn(exception);
       });
 
@@ -391,11 +422,11 @@ function GameWait() {
 
           setPublisher(newPublisher);
           setMainStreamManager(newPublisher);
-          setPlayers((prevPlayers) => [...prevPlayers, newPublisher]);
+          setPlayers(prevPlayers => [...prevPlayers, newPublisher]);
 
           //--------------------------
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(
             "There was an error connecting to the session:",
             error.code,
@@ -427,28 +458,42 @@ function GameWait() {
   }
 
   // "게임 시작" 버튼을 클릭했을 때 동작 -----------------------------------------------------------------------------
+  // function handleGameReady() {
+  //   setGameStarted(true);
+  //   setPlayerFix([...players]); // player 배열 복사
+
+  // axios 보내기
+  // console.log("access : " + access);
+
+  // axios.post(`https://i9b109.p.ssafy.io:8443/wait/enter`,
+  //   {
+  //     headers: {
+  //       Authorization: "Bearer " + access,
+  //     }
+  //   },
+  //   {
+  //     "gameSeq": gameSeq,
+  //     "userSeq": userseq
+  //   }
+  // )
+  // }
+
   function handleGameReady() {
-    setGameStarted(true);
-    setPlayerFix([...players]); // player 배열 복사
-
-    // axios 보내기
-    // console.log("access : " + access);
-
-    // axios.post(`https://i9b109.p.ssafy.io:8443/wait/enter`,
-    //   {
-    //     headers: {
-    //       Authorization: "Bearer " + access,
-    //     }
-    //   },
-    //   {
-    //     "gameSeq": gameSeq,
-    //     "userSeq": userseq
-    //   }
-    // )
+    console.log("게임 시작 버튼 누름");
+    console.log(stomp);
+    // 게임 시작 메시지를 서버에 전송
+    if (stomp && stomp.connected) {
+      console.log("연결 후 자동 재생 요청");
+      const message = {
+        gameSeq: gameSeq,
+        // 필요한 경우 여기에 다른 데이터 추가
+      };
+      stomp.send("/public/song", {}, JSON.stringify(message));
+    }
   }
 
   // "채팅" 버튼을 클릭했을 때 동작 ---------------------------------------------------------------------------------
-  const handleChat = () => {};
+  const handleChat = () => { };
 
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
   const handleExit = () => {
@@ -465,7 +510,7 @@ function GameWait() {
     console.log("--------------------leave session");
 
     // 나가는 플레이어를 배열에서 제거하고 상태 업데이트
-    const updatedPlayers = players.filter((player) => player !== publisher);
+    const updatedPlayers = players.filter(player => player !== publisher);
     setPlayers(updatedPlayers);
 
     // // 자신의 스트림 해제
@@ -474,7 +519,7 @@ function GameWait() {
     // }
 
     // 구독 중인 스트림 해제
-    subscribers.forEach((subscriber) => {
+    subscribers.forEach(subscriber => {
       if (typeof subscriber.unsubscribe === "function") {
         subscriber.unsubscribe(); // 구독자 해제
         if (subscriber.streamManager) {
@@ -495,13 +540,15 @@ function GameWait() {
           Authorization: "Bearer " + access,
         },
       })
-      .then((response) => {
+      .then(response => {
         // navigate(`/GameList`)
       })
-      .catch((error) => {
+      .catch(error => {
         // Handle error if needed
         console.error("Error:", error);
       });
+
+    navigate("/GameList")
   };
 
   // 해당 노래 번호 가져오기
@@ -544,6 +591,7 @@ function GameWait() {
   useEffect(() => {
     bringUrl();
   }, [songSeq]);
+
   return (
     <div
       style={{
@@ -570,17 +618,19 @@ function GameWait() {
               }}
             >
               {/* 대기중 비디오 */}
-              <video
-                src={musicUrl}
-                controls={false}
-                autoPlay
-                loop
-                style={{
-                  width: "100%",
-                  height: "40vh",
-                  objectFit: "cover",
-                }}
-              />
+              {gameStarted && (
+                <video
+                  src={musicUrl}
+                  controls={false}
+                  autoPlay
+                  loop
+                  style={{
+                    width: "100%",
+                    height: "40vh",
+                    objectFit: "cover",
+                  }}
+                />
+              )}
             </Card>
           </Grid>
         ) : (
@@ -706,7 +756,7 @@ function GameWait() {
                 margin: "50px",
               }}
             >
-              {playerFix.map((player, index) => (
+              {[0, 1, 2, 3].map(index => (
                 <Grid
                   key={index}
                   item
@@ -719,8 +769,8 @@ function GameWait() {
                     borderRadius: "20px",
                   }}
                 >
-                  {player ? (
-                    <UserVideoComponent streamManager={player} />
+                  {players[index] ? (
+                    <UserVideoComponent streamManager={players[index]} userSeq={userSeq} cnt = {players.length}/>
                   ) : (
                     // 빈 자리 표시
                     <video
@@ -739,6 +789,7 @@ function GameWait() {
                   )}
                 </Grid>
               ))}
+
             </Grid>
           ) : (
             // 게임시작 버튼 클릭 전 전 전! --------------------------------------------------------------------------------
@@ -753,7 +804,7 @@ function GameWait() {
               }}
             >
               {/* 각 플레이어별로 Grid 아이템 생성 */}
-              {[0, 1, 2, 3].map((index) => (
+              {[0, 1, 2, 3].map(index => (
                 <Grid
                   key={index}
                   item

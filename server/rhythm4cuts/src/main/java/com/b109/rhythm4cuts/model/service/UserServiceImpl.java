@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     private final LogRepository logRepository;
 
     //id로 사용자 객체를 찾는 메서드
-    public UserDto findById(Long userId) {
+    public UserDto findById(int userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("id: " + userId + " 사용자를 찾을 수 없습니다."));
 
@@ -391,6 +391,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
     public String findNicknameById(int userSeq) {
         return userRepository.findByUserSeq(userSeq).getNickname();
     }

@@ -1,9 +1,6 @@
 package com.b109.rhythm4cuts.config;
 
-import com.b109.rhythm4cuts.model.domain.Category;
-import com.b109.rhythm4cuts.model.domain.ProfileImage;
-import com.b109.rhythm4cuts.model.domain.Song;
-import com.b109.rhythm4cuts.model.domain.User;
+import com.b109.rhythm4cuts.model.domain.*;
 import com.b109.rhythm4cuts.model.repository.*;
 import com.b109.rhythm4cuts.model.service.MelonService;
 import com.b109.rhythm4cuts.model.service.MusicService;
@@ -17,6 +14,8 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Component
 public class DummyDataInitializer {
@@ -32,10 +31,13 @@ public class DummyDataInitializer {
 
     private final CategoryRepository categoryRepository;
 
+    private final FilmRepository filmRepository;
+
     public DummyDataInitializer(UserRepository userRepository, ProfileImageRepository profileImageRepository,
                                 BCryptPasswordEncoder bCryptPasswordEncoder
             , FriendRepository friendRepository, MelonService melonService, MusicService musicService
-            , MusicRepository musicRepository, CategoryRepository categoryRepository) {
+    , MusicRepository musicRepository, CategoryRepository categoryRepository,
+                                FilmRepository filmRepository) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -44,6 +46,7 @@ public class DummyDataInitializer {
         this.musicService = musicService;
         this.musicRepository = musicRepository;
         this.categoryRepository = categoryRepository;
+        this.filmRepository = filmRepository;
     }
 
 
@@ -209,6 +212,23 @@ public class DummyDataInitializer {
         category1.setDescription("포인트 얻음");
         categoryRepository.save(category1);
 
+        List<String> urlList = new ArrayList<>(List.of(
+                "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/012382fa1597e60cffef3c58c5212e7f.jpg"
+                , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/aa58e437-05db-4183-9d4d-7ec40a008d88.jpg"
+                , "https://rhythm4cuts.s3.ap-northeast-2.amazonaws.com/img/D8R-NuUVsAAxTic.jpg"
+        ));
+
+        for(int i = 0; i < urlList.size(); i++) {
+            GameImage gameImage = new GameImage();
+
+            gameImage.setImageSeq(i);
+            gameImage.setUser(user);
+            gameImage.setCommonUrl(urlList.get(i % urlList.size()));
+            gameImage.setPrivateUrl(urlList.get(i % urlList.size()));
+            gameImage.setCreateDate(LocalDateTime.now());
+
+            filmRepository.save(gameImage);
+        }
     }
 
 }

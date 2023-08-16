@@ -22,14 +22,14 @@ function FriendList({ friends }) {
         <ListItem key={index}>
           <Typography
             variant="body1"
-            style={{ color: "#ffffff" }}
+            style={{ color: "#ffffff", fontFamily: 'Ramche', }}
             component="span"
           >
             {friend.isOnline ? "🟢" : "⚫"}
           </Typography>
           <Typography
             variant="body1"
-            style={{ color: "#ffffff", paddingLeft: "10px", padding: "5px" }}
+            style={{ color: "#ffffff", paddingLeft: "10px", padding: "5px", fontFamily: 'Ramche', }}
             component="span"
           >
             {friend.name}
