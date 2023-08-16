@@ -205,6 +205,7 @@ public class UserServiceImpl implements UserService {
     public UserDto login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException());
+        user.setIsOnline(1); // 온라인 상태로 변경
 
         if (!bCryptPasswordEncoder.matches(loginDto.getPassword(), user.getPassword())) throw new IllegalArgumentException();
 
@@ -217,6 +218,7 @@ public class UserServiceImpl implements UserService {
     public void logout(LogoutDto logoutDto) {
         User user = userRepository.findByEmail(logoutDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+        user.setIsOnline(0); // 오프라인 상태로 변경
 
         long expiryMilliSeconds = tokenProvider.getExpirationDateFromToken(logoutDto.getAccessToken()).getTime() - new Date().getTime();
 
