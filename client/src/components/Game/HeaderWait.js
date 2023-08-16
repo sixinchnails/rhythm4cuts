@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/NotificationsNone";
 import LogoutAlert from "../Common/LogoutAlert";
+import MessageAlert from "../Common/MessageAlert";
 import Badge from "@mui/material/Badge";
 import axios from "axios";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
@@ -25,7 +26,8 @@ const HeaderWait = () => {
 
   const onNotificationClick = () => {
     if (!hasNotification && !gameInvite) {
-      window.alert("알림이 없습니다!");
+      setMessageModalOpen(true);
+      // window.alert("알림이 없습니다!");
     } else {
       if (isModalOpen) {
         // 모달이 이미 열려있는 상태라면 모달을 닫고 알림 상태를 초기화합니다.
@@ -41,6 +43,7 @@ const HeaderWait = () => {
 
   // 모달 상태를 관리하기 위한 state 추가
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [isMessageModalOpen, setMessageModalOpen] = useState(false);
 
   const checkLogin = async () => {
     try {
@@ -65,7 +68,7 @@ const HeaderWait = () => {
       } else {
         window.confirm("로그아웃 실패.");
       }
-    } catch (error) {
+    } catch (error) { 
       console.log(error);
       window.confirm("로그아웃 통신 오류발생.");
     }
@@ -138,6 +141,13 @@ const HeaderWait = () => {
         onClose={() => setLogoutModalOpen(false)}
         onConfirm={checkLogin}
       />
+
+      {/* 알림 모달 */}
+      <MessageAlert
+        isOpen={isMessageModalOpen}
+        onClose={() => setMessageModalOpen(false)}
+      />
+
 
       {/* Friend request modal */}
       {isModalOpen && hasNotification && (

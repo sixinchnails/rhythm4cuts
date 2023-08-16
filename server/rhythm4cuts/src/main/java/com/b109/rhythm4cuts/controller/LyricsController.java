@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,7 +24,7 @@ public class LyricsController {
     @GetMapping("/{songSeq}")
     public ResponseEntity<?> selectLyricTime(@PathVariable("songSeq") int songSeq) {
 
-        LyricsDto lyricsDto = lyricsService.selectLyricTime(songSeq);
+        List<LyricsDto> lyricsDto = lyricsService.selectLyricTime(songSeq);
 
         Map<String, Object> res = new HashMap<>();
         res.put("message", "Success");

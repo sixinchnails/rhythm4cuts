@@ -9,6 +9,7 @@ import axios from "axios";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 import YourModalComponent from "../Common/ConfirmFriend";
 import GameInviteModal from "../Common/InviteGameModal";
+import MessageAlert from '../Common/MessageAlert';
 
 const LoginHeader = () => {
   const access = getCookie("access");
@@ -20,10 +21,12 @@ const LoginHeader = () => {
     resetGameInvite,
   } = useWebSocket();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMessageModalOpen, setMessageModalOpen] = useState(false);
 
   const onNotificationClick = () => {
     if (!hasNotification && !gameInvite) {
-      window.alert("알림이 없습니다!");
+      setMessageModalOpen(true);
+      // window.alert("알림이 없습니다!");
     } else {
       if (isModalOpen) {
         // 모달이 이미 열려있는 상태라면 모달을 닫고 알림 상태를 초기화합니다.
@@ -93,10 +96,10 @@ const LoginHeader = () => {
         >
           <NotificationsIcon />
         </Badge>
-        <Link className="Header_Login1" to="/Mypage" style={{fontFamily: 'Ramche',}}>
+        <Link className="Header_Login1" to="/Mypage" style={{ fontFamily: 'Ramche', }}>
           MyPage
         </Link>
-        <Link className="Header_Login1" onClick={checkLogin} style={{fontFamily: 'Ramche',}}>
+        <Link className="Header_Login1" onClick={checkLogin} style={{ fontFamily: 'Ramche', }}>
           Logout
         </Link>
       </div>
@@ -121,6 +124,12 @@ const LoginHeader = () => {
           }}
         />
       )}
+
+      {/* 알림 모달 */}
+      <MessageAlert
+        isOpen={isMessageModalOpen}
+        onClose={() => setMessageModalOpen(false)}
+      />
     </div>
   );
 };

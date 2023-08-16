@@ -55,8 +55,16 @@ public class FilmController {
     @GetMapping("/photo")
     public ResponseEntity<List<FilmResponseDto>> getPhotos(@RequestParam String email) throws IOException {
         int userSeq = userService.findByEmail(email).getUserSeq();
+
         List<FilmResponseDto> filmUrls = filmService.getUserPhotoList(userSeq);
 
         return ResponseEntity.status(200).body(filmUrls);
+    }
+
+    @GetMapping("/photo/daily/info/{year}/{month}/{day}/{page}")
+    public ResponseEntity<List<FilmResponseDto>> getDailyPhotos(@PathVariable int year, @PathVariable int month, @PathVariable int day, @PathVariable int page) {
+        List<FilmResponseDto> filmResponseDtoList = filmService.getDailyPhotoList(year, month, day, page);
+
+        return ResponseEntity.status(200).body(filmResponseDtoList);
     }
 }

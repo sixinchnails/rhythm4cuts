@@ -5,7 +5,6 @@ import {
   Check as CheckIcon,
   ExitToApp as ExitToAppIcon,
   PersonAdd as PersonAddIcon,
-  Tune,
 } from "@mui/icons-material";
 import {
   styled,
@@ -22,8 +21,9 @@ import {
 import { createConnection } from "../../openvidu/connectionInitialization";
 import UserVideoComponent from "../../components/Game/UserVideoComponent";
 import UserComponent from "../../components/Game/UserComponent";
-import React, { Component, useState, useEffect, useRef } from "react";
+import React, { Component, useState, useEffect } from "react";
 import LoginAlert from "../../components/Common/LoginAlert";
+import BoomAlert from "../../components/Common/BoomAlert";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../../components/Game/HeaderPlay";
@@ -116,6 +116,7 @@ function GameWait() {
   }, [stomp]);
 
   const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
+  const [isBoomAlertOpen, setBoomAlertOpen] = useState(false); // 방 폭파 알람
   const dispatch = useDispatch(); // 리덕스 업데이트
   const navigate = useNavigate(); // 페이지 이동
   const [userSeq, setUserSeq] = useState("");
@@ -137,14 +138,9 @@ function GameWait() {
   const [publisher, setPublisher] = useState(undefined); // 자신
   const [subscribers, setSubscribers] = useState([]); // 구독자
   const [players, setPlayers] = useState([]); // 통합
-  // 녹음 관련 상태
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioChunks, setAudioChunks] = useState([]);
-  const [audioBlob, setAudioBlob] = useState(null);
-  const mediaRecorderRef = useRef(null);
-  const [gameReadyed, setGameReadyed] = useState(false); // 게임 준비 여부 상태
   const [gameStarted, setGameStarted] = useState(false); // 게임 시작 여부 상태
   const [stream, setStream] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
 
   // 게임 시작 여부에 따른 녹음 시작/종료 처리
   useEffect(() => {
@@ -159,6 +155,7 @@ function GameWait() {
   }, [gameStarted]);
 
   const startRecording = () => {
+    setIsRecording(true);
     navigator.mediaDevices
       .getUserMedia({
         audio: true,
@@ -220,6 +217,8 @@ function GameWait() {
   const access = getCookie("access");
   const [musicUrl, setMusicUrl] = useState(""); // 해당 노래 url
 
+  const [playerFix, setPlayerFix] = useState([]); // 배열 순서 고정
+
   // 상태 추가
   const [isInviteModalOpen, setInviteModalOpen] = useState(false);
   const [friends, setFriends] = useState([]);
@@ -243,6 +242,16 @@ function GameWait() {
   const handleCloseLoginAlert = () => {
     setLoginAlertOpen(false);
     navigate("/Login");
+  };
+
+  // 방 붕괴 상태를 업데이트하는 함수
+  const handleOpenBoomAlert = () => {
+    setBoomAlertOpen(true);
+  };
+  const handleCloseBoomAlert = () => {
+    setBoomAlertOpen(false);
+    connectSession.disconnect();
+    navigate("/GameList");
   };
 
   //친구 목록 가져오는 함수
@@ -271,6 +280,7 @@ function GameWait() {
     },
   });
 
+  // 친구 초대
   function InviteGame(toUserValue) {
     var request = {
       fromUser: userSeq,
@@ -350,6 +360,7 @@ function GameWait() {
   }, [gameSeq]);
 
   const stopRecording = () => {
+    setIsRecording(false);
     if (
       mediaRecorderRef.current &&
       mediaRecorderRef.current.state !== "inactive"
@@ -479,8 +490,21 @@ function GameWait() {
         }
       });
 
+      // 방 폭파 시키기
       newSession.on("streamDestroyed", event => {
-        deleteSubscriber(event.stream.streamManager);
+        // deleteSubscriber(event.stream.streamManager);
+        // 방 인원수 줄이는 요청 보내기
+        axios
+          .get(`https://i9b109.p.ssafy.io:8443/lobby/room/exit/` + gameSeq, {
+            headers: {
+              Authorization: "Bearer " + access,
+            },
+          })
+          .then()
+          .then(
+            handleOpenBoomAlert()
+            // navigate("/gameList")
+          );
       });
 
       newSession.on("exception", exception => {
@@ -543,13 +567,11 @@ function GameWait() {
     }
   }
 
-  // "게임 시작" 버튼을 눌렀을 때 동작
-  function handleGamePlay() {
+  function handleGameReady() {
     console.log("게임 시작 버튼 누름");
     console.log(stomp);
     // 게임 시작 메시지를 서버에 전송
     if (stomp && stomp.connected) {
-      setGameStarted(true);
       console.log("연결 후 자동 재생 요청");
       const message = {
         gameSeq: gameSeq,
@@ -559,11 +581,9 @@ function GameWait() {
       stomp.send("/public/song", {}, JSON.stringify(message));
     }
   }
-  // "게임 준비" 버튼을 눌렀을 때 동작
-  function handleGameReady() {
-    console.log("게임 준비 버튼 누름");
-    setGameReadyed(true);
-  }
+
+  // "채팅" 버튼을 클릭했을 때 동작 ---------------------------------------------------------------------------------
+  const handleChat = () => {};
 
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
   const handleExit = () => {
@@ -686,6 +706,18 @@ function GameWait() {
     }
   };
 
+  const [content, setContent] = useState("1번의 차례입니다.");
+
+  if (currentIndex % 4 === 0) {
+    setContent("1번의 차례입니다.");
+  } else if (currentIndex % 4 === 1) {
+    setContent("2번의 차례입니다.");
+  } else if (currentIndex % 4 === 2) {
+    setContent("3번의 차례입니다.");
+  } else if (currentIndex % 4 === 3) {
+    setContent("4번의 차례입니다.");
+  }
+
   const handlePlayButtonClick = () => {
     setIsPlaying(true);
     startTimer();
@@ -740,7 +772,7 @@ function GameWait() {
               }}
             >
               {/* 대기중 비디오 */}
-              {gameReadyed && (
+              {gameStarted && (
                 <video
                   src={musicUrl}
                   controls={false}
@@ -754,6 +786,18 @@ function GameWait() {
                 />
               )}
             </Card>
+            <div
+              style={{
+                width: "20vw",
+                height: "5vh",
+                marginLeft: "5%",
+                backgroundColor: "none",
+                color: "gray",
+                fontWeight: "bolder",
+              }}
+            >
+              {content}
+            </div>
           </Grid>
         ) : (
           // 게임 시작 하기 전 춤추는 동영상 ----------------------------------------------------------------------
@@ -839,31 +883,11 @@ function GameWait() {
                     </StyledIconButton>
                   </Grid>
                 )}
-                {/* "게임 준비" 버튼 : 4명이 차면 뜬다!! && 게임 준비가 아닌 상태면 */}
-                {players.length === 4 && !gameReadyed ? (
+                {/* "게임 시작" 버튼 : 4명이 차면 뜬다!! */}
+                {players.length === 4 ? (
                   <Grid item xs={10} style={{ margin: "1px" }}>
                     <StyledIconButton
                       onClick={handleGameReady}
-                      style={{ width: "30vw" }}
-                    >
-                      <CheckIcon />
-                      <Typography
-                        style={{
-                          fontFamily: "Pretendard-Regular",
-                          fontSize: "20px",
-                          padding: "15px",
-                        }}
-                      >
-                        게임 준비
-                      </Typography>
-                    </StyledIconButton>
-                  </Grid>
-                ) : null}
-                {/* "게임 시작" 버튼 : 게임 준비가 true인 상태에 뜬다 */}
-                {gameReadyed ? (
-                  <Grid item xs={10} style={{ margin: "1px" }}>
-                    <StyledIconButton
-                      onClick={handleGamePlay}
                       style={{ width: "30vw" }}
                     >
                       <CheckIcon />
@@ -885,8 +909,8 @@ function GameWait() {
         )}
         {/* Bottom */}
         <Grid container>
-          {gameReadyed ? (
-            // 게임준비 버튼 클릭 후 후 후! -------------------------------------------------------------------------------------
+          {gameStarted ? (
+            // 게임시작 버튼 클릭 후 후 후! -------------------------------------------------------------------------------------
             <Grid
               style={{
                 height: "25vh",
@@ -936,7 +960,7 @@ function GameWait() {
               ))}
             </Grid>
           ) : (
-            // 게임준비 버튼 클릭 전 전 전! --------------------------------------------------------------------------------
+            // 게임시작 버튼 클릭 전 전 전! --------------------------------------------------------------------------------
             <Grid
               style={{
                 height: "25vh",
@@ -988,6 +1012,9 @@ function GameWait() {
 
       {/* '로그인 경고' 모달 */}
       <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
+      {/* '방 폭파 모달 */}
+      <BoomAlert isOpen={isBoomAlertOpen} onClose={handleCloseBoomAlert} />
+
       {/* 친구 초대 모달 추가 */}
       <InviteFriendsModal
         isOpen={isInviteModalOpen}

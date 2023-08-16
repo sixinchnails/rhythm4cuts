@@ -7,16 +7,48 @@ import {
   Grid,
   Box,
 } from "@mui/material";
-import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
+import axios from "axios";
+import { getCookie } from '../../utils/cookie';
+import { userInfo } from '../../apis/userInfo';
 
 function FriendInfo() {
-  const Info = useSelector((state) => state.MyPage_Friend);
+  const [friendData, setFriendData] = useState([]); // 친구 데이터를 저장할 상태
+  const [userSeq, setUserSeq] = useState(""); // 유저시퀀스
 
   const itemsPerPage = 6;
   const [page, setPage] = useState(1);
-  const noOfPages = Math.ceil(Info.length / itemsPerPage);
+  const noOfPages = Math.ceil(friendData.length / itemsPerPage);
+
+  useEffect(() => {
+    userInfo()
+      .then(res => {
+        if (res.status === 200) {
+          setUserSeq(res.data.user_seq);
+        } else {
+          console.log("MyFriend_친구 정보 오류")
+        }
+      })
+  }, [])
+
+  // Axios를 사용하여 친구 데이터를 가져옴
+  useEffect(() => {
+    axios.get(
+      `https://i9b109.p.ssafy.io:8443/friend/list/` + userSeq,
+      {
+        headers: {
+          Authorization: "Bearer " + getCookie("access"),
+        },
+      })
+      .then((response) => {
+        const fetchedData = response.data.data;
+        setFriendData(fetchedData);
+      })
+      .catch((error) => {
+        console.error("Error fetching friend data:", error);
+      });
+  }, [userSeq]);
 
   function getProfilePic(point) {
     if (point <= 2000) {
@@ -32,44 +64,60 @@ function FriendInfo() {
     }
   }
 
-  function deleteFriend(params) {
+  function deleteFriend(toUserSeq) {
     if (window.confirm("친구를 삭제하시겠습니까?")) {
-      window.alert("삭제되었습니다.");
+      axios.delete(
+        `https://i9b109.p.ssafy.io:8443/friend/del/${userSeq}/${toUserSeq}`,
+        {
+          headers: {
+            Authorization: "Bearer " + getCookie("access"),
+          },
+        }
+      )
+        .then(() => {
+          // 삭제 성공 시에 friendData를 업데이트하여 변경된 데이터를 반영
+          const updatedFriendData = friendData.filter(item => item.userSeq !== toUserSeq);
+          setFriendData(updatedFriendData);
+          window.alert("삭제되었습니다.");
+        })
+        .catch((error) => {
+          console.error("Error deleting friend:", error);
+        });
     }
   }
 
   return (
     <div
       style={{
-        width: "80%", // 전체 컨테이너의 너비를 80%로 조정
+        width: "80%",
         height: "100vh",
-        marginLeft: "5%", // 마진을 조정하여 중앙에 위치하게 함
+        marginLeft: "5%",
         marginRight: "5%",
         fontFamily: 'Ramche',
       }}
     >
       <Grid container style={{ marginLeft: "10%", fontFamily: 'Ramche', }}>
-        <Grid item xs={12} padding={"20px"}>
-          <Box display="flex" justifyContent="flex-end" marginBottom="1%"></Box>
+        <Grid item xs={12} style={{ padding: "20px" }}>
+          <Box display="flex" justifyContent="flex-end" marginBottom="2px"></Box>
           <Grid container spacing={3}>
-            {Info.slice((page - 1) * itemsPerPage, page * itemsPerPage).map(
+            {friendData.slice((page - 1) * itemsPerPage, page * itemsPerPage).map(
               (item, index) => (
                 <Grid item xs={6} key={index}>
                   <Paper
                     elevation={3}
                     style={{
-                      padding: "10px",
+                      padding: "5px",
                       display: "flex",
                       alignItems: "center",
-                      gap: "10px",
+                      gap: "20px",
                       backgroundColor: "rgba(0, 0, 0, 0.8)",
-                      width: "400px",
+                      width: "30vw",
                       fontFamily: 'Ramche',
                     }}
                   >
                     <Avatar
                       src={getProfilePic(item.point)}
-                      style={{ width: "80px", height: "80px", flexShrink: 0, fontFamily: 'Ramche', }}
+                      style={{ width: "3vw", height: "10vh", flexShrink: 0, fontFamily: 'Ramche', }}
                     />
                     <div style={{ flex: 1 }}>
                       <Typography variant="h6" style={{ color: "#ffffff", fontFamily: 'Ramche', }}>
@@ -81,14 +129,12 @@ function FriendInfo() {
                       >
                         포인트: {item.point}
                       </Typography>
-                      <Typography variant="body2" style={{ color: "#ffffff", fontFamily: 'Ramche', }}>
-                        상태: {item.playing}
-                      </Typography>
+
                     </div>
                     <Button
                       variant="contained"
                       color="secondary"
-                      onClick={deleteFriend}
+                      onClick={() => deleteFriend(item.userSeq)}
                       style={{ flexShrink: 0, fontFamily: 'Ramche', }}
                     >
                       삭제
