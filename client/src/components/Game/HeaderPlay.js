@@ -5,7 +5,7 @@ import { useState } from "react";
 import YourModalComponent from "../Common/ConfirmFriend";
 import MessageAlert from "../Common/MessageAlert";
 
-const LoginMypageHeader = () => {
+function LoginMypageHeader() {
   const { hasNotification, resetNotification, friendRequest } = useWebSocket(); // Get the required states and functions from the hook
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
   const [isMessageModalOpen, setMessageModalOpen] = useState(false);
