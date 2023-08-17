@@ -200,6 +200,7 @@ function GameList() {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/GameImage/GameList.jpg')",
+        fontFamily: "Ramche",
       }}
     >
       <Header />
@@ -212,7 +213,6 @@ function GameList() {
             <IconButton
               onClick={handleRefresh}
               style={{
-                // marginRight: "1em",
                 marginBottom: "0.5em",
               }}
             >
@@ -239,13 +239,14 @@ function GameList() {
                     backgroundColor: "#333", // 드롭다운 메뉴 배경색 변경
                     color: "#ffffff", // 드롭다운 메뉴 텍스트 색상 변경
                     border: "1px solid #ffffff", // 드롭다운 메뉴 테두리 색상을 흰색으로 설정
+                    fontFamily: "Ramche",
                   },
                 },
               }}
             >
-              <MenuItem value={"gameSeq"}>방 번호</MenuItem>
-              <MenuItem value={"title"}>방 이름</MenuItem>
-              <MenuItem value={"songSeq"}>노래 제목</MenuItem>
+              <MenuItem value={"gameSeq"} style={{ fontFamily: "Ramche" }}>방 번호</MenuItem>
+              <MenuItem value={"title"} style={{ fontFamily: "Ramche" }}>방 이름</MenuItem>
+              <MenuItem value={"songSeq"} style={{ fontFamily: "Ramche" }}>노래 제목</MenuItem>
             </Select>
 
             <TextField
@@ -362,6 +363,7 @@ function GameList() {
                     backgroundColor: "#283593", // 마우스 호버 시 아이템의 배경색을 진한 파란색으로 설정
                   },
                 }}
+                style={{ fontFamily: "Ramche" }}
               />
             </Paper>
           </Grid>

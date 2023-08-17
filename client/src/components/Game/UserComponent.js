@@ -33,7 +33,7 @@ const UserVideoComponent = ({ streamManager }) => {
       </div>
       <div
         style={{
-          fontFamily: "Pretendard-Regular",
+          fontFamily: "Ramche",
           fontSize: "20px",
           color: "white",
           display: "flex",
@@ -41,7 +41,7 @@ const UserVideoComponent = ({ streamManager }) => {
           justifyContent: "center",
         }}
       >
-        <div item xs={3} style={{ marginRight: "10px" }}>
+        <div item xs={3} style={{ marginRight: "10px",fontFamily: "Ramche", }}>
           <Avatar
             src={getProfilePic(getUserInfo().data.score_sum)}
             style={{ width: "40px", height: "40px", flexShrink: 0 }}
@@ -51,7 +51,7 @@ const UserVideoComponent = ({ streamManager }) => {
         <div
           item
           xs={7}
-          style={{ fontFamily: "Pretendard-Regular", fontSize: "20px", paddingLeft: "20px"}}
+          style={{fontFamily: "Ramche", fontSize: "20px", paddingLeft: "20px"}}
         >
           {getUserInfo().data.nickname}
         </div>

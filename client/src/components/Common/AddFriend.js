@@ -8,6 +8,10 @@ import {
   List,
   ListItem,
   ListItemText,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { useDebounce } from "use-debounce";
 import { getCookie } from "../../utils/cookie";
@@ -30,6 +34,11 @@ function AddFriend({ isOpen, handleClose }) {
   const navigate = useNavigate();
   const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
 
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const handleSuccessDialogClose = () => {
+    setSuccessDialogOpen(false);
+  };
+
   try {
     userInfo()
       .then(res => {
@@ -38,7 +47,7 @@ function AddFriend({ isOpen, handleClose }) {
           console.log(res.data.user_seq);
         }
       })
-      .catch(error => {});
+      .catch(error => { });
   } catch (error) {
     console.log(error);
   }
@@ -108,7 +117,8 @@ function AddFriend({ isOpen, handleClose }) {
       .then(response => {
         if (response.status === 200) {
           console.log("친구 요청 성공");
-          alert("친구 요청이 성공적으로 보내졌습니다!");
+          setSuccessDialogOpen(true);
+          // alert("친구 요청이 성공적으로 보내졌습니다!");
         } else {
           console.error("친구 요청 실패:", response.data);
         }
@@ -186,6 +196,20 @@ function AddFriend({ isOpen, handleClose }) {
             취소
           </Button>
         </Stack>
+
+        {/* 친구 요청 성공 : Dialog */}
+        <Dialog open={successDialogOpen} onClose={handleSuccessDialogClose}>
+          <DialogTitle>성공</DialogTitle>
+          <DialogContent>
+            친구 요청이 성공적으로 보내졌습니다!
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleSuccessDialogClose} color="primary">
+              확인
+            </Button>
+          </DialogActions>
+        </Dialog>
+
       </Box>
     </Modal>
   );

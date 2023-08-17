@@ -27,7 +27,7 @@ function NextToShot({ gameSeq }) {
         container
         justifyContent="flex-end"
         alignItems="center"
-        marginTop={5}
+        marginTop={50}
       >
         <Grid item>
           <Typography variant="h5" style={{ fontFamily: "Ramche" }}>

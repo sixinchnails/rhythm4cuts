@@ -569,14 +569,15 @@ const GameShot = () => {
                     display: "flex",
                     justifyContent: "space-around",
                     alignItems: "center",
+                    fontFamily: "Ramche"
                   }}
                 >
                   {image ? (
                     <>
-                      <Button onClick={uploadImage}>Upload</Button>
+                      <Button onClick={uploadImage} style={{ fontFamily: "Ramche" }}>Upload</Button>
                     </>
                   ) : (
-                    <Button onClick={capture}>촬영</Button>
+                    <Button onClick={capture} style={{ fontFamily: "Ramche" }}>촬영</Button>
                   )}
                 </div>
               </Box>
@@ -610,6 +611,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
+                      fontFamily: "Ramche"
                     }}
                     sx={{
                       backgroundImage: `url(${playerURL1})`,
@@ -625,6 +627,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
+                      fontFamily: "Ramche"
                     }}
                     sx={{
                       backgroundImage: `url("/images/ShotEmpty.jfif")`,
@@ -642,6 +645,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
+                      fontFamily: "Ramche"
                     }}
                     sx={{
                       backgroundImage: `url(${playerURL2})`,
@@ -657,6 +661,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
+                      fontFamily: "Ramche"
                     }}
                     sx={{
                       backgroundImage: `url("/images/ShotEmpty.jfif")`,
@@ -673,6 +678,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
+                      fontFamily: "Ramche"
                     }}
                     sx={{
                       backgroundImage: `url(${playerURL3})`,
@@ -688,6 +694,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
+                      fontFamily: "Ramche"
                     }}
                     sx={{
                       backgroundImage: `url("/images/ShotEmpty.jfif")`,
@@ -704,11 +711,13 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
+                      fontFamily: "Ramche"
                     }}
                     sx={{
                       backgroundImage: `url("/images/ShotEmpty.jfif")`,
                       height: "15vh",
                       margin: "5%",
+                      fontFamily: "Ramche"
                     }}
                   >
                     User 4
@@ -719,6 +728,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
+                      fontFamily: "Ramche"
                     }}
                     sx={{
                       backgroundImage: `url(${playerURL4})`,
@@ -744,6 +754,7 @@ const GameShot = () => {
                   variant="contained"
                   color="warning"
                   onClick={() => copyCommonCapture(copyRef.current)}
+                  style={{fontFamily: "Ramche"}}
                 >
                   확인
                 </Button>

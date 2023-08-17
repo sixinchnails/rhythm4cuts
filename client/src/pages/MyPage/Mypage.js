@@ -131,6 +131,7 @@ function Mypage() {
               backgroundColor: "#ffffff",
               color: "#000000",
               fontWeight: "bold",
+              fontFamily: 'Ramche',
             }}
           >
             정보 수정
