@@ -40,6 +40,9 @@ public class UploadServiceImpl implements UploadService {
         String fileUrl = s3UploadService.saveVoiceFile(multipartFile, fileName);
         GameLog gameLog = gameLogCustomRepository.selectGameLog(gameSeq, userSeq);
 
+        System.out.println("file 이름: " + fileName);
+        System.out.println("file Url: " + fileUrl);
+
         VoiceLog voiceLog = new VoiceLog();
         voiceLog.setVoiceFile(fileName);
         voiceLog.setVoiceUrl(fileUrl);
