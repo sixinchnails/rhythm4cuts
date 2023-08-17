@@ -220,16 +220,16 @@ public class FilmServiceImpl implements FilmService {
         return randomString.toString();
     }
 
-    public FilmResponseDto getPrivateFilm(int userSeq, int gameSeq) {
-        GameImage gameInfo = filmRepository.findByUserAndGameInfo(userSeq, gameSeq);
+    public FilmResponseDto getPrivateFilm(int gameRank, int gameSeq) {
+        GameImage gameInfo = filmRepository.findByGameRankAndGameInfo(gameRank, gameSeq);
         FilmResponseDto filmResponseDto = new FilmResponseDto();
         filmResponseDto.setPrivateUrl(gameInfo.getPrivateUrl());
 
         return filmResponseDto;
     }
 
-    public FilmResponseDto getCommonFilm(int userSeq, int gameSeq) {
-        GameImage gameInfo = filmRepository.findByUserAndGameInfo(userSeq, gameSeq);
+    public FilmResponseDto getCommonFilm(int gameRank, int gameSeq) {
+        GameImage gameInfo = filmRepository.findByGameRankAndGameInfo(gameRank, gameSeq);
         FilmResponseDto filmResponseDto = new FilmResponseDto();
         filmResponseDto.setCommonUrl(gameInfo.getCommonUrl());
 

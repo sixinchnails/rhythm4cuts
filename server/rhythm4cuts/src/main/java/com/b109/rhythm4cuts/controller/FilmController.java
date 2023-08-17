@@ -68,15 +68,15 @@ public class FilmController {
         return ResponseEntity.status(200).body(filmResponseDtoList);
     }
 
-    @GetMapping("/photo/private/game/{gameSeq}/user/{userSeq}")
-    public ResponseEntity<FilmResponseDto> getPrivatePhotos(@PathVariable int gameSeq, @PathVariable int userSeq) {
-        FilmResponseDto filmResponseDto = filmService.getPrivateFilm(userSeq, gameSeq);
+    @GetMapping("/photo/private/game/{gameSeq}/rank/{rank}")
+    public ResponseEntity<FilmResponseDto> getPrivatePhotos(@PathVariable int gameSeq, @PathVariable int rank) {
+        FilmResponseDto filmResponseDto = filmService.getPrivateFilm(rank, gameSeq);
         return ResponseEntity.status(200).body(filmResponseDto);
     }
 
-    @GetMapping("/photo/common/game/{gameSeq}/user/{userSeq}")
-    public ResponseEntity<FilmResponseDto> getCommonPhotos(@PathVariable int gameSeq, @PathVariable int userSeq) {
-        FilmResponseDto filmResponseDto = filmService.getCommonFilm(userSeq, gameSeq);
+    @GetMapping("/photo/common/game/{gameSeq}/rank/{rank}")
+    public ResponseEntity<FilmResponseDto> getCommonPhotos(@PathVariable int gameSeq, @PathVariable int rank) {
+        FilmResponseDto filmResponseDto = filmService.getCommonFilm(rank, gameSeq);
         return ResponseEntity.status(200).body(filmResponseDto);
     }
 

@@ -78,8 +78,15 @@ function InviteFriendsModal({
   );
 }
 
+var mediaRecorder;
+var audioChunks = [];
+var audioBlob;
+
 function GameWait() {
   const [stomp, setStomp] = useState(null); // stomp 객체 상태 추가
+  const [recording, setRecording] = useState(false);
+  // const [audioBlob, setAudioBlob] = useState(null);
+  const [audioUrl, setAudioUrl] = useState("");
 
   useEffect(() => {
     if (!stomp) {
@@ -94,10 +101,20 @@ function GameWait() {
           stompClient.subscribe(`/subscribe/song/${gameSeq}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
             // 서버로부터 받은 메시지에 'START_GAME' 신호가 포함되어 있으면
-            if (receivedMessage.action === "START_GAME") {
-              console.log("video start");
-            }
+
             setGameStarted(true);
+            startRecording();
+            setTimeout(() => {
+              console.log("종료됨");
+              stopRecording();
+            }, 220000);
+            setTimeout(() => {
+              console.log("전송됨");
+              saveRecording();
+            }, 225000);
+            setTimeout(() => {
+              navigate(`/GameScore/${gameSeq}`);
+            }, 230000);
           });
 
           console.log(userSeq);
@@ -137,93 +154,83 @@ function GameWait() {
   const [subscribers, setSubscribers] = useState([]); // 구독자
   const [players, setPlayers] = useState([]); // 통합
   // 녹음 관련 상태
-  const [isRecording, setIsRecording] = useState(false); //녹음이 진행 중인지 확인
-  const [audioChunks, setAudioChunks] = useState([]);
   // audioChunks : 녹음된 오디오 데이터를 담는 배열 녹음이 진행되면서 이 배열에 오디오 데이터의 조각들이 계속 추가됨
-  const [audioBlob, setAudioBlob] = useState(null);
   //audioBlob은 녹음이 완료된 후, audioChunks를 하나의 Blob 객체로 합쳐 저장하는 상태
-  const mediaRecorderRef = useRef(null);
   //MediaRecorder 객체의 참조를 저장하는데 사용됨->오디오와 비디오를 녹음할 수 있게 해주는 api
   const [gameReadyed, setGameReadyed] = useState(false); // 게임 준비 여부 상태
   const [gameStarted, setGameStarted] = useState(false); // 게임 시작 여부 상태
-  const [stream, setStream] = useState(null);
 
-  // 게임 시작 여부에 따른 녹음 시작/종료 처리
-  useEffect(() => {
-    // 게임이 시작되면 녹음 시작
-    if (gameStarted && !isRecording) {
-      startRecording();
-    }
-    // 게임이 종료되면 녹음 종료
-    else if (!gameStarted && isRecording) {
-      stopRecording();
-    }
-  }, [gameStarted]);
+  // let mediaRecorder;
+  // let audioChunks = [];
 
   //녹음 시작하는 역할 함수
   const startRecording = () => {
-    setIsRecording(true);
-    //사용자의 오디오 입력 장치에 접근
+    audioChunks = [];
     navigator.mediaDevices
       .getUserMedia({
         audio: true,
       })
       .then((stream) => {
-        if (stream && stream instanceof MediaStream) {
-          setStream(stream);
-          setIsRecording(true);
-          setAudioChunks([]);
-          //MediaRecorder 객체를 생성하고, mediaRecorderRef.current에 저장
-          const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder = new MediaRecorder(stream, {
+          mimeType: "audio/webm;codecs=opus",
+        });
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            audioChunks.push(event.data);
+          }
+        };
+        mediaRecorder.onstop = () => {
+          const tmpBlob = new Blob(audioChunks, { type: "audio/wav" });
+          console.log(tmpBlob);
+          audioBlob = tmpBlob;
 
-          mediaRecorderRef.current = mediaRecorder;
+          // setAudioBlob(audioBlob);
+          setAudioUrl(URL.createObjectURL(audioBlob));
+        };
 
-          // 녹음 데이터가 생성될 때마다 chunks 배열에 추가
-          mediaRecorderRef.current.ondataavailable = (e) => {
-            if (e.data.size > 0) {
-              setAudioChunks((chunks) => [...chunks, e.data]);
-            }
-          };
-
-          // 녹음이 종료되면 호출되는 이벤트 핸들러
-          mediaRecorderRef.current.onstop = async () => {
-            //audioChunks를 하나의 Blob 객체로 만들고, 이를 'audiaBlob' 상태에 저장한 후 서버에 전송
-            const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-            setAudioBlob(audioBlob);
-
-            const formData = new FormData();
-            formData.append("audio", audioBlob, "recorded-audio.wav");
-            formData.append("gameSeq", gameSeq);
-            formData.append("userSeq", userSeq);
-
-            try {
-              const response = await axios.post(
-                "https://i9b109.p.ssafy.io:8443/upload/user/audio",
-                formData,
-                {
-                  headers: {
-                    Authorization: `Bearer ${getCookie("access")}`,
-                    "Content-Type": "multipart/form-data",
-                  },
-                }
-              );
-              console.log("Audio URL:", response.data);
-            } catch (error) {
-              console.error("Error saving audio:", error);
-            }
-          };
-
-          // 녹음을 시작합니다.
-          mediaRecorderRef.current.start();
-        } else {
-          console.error("Stream is not valid");
-        }
-      })
-      .catch((error) => {
-        console.error("Error starting recording:", error);
+        mediaRecorder.start();
+        setRecording(true);
+        console.log(mediaRecorder);
+        //========================녹음 시작 끝
       });
   };
 
+  //녹음을 중지하고, 녹음된 오디오 데이터를 서버에 전송하는 역할.
+  const stopRecording = () => {
+    console.log("녹음 종료");
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      mediaRecorder.stop();
+      setRecording(false);
+    }
+  };
+
+  const saveRecording = () => {
+    console.log("녹음 저장");
+    console.log(audioBlob);
+    console.log(typeof audioBlob);
+
+    if (audioBlob) {
+      console.log("조건이 맞다면 녹음 저장");
+      const formData = new FormData();
+      // formData.append("gameSeq", gameSeq);
+      // formData.append("userSeq", userSeq);
+      formData.append("file", audioBlob, "recording.wav");
+
+      axios
+        .post("https://i9b109.p.ssafy.io:8081/split", formData, {
+          headers: {
+            Authorization: `Bearer ${getCookie("access")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          console.log("Recording saved successfully:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error saving recording:", error);
+        });
+    }
+  };
   const access = getCookie("access");
   const [musicUrl, setMusicUrl] = useState(""); // 해당 노래 url
 
@@ -380,38 +387,26 @@ function GameWait() {
       });
   }, [gameSeq]);
 
-  //녹음을 중지하고, 녹음된 오디오 데이터를 서버에 전송하는 역할.
-  const stopRecording = () => {
-    setIsRecording(false);
-    if (
-      mediaRecorderRef.current &&
-      mediaRecorderRef.current.state !== "inactive"
-    ) {
-      //녹음 중지
-      mediaRecorderRef.current.stop();
+  // const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+  // const formData = new FormData();
+  // formData.append("audio", audioBlob, "recorded-audio.wav");
+  // formData.append("gameSeq", gameSeq); // 게임 일련번호 추가
+  // formData.append("userSeq", userSeq); // 유저 일련번호 추가
 
-      const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-      const formData = new FormData();
-      formData.append("audio", audioBlob, "recorded-audio.wav");
-      formData.append("gameSeq", gameSeq); // 게임 일련번호 추가
-      formData.append("userSeq", userSeq); // 유저 일련번호 추가
-
-      axios
-        .post("https://i9b109.p.ssafy.io:8443/upload/user/audio", formData, {
-          headers: {
-            Authorization: `Bearer ${getCookie("access")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((response) => {
-          console.log("Audio URL:", response.data);
-          // 응답으로 받은 오디오 URL 활용 가능
-        })
-        .catch((error) => {
-          console.error("Error saving audio:", error);
-        });
-    }
-  };
+  // axios
+  //   .post("https://i9b109.p.ssafy.io:8443/upload/user/audio", formData, {
+  //     headers: {
+  //       Authorization: `Bearer ${getCookie("access")}`,
+  //       "Content-Type": "multipart/form-data",
+  //     },
+  //   })
+  //   .then(response => {
+  //     console.log("Audio URL:", response.data);
+  //     // 응답으로 받은 오디오 URL 활용 가능
+  //   })
+  //   .catch(error => {
+  //     console.error("Error saving audio:", error);
+  //   });
 
   // 페이지 떠날 때 이벤트 리스너 등록 및 해제
   useEffect(() => {
@@ -843,6 +838,7 @@ function GameWait() {
                     height: "5vh",
                   }}
                 >
+                  <button onClick={stopRecording}>Stop Recording</button>
                   {content}
                 </div>
               </div>

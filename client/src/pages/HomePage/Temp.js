@@ -1,78 +1,97 @@
 import React, { useState } from "react";
-import Webcam from "react-webcam";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
 
-function Temp() {
-  const [image, setImage] = useState(null);
-  const webcamRef = React.useRef(null);
+var mediaRecorder;
+var audioChunks = [];
 
-  const capture = React.useCallback(() => {
-    const imageSrc = webcamRef.current.getScreenshot();
-    setImage(imageSrc);
+function Recorder() {
+  const [recording, setRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [audioUrl, setAudioUrl] = useState("");
 
-    console.log(image);
-    console.log(typeof image);
-  }, [webcamRef]);
+  const startRecording = () => {
+    audioChunks = [];
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => {
+        console.log("stream begin");
+        mediaRecorder = new MediaRecorder(stream, {
+          mimeType: "audio/webm;codecs=opus",
+        });
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            audioChunks.push(event.data);
+          }
+        };
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+          setAudioBlob(audioBlob);
+          setAudioUrl(URL.createObjectURL(audioBlob));
+        };
 
-  const uploadImage = async () => {
-    if (image) {
+        mediaRecorder.start();
+        setRecording(true);
+        console.log(mediaRecorder);
+      })
+      .catch((error) => console.error("Error accessing microphone:", error));
+  };
+
+  const stopRecording = () => {
+    console.log("stop-----");
+    console.log(mediaRecorder);
+    console.log(mediaRecorder.state);
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      mediaRecorder.stop();
+      setRecording(false);
+    }
+  };
+
+  const saveRecording = () => {
+    console.log(audioBlob);
+    console.log(typeof audioBlob);
+    if (audioBlob) {
+      const gameSeq = 122;
+      const userSeq = 10;
+
       const formData = new FormData();
       formData.append("gameSeq", 122);
       formData.append("userSeq", 10);
-      formData.append("playerRank", 1);
-      formData.append("privateFilm", dataURLtoFile(image, "temp.jpg"));
+      formData.append("audio", audioBlob, "recording.wav");
 
-      const headers = {
-        Authorization: "Bearer " + getCookie("access"),
-      };
-
-      try {
-        const response = await axios.post(
-          "https://i9b109.p.ssafy.io:8443/film/private/film",
-          formData,
-          { headers }
-        );
-        console.log("Image uploaded successfully:", response.data);
-      } catch (error) {
-        console.error("Error uploading image:", error);
-      }
+      axios
+        .post("https://localhost:8443/upload/user/audio", formData, {
+          headers: {
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhanVmcmVzaEBnbWFpbC5jb20iLCJpYXQiOjE2OTIyNjEyODAsImV4cCI6MTY5MjI2MzA4MCwic3ViIjoic3NhZnlAbmF2ZXIuY29tIiwiaWQiOiJzc2FmeUBuYXZlci5jb20ifQ.VfUMesv88r5dRRakpBDmM6AGF3A5TyFlhh3CFuPeuqc`,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          console.log("Recording saved successfully:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error saving recording:", error);
+        });
     }
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <Webcam
-          style={{ height: "50vh" }}
-          audio={false}
-          ref={webcamRef}
-          screenshotFormat="image/jpeg"
-        />
-        <button onClick={capture}>Capture Photo</button>
-        {image && (
-          <>
-            {/* <img src={image} alt="Captured" /> */}
-            <button onClick={uploadImage}>Upload</button>
-          </>
-        )}
-      </header>
+    <div>
+      <h1>Audio Recorder</h1>
+      <button onClick={startRecording} disabled={recording}>
+        Start Recording
+      </button>
+      <button onClick={stopRecording} disabled={!recording}>
+        Stop Recording
+      </button>
+      {audioUrl && (
+        <div>
+          <audio controls src={audioUrl}></audio>
+          <button onClick={saveRecording}>Save Recording</button>
+        </div>
+      )}
     </div>
   );
 }
 
-function dataURLtoFile(dataURL, filename) {
-  const arr = dataURL.split(",");
-  const mime = arr[0].match(/:(.*?);/)[1];
-  const bstr = atob(arr[1]);
-  let n = bstr.length;
-  const u8arr = new Uint8Array(n);
-
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-
-  return new File([u8arr], filename, { type: mime });
-}
-
-export default Temp;
+export default Recorder;
