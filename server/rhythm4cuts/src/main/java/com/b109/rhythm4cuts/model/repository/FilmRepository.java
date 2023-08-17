@@ -21,4 +21,7 @@ public interface FilmRepository extends JpaRepository<GameImage, Long> {
     @Query("SELECT gi FROM GameImage gi WHERE gi.user.userSeq = :userSeq AND gi.gameInfo.gameSeq = :gameSeq")
     GameImage findByUserAndGameInfo(int userSeq, int gameSeq);
 
+    @Query("SELECT gi FROM GameImage gi WHERE gi.gameRank = :gameRank AND gi.gameInfo.gameSeq = :gameSeq")
+    GameImage findByGameRankAndGameInfo(int gameRank, int gameSeq);
+
 }
