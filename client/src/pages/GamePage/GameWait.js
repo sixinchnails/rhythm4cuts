@@ -96,9 +96,10 @@ function GameWait() {
             // 서버로부터 받은 메시지에 'START_GAME' 신호가 포함되어 있으면
             if (receivedMessage.action === "START_GAME") {
               console.log("video start");
-              setGameStarted(true);
             }
+            setGameStarted(true);
           });
+
           console.log(userSeq);
           if (userSeq) {
             stompClient.subscribe(
@@ -280,10 +281,23 @@ function GameWait() {
   const StyledIconButton = styled(IconButton)({
     color: "white",
     margin: "20px",
-    boxShadow: "10px 5px 5px rgba(0, 0, 0, 0.8)",
-    borderRadius: "10px",
+    boxShadow: "10px 10px 10px rgba(0, 0, 0, 0.8)",
+    borderRadius: "20px",
+
     "&:hover": {
-      backgroundColor: "#1976d2", // 마우스 오버 시 배경색 변경
+      color: "black",
+      backgroundColor: "white", // Darker background color on hover
+      transform: "scale(1.1)", // Enlarge the button on hover
+    },
+
+    "&:active": {
+      backgroundColor: "#0d47a1", // Even darker background color on click
+      transform: "scale(0.9)", // Slightly shrink the button on click
+      boxShadow: "none", // Remove the shadow on click
+    },
+
+    "& .MuiSvgIcon-root": {
+      fontSize: "2rem", // Adjust the icon size
     },
   });
 
@@ -471,7 +485,6 @@ function GameWait() {
       const joinSessionTimeout = setTimeout(() => {
         joinSession();
       }, 3000);
-
       return () => clearTimeout(joinSessionTimeout);
     }
   }, [isSessionJoined]);
@@ -601,6 +614,7 @@ function GameWait() {
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
   const handleExit = () => {
     onBeforeUnload();
+    leaveSession();
     console.log("방 나갈거야 ~");
   };
 
@@ -733,47 +747,47 @@ function GameWait() {
     }
   }, [currentIndex]);
 
-  const handlePlayButtonClick = () => {
-    setCurrentIndex(0); // 처음 인덱스로 값을 초기화
-    setIsPlaying(true);
-    startTimer();
-  };
+  // const handlePlayButtonClick = () => {
+  //   setCurrentIndex(0); // 처음 인덱스로 값을 초기화
+  //   setIsPlaying(true);
+  //   startTimer();
+  // };
 
   // useEffect(() => {
   //   handlePlayButtonClick();
   // }, [handleGamePlay]);
 
-  const startTimer = () => {
-    const timerInterval = 1000; // 1초마다 타이머 업데이트
-    let currentTime = 0;
+  // const startTimer = () => {
+  //   const timerInterval = 1000; // 1초마다 타이머 업데이트
+  //   let currentTime = 0;
 
-    const timer = setInterval(() => {
-      currentTime += timerInterval / 1000; // 초 단위로 업데이트
+  //   const timer = setInterval(() => {
+  //     currentTime += timerInterval / 1000; // 초 단위로 업데이트
 
-      timeRanges.forEach(([startTime, endTime], index) => {
-        if (
-          currentTime >= startTime &&
-          currentTime <= endTime &&
-          index != timeRanges.length - 1
-        ) {
-          console.log(`Dynamic change at time ${currentTime}`);
-          console.log(index);
-          console.log(startTime);
-          console.log(endTime);
-          console.log(currentTime);
-          setCurrentIndex(index); // 현재 인덱스 업데이트
-        } else if (endTime === currentTime && index == timeRanges.length - 1) {
-          console.log("종료");
-        }
-      });
+  //     timeRanges.forEach(([startTime, endTime], index) => {
+  //       if (
+  //         currentTime >= startTime &&
+  //         currentTime <= endTime &&
+  //         index != timeRanges.length - 1
+  //       ) {
+  //         console.log(`Dynamic change at time ${currentTime}`);
+  //         console.log(index);
+  //         console.log(startTime);
+  //         console.log(endTime);
+  //         console.log(currentTime);
+  //         setCurrentIndex(index); // 현재 인덱스 업데이트
+  //       } else if (endTime === currentTime && index == timeRanges.length - 1) {
+  //         console.log("종료");
+  //       }
+  //     });
 
-      if (currentTime >= timeRanges[timeRanges.length - 1][1]) {
-        clearInterval(timer);
-        setIsPlaying(false);
-        setCurrentIndex(-1); // 인덱스 초기화
-      }
-    }, timerInterval);
-  };
+  //     if (currentTime >= timeRanges[timeRanges.length - 1][1]) {
+  //       clearInterval(timer);
+  //       setIsPlaying(false);
+  //       setCurrentIndex(-1); // 인덱스 초기화
+  //     }
+  //   }, timerInterval);
+  // };
 
   return (
     <div
@@ -789,8 +803,7 @@ function GameWait() {
       <Header />
 
       <Grid container>
-        {/* TOP : 게임 시작 전*/}
-        {/* 게임 시작 단계 */}
+        {/* TOP : 게임 시작 후 / 전*/}
         {gameStarted ? (
           <Grid container alignItems="center" justifyContent="center">
             <Card
@@ -801,37 +814,34 @@ function GameWait() {
                 borderRadius: "30px",
               }}
             >
-              {/* 대기중 비디오 */}
-              {gameReadyed && (
-                <div>
-                  <video
-                    src={musicUrl}
-                    controls={false}
-                    autoPlay
-                    loop
-                    style={{
-                      width: "100%",
-                      height: "40vh",
-                      objectFit: "cover",
-                    }}
-                  />
-                  <div
-                    style={{
-                      justifyContent: "center",
-                      display: "flex",
-                      alignContent: "center",
-                      color: "white",
-                    }}
-                  >
-                    {content}
-                  </div>
+              <div>
+                <video
+                  src={musicUrl}
+                  controls={false}
+                  autoPlay
+                  loop
+                  style={{
+                    width: "100%",
+                    height: "40vh",
+                    objectFit: "cover",
+                  }}
+                />
+                <div
+                  style={{
+                    justifyContent: "center",
+                    display: "flex",
+                    alignContent: "center",
+                    color: "white",
+                  }}
+                >
+                  {content}
                 </div>
-              )}
+              </div>
             </Card>
           </Grid>
-        ) : (
-          // 게임 시작 단계가 아님
-          // 게임 시작 하기 전 춤추는 동영상 ----------------------------------------------------------------------
+        ) : null}
+        {/*게임 시작 하기 전 춤추는 동영상 ---------------------------------------------------------------------- */}
+        {!gameStarted ? (
           <Grid container>
             <Grid
               item
@@ -873,7 +883,7 @@ function GameWait() {
             >
               <Grid container spacing={2}>
                 {/* 친구 초대 버튼 */}
-                {players.length !== 4 && (
+                {players.length !== 4 ? (
                   <Grid item xs={5} style={{ margin: "1px" }}>
                     <StyledIconButton
                       onClick={() => {
@@ -893,9 +903,10 @@ function GameWait() {
                       </Typography>
                     </StyledIconButton>
                   </Grid>
-                )}
+                ) : null}
+
                 {/* "나가기" 버튼 */}
-                {players.length !== 4 && (
+                {players.length !== 4 ? (
                   <Grid item xs={5} style={{ margin: "1px" }}>
                     <StyledIconButton
                       onClick={handleExit}
@@ -913,9 +924,9 @@ function GameWait() {
                       </Typography>
                     </StyledIconButton>
                   </Grid>
-                )}
-                {/* "게임 준비" 버튼 : 4명이 차면 뜬다!! && 게임 준비가 아닌 상태면 */}
-                {/* 방 인원이 4명이고 게임 준비 상태가 아님 */}
+                ) : null}
+
+                {/* "게임 준비" 버튼 : 플레이어 4명 & 게임 준비완료 전 */}
                 {players.length === 4 && !gameReadyed ? (
                   <Grid item xs={10} style={{ margin: "1px" }}>
                     <StyledIconButton
@@ -935,14 +946,15 @@ function GameWait() {
                     </StyledIconButton>
                   </Grid>
                 ) : null}
-                {/* "게임 시작" 버튼 : 게임 준비가 true인 상태에 뜬다 */}
-                {gameReadyed ? (
+
+                {/* "게임 시작" 버튼 : 플레이어 4명 & 게임 준비완료 후 */}
+                {players.length === 4 && gameReadyed ? (
                   <Grid item xs={10} style={{ margin: "1px" }}>
                     <StyledIconButton
                       // onClick={handleGamePlay && handlePlayButtonClick}
                       onClick={() => {
                         handleGamePlay();
-                        handlePlayButtonClick();
+                        // handlePlayButtonClick();
                       }}
                       style={{ width: "30vw" }}
                     >
@@ -962,7 +974,9 @@ function GameWait() {
               </Grid>
             </Grid>
           </Grid>
-        )}
+        ) : null}
+
+        {/* 아래 4개의 유저 박스 -----------------------------------------------------------------------------------------*/}
         {/* Bottom */}
         <Grid container>
           {gameReadyed ? (
@@ -1015,8 +1029,10 @@ function GameWait() {
                 </Grid>
               ))}
             </Grid>
-          ) : (
-            // 게임준비 버튼 클릭 전 전 전! --------------------------------------------------------------------------------
+          ) : null}
+
+          {/* 게임준비 버튼 클릭 전 전 전! -------------------------------------------------------------------------------- */}
+          {!gameReadyed ? (
             <Grid
               style={{
                 height: "25vh",
@@ -1062,7 +1078,7 @@ function GameWait() {
                 </Grid>
               ))}
             </Grid>
-          )}
+          ) : null}
         </Grid>
       </Grid>
 

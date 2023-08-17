@@ -79,7 +79,7 @@ function Home() {
       } else {
         window.confirm("1오류가 발생했습니다.");
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const [startDate, setStartDate] = useState(new Date());
@@ -110,7 +110,7 @@ function Home() {
   }, []);
 
   // 음악 개수 컨트롤러
-  const musicPerPage = 12; // 한 페이지당 표시할 방 수
+  const musicPerPage = 10; // 한 페이지당 표시할 방 수
   const [musicPage, setMusicPage] = useState(1); // 페이지 상태
 
   // 음악 페이지 변경 이벤트 핸들러
@@ -302,7 +302,7 @@ function Home() {
                   </div>
                 </div>
                 <div className="music_rank">
-                  <div className="rank">
+                  <div className="rank" style={{ padding: "10px" }}>
                     {musicData
                       .slice(
                         (musicPage - 1) * musicPerPage,
