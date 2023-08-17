@@ -49,4 +49,9 @@ public class StompController {
         System.out.println("game seq : " + film.getGameSeq() + "user seq : " + film.getUserSeq() + "rank : " + film.getPlayerRank());
         messagingTemplate.convertAndSend("/subscribe/film/gameSeq/" + film.getGameSeq() + "/playerLank" + film.getPlayerRank(), film);
     }
+
+    @MessageMapping(value = "/ready")
+    public void setReady(FriendDto friend) {
+        messagingTemplate.convertAndSend("/subscribe/ready/" + friend.getGameSeq(), friend);
+    }
 }
