@@ -1,5 +1,9 @@
 /* My 회원 정보, My Photo 같은 제목 폰트 */
 
+.css-10hburv-MuiTypography-root {
+  font-family: 'Ramche';
+}
+
 /* 공통 사이드 바 항목 스타일 */
 .sidebar-item {
   width: 230px;

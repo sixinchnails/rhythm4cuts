@@ -10,6 +10,7 @@ import {
 import { Info as InfoIcon, Photo as PhotoIcon } from "@mui/icons-material";
 import { useLocation, Link } from "react-router-dom";
 import React from "react";
+import "./My_SideBarItem.css";
 
 const theme = createTheme({
   components: {
@@ -88,9 +89,10 @@ function Sidebar() {
                     key={subIndex}
                     style={{
                       color: pathName === subItem.path ? "black" : "white",
+                      fontFamily: 'Ramche',
                     }} // 현재 위치가 메뉴 항목의 경로와 일치하면 글자색을 검정색으로 설정합니다.
                   >
-                    <ListItemText inset primary={subItem.name} />
+                    <ListItemText inset primary={subItem.name} style={{fontFamily: 'Ramche',}} />
                   </ListItem>
                 </Link>
               ))}
