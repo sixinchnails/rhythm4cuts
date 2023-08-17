@@ -27,8 +27,9 @@ def calculate_fingerprints(filename):
         f.close()
     else:
         print("Calculating fingerprint by fpcalc for %s" % (filename))
-        fpcalc_out = str(subprocess.check_output(['fpcalc', '-raw', '-length', str(sample_time), filename])).strip().replace('\\n', '').replace("'", "").replace("\\r", "")
 
+    fpcalc_out = str(subprocess.check_output(['./fpcalc', '-raw', '-length', str(sample_time), filename])).strip().replace('\\n', '').replace("'", "").replace("\\r", "").replace("\\r", "")
+        
     fingerprint_index = fpcalc_out.find('FINGERPRINT=') + 12
     # convert fingerprint to list of integers
     fingerprints = list(map(int, fpcalc_out[fingerprint_index:].split(',')))
