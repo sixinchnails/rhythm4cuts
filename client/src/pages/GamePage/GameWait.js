@@ -92,7 +92,7 @@ function GameWait() {
   // 모달
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
-  
+
   const handleOpenDialog = (message) => {
     setDialogMessage(message);
     setOpenDialog(true);
@@ -667,7 +667,7 @@ function GameWait() {
           Authorization: "Bearer " + access,
         },
       })
-      .then((response) => {})
+      .then((response) => { })
       .catch((error) => {
         console.error("Error:", error);
       });
@@ -854,7 +854,6 @@ function GameWait() {
                     height: "5vh",
                   }}
                 >
-                  <button onClick={stopRecording}>Stop Recording</button>
                   {content}
                 </div>
               </div>
