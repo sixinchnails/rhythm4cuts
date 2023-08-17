@@ -35,7 +35,7 @@ public class S3UploadService {
 
         amazonS3.putObject(bucket, fileName, multipartFile.getInputStream(), metadata);
 
-        return amazonS3.getUrl(bucket, originalFilename).toString();
+        return amazonS3.getUrl(bucket, fileName).toString();
     }
 
     public String saveVoiceFile(MultipartFile multipartFile, String fileName) throws IOException {
@@ -46,6 +46,6 @@ public class S3UploadService {
 
         amazonS3.putObject(voiceBucket, fileName, multipartFile.getInputStream(), metadata);
 
-        return amazonS3.getUrl(voiceBucket, originalFilename).toString();
+        return amazonS3.getUrl(voiceBucket, fileName).toString();
     }
 }
