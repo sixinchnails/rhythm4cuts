@@ -58,14 +58,12 @@ def splitter(game_seq, song_seq, file_name):
         print(lyrics_seq, start_time, end_time)
         portion_splitter(file_name, start_time, end_time, i)
 
-
-
     return
 
 # 곡명, 파트로 매개변수 변경 필요
 def getLyricsScore(song_seq, lyrics_idx, file):
     try:
-        OPENAI_API_KEY = "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"
+        OPENAI_API_KEY = "#"
         openai.api_key = OPENAI_API_KEY
 
         global conn
