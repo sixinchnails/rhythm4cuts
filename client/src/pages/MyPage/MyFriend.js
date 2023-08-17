@@ -15,6 +15,7 @@ const MyFriend = () => {
   const navigate = useNavigate();
 
   const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
+  const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
 
   useEffect(() => {
     connectWebSocket();
@@ -34,7 +35,6 @@ const MyFriend = () => {
   } catch (error) {
     console.log(error);
   }
-  const [isLoginAlertOpen, setLoginAlertOpen] = useState(false); // 로그인 알람
 
   // 로그인 상태를 업데이트하는 함수
   const handleOpenLoginAlert = () => {

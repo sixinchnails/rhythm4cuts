@@ -23,9 +23,9 @@ align-items: flex-start 속성은 두 컴포넌트가 상단에 맞춰져 있도
 .buttons {
   position: absolute;
   /* 요소의 위치->절대적인 위치 지정 */
-  right: 180px;
+  right: 400px;
   /* 오른쪽으로 얼마나 떨어져라 */
-  bottom: 150px;
+  bottom: 200px;
   /* 밑에서 얼마나 떨어져라 */
 }
 
