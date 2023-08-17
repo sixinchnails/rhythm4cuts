@@ -161,7 +161,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
     <div className="Join-info-container">
       <div className="Join-info" style={{ width: "60vw" }}>
         <div className="Join-item">
-          <span className="Join-name Join-name-topline" style={{fontFamily: 'Ramche',}}>이름</span>
+          <span className="Join-name Join-name-topline" style={{ fontFamily: 'Ramche', }}>이름</span>
           <TextField
             fullWidth
             value={name}
@@ -186,7 +186,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
           />
         </div>
         <div className="Join-item">
-          <span className="Join-name" style={{fontFamily: 'Ramche',}}>성별</span>
+          <span className="Join-name" style={{ fontFamily: 'Ramche', }}>성별</span>
           <RadioGroup
             row
             aria-label="gender"
@@ -208,7 +208,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
           </RadioGroup>
         </div>
         <div className="Join-item">
-          <span className="Join-name" style={{fontFamily: 'Ramche',}}>닉네임</span>
+          <span className="Join-name" style={{ fontFamily: 'Ramche', }}>닉네임</span>
           <TextField
             fullWidth
             value={nickname}
@@ -245,7 +245,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
           {showNickNameImage()}
         </div>
         <div className="Join-item">
-          <span className="Join-name" style={{fontFamily: 'Ramche',}}>이메일</span>
+          <span className="Join-name" style={{ fontFamily: 'Ramche', }}>이메일</span>
           <TextField
             fullWidth
             value={email}
@@ -268,12 +268,12 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               },
             }}
           />
-          <Button variant="contained" color="primary" onClick={emailCheck} style={{fontFamily: 'Ramche',}}>
+          <Button variant="contained" color="primary" onClick={emailCheck} style={{ fontFamily: 'Ramche', }}>
             인증
           </Button>
         </div>
         <div className="Join-item">
-          <span className="Join-name" style={{fontFamily: 'Ramche',}}>이메일 인증</span>
+          <span className="Join-name" style={{ fontFamily: 'Ramche', }}>이메일 인증</span>
           <TextField
             fullWidth
             value={emailCode}
@@ -310,7 +310,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
           {showEmailImage()}
         </div>
         <div className="Join-item">
-          <span className="Join-name" style={{fontFamily: 'Ramche',}}>비밀 번호</span>
+          <span className="Join-name" style={{ fontFamily: 'Ramche', }}>비밀 번호</span>
           <TextField
             fullWidth
             type="password"
@@ -355,18 +355,19 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
           )}
         </div>
         <div className="Join-item">
-          <span className="Join-name" style={{fontFamily: 'Ramche',}}>비밀 번호 확인</span>
+          <span className="Join-name" style={{ fontFamily: 'Ramche', }}>비밀 번호 확인</span>
           <TextField
             fullWidth
             type="password"
             value={passwordConfirm}
             onChange={(e) => setPasswordConfirm(e.target.value)}
             variant="outlined"
-            style={{ flexBasis: "40%", height: "40px", fontFamily: 'Ramche', }}
+            style={{ flexBasis: "45%", height: "40px", fontFamily: 'Ramche', }}
             InputProps={{
               style: {
                 height: "40px",
                 padding: "10px 14px",
+                marginLeft: "368px",
                 fontFamily: 'Ramche',
               },
             }}
@@ -380,22 +381,27 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
             }}
           />
           {password === passwordConfirm && passwordConfirm && (
-            <img
-              src={"/images/체크.png"}
-              alt="Check"
-              className="Join-check"
-              style={{ width: "40px", height: "40px" }}
-            />
+            <span className="Join-warning" style={{ color: "red", fontFamily: 'Ramche', }}>
+              <img
+                src={"/images/체크.png"}
+                alt="Check"
+                className="Join-check"
+                style={{ width: "40px", height: "40px", marginLeft: "370px" }}
+              />
+            </span>
           )}
           {password !== passwordConfirm && passwordConfirm && (
-            <img
-              src={"/images/오답.png"}
-              alt="Check"
-              className="Join-check"
-              style={{ width: "40px", height: "40px" }}
-            />
+            <span className="Join-warning" style={{ color: "red", fontFamily: 'Ramche', }}>
+              <img
+                src={"/images/오답.png"}
+                alt="Check"
+                className="Join-check"
+                style={{ width: "40px", height: "40px", marginLeft: "370px" }}
+              />
+            </span>
           )}
         </div>
+
       </div>
     </div>
   );
