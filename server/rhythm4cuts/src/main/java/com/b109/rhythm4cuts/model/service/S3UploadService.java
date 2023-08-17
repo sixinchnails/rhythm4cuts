@@ -46,6 +46,6 @@ public class S3UploadService {
 
         amazonS3.putObject(voiceBucket, fileName, multipartFile.getInputStream(), metadata);
 
-        return amazonS3.getUrl(voiceBucket, originalFilename).toString();
+        return amazonS3.getUrl(voiceBucket, fileName).toString();
     }
 }
