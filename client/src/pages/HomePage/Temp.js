@@ -1,54 +1,97 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { getCookie } from "../../utils/cookie";
 
-function Temp() {
+var mediaRecorder;
+var audioChunks = [];
+
+function Recorder() {
   const [recording, setRecording] = useState(false);
-  const mediaRecorderRef = useRef(null);
-  const audioChunks = useRef([]);
-  const audioElementRef = useRef(null);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [audioUrl, setAudioUrl] = useState("");
 
-  const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorderRef.current = new MediaRecorder(stream);
+  const startRecording = () => {
+    audioChunks = [];
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(stream => {
+        console.log("stream begin");
+        mediaRecorder = new MediaRecorder(stream, {
+          mimeType: "audio/webm;codecs=opus",
+        });
+        mediaRecorder.ondataavailable = event => {
+          if (event.data.size > 0) {
+            audioChunks.push(event.data);
+          }
+        };
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+          setAudioBlob(audioBlob);
+          setAudioUrl(URL.createObjectURL(audioBlob));
+        };
 
-    mediaRecorderRef.current.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        audioChunks.current.push(event.data);
-      }
-    };
-
-    mediaRecorderRef.current.start();
-    setRecording(true);
+        mediaRecorder.start();
+        setRecording(true);
+        console.log(mediaRecorder);
+      })
+      .catch(error => console.error("Error accessing microphone:", error));
   };
 
   const stopRecording = () => {
-    mediaRecorderRef.current.stop();
-    setRecording(false);
-
-    const audioBlob = new Blob(audioChunks.current, { type: "audio/wav" });
-    const audioUrl = URL.createObjectURL(audioBlob);
-
-    // 오디오 재생을 위해 <audio> 요소에 source를 설정합니다.
-    if (audioElementRef.current) {
-      audioElementRef.current.src = audioUrl;
+    console.log("stop-----");
+    console.log(mediaRecorder);
+    console.log(mediaRecorder.state);
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      mediaRecorder.stop();
+      setRecording(false);
     }
+  };
 
-    console.log(audioUrl);
+  const saveRecording = () => {
+    console.log(audioBlob);
+    console.log(typeof audioBlob);
+    if (audioBlob) {
+      const gameSeq = 122;
+      const userSeq = 10;
 
-    audioChunks.current = [];
+      const formData = new FormData();
+      formData.append("gameSeq", 122);
+      formData.append("userSeq", 10);
+      formData.append("audio", audioBlob, "recording.wav");
+
+      axios
+        .post("https://i9b109.p.ssafy.io:8443/upload/user/audio", formData, {
+          headers: {
+            Authorization: `Bearer ${getCookie("access")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(response => {
+          console.log("Recording saved successfully:", response.data);
+        })
+        .catch(error => {
+          console.error("Error saving recording:", error);
+        });
+    }
   };
 
   return (
     <div>
-      <h1>음성 녹음</h1>
-      <button onClick={recording ? stopRecording : startRecording}>
-        {recording ? "녹음 중지" : "녹음 시작"}
+      <h1>Audio Recorder</h1>
+      <button onClick={startRecording} disabled={recording}>
+        Start Recording
       </button>
-      {recording && <p>녹음 중...</p>}
-      <audio controls ref={audioElementRef}>
-        Your browser does not support the audio element.
-      </audio>
+      <button onClick={stopRecording} disabled={!recording}>
+        Stop Recording
+      </button>
+      {audioUrl && (
+        <div>
+          <audio controls src={audioUrl}></audio>
+          <button onClick={saveRecording}>Save Recording</button>
+        </div>
+      )}
     </div>
   );
 }
 
-export default Temp;
+export default Recorder;
