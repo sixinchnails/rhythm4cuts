@@ -40,6 +40,9 @@ public class UploadServiceImpl implements UploadService {
         String fileUrl = s3UploadService.saveVoiceFile(multipartFile, fileName);
         GameLog gameLog = gameLogCustomRepository.selectGameLog(gameSeq, userSeq);
 
+        System.out.println("file 이름: " + fileName);
+        System.out.println("file Url: " + fileUrl);
+
         VoiceLog voiceLog = new VoiceLog();
         voiceLog.setVoiceFile(fileName);
         voiceLog.setVoiceUrl(fileUrl);
@@ -49,22 +52,22 @@ public class UploadServiceImpl implements UploadService {
 
         // Python Flaks 서버로 multipartFile 전송 Start
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-        File tempFile = File.createTempFile("temp-", multipartFile.getOriginalFilename());
-        Path filePath = tempFile.toPath();
-        Files.copy(multipartFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        FileSystemResource resource = new FileSystemResource(tempFile);
-
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", resource);
-
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-
-        String pythonUrl = "https://i9b109.p.ssafy.io/score"; // Python Flask 서버의 URL
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.postForEntity(pythonUrl, requestEntity, String.class);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+//
+//        File tempFile = File.createTempFile("temp-", multipartFile.getOriginalFilename());
+//        Path filePath = tempFile.toPath();
+//        Files.copy(multipartFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+//        FileSystemResource resource = new FileSystemResource(tempFile);
+//
+//        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+//        body.add("file", resource);
+//
+//        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+//
+//        String pythonUrl = "https://i9b109.p.ssafy.io/score"; // Python Flask 서버의 URL
+//        RestTemplate restTemplate = new RestTemplate();
+//        ResponseEntity<String> response = restTemplate.postForEntity(pythonUrl, requestEntity, String.class);
 
         // Python Flaks 서버로 multipartFile 전송 End
     }
