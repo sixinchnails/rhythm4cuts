@@ -755,47 +755,47 @@ function GameWait() {
     }
   }, [currentIndex]);
 
-  // const handlePlayButtonClick = () => {
-  //   setCurrentIndex(0); // 처음 인덱스로 값을 초기화
-  //   setIsPlaying(true);
-  //   startTimer();
-  // };
+  const handlePlayButtonClick = () => {
+    setCurrentIndex(0); // 처음 인덱스로 값을 초기화
+    setIsPlaying(true);
+    startTimer();
+  };
 
   // useEffect(() => {
   //   handlePlayButtonClick();
   // }, [handleGamePlay]);
 
-  // const startTimer = () => {
-  //   const timerInterval = 1000; // 1초마다 타이머 업데이트
-  //   let currentTime = 0;
+  const startTimer = () => {
+    const timerInterval = 1000; // 1초마다 타이머 업데이트
+    let currentTime = 0;
 
-  //   const timer = setInterval(() => {
-  //     currentTime += timerInterval / 1000; // 초 단위로 업데이트
+    const timer = setInterval(() => {
+      currentTime += timerInterval / 1000; // 초 단위로 업데이트
 
-  //     timeRanges.forEach(([startTime, endTime], index) => {
-  //       if (
-  //         currentTime >= startTime &&
-  //         currentTime <= endTime &&
-  //         index != timeRanges.length - 1
-  //       ) {
-  //         console.log(`Dynamic change at time ${currentTime}`);
-  //         console.log(index);
-  //         console.log(startTime);
-  //         console.log(endTime);
-  //         console.log(currentTime);
-  //         setCurrentIndex(index); // 현재 인덱스 업데이트
-  //       } else if (endTime === currentTime && index == timeRanges.length - 1) {
-  //         console.log("종료");
-  //       }
-  //     });
+      timeRanges.forEach(([startTime, endTime], index) => {
+        if (
+          currentTime >= startTime &&
+          currentTime <= endTime &&
+          index != timeRanges.length - 1
+        ) {
+          console.log(`Dynamic change at time ${currentTime}`);
+          console.log(index);
+          console.log(startTime);
+          console.log(endTime);
+          console.log(currentTime);
+          setCurrentIndex(index); // 현재 인덱스 업데이트
+        } else if (endTime === currentTime && index == timeRanges.length - 1) {
+          console.log("종료");
+        }
+      });
 
-  //     if (currentTime >= timeRanges[timeRanges.length - 1][1]) {
-  //       clearInterval(timer);
-  //       setIsPlaying(false);
-  //       setCurrentIndex(-1); // 인덱스 초기화
-  //     }
-  //   }, timerInterval);
-  // };
+      if (currentTime >= timeRanges[timeRanges.length - 1][1]) {
+        clearInterval(timer);
+        setIsPlaying(false);
+        setCurrentIndex(-1); // 인덱스 초기화
+      }
+    }, timerInterval);
+  };
 
   return (
     <div
@@ -838,8 +838,9 @@ function GameWait() {
                   style={{
                     justifyContent: "center",
                     display: "flex",
-                    alignContent: "center",
+                    alignItems: "center",
                     color: "white",
+                    height: "5vh",
                   }}
                 >
                   {content}
@@ -962,7 +963,7 @@ function GameWait() {
                       // onClick={handleGamePlay && handlePlayButtonClick}
                       onClick={() => {
                         handleGamePlay();
-                        // handlePlayButtonClick();
+                        handlePlayButtonClick();
                       }}
                       style={{ width: "30vw" }}
                     >

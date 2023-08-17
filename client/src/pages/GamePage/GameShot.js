@@ -9,12 +9,14 @@ import { createConnection } from "../../openvidu/connectionInitialization";
 import LoginAlert from "../../components/Common/LoginAlert";
 import html2canvas from "html2canvas";
 import domtoimage from "dom-to-image";
-import { useNavigate } from "react-router-dom";
-import { userInfo } from "../../apis/userInfo"; 
+import { useNavigate, useParams } from "react-router-dom";
+import { userInfo } from "../../apis/userInfo";
+import axios from "axios";
+import { getCookie } from "../../utils/cookie";
 
 //close test
 import { closeSession } from "../../store";
-import UserVideoShot from '../../components/Game/UserVideoShot';
+import UserVideoShot from "../../components/Game/UserVideoShot";
 // import UserVideoComponent from "../../components/Game/UserVideoComponent";
 
 const GameShot = () => {
@@ -57,11 +59,14 @@ const GameShot = () => {
 
   const navigate = useNavigate();
 
+  const [userSeq, setUserSeq] = useState(0);
   //로그인 상태 확인
   try {
     userInfo()
       .then((res) => {
         if (res.status === 200) {
+          setUserSeq(res.data.user_seq);
+          console.log(userSeq);
         }
       })
       .catch((error) => {
@@ -82,10 +87,10 @@ const GameShot = () => {
   };
 
   // 사진을 찍는 타이머를 설정하기 위한 상태 변수
-  const [shotSeconds, setShotSeconds] = useState(20);
+  const [shotSeconds, setShotSeconds] = useState(10);
 
   // 프레임 고르는 타이머를 설정하기 위한 상태 변수
-  const [frameSeconds, setFrameSeconds] = useState(10);
+  const [frameSeconds, setFrameSeconds] = useState(5);
 
   // 캡처가 완료되었는지 여부를 확인하는 상태 변수
   const [captured, setCaptured] = useState(false);
@@ -133,10 +138,29 @@ const GameShot = () => {
         }
         setCaptured(true);
         // copyCapture(copyRef.current); // 이건 4개 묶음 사진
+
+        if (shotSeconds === 0) {
+          // captureRef.current 요소를 이미지로 저장
+          copyCapture(captureRef.current);
+        }
+
+        // 이미지 데이터를 파일로 다운로드
+        const blob = dataURLtoBlob(screenshot);
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "captured_image.png";
+        link.click();
       }
     }
-  }, [webcamRef, captured]);
-
+  }, [webcamRef, captured, shotSeconds]);
+  useEffect(() => {
+    if (shotSeconds === 0) {
+      console.log(shotSeconds);
+      // captureRef.current 요소를 이미지로 저장
+      copyCapture(captureRef.current);
+    }
+  }, [shotSeconds]);
   // "captured" 상태가 변경될 때 메시지를 업데이트하는 useEffect 훅 추가
   // useEffect(() => {
   //   if (captured) {
@@ -205,6 +229,52 @@ const GameShot = () => {
       prevIndex === frameImage.length - 1 ? 0 : prevIndex + 1
     );
   };
+
+  const [gameResults, setGameResults] = useState([]);
+  var { gameSeq } = useParams(); // url에서 추출
+
+  // 로그인 상태 확인
+  useEffect(() => {
+    userInfo()
+      .then((res) => {
+        if (res.status === 200) {
+          // 로그인 상태일 때 axios로 데이터를 가져옴
+          axios
+            .get(`https://i9b109.p.ssafy.io:8443/wait/order/${gameSeq}`, {
+              headers: {
+                Authorization: "Bearer " + getCookie("access"),
+              },
+            })
+            .then((response) => {
+              // 가져온 데이터를 score 순서로 정렬하여 저장
+              const sortedResults = response.data.sort(
+                (a, b) => b.score - a.score
+              );
+              setGameResults(sortedResults);
+            })
+            .catch((error) => {
+              console.error("Error fetching game results:", error);
+            });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        handleOpenLoginAlert();
+      });
+  }, []);
+
+  const [userRank, setUserRank] = useState(-1);
+
+  useEffect(() => {
+    gameResults.forEach((data, index) => {
+      if (data.userSeq === userSeq) {
+        setUserRank(index + 1);
+        console.log(userRank);
+      }
+    });
+    console.log(gameResults);
+  }, [userSeq]);
+
   return (
     <Box
       sx={{
@@ -248,7 +318,6 @@ const GameShot = () => {
                 height: "90%",
                 width: "100%",
               }}
-              ref={captureRef}
             >
               <Box
                 sx={{
@@ -273,10 +342,12 @@ const GameShot = () => {
                     right: 0,
                     bottom: 0,
                     left: 0,
+                    backgroundColor: "white",
                   }}
+                  ref={captureRef}
                 >
                   {/* 비디오 나오게! */}
-                  <UserVideoShot/>
+                  <UserVideoShot time={shotSeconds} />
                 </Box>
               </Box>
               <Box
@@ -287,15 +358,25 @@ const GameShot = () => {
               >
                 {/* 촬영 버튼 */}
                 {doState === true ? (
-                  <Typography variant="h6">
-                    {shotSeconds === 0
-                      ? "촬영이 완료되었습니다."
-                      : `${shotSeconds}초 뒤에 촬영됩니다~ `}
-                  </Typography>
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography variant="h6">
+                      {shotSeconds === 0
+                        ? "촬영이 완료되었습니다."
+                        : `${shotSeconds}초 뒤에 촬영됩니다~ `}
+                    </Typography>
+                    <Button onClick={() => setShotSeconds(0)}>촬영</Button>
+                  </div>
                 ) : (
                   <Typography variant="h6">
-                    {frameSeconds === 0 
-                      ? "프레임 선택이 완료되었습니다." 
+                    {frameSeconds === 0
+                      ? "프레임 선택이 완료되었습니다."
                       : `${frameSeconds}초 뒤에 프레임이 선택됩니다.`}
                   </Typography>
                 )}
@@ -398,6 +479,23 @@ const GameShot = () => {
 };
 
 // 인생네컷 저장 컴포넌트
+// function copyCapture(element) {
+//   if (element) {
+//     domtoimage
+//       .toPng(element)
+//       .then(function (dataUrl) {
+//         console.log(dataUrl);
+//         const link = document.createElement("a");
+//         link.download = "capture.png";
+//         link.href = dataUrl;
+//         link.click();
+//       })
+//       .catch(function (error) {
+//         console.error("oops, something went wrong!", error);
+//       });
+//   }
+// }
+
 function copyCapture(element) {
   if (element) {
     domtoimage
@@ -421,7 +519,7 @@ function sendCapture(element) {
     domtoimage.toPng(element).then((res) => {
       try {
         // const response = async axios.post
-      } catch (error) { }
+      } catch (error) {}
     });
   }
 }
