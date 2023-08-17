@@ -52,6 +52,7 @@ function InviteFriendsModal({
           margin: "100px auto",
           padding: "20px",
           backgroundColor: "#fff",
+          fontFamily: "Ramche",
         }}
       >
         <h3>친구 초대하기</h3>
@@ -62,7 +63,7 @@ function InviteFriendsModal({
                 primary={friend.nickname}
                 secondary={friend.email}
               />
-              <Button
+              <Button style={{ fontFamily: "Ramche", }}
                 onClick={() => {
                   setToUser(friend.userSeq); // 친구 선택 시 toUser 상태 업데이트
                   console.log(friend.userSeq);
@@ -817,6 +818,7 @@ function GameWait() {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/GameImage/GameList.jpg')",
+        fontFamily: "Ramche",
       }}
     >
       <Header />
@@ -831,6 +833,7 @@ function GameWait() {
                 height: "45vh",
                 background: "transparent",
                 borderRadius: "30px",
+                fontFamily: "Ramche",
               }}
             >
               <div>
@@ -843,6 +846,7 @@ function GameWait() {
                     width: "100%",
                     height: "40vh",
                     objectFit: "cover",
+                    fontFamily: "Ramche",
                   }}
                 />
                 <div
@@ -852,6 +856,7 @@ function GameWait() {
                     alignItems: "center",
                     color: "white",
                     height: "5vh",
+                    fontFamily: "Ramche",
                   }}
                 >
                   {content}
@@ -917,6 +922,7 @@ function GameWait() {
                           fontFamily: "Pretendard-Regular",
                           fontSize: "20px",
                           padding: "15px",
+                          fontFamily: "Ramche",
                         }}
                       >
                         친구 초대
@@ -938,6 +944,7 @@ function GameWait() {
                           fontFamily: "Pretendard-Regular",
                           fontSize: "20px",
                           padding: "15px",
+                          fontFamily: "Ramche",
                         }}
                       >
                         나가기
@@ -951,7 +958,7 @@ function GameWait() {
                   <Grid item xs={10} style={{ margin: "1px" }}>
                     <StyledIconButton
                       onClick={handleGameReady}
-                      style={{ width: "30vw" }}
+                      style={{ width: "30vw", fontFamily: "Ramche", }}
                     >
                       <CheckIcon />
                       <Typography
@@ -959,6 +966,7 @@ function GameWait() {
                           fontFamily: "Pretendard-Regular",
                           fontSize: "20px",
                           padding: "15px",
+                          fontFamily: "Ramche",
                         }}
                       >
                         게임 준비
@@ -969,14 +977,14 @@ function GameWait() {
 
                 {/* "게임 시작" 버튼 : 플레이어 4명 & 게임 준비완료 후 */}
                 {players.length === 4 && gameReadyed ? (
-                  <Grid item xs={10} style={{ margin: "1px" }}>
+                  <Grid item xs={10} style={{ margin: "1px", fontFamily: "Ramche", }}>
                     <StyledIconButton
                       // onClick={handleGamePlay && handlePlayButtonClick}
                       onClick={() => {
                         handleGamePlay();
                         handlePlayButtonClick();
                       }}
-                      style={{ width: "30vw" }}
+                      style={{ width: "30vw", fontFamily: "Ramche", }}
                     >
                       <CheckIcon />
                       <Typography
@@ -984,6 +992,7 @@ function GameWait() {
                           fontFamily: "Pretendard-Regular",
                           fontSize: "20px",
                           padding: "15px",
+                          fontFamily: "Ramche",
                         }}
                       >
                         게임 시작
@@ -1009,6 +1018,7 @@ function GameWait() {
                 alignItems: "center",
                 justifyContent: "space-between",
                 margin: "50px",
+                fontFamily: "Ramche",
               }}
             >
               {[0, 1, 2, 3].map((index) => (
@@ -1022,6 +1032,7 @@ function GameWait() {
                     padding: "2px",
                     margin: "20px",
                     borderRadius: "20px",
+                    fontFamily: "Ramche",
                   }}
                 >
                   {players[index] ? (
@@ -1118,14 +1129,14 @@ function GameWait() {
 
       {/* 모달 다이얼로그 */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{"알림"}</DialogTitle>
+        <DialogTitle style={{fontFamily: "Ramche"}} >{"알림"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             {dialogMessage}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
+          <Button onClick={handleCloseDialog} color="primary" style={{fontFamily: "Ramche",}}>
             확인
           </Button>
         </DialogActions>

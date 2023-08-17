@@ -206,6 +206,7 @@ function GamePlay() {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundImage: "url('/images/GameImage/GameList.jpg')",
+        fontFamily: "Ramche",
       }}
     >
       <Header />
@@ -219,6 +220,7 @@ function GamePlay() {
               height: "55vh",
               background: "transparent",
               borderRadius: "30px",
+              fontFamily: "Ramche",
             }}
           >
             {/* Record 기능을 위한 코드 Start */}
@@ -286,7 +288,7 @@ function GamePlay() {
               borderRadius: "20px",
             }}
           >
-            <UserVideo roomSession={session} userToken={connectionToken} />
+            {/* <UserVideo roomSession={session} userToken={connectionToken} /> */}
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
             <div
@@ -313,7 +315,7 @@ function GamePlay() {
               borderRadius: "20px",
             }}
           >
-            <UserVideo />
+            {/* <UserVideo /> */}
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
             <div
@@ -340,7 +342,7 @@ function GamePlay() {
               borderRadius: "20px",
             }}
           >
-            <UserVideo />
+            {/* <UserVideo /> */}
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
             <div
@@ -367,7 +369,7 @@ function GamePlay() {
               borderRadius: "20px",
             }}
           >
-            <UserVideo />
+            {/* <UserVideo /> */}
           </Grid>
           <Grid item xs={1} style={{ height: "20vh" }}>
             <div

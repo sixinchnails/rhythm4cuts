@@ -20,6 +20,7 @@ const Root = styled("div")({
   backgroundRepeat: "no-repeat",
   backgroundImage: "url('/images/Game_Shot.png')",
   zIndex: 0,
+  
 });
 
 const Title = styled(Typography)({
@@ -86,13 +87,13 @@ function GameScore() {
           color={"Black"}
           fontWeight={"bolder"}
           variant="h3"
-          style={{ marginBottom: "50px" }}
+          style={{ marginBottom: "50px", fontFamily: "Ramche", }}
         >
           Score Board
         </Title>
 
         {/* Middle */}
-        <Grid container spacing={5} style={{ padding: "5px" }}>
+        <Grid container spacing={5} style={{ padding: "5px", fontFamily: "Ramche",}}>
 
           {/* Middle_Left : 시상대 */}
           <Grid item xs={12} md={5}>
@@ -131,25 +132,25 @@ function GameScore() {
               <Table aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell style={{ fontWeight: "bold" }} align="center">
+                    <TableCell style={{ fontWeight: "bold", fontFamily: "Ramche", }} align="center">
                       순위
                     </TableCell>
-                    <TableCell style={{ fontWeight: "bold" }} align="center">
+                    <TableCell style={{ fontWeight: "bold", fontFamily: "Ramche", }} align="center">
                       NickName
                     </TableCell>
-                    <TableCell style={{ fontWeight: "bold" }} align="center">
+                    <TableCell style={{ fontWeight: "bold", fontFamily: "Ramche", }} align="center">
                       Score
                     </TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody style={{ fontFamily: "Ramche"}}>
                   {gameResults.map((result, index) => (
                     <TableRow key={result.userSeq}>
-                      <TableCell align="center" component="th" scope="row">
+                      <TableCell align="center" component="th" scope="row" style={{ fontFamily: "Ramche"}}> 
                         {index + 1}
                       </TableCell>
-                      <TableCell align="center">{result.nickname}</TableCell>
-                      <TableCell align="center">{result.score}</TableCell>
+                      <TableCell align="center" style={{ fontFamily: "Ramche"}}>{result.nickname}</TableCell>
+                      <TableCell align="center" style={{ fontFamily: "Ramche"}}>{result.score}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
