@@ -3,12 +3,19 @@ from pydub import AudioSegment
 import math
 from difflib import SequenceMatcher
 from correlation import correlate
+from splitter import portion_splitter
 import pymysql
 
 # MySQL database properties
-host = 'i9b109.p.ssafy.io'
-user = '9ithubB109_simons'
-password = 'zlwhsalsrnrWid7991'
+# host = 'i9b109.p.ssafy.io'
+# user = '9ithubB109_simons'
+# password = 'zlwhsalsrnrWid7991'
+# db = 'rhythm'
+# charset = 'utf8'
+
+host = 'localhost'
+user = 'root'
+password = '0000'
 db = 'rhythm'
 charset = 'utf8'
 
@@ -33,56 +40,45 @@ split_wav.multiple_split(min_per_split=1)
 결과는 Downloads 디렉터리에 '번호_파일명.wav'의 파일들 생성
 """
 
-class SplitWavAudioMubin():
-    def __init__(self, folder, filename, ext):
-        self.folder = folder
-        self.filename = filename
-        self.ext = ext
-        self.filepath = folder + '//' + filename + ext
+#portion_splitter(file_name, start_sec, end_sec)
+def splitter(game_seq, song_seq, file_name):
+    print("[Execute] splitter")
 
-        self.audio = AudioSegment.from_wav(self.filepath)
+    # Load the input WAV file
+    input_wav = AudioSegment.from_wav(file_name)
 
-    def get_duration(self):
-        return self.audio.duration_seconds
+    global conn
+    cursor = conn.cursor()
 
-    def single_split(self, from_min, to_min, split_filename):
-        t1 = from_min * 60 * 1000
-        t2 = to_min * 60 * 1000
-        split_audio = self.audio[t1:t2]
-        split_audio.export(self.folder + '//' + split_filename, format="wav")
+    cursor.execute("select * from lyrics where song_seq = %s order by lyrics_seq", song_seq)
+    lyricsPart = cursor.fetchall()
 
-    def multiple_split(self, min_per_split):
-        total_mins = math.ceil(self.get_duration() / 60)
+    for i in range(len(lyricsPart)):
+        lyrics_seq, end_time, lyric, song_order, start_time, song_seq = lyricsPart[i]
+        print(lyrics_seq, start_time, end_time)
+        portion_splitter(file_name, start_time, end_time, i)
 
-        for i in range(0, total_mins, min_per_split):
-            split_fn = str(i) + '_' + self.filename + self.ext
-            self.single_split(i, i + min_per_split, split_fn)
-            print(str(i) + ' Done')
 
-            if i == total_mins - min_per_split:
-                print('All splited successfully')
+
+    return
 
 # 곡명, 파트로 매개변수 변경 필요
-def getLyricsScore(song_seq, song_order, file):
+def getLyricsScore(song_seq, lyrics_idx, file):
     try:
-        OPENAI_API_KEY = "#"
+        OPENAI_API_KEY = "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"
         openai.api_key = OPENAI_API_KEY
 
         global conn
         cur = conn.cursor()
 
-        cur.execute("SELECT lyric FROM lyrics WHERE song_seq = %s AND song_order = %s", (song_seq, song_order))
+        cur.execute("SELECT lyric FROM lyrics WHERE song_seq = %s AND lyrics_seq = %s", (song_seq, lyrics_idx))
         lyricsAnswer = cur.fetchone()
-        print(lyricsAnswer)
-        #
-        #     #lyricsAnswer =
-        #     lyricsSize = len(lyricsAnswer)
-        #
-        #     # audio_file = open("C://Users//SSAFY//Desktop//0_naul.wav", 'rb')
+        print("lyricsAnswer : " + lyricsAnswer[0])
+        print(file)
         # 음성 인식
         # transcript = openai.Audio.transcribe("whisper-1", audio_file)
         transcript = openai.Audio.transcribe("whisper-1", file)
-        print("transcript" + transcript['text'])
+        print("userLyrics : " + transcript['text'])
         # 사용자 입력 가사
         userLyrics = transcript['text']
 
@@ -108,6 +104,21 @@ def getMelodyScore(filename):
     return {
         "score": score
     }
+
+def test():
+    global conn
+    cursor = conn.cursor()
+    song_seq = 114
+
+    cursor.execute("SELECT * FROM lyrics WHERE song_seq = %s", song_seq)
+
+    lyricsPart = cursor.fetchall()
+
+    for lyric in lyricsPart:
+        #lyrics_seq는 1부터 시작
+        lyrics_seq, end_time, lyric, song_order, start_time, song_seq = lyric
+
+
 
 # folder = 'C://Users//SSAFY//Downloads'
 # file = 'naul'
