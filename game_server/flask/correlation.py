@@ -107,18 +107,10 @@ def get_max_corr(corr, source, target):
         return corr[max_corr_index] * 100
 
 def correlate(source, target):
-    try:
-        fingerprint_source = calculate_fingerprints(source)
-        fingerprint_target = calculate_fingerprints(target)
-    except Exception as e:
-        print("1")
-        print(e)
+    fingerprint_source = calculate_fingerprints(source)
+    fingerprint_target = calculate_fingerprints(target)
 
-    try:
-        corr = compare(fingerprint_source, fingerprint_target, span, step)
-        max_corr_offset = get_max_corr(corr, source, target)
-    except Exception as e:
-        print("2")
-        print(e)
+    corr = compare(fingerprint_source, fingerprint_target, span, step)
+    max_corr_offset = get_max_corr(corr, source, target)
 
     return max_corr_offset

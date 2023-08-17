@@ -1,16 +1,30 @@
-# from game_server.flask.score import SplitWavAudioMubin
-# from game_server.flask.correlation import correlate
-# import os
+# from game_server.flask.splitter import portion_splitter
+# import pymysql
 #
-# folder = "D:"
-# file = "seven"
-# ext = ".wav"
+# # MySQL database properties
+# host = 'i9b109.p.ssafy.io'
+# user = '9ithubB109_simons'
+# password = 'zlwhsalsrnrWid7991'
+# db = 'rhythm'
+# charset = 'utf8'
 #
-# correlate(folder)
-
-from difflib import SequenceMatcher
-
-answerLyrics = "바람이 마음을 스치는 날에는 그대 숨결을 느낄 수 있죠 난 잘 있어요 아무 걱정 말아요 이젠 제법 익숙한 걸요 추억이 마음을 여미는 날에는 그대 생각을 멈출 수 없죠 지나간 기억들을 떠올리는 일은 어떤 의미도 없는걸요 오 걸음을 멈추는"
-userLyrics = "바람이 마음을 스치는 날에는 그대 숨결을 느낄 수 있죠 난 잘 있어요 아무 걱정 말아요 이젠 제법 익숙한걸요 추억이 마음을 여미는 날에는 그대 생각을 멈출 수 없죠 지나간 기억들을 떠올리는 일은 어떤 의미도 없는걸요 아, 걸음을 멈추고"
-
-print(SequenceMatcher(None, userLyrics, answerLyrics).ratio())
+# # Establishing a connection
+# conn = pymysql.connect(
+#     host=host,
+#     user=user,
+#     password=password,
+#     db=db,
+#     charset=charset
+# )
+#
+# cursor = conn.cursor()
+# cursor.execute("select * from lyrics where song_seq = 119 order by lyrics_seq")
+# lyrics_arr = cursor.fetchall()
+#
+# for i in range(len(lyrics_arr)):
+#     lyrics_seq, end_time, lyric, song_order, start_time, song_seq = lyrics_arr[i]
+#
+#     # 게임시퀀스(디렉토리), 파일명(디렉토리/파일명), 시작 시간, 끝 시간
+#     # 생성되는 파일명 => 1~n.wav (순서 번호.wav)
+#     # !!!파일명은 1번부터 시작함!!!
+#     portion_splitter(str(0), "./flask/output/red_sun/vocals.wav", str(i + 1), start_time, end_time)
