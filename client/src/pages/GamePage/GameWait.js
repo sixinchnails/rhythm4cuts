@@ -96,8 +96,8 @@ function GameWait() {
             // 서버로부터 받은 메시지에 'START_GAME' 신호가 포함되어 있으면
             if (receivedMessage.action === "START_GAME") {
               console.log("video start");
-              setGameStarted(true);
             }
+            setGameStarted(true);
           });
           console.log(userSeq);
           if (userSeq) {
@@ -585,8 +585,16 @@ function GameWait() {
   }
   // "게임 준비" 버튼을 눌렀을 때 동작
   function handleGameReady() {
-    console.log("게임 준비 버튼 누름");
-    setGameReadyed(true);
+    if (stomp && stomp.connected) {
+      setGameReadyed(true);
+      console.log("연결 후 자동 재생 요청");
+      // const message = {
+      //   gameSeq: gameSeq,
+      //   action: "START_GAME", // 게임 시작 신호를 표시하는 필드 추가
+      // 필요한 경우 여기에 다른 데이터 추가
+    }
+    // stomp.send("/public/song", {}, JSON.stringify(message));
+    // }
   }
 
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
@@ -780,7 +788,7 @@ function GameWait() {
 
       <Grid container>
         {/* TOP : 게임 시작 전*/}
-        {gameStarted ? (
+        {gameReadyed ? (
           <Grid container alignItems="center" justifyContent="center">
             <Card
               style={{
@@ -790,8 +798,31 @@ function GameWait() {
                 borderRadius: "30px",
               }}
             >
+              {gameReadyed ? (
+                <Grid item xs={10} style={{ margin: "1px" }}>
+                  <StyledIconButton
+                    // onClick={handleGamePlay && handlePlayButtonClick}
+                    onClick={() => {
+                      handleGamePlay();
+                      // handlePlayButtonClick();
+                    }}
+                    style={{ width: "30vw" }}
+                  >
+                    <CheckIcon />
+                    <Typography
+                      style={{
+                        fontFamily: "Pretendard-Regular",
+                        fontSize: "20px",
+                        padding: "15px",
+                      }}
+                    >
+                      게임 시작
+                    </Typography>
+                  </StyledIconButton>
+                </Grid>
+              ) : null}
               {/* 대기중 비디오 */}
-              {gameReadyed && (
+              {gameStarted && (
                 <div>
                   <video
                     src={musicUrl}
@@ -923,13 +954,13 @@ function GameWait() {
                   </Grid>
                 ) : null}
                 {/* "게임 시작" 버튼 : 게임 준비가 true인 상태에 뜬다 */}
-                {gameReadyed ? (
+                {/* {gameStarted ? (
                   <Grid item xs={10} style={{ margin: "1px" }}>
                     <StyledIconButton
                       // onClick={handleGamePlay && handlePlayButtonClick}
                       onClick={() => {
                         handleGamePlay();
-                        handlePlayButtonClick();
+                        // handlePlayButtonClick();
                       }}
                       style={{ width: "30vw" }}
                     >
@@ -945,7 +976,7 @@ function GameWait() {
                       </Typography>
                     </StyledIconButton>
                   </Grid>
-                ) : null}
+                ) : null} */}
               </Grid>
             </Grid>
           </Grid>
