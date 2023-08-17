@@ -5,6 +5,7 @@ import {
   Check as CheckIcon,
   ExitToApp as ExitToAppIcon,
   PersonAdd as PersonAddIcon,
+  Tune,
 } from "@mui/icons-material";
 import {
   styled,
@@ -21,7 +22,7 @@ import {
 import { createConnection } from "../../openvidu/connectionInitialization";
 import UserVideoComponent from "../../components/Game/UserVideoComponent";
 import UserComponent from "../../components/Game/UserComponent";
-import React, { Component, useState, useEffect } from "react";
+import React, { Component, useState, useEffect, useRef } from "react";
 import LoginAlert from "../../components/Common/LoginAlert";
 import BoomAlert from "../../components/Common/BoomAlert";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
@@ -123,10 +124,6 @@ function GameWait() {
   const [toUser, setToUser] = useState("");
   const [songSeq, setSongSeq] = useState(0);
 
-  {
-    console.log(songSeq);
-  }
-
   var { gameSeq } = useParams(); // url에서 추출
 
   dispatch(setGameseq(gameSeq));
@@ -138,9 +135,17 @@ function GameWait() {
   const [publisher, setPublisher] = useState(undefined); // 자신
   const [subscribers, setSubscribers] = useState([]); // 구독자
   const [players, setPlayers] = useState([]); // 통합
+  // 녹음 관련 상태
+  const [isRecording, setIsRecording] = useState(false); //녹음이 진행 중인지 확인
+  const [audioChunks, setAudioChunks] = useState([]);
+  // audioChunks : 녹음된 오디오 데이터를 담는 배열 녹음이 진행되면서 이 배열에 오디오 데이터의 조각들이 계속 추가됨
+  const [audioBlob, setAudioBlob] = useState(null);
+  //audioBlob은 녹음이 완료된 후, audioChunks를 하나의 Blob 객체로 합쳐 저장하는 상태
+  const mediaRecorderRef = useRef(null);
+  //MediaRecorder 객체의 참조를 저장하는데 사용됨->오디오와 비디오를 녹음할 수 있게 해주는 api
+  const [gameReadyed, setGameReadyed] = useState(false); // 게임 준비 여부 상태
   const [gameStarted, setGameStarted] = useState(false); // 게임 시작 여부 상태
   const [stream, setStream] = useState(null);
-  const [isRecording, setIsRecording] = useState(false);
 
   // 게임 시작 여부에 따른 녹음 시작/종료 처리
   useEffect(() => {
@@ -154,8 +159,10 @@ function GameWait() {
     }
   }, [gameStarted]);
 
+  //녹음 시작하는 역할 함수
   const startRecording = () => {
     setIsRecording(true);
+    //사용자의 오디오 입력 장치에 접근
     navigator.mediaDevices
       .getUserMedia({
         audio: true,
@@ -165,6 +172,7 @@ function GameWait() {
           setStream(stream);
           setIsRecording(true);
           setAudioChunks([]);
+          //MediaRecorder 객체를 생성하고, mediaRecorderRef.current에 저장
           const mediaRecorder = new MediaRecorder(stream);
 
           mediaRecorderRef.current = mediaRecorder;
@@ -178,6 +186,7 @@ function GameWait() {
 
           // 녹음이 종료되면 호출되는 이벤트 핸들러
           mediaRecorderRef.current.onstop = async () => {
+            //audioChunks를 하나의 Blob 객체로 만들고, 이를 'audiaBlob' 상태에 저장한 후 서버에 전송
             const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
             setAudioBlob(audioBlob);
 
@@ -216,8 +225,6 @@ function GameWait() {
 
   const access = getCookie("access");
   const [musicUrl, setMusicUrl] = useState(""); // 해당 노래 url
-
-  const [playerFix, setPlayerFix] = useState([]); // 배열 순서 고정
 
   // 상태 추가
   const [isInviteModalOpen, setInviteModalOpen] = useState(false);
@@ -359,12 +366,14 @@ function GameWait() {
       });
   }, [gameSeq]);
 
+  //녹음을 중지하고, 녹음된 오디오 데이터를 서버에 전송하는 역할.
   const stopRecording = () => {
     setIsRecording(false);
     if (
       mediaRecorderRef.current &&
       mediaRecorderRef.current.state !== "inactive"
     ) {
+      //녹음 중지
       mediaRecorderRef.current.stop();
 
       const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
@@ -567,11 +576,13 @@ function GameWait() {
     }
   }
 
-  function handleGameReady() {
+  // "게임 시작" 버튼을 눌렀을 때 동작
+  function handleGamePlay() {
     console.log("게임 시작 버튼 누름");
     console.log(stomp);
     // 게임 시작 메시지를 서버에 전송
     if (stomp && stomp.connected) {
+      setGameStarted(true);
       console.log("연결 후 자동 재생 요청");
       const message = {
         gameSeq: gameSeq,
@@ -581,9 +592,11 @@ function GameWait() {
       stomp.send("/public/song", {}, JSON.stringify(message));
     }
   }
-
-  // "채팅" 버튼을 클릭했을 때 동작 ---------------------------------------------------------------------------------
-  const handleChat = () => {};
+  // "게임 준비" 버튼을 눌렀을 때 동작
+  function handleGameReady() {
+    console.log("게임 준비 버튼 누름");
+    setGameReadyed(true);
+  }
 
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
   const handleExit = () => {
@@ -640,8 +653,8 @@ function GameWait() {
           },
         }
       );
-      console.log(response.data.data.songSeq);
       setSongSeq(response.data.data.songSeq);
+      console.log(songSeq);
     } catch (error) {
       console.log(error);
     }
@@ -698,31 +711,37 @@ function GameWait() {
           item.endTime + 3,
         ]);
         setTimeRanges(newTimeRanges);
-        console.log(1);
+        console.log(timeRanges);
       }
-      console.log(timeRanges);
     } catch (error) {
       console.error("Error fetching time ranges:", error);
     }
   };
 
-  const [content, setContent] = useState("1번의 차례입니다.");
-
-  if (currentIndex % 4 === 0) {
-    setContent("1번의 차례입니다.");
-  } else if (currentIndex % 4 === 1) {
-    setContent("2번의 차례입니다.");
-  } else if (currentIndex % 4 === 2) {
-    setContent("3번의 차례입니다.");
-  } else if (currentIndex % 4 === 3) {
-    setContent("4번의 차례입니다.");
-  }
+  const [content, setContent] = useState("");
+  useEffect(() => {
+    if (currentIndex % 4 === 0) {
+      setContent("1번의 차례입니다.");
+    } else if (currentIndex % 4 === 1) {
+      setContent("2번의 차례입니다.");
+    } else if (currentIndex % 4 === 2) {
+      setContent("3번의 차례입니다.");
+    } else if (currentIndex % 4 === 3) {
+      setContent("4번의 차례입니다.");
+    } else if (currentIndex === -1) {
+      setContent("");
+    }
+  }, [currentIndex]);
 
   const handlePlayButtonClick = () => {
+    setCurrentIndex(0); // 처음 인덱스로 값을 초기화
     setIsPlaying(true);
     startTimer();
-    setCurrentIndex(0); // 처음 인덱스로 값을 초기화
   };
+
+  // useEffect(() => {
+  //   handlePlayButtonClick();
+  // }, [handleGamePlay]);
 
   const startTimer = () => {
     const timerInterval = 1000; // 1초마다 타이머 업데이트
@@ -732,9 +751,19 @@ function GameWait() {
       currentTime += timerInterval / 1000; // 초 단위로 업데이트
 
       timeRanges.forEach(([startTime, endTime], index) => {
-        if (currentTime >= startTime && currentTime <= endTime) {
+        if (
+          currentTime >= startTime &&
+          currentTime <= endTime &&
+          index != timeRanges.length - 1
+        ) {
           console.log(`Dynamic change at time ${currentTime}`);
+          console.log(index);
+          console.log(startTime);
+          console.log(endTime);
+          console.log(currentTime);
           setCurrentIndex(index); // 현재 인덱스 업데이트
+        } else if (endTime === currentTime && index == timeRanges.length - 1) {
+          console.log("종료");
         }
       });
 
@@ -761,45 +790,47 @@ function GameWait() {
 
       <Grid container>
         {/* TOP : 게임 시작 전*/}
+        {/* 게임 시작 단계 */}
         {gameStarted ? (
           <Grid container alignItems="center" justifyContent="center">
             <Card
               style={{
                 width: "55vw",
-                height: "40vh",
+                height: "45vh",
                 background: "transparent",
                 borderRadius: "30px",
               }}
             >
               {/* 대기중 비디오 */}
-              {gameStarted && (
-                <video
-                  src={musicUrl}
-                  controls={false}
-                  autoPlay
-                  loop
-                  style={{
-                    width: "100%",
-                    height: "40vh",
-                    objectFit: "cover",
-                  }}
-                />
+              {gameReadyed && (
+                <div>
+                  <video
+                    src={musicUrl}
+                    controls={false}
+                    autoPlay
+                    loop
+                    style={{
+                      width: "100%",
+                      height: "40vh",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <div
+                    style={{
+                      justifyContent: "center",
+                      display: "flex",
+                      alignContent: "center",
+                      color: "white",
+                    }}
+                  >
+                    {content}
+                  </div>
+                </div>
               )}
             </Card>
-            <div
-              style={{
-                width: "20vw",
-                height: "5vh",
-                marginLeft: "5%",
-                backgroundColor: "none",
-                color: "gray",
-                fontWeight: "bolder",
-              }}
-            >
-              {content}
-            </div>
           </Grid>
         ) : (
+          // 게임 시작 단계가 아님
           // 게임 시작 하기 전 춤추는 동영상 ----------------------------------------------------------------------
           <Grid container>
             <Grid
@@ -883,11 +914,36 @@ function GameWait() {
                     </StyledIconButton>
                   </Grid>
                 )}
-                {/* "게임 시작" 버튼 : 4명이 차면 뜬다!! */}
-                {players.length === 4 ? (
+                {/* "게임 준비" 버튼 : 4명이 차면 뜬다!! && 게임 준비가 아닌 상태면 */}
+                {/* 방 인원이 4명이고 게임 준비 상태가 아님 */}
+                {players.length === 4 && !gameReadyed ? (
                   <Grid item xs={10} style={{ margin: "1px" }}>
                     <StyledIconButton
                       onClick={handleGameReady}
+                      style={{ width: "30vw" }}
+                    >
+                      <CheckIcon />
+                      <Typography
+                        style={{
+                          fontFamily: "Pretendard-Regular",
+                          fontSize: "20px",
+                          padding: "15px",
+                        }}
+                      >
+                        게임 준비
+                      </Typography>
+                    </StyledIconButton>
+                  </Grid>
+                ) : null}
+                {/* "게임 시작" 버튼 : 게임 준비가 true인 상태에 뜬다 */}
+                {gameReadyed ? (
+                  <Grid item xs={10} style={{ margin: "1px" }}>
+                    <StyledIconButton
+                      // onClick={handleGamePlay && handlePlayButtonClick}
+                      onClick={() => {
+                        handleGamePlay();
+                        handlePlayButtonClick();
+                      }}
                       style={{ width: "30vw" }}
                     >
                       <CheckIcon />
@@ -909,8 +965,8 @@ function GameWait() {
         )}
         {/* Bottom */}
         <Grid container>
-          {gameStarted ? (
-            // 게임시작 버튼 클릭 후 후 후! -------------------------------------------------------------------------------------
+          {gameReadyed ? (
+            // 게임준비 버튼 클릭 후 후 후! -------------------------------------------------------------------------------------
             <Grid
               style={{
                 height: "25vh",
@@ -960,7 +1016,7 @@ function GameWait() {
               ))}
             </Grid>
           ) : (
-            // 게임시작 버튼 클릭 전 전 전! --------------------------------------------------------------------------------
+            // 게임준비 버튼 클릭 전 전 전! --------------------------------------------------------------------------------
             <Grid
               style={{
                 height: "25vh",
