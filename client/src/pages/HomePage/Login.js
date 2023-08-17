@@ -70,7 +70,7 @@ const Login = () => {
   };
 
   return (
-    <div className="bg">
+    <div className="bg" >
       <video autoPlay loop muted>
         <source src="/videos/33.mp4" type="video/mp4" />
       </video>

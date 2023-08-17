@@ -23,4 +23,9 @@ public interface FilmService {
     public List<Resource> downDailyFilm(int year, int month, int day, int page);
     public List<FilmResponseDto> getUserPhotoList(int userSeq);
     public List<FilmResponseDto> getDailyPhotoList(int year, int month, int day, int page);
+    public FilmResponseDto getPrivateFilm(int gameRank, int gameSeq);
+    public FilmResponseDto getCommonFilm(int gameRank, int gameSeq);
+
+    public void savePrivateFilm(FilmDto filmDto) throws IOException;
+    public void saveCommonFilm(FilmDto filmInfo) throws Exception;
 }
