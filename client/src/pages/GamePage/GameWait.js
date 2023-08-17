@@ -96,9 +96,10 @@ function GameWait() {
             // 서버로부터 받은 메시지에 'START_GAME' 신호가 포함되어 있으면
             if (receivedMessage.action === "START_GAME") {
               console.log("video start");
-              setGameStarted(true);
             }
+            setGameStarted(true);
           });
+
           console.log(userSeq);
           if (userSeq) {
             stompClient.subscribe(
@@ -475,7 +476,6 @@ function GameWait() {
       const joinSessionTimeout = setTimeout(() => {
         joinSession();
       }, 3000);
-
       return () => clearTimeout(joinSessionTimeout);
     }
   }, [isSessionJoined]);
@@ -605,6 +605,7 @@ function GameWait() {
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
   const handleExit = () => {
     onBeforeUnload();
+    leaveSession();
     console.log("방 나갈거야 ~");
   };
 
@@ -779,7 +780,6 @@ function GameWait() {
   //   }, timerInterval);
   // };
 
-
   return (
     <div
       style={{
@@ -830,8 +830,9 @@ function GameWait() {
               </div>
             </Card>
           </Grid>
-        ) : (
-          // 게임 시작 하기 전 춤추는 동영상 ----------------------------------------------------------------------
+        ) : null}
+        {/*게임 시작 하기 전 춤추는 동영상 ---------------------------------------------------------------------- */}
+        {!gameStarted ? (
           <Grid container>
             <Grid
               item
@@ -966,7 +967,8 @@ function GameWait() {
               </Grid>
             </Grid>
           </Grid>
-        )}
+        ) : null}
+
         {/* 아래 4개의 유저 박스 -----------------------------------------------------------------------------------------*/}
         {/* Bottom */}
         <Grid container>
@@ -1021,7 +1023,7 @@ function GameWait() {
               ))}
             </Grid>
           ) : null}
-          
+
           {/* 게임준비 버튼 클릭 전 전 전! -------------------------------------------------------------------------------- */}
           {!gameReadyed ? (
             <Grid
