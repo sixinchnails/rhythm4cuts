@@ -55,7 +55,7 @@ function InviteFriendsModal({
       >
         <h3>친구 초대하기</h3>
         <List>
-          {friends.map(friend => (
+          {friends.map((friend) => (
             <ListItem key={friend.email}>
               <ListItemText
                 primary={friend.nickname}
@@ -98,7 +98,7 @@ function GameWait() {
         {},
         function () {
           console.log("게임 페이지 안 웹소켓 연결.");
-          stompClient.subscribe(`/subscribe/song/${gameSeq}`, message => {
+          stompClient.subscribe(`/subscribe/song/${gameSeq}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
             // 서버로부터 받은 메시지에 'START_GAME' 신호가 포함되어 있으면
 
@@ -125,7 +125,7 @@ function GameWait() {
             );
           }
         },
-        error => {
+        (error) => {
           console.log("STOMP 연결 실패:", error);
         }
       );
@@ -146,7 +146,7 @@ function GameWait() {
 
   dispatch(setGameseq(gameSeq));
 
-  const session = useSelector(state => state.roomState.session);
+  const session = useSelector((state) => state.roomState.session);
 
   const [connectSession, setConnectSession] = useState(undefined);
   const [mainStreamManager, setMainStreamManager] = useState(undefined); // 방장
@@ -170,11 +170,11 @@ function GameWait() {
       .getUserMedia({
         audio: true,
       })
-      .then(stream => {
+      .then((stream) => {
         mediaRecorder = new MediaRecorder(stream, {
           mimeType: "audio/webm;codecs=opus",
         });
-        mediaRecorder.ondataavailable = event => {
+        mediaRecorder.ondataavailable = (event) => {
           if (event.data.size > 0) {
             audioChunks.push(event.data);
           }
@@ -223,10 +223,10 @@ function GameWait() {
             "Content-Type": "multipart/form-data",
           },
         })
-        .then(response => {
+        .then((response) => {
           console.log("Recording saved successfully:", response.data);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error saving recording:", error);
         });
     }
@@ -270,7 +270,7 @@ function GameWait() {
   };
 
   //친구 목록 가져오는 함수
-  const fetchFriendList = async userSeq => {
+  const fetchFriendList = async (userSeq) => {
     const headers = {
       Authorization: "Bearer " + getCookie("access"),
     };
@@ -330,7 +330,7 @@ function GameWait() {
           Authorization: `Bearer ${getCookie("access")}`,
         },
       })
-      .then(res => {
+      .then((res) => {
         const param = {
           userSeq: String(res.data.user_seq),
           gameSeq: String(gameSeq),
@@ -345,11 +345,11 @@ function GameWait() {
           },
         });
       })
-      .then(postRes => {
+      .then((postRes) => {
         // 이곳에서 post 요청에 대한 응답 처리
         console.log("POST 요청 응답:", postRes);
       })
-      .catch(error => {
+      .catch((error) => {
         // 에러 처리
         console.error("에러 발생:", error);
       });
@@ -358,7 +358,7 @@ function GameWait() {
   // 로그인 상태관리
   useEffect(() => {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           setUserSeq(res.data.user_seq);
         } else {
@@ -366,7 +366,7 @@ function GameWait() {
           handleOpenLoginAlert();
         }
       })
-      .catch(error => {
+      .catch((error) => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -374,13 +374,13 @@ function GameWait() {
 
   useEffect(() => {
     userInfo()
-      .then(res => {
+      .then((res) => {
         if (res.status !== 200) {
           window.alert("로그인을 해주세요!");
           navigate("/");
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("유저 정보 불러오기 실패:", error);
         window.alert("로그인을 해주세요!");
         navigate("/");
@@ -496,11 +496,11 @@ function GameWait() {
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
-      newSession.on("streamCreated", event => {
+      newSession.on("streamCreated", (event) => {
         const subscriber = newSession.subscribe(event.stream, undefined);
-        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+        setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
 
-        setPlayers(prevPlayers => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
+        setPlayers((prevPlayers) => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
 
         if (!mainStreamManager) {
           setMainStreamManager(subscriber);
@@ -508,7 +508,7 @@ function GameWait() {
       });
 
       // 방 폭파 시키기
-      newSession.on("streamDestroyed", event => {
+      newSession.on("streamDestroyed", (event) => {
         // deleteSubscriber(event.stream.streamManager);
         // 방 인원수 줄이는 요청 보내기
         axios
@@ -524,7 +524,7 @@ function GameWait() {
           );
       });
 
-      newSession.on("exception", exception => {
+      newSession.on("exception", (exception) => {
         console.warn(exception);
       });
 
@@ -549,11 +549,11 @@ function GameWait() {
 
           setPublisher(newPublisher);
           setMainStreamManager(newPublisher);
-          setPlayers(prevPlayers => [...prevPlayers, newPublisher]);
+          setPlayers((prevPlayers) => [...prevPlayers, newPublisher]);
 
           //--------------------------
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(
             "There was an error connecting to the session:",
             error.code,
@@ -602,8 +602,16 @@ function GameWait() {
   }
   // "게임 준비" 버튼을 눌렀을 때 동작
   function handleGameReady() {
-    console.log("게임 준비 버튼 누름");
-    setGameReadyed(true);
+    if (stomp && stomp.connected) {
+      setGameReadyed(true);
+      console.log("연결 후 자동 재생 요청");
+      // const message = {
+      //   gameSeq: gameSeq,
+      //   action: "START_GAME", // 게임 시작 신호를 표시하는 필드 추가
+      // 필요한 경우 여기에 다른 데이터 추가
+    }
+    // stomp.send("/public/song", {}, JSON.stringify(message));
+    // }
   }
 
   // "나가기" 버튼 눌렀을 때 동작 -----------------------------------------------------------------------------------
@@ -618,11 +626,11 @@ function GameWait() {
     console.log("--------------------leave session");
 
     // 나가는 플레이어를 배열에서 제거하고 상태 업데이트
-    const updatedPlayers = players.filter(player => player !== publisher);
+    const updatedPlayers = players.filter((player) => player !== publisher);
     setPlayers(updatedPlayers);
 
     // 구독 중인 스트림 해제
-    subscribers.forEach(subscriber => {
+    subscribers.forEach((subscriber) => {
       if (typeof subscriber.unsubscribe === "function") {
         subscriber.unsubscribe(); // 구독자 해제
         if (subscriber.streamManager) {
@@ -643,8 +651,8 @@ function GameWait() {
           Authorization: "Bearer " + access,
         },
       })
-      .then(response => {})
-      .catch(error => {
+      .then((response) => {})
+      .catch((error) => {
         console.error("Error:", error);
       });
 
@@ -715,7 +723,7 @@ function GameWait() {
 
       if (response.status === 200) {
         const data = response.data.data;
-        const newTimeRanges = data.map(item => [
+        const newTimeRanges = data.map((item) => [
           item.startTime + 3,
           item.endTime + 3,
         ]);
@@ -742,47 +750,47 @@ function GameWait() {
     }
   }, [currentIndex]);
 
-  // const handlePlayButtonClick = () => {
-  //   setCurrentIndex(0); // 처음 인덱스로 값을 초기화
-  //   setIsPlaying(true);
-  //   startTimer();
-  // };
+  const handlePlayButtonClick = () => {
+    setCurrentIndex(0); // 처음 인덱스로 값을 초기화
+    setIsPlaying(true);
+    startTimer();
+  };
 
   // useEffect(() => {
   //   handlePlayButtonClick();
   // }, [handleGamePlay]);
 
-  // const startTimer = () => {
-  //   const timerInterval = 1000; // 1초마다 타이머 업데이트
-  //   let currentTime = 0;
+  const startTimer = () => {
+    const timerInterval = 1000; // 1초마다 타이머 업데이트
+    let currentTime = 0;
 
-  //   const timer = setInterval(() => {
-  //     currentTime += timerInterval / 1000; // 초 단위로 업데이트
+    const timer = setInterval(() => {
+      currentTime += timerInterval / 1000; // 초 단위로 업데이트
 
-  //     timeRanges.forEach(([startTime, endTime], index) => {
-  //       if (
-  //         currentTime >= startTime &&
-  //         currentTime <= endTime &&
-  //         index != timeRanges.length - 1
-  //       ) {
-  //         console.log(`Dynamic change at time ${currentTime}`);
-  //         console.log(index);
-  //         console.log(startTime);
-  //         console.log(endTime);
-  //         console.log(currentTime);
-  //         setCurrentIndex(index); // 현재 인덱스 업데이트
-  //       } else if (endTime === currentTime && index == timeRanges.length - 1) {
-  //         console.log("종료");
-  //       }
-  //     });
+      timeRanges.forEach(([startTime, endTime], index) => {
+        if (
+          currentTime >= startTime &&
+          currentTime <= endTime &&
+          index != timeRanges.length - 1
+        ) {
+          console.log(`Dynamic change at time ${currentTime}`);
+          console.log(index);
+          console.log(startTime);
+          console.log(endTime);
+          console.log(currentTime);
+          setCurrentIndex(index); // 현재 인덱스 업데이트
+        } else if (endTime === currentTime && index == timeRanges.length - 1) {
+          console.log("종료");
+        }
+      });
 
-  //     if (currentTime >= timeRanges[timeRanges.length - 1][1]) {
-  //       clearInterval(timer);
-  //       setIsPlaying(false);
-  //       setCurrentIndex(-1); // 인덱스 초기화
-  //     }
-  //   }, timerInterval);
-  // };
+      if (currentTime >= timeRanges[timeRanges.length - 1][1]) {
+        clearInterval(timer);
+        setIsPlaying(false);
+        setCurrentIndex(-1); // 인덱스 초기화
+      }
+    }, timerInterval);
+  };
 
   return (
     <div
@@ -825,8 +833,9 @@ function GameWait() {
                   style={{
                     justifyContent: "center",
                     display: "flex",
-                    alignContent: "center",
+                    alignItems: "center",
                     color: "white",
+                    height: "5vh",
                   }}
                 >
                   <button onClick={stopRecording}>Stop Recording</button>
@@ -950,7 +959,7 @@ function GameWait() {
                       // onClick={handleGamePlay && handlePlayButtonClick}
                       onClick={() => {
                         handleGamePlay();
-                        // handlePlayButtonClick();
+                        handlePlayButtonClick();
                       }}
                       style={{ width: "30vw" }}
                     >
@@ -987,7 +996,7 @@ function GameWait() {
                 margin: "50px",
               }}
             >
-              {[0, 1, 2, 3].map(index => (
+              {[0, 1, 2, 3].map((index) => (
                 <Grid
                   key={index}
                   item
@@ -1040,7 +1049,7 @@ function GameWait() {
               }}
             >
               {/* 각 플레이어별로 Grid 아이템 생성 */}
-              {[0, 1, 2, 3].map(index => (
+              {[0, 1, 2, 3].map((index) => (
                 <Grid
                   key={index}
                   item

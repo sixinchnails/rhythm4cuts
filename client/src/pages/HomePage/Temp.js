@@ -14,12 +14,12 @@ function Recorder() {
     audioChunks = [];
     navigator.mediaDevices
       .getUserMedia({ audio: true })
-      .then(stream => {
+      .then((stream) => {
         console.log("stream begin");
         mediaRecorder = new MediaRecorder(stream, {
           mimeType: "audio/webm;codecs=opus",
         });
-        mediaRecorder.ondataavailable = event => {
+        mediaRecorder.ondataavailable = (event) => {
           if (event.data.size > 0) {
             audioChunks.push(event.data);
           }
@@ -34,7 +34,7 @@ function Recorder() {
         setRecording(true);
         console.log(mediaRecorder);
       })
-      .catch(error => console.error("Error accessing microphone:", error));
+      .catch((error) => console.error("Error accessing microphone:", error));
   };
 
   const stopRecording = () => {
@@ -66,10 +66,10 @@ function Recorder() {
             "Content-Type": "multipart/form-data",
           },
         })
-        .then(response => {
+        .then((response) => {
           console.log("Recording saved successfully:", response.data);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error saving recording:", error);
         });
     }
