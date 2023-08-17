@@ -16,6 +16,7 @@ import { getCookie } from "../../utils/cookie";
 import Webcam from "react-webcam";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
+import NextToHome from "../../components/Game/NextToHome";
 
 //close test
 import { closeSession } from "../../store";
@@ -442,29 +443,55 @@ const GameShot = () => {
   //   console.log(userRank);
   // }, [uploadImage]);
 
-  function copyCommonCapture(element) {
-    if (element) {
-      domtoimage.toPng(element).then(function (dataUrl) {
-        const formData = new FormData();
-        formData.append("gameSeq", gameSeq);
-        formData.append("userSeq", userSeq);
-        formData.append("commonFilm", dataURLtoFile(dataUrl, "temp.jpg"));
-        const headers = {
-          Authorization: "Bearer " + getCookie("access"),
-        };
+  // function copyCommonCapture(element) {
+  //   if (element) {
+  //     domtoimage.toPng(element).then(function (dataUrl) {
+  //       const formData = new FormData();
+  //       formData.append("gameSeq", gameSeq);
+  //       formData.append("userSeq", userSeq);
+  //       formData.append("commonFilm", dataURLtoFile(dataUrl, "temp.jpg"));
+  //       const headers = {
+  //         Authorization: "Bearer " + getCookie("access"),
+  //       };
+  //       try {
+  //         console.log(1);
+  //         const response = axios.post(
+  //           "https://i9b109.p.ssafy.io:8443/film/common/film",
+  //           formData,
+  //           { headers }
+  //         );
+  //         console.log(response);
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     });
+  //   }
+  // }
 
-        try {
-          const response = axios.post(
-            "https://i9b109.p.ssafy.io:8443/film/common/film",
-            formData,
-            { headers }
-          );
-          console.log(response);
-        } catch (error) {
-          console.log(error);
-        }
-      });
+  const [homestate, setHomeState] = useState(false);
+  // useEffect(() => {
+  //   setHomeState(true);
+  // }, [copyCommonCapture]);
+
+  function copyCapture(element) {
+    if (element) {
+      domtoimage
+        .toPng(element)
+        .then(function (dataUrl) {
+          console.log(dataUrl);
+          const link = document.createElement("a");
+          link.download = "capture.png";
+          link.href = dataUrl;
+          link.click();
+          setHomeState(true);
+        })
+        .catch(function (error) {
+          console.error("oops, something went wrong!", error);
+        });
     }
+  }
+  if (homestate) {
+    navigate("/");
   }
 
   return (
@@ -569,16 +596,24 @@ const GameShot = () => {
                     display: "flex",
                     justifyContent: "space-around",
                     alignItems: "center",
-                    fontFamily: "Ramche"
+                    fontFamily: "Ramche",
                   }}
                 >
                   {image ? (
                     <>
-                      <Button onClick={uploadImage} style={{ fontFamily: "Ramche" }}>Upload</Button>
+                      <Button
+                        onClick={uploadImage}
+                        style={{ fontFamily: "Ramche" }}
+                      >
+                        Upload
+                      </Button>
                     </>
                   ) : (
-                    <Button onClick={capture} style={{ fontFamily: "Ramche" }}>촬영</Button>
+                    <Button onClick={capture} style={{ fontFamily: "Ramche" }}>
+                      촬영
+                    </Button>
                   )}
+                  {/* {homestate ? null : <NextToHome />} */}
                 </div>
               </Box>
             </Box>
@@ -611,7 +646,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
-                      fontFamily: "Ramche"
+                      fontFamily: "Ramche",
                     }}
                     sx={{
                       backgroundImage: `url(${playerURL1})`,
@@ -627,7 +662,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
-                      fontFamily: "Ramche"
+                      fontFamily: "Ramche",
                     }}
                     sx={{
                       backgroundImage: `url("/images/ShotEmpty.jfif")`,
@@ -645,7 +680,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
-                      fontFamily: "Ramche"
+                      fontFamily: "Ramche",
                     }}
                     sx={{
                       backgroundImage: `url(${playerURL2})`,
@@ -661,7 +696,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
-                      fontFamily: "Ramche"
+                      fontFamily: "Ramche",
                     }}
                     sx={{
                       backgroundImage: `url("/images/ShotEmpty.jfif")`,
@@ -678,7 +713,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
-                      fontFamily: "Ramche"
+                      fontFamily: "Ramche",
                     }}
                     sx={{
                       backgroundImage: `url(${playerURL3})`,
@@ -694,7 +729,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
-                      fontFamily: "Ramche"
+                      fontFamily: "Ramche",
                     }}
                     sx={{
                       backgroundImage: `url("/images/ShotEmpty.jfif")`,
@@ -711,13 +746,13 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
-                      fontFamily: "Ramche"
+                      fontFamily: "Ramche",
                     }}
                     sx={{
                       backgroundImage: `url("/images/ShotEmpty.jfif")`,
                       height: "15vh",
                       margin: "5%",
-                      fontFamily: "Ramche"
+                      fontFamily: "Ramche",
                     }}
                   >
                     User 4
@@ -728,7 +763,7 @@ const GameShot = () => {
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       color: "white",
-                      fontFamily: "Ramche"
+                      fontFamily: "Ramche",
                     }}
                     sx={{
                       backgroundImage: `url(${playerURL4})`,
@@ -753,8 +788,8 @@ const GameShot = () => {
                 <Button
                   variant="contained"
                   color="warning"
-                  onClick={() => copyCommonCapture(copyRef.current)}
-                  style={{fontFamily: "Ramche"}}
+                  onClick={() => copyCapture(copyRef.current)}
+                  style={{ fontFamily: "Ramche" }}
                 >
                   확인
                 </Button>
@@ -805,6 +840,7 @@ function copyCapture(element) {
         link.href = dataUrl;
         link.click();
       })
+      .then(navigate("/"))
       .catch(function (error) {
         console.error("oops, something went wrong!", error);
       });
