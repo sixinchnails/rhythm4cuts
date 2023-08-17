@@ -1,5 +1,6 @@
 package com.b109.rhythm4cuts.controller;
 
+import com.b109.rhythm4cuts.model.dto.FilmDto;
 import com.b109.rhythm4cuts.model.dto.FriendDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -41,5 +42,16 @@ public class StompController {
     public void startMR(FriendDto friendDto) {
         System.out.println(friendDto.getGameSeq()+"에서 MR을 시작합니다.");
         messagingTemplate.convertAndSend("/subscribe/MR/" + friendDto.getGameSeq(), friendDto);
+    }
+
+    @MessageMapping(value = "/film")
+    public void startMR(FilmDto film) {
+        System.out.println("game seq : " + film.getGameSeq() + "user seq : " + film.getUserSeq() + "rank : " + film.getPlayerRank());
+        messagingTemplate.convertAndSend("/subscribe/film/gameSeq/" + film.getGameSeq() + "/playerRank/" + film.getPlayerRank(), film);
+    }
+
+    @MessageMapping(value = "/ready")
+    public void setReady(FriendDto friend) {
+        messagingTemplate.convertAndSend("/subscribe/ready/" + friend.getGameSeq(), friend);
     }
 }

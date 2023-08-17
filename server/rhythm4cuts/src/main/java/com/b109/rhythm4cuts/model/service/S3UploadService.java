@@ -35,17 +35,18 @@ public class S3UploadService {
 
         amazonS3.putObject(bucket, fileName, multipartFile.getInputStream(), metadata);
 
-        return amazonS3.getUrl(bucket, originalFilename).toString();
+        return amazonS3.getUrl(bucket, fileName).toString();
     }
 
     public String saveVoiceFile(MultipartFile multipartFile, String fileName) throws IOException {
         String originalFilename = multipartFile.getOriginalFilename();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
-        metadata.setContentType(multipartFile.getContentType());
+        metadata.setContentType("audio/wav");
+        System.out.println("우리의 Content Type은: " + multipartFile.getContentType() + ", 하지만 아니쥬?: " + metadata.getContentType());
 
         amazonS3.putObject(voiceBucket, fileName, multipartFile.getInputStream(), metadata);
 
-        return amazonS3.getUrl(voiceBucket, originalFilename).toString();
+        return amazonS3.getUrl(voiceBucket, fileName).toString();
     }
 }

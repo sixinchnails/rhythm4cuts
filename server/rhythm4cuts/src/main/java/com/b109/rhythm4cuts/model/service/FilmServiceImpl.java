@@ -219,4 +219,49 @@ public class FilmServiceImpl implements FilmService {
         }
         return randomString.toString();
     }
+
+    public FilmResponseDto getPrivateFilm(int gameRank, int gameSeq) {
+        GameImage gameInfo = filmRepository.findByGameRankAndGameInfo(gameRank, gameSeq);
+        FilmResponseDto filmResponseDto = new FilmResponseDto();
+        filmResponseDto.setPrivateUrl(gameInfo.getPrivateUrl());
+
+        return filmResponseDto;
+    }
+
+    public FilmResponseDto getCommonFilm(int gameRank, int gameSeq) {
+        GameImage gameInfo = filmRepository.findByGameRankAndGameInfo(gameRank, gameSeq);
+        FilmResponseDto filmResponseDto = new FilmResponseDto();
+        filmResponseDto.setCommonUrl(gameInfo.getCommonUrl());
+
+        return filmResponseDto;
+    }
+
+    public void savePrivateFilm(FilmDto filmInfo) throws IOException {
+        GameImage gameImage = new GameImage();
+
+        User user =  userRepository.findByUserSeq(filmInfo.getUserSeq());
+        GameInfo gameInfo = gameRepository.findByGameSeq(filmInfo.getGameSeq());
+        gameImage.setUser(user);
+        gameImage.setGameRank(filmInfo.getPlayerRank());
+        gameImage.setCreateDate(LocalDateTime.now());
+        gameImage.setGameInfo(gameInfo);
+
+        String privateFilmName = generateFileName(filmInfo.getPrivateFilm().getOriginalFilename());
+        gameImage.setFileName(privateFilmName);
+        String privateUrl = s3UploadService.saveFile(filmInfo.getPrivateFilm(), privateFilmName);
+
+        gameImage.setPrivateUrl(privateUrl);
+        filmRepository.save(gameImage);
+
+    }
+
+    public void saveCommonFilm(FilmDto filmInfo) throws Exception {
+        GameImage gameImage = filmRepository.findByUserAndGameInfo(filmInfo.getUserSeq(), filmInfo.getGameSeq());
+
+        String commonFilmName = "total_" + generateFileName(Objects.requireNonNull(filmInfo.getCommonFilm().getOriginalFilename()));
+        gameImage.setTotalFileName(commonFilmName);
+
+        String commonUrl = s3UploadService.saveFile(filmInfo.getCommonFilm(), commonFilmName);
+        gameImage.setCommonUrl(commonUrl);
+    }
 }
