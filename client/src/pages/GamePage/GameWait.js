@@ -1016,7 +1016,7 @@ function GameWait() {
             >
               {/* 각 플레이어별로 Grid 아이템 생성 */}
               {[0, 1, 2, 3].map((index) => (
-                <Grid
+                  <Grid
                   key={index}
                   item
                   xs={3}
