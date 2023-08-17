@@ -6,6 +6,7 @@ import pymysql
 
 app = Flask(__name__)
 
+
 # MySQL database properties
 host = 'i9b109.p.ssafy.io'
 user = '9ithubB109_simons'
