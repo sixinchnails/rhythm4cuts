@@ -22,7 +22,7 @@ function SidebarItem({ menu, isActive, isSub, lastSubItem }) {
   // lastSubItem가 true면 "last-subitem" 클래스를 적용.
   return (
     <div
-      style={{ fontFamily: "Pretendard-Regular", fontWeight: "bold", fontFamily: 'Ramche', }}
+      style={{ fontFamily: 'Ramche', fontWeight: "bold", }}
       className={`sidebar-item ${isSub ? "sidebar-item-sub" : ""} ${
         isTitle ? "sidebar-item-title" : ""
       } ${
