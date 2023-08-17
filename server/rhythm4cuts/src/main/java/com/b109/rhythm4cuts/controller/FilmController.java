@@ -68,7 +68,7 @@ public class FilmController {
         return ResponseEntity.status(200).body(filmResponseDtoList);
     }
 
-    @GetMapping("/photo/private/game/{gameSeq}/user/{rank}")
+    @GetMapping("/photo/private/game/{gameSeq}/rank/{rank}")
     public ResponseEntity<FilmResponseDto> getPrivatePhotos(@PathVariable int gameSeq, @PathVariable int rank) {
         FilmResponseDto filmResponseDto = filmService.getPrivateFilm(rank, gameSeq);
         return ResponseEntity.status(200).body(filmResponseDto);

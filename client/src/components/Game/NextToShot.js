@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function NextToShot({ gameSeq }) {
   const navigate = useNavigate();
-  const [seconds, setSeconds] = useState(10000);
+  const [seconds, setSeconds] = useState(10);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -30,7 +30,7 @@ function NextToShot({ gameSeq }) {
         marginTop={5}
       >
         <Grid item>
-          <Typography variant="h5" style={{fontFamily: 'Ramche',}}>
+          <Typography variant="h5" style={{ fontFamily: "Ramche" }}>
             {seconds}초 후 사진 촬영 화면으로 넘어갑니다.&nbsp;&nbsp;
           </Typography>
         </Grid>
@@ -39,7 +39,7 @@ function NextToShot({ gameSeq }) {
             variant="contained"
             color="warning"
             onClick={() => navigate("/")}
-            style={{fontFamily: 'Ramche',}}
+            style={{ fontFamily: "Ramche" }}
           >
             나가기
           </Button>

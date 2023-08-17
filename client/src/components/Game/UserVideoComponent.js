@@ -42,8 +42,8 @@ const UserVideoComponent = ({ streamManager }) => {
   }, []);
 
   function getUserInfo() {
-    console.log("user info function");
-    console.log(JSON.parse(streamManager.stream.connection.data).clientData);
+    // console.log("user info function");
+    // console.log(JSON.parse(streamManager.stream.connection.data).clientData);
     return JSON.parse(streamManager.stream.connection.data).clientData;
   }
   // 서버데이터 가져올 것
@@ -92,10 +92,8 @@ const UserVideoComponent = ({ streamManager }) => {
           >
             {/* {getUserInfo().data.user_seq}  */}
             {userOrders[userSeq] ? (
-              <>
-                {userOrders[userSeq]} 번째
-              </>
-            ) : ( 
+              <>{userOrders[userSeq]} 번째</>
+            ) : (
               "Loading..."
             )}
           </Grid>
