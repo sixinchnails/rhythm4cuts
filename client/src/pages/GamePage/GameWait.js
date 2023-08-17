@@ -111,10 +111,10 @@ function GameWait() {
             setTimeout(() => {
               console.log("전송됨");
               saveRecording();
-            }, 2000);
+            }, 225000);
             setTimeout(() => {
               navigate(`/GameScore/${gameSeq}`);
-            }, 2000);
+            }, 230000);
           });
 
           console.log(userSeq);
