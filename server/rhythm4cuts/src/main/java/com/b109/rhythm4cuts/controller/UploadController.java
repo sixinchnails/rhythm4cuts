@@ -25,9 +25,7 @@ public class UploadController {
             @RequestParam("userSeq") int userSeq
     ) {
         try {
-            System.out.println("voice save 전");
             uploadService.saveUserAudio(multipartFile, gameSeq, userSeq);
-            System.out.println("voice save 후");
             return ResponseEntity.ok("Audio saved successfully");
         } catch (Exception e) {
             e.printStackTrace();
