@@ -436,11 +436,37 @@ const GameShot = () => {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-  useEffect(() => {
-    console.log(gameSeq);
-    console.log(userSeq);
-    console.log(userRank);
-  }, [uploadImage]);
+  // useEffect(() => {
+  //   console.log(gameSeq);
+  //   console.log(userSeq);
+  //   console.log(userRank);
+  // }, [uploadImage]);
+
+  function copyCommonCapture(element) {
+    if (element) {
+      domtoimage.toPng(element).then(function (dataUrl) {
+        const formData = new FormData();
+        formData.append("gameSeq", gameSeq);
+        formData.append("userSeq", userSeq);
+        formData.append("commonFilm", dataURLtoFile(dataUrl, "temp.jpg"));
+        const headers = {
+          Authorization: "Bearer " + getCookie("access"),
+        };
+
+        try {
+          const response = axios.post(
+            "https://i9b109.p.ssafy.io:8443/film/common/film",
+            formData,
+            { headers }
+          );
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -481,8 +507,8 @@ const GameShot = () => {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                height: "90%",
-                width: "89.8%",
+                height: "100%",
+                width: "95%",
               }}
             >
               <Box
@@ -583,6 +609,7 @@ const GameShot = () => {
                     style={{
                       backgroundPosition: "center",
                       backgroundSize: "cover",
+                      color: "white",
                     }}
                     sx={{
                       backgroundImage: `url(${playerURL1})`,
@@ -597,6 +624,7 @@ const GameShot = () => {
                     style={{
                       backgroundPosition: "center",
                       backgroundSize: "cover",
+                      color: "white",
                     }}
                     sx={{
                       backgroundImage: `url("/images/ShotEmpty.jfif")`,
@@ -613,6 +641,7 @@ const GameShot = () => {
                     style={{
                       backgroundPosition: "center",
                       backgroundSize: "cover",
+                      color: "white",
                     }}
                     sx={{
                       backgroundImage: `url(${playerURL2})`,
@@ -627,6 +656,7 @@ const GameShot = () => {
                     style={{
                       backgroundPosition: "center",
                       backgroundSize: "cover",
+                      color: "white",
                     }}
                     sx={{
                       backgroundImage: `url("/images/ShotEmpty.jfif")`,
@@ -642,6 +672,7 @@ const GameShot = () => {
                     style={{
                       backgroundPosition: "center",
                       backgroundSize: "cover",
+                      color: "white",
                     }}
                     sx={{
                       backgroundImage: `url(${playerURL3})`,
@@ -656,6 +687,7 @@ const GameShot = () => {
                     style={{
                       backgroundPosition: "center",
                       backgroundSize: "cover",
+                      color: "white",
                     }}
                     sx={{
                       backgroundImage: `url("/images/ShotEmpty.jfif")`,
@@ -671,6 +703,7 @@ const GameShot = () => {
                     style={{
                       backgroundPosition: "center",
                       backgroundSize: "cover",
+                      color: "white",
                     }}
                     sx={{
                       backgroundImage: `url("/images/ShotEmpty.jfif")`,
@@ -685,6 +718,7 @@ const GameShot = () => {
                     style={{
                       backgroundPosition: "center",
                       backgroundSize: "cover",
+                      color: "white",
                     }}
                     sx={{
                       backgroundImage: `url(${playerURL4})`,
@@ -709,7 +743,7 @@ const GameShot = () => {
                 <Button
                   variant="contained"
                   color="warning"
-                  onClick={() => copyCapture(copyRef.current)}
+                  onClick={() => copyCommonCapture(copyRef.current)}
                 >
                   확인
                 </Button>
@@ -763,17 +797,6 @@ function copyCapture(element) {
       .catch(function (error) {
         console.error("oops, something went wrong!", error);
       });
-  }
-}
-
-// 인생네컷 DB 전송 컴포넌트
-function sendCapture(element) {
-  if (element) {
-    domtoimage.toPng(element).then((res) => {
-      try {
-        // const response = async axios.post
-      } catch (error) {}
-    });
   }
 }
 
