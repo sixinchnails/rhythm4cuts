@@ -60,9 +60,9 @@ function Recorder() {
       formData.append("audio", audioBlob, "recording.wav");
 
       axios
-        .post("https://i9b109.p.ssafy.io:8443/upload/user/audio", formData, {
+        .post("https://localhost:8443/upload/user/audio", formData, {
           headers: {
-            Authorization: `Bearer ${getCookie("access")}`,
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhanVmcmVzaEBnbWFpbC5jb20iLCJpYXQiOjE2OTIyNjEyODAsImV4cCI6MTY5MjI2MzA4MCwic3ViIjoic3NhZnlAbmF2ZXIuY29tIiwiaWQiOiJzc2FmeUBuYXZlci5jb20ifQ.VfUMesv88r5dRRakpBDmM6AGF3A5TyFlhh3CFuPeuqc`,
             "Content-Type": "multipart/form-data",
           },
         })
