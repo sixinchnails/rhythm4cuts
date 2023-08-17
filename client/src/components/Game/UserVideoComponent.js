@@ -69,7 +69,7 @@ const UserVideoComponent = ({ streamManager }) => {
         </div>
         <div
           style={{
-            fontFamily: "Pretendard-Regular",
+            fontFamily: "Ramche",
             fontSize: "20px",
             color: "white",
             margin: "20px",
@@ -88,7 +88,8 @@ const UserVideoComponent = ({ streamManager }) => {
           <Grid
             item
             xs={7}
-            style={{ fontFamily: "Pretendard-Regular", fontSize: "20px" }}
+           
+            style={{ fontSize: "20px",  fontFamily: "Ramche", }}
           >
             {/* {getUserInfo().data.user_seq}  */}
             {userOrders[userSeq] ? (

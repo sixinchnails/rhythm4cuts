@@ -75,10 +75,9 @@ const LoginHeader = () => {
     setNickName(res.data.nickname);
     setPoint(res.data.point);
   });
-
   return (
     <div className="Header_outer1" style={{ color: "white", fontFamily: 'Ramche', }}>
-      <div className="Header_logo1">
+      <div className="Header_logo1" style={{ cursor: "pointer" }} >
         <img src="images/Home_Logo.png" alt="헤더 사진"></img>
       </div>
       <div>
@@ -92,7 +91,7 @@ const LoginHeader = () => {
           color="error"
           variant={hasNotification || gameInvite ? "dot" : "standard"}
           onClick={onNotificationClick}
-          style={{ marginRight: "20px" }}
+          style={{ marginRight: "20px", cursor: "pointer" }}
         >
           <NotificationsIcon />
         </Badge>

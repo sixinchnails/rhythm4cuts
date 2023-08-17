@@ -1,6 +1,23 @@
 import { Modal, Box, Button, Typography } from "@mui/material";
+import { useEffect } from 'react';
 
 function LoginCheck({ isOpen, onClose, onConfirm }) {
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.key === "Enter") {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyPress);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [isOpen, onClose]);
+
   return (
     <Modal open={isOpen} onClose={onClose}>
       <Box

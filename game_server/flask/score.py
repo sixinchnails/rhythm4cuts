@@ -7,17 +7,17 @@ from splitter import portion_splitter
 import pymysql
 
 # MySQL database properties
-# host = 'i9b109.p.ssafy.io'
-# user = '9ithubB109_simons'
-# password = 'zlwhsalsrnrWid7991'
-# db = 'rhythm'
-# charset = 'utf8'
-
-host = 'localhost'
-user = 'root'
-password = '0000'
+host = 'i9b109.p.ssafy.io'
+user = '9ithubB109_simons'
+password = 'zlwhsalsrnrWid7991'
 db = 'rhythm'
 charset = 'utf8'
+
+# host = 'localhost'
+# user = 'root'
+# password = '0000'
+# db = 'rhythm'
+# charset = 'utf8'
 
 # Establishing a connection
 conn = pymysql.connect(
@@ -58,23 +58,21 @@ def splitter(game_seq, song_seq, file_name):
         print(lyrics_seq, start_time, end_time)
         portion_splitter(file_name, start_time, end_time, i)
 
-
-
     return
 
 # 곡명, 파트로 매개변수 변경 필요
 def getLyricsScore(song_seq, lyrics_idx, file):
     try:
-        OPENAI_API_KEY = "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"
+        OPENAI_API_KEY = "#"
         openai.api_key = OPENAI_API_KEY
 
         global conn
         cur = conn.cursor()
 
         cur.execute("SELECT lyric FROM lyrics WHERE song_seq = %s AND lyrics_seq = %s", (song_seq, lyrics_idx))
+
         lyricsAnswer = cur.fetchone()
-        print("lyricsAnswer : " + lyricsAnswer[0])
-        print(file)
+
         # 음성 인식
         # transcript = openai.Audio.transcribe("whisper-1", audio_file)
         transcript = openai.Audio.transcribe("whisper-1", file)
@@ -95,10 +93,7 @@ def getLyricsScore(song_seq, lyrics_idx, file):
     except Exception as e:
         print(e)
 
-def getMelodyScore(filename):
-    answerFile = ".//0_naul.wav"
-    
-    print("[getMelodyScore] 시작")
+def getMelodyScore(filename, answerFile):
     score = correlate(filename, answerFile)
 
     return {

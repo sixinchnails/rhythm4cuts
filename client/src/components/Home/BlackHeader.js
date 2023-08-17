@@ -77,15 +77,15 @@ const LoginMypageHeader = () => {
 
   return (
     <div className="Header_outer2">
-      <div className="Header_logo2" onClick={GoMain}>
-        <img src="images/Mypage_Logo.png" alt="헤더 사진"></img>
+      <div className="Header_logo2" onClick={GoMain} style={{ cursor: "pointer" }}>
+        <img src="images/Mypage_Logo.png" alt="헤더 사진" />
       </div>
       <div>
         <Badge
           color="error"
           variant={hasNotification || gameInvite ? "dot" : "standard"}
           onClick={onNotificationClick}
-          style={{ marginRight: "20px", fontFamily: 'Ramche', }}
+          style={{ marginRight: "20px", fontFamily: 'Ramche', cursor: "pointer"}}
         >
           <NotificationsIcon />
         </Badge>

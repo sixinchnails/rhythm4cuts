@@ -9,7 +9,7 @@ function MessageAlert({ isOpen, onClose, onConfirm }) {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          backgroundColor: "rgba(50, 100, 255, 0.9)",
+          backgroundColor: "rgba(50, 100, 255, 0.95)",
           color: "#ffffff",
           padding: "50px",
           fontFamily: 'Ramche',

@@ -5,25 +5,46 @@ import Sidebar from "../../components/My/My_SideBar";
 import "./Mypage.css";
 // 마이 페이지들 import
 import { userInfo } from "../../apis/userInfo";
-import CheckUserToModiInfo from "../../components/Common/CheckUserToModiInfo";
+// import DeleteUserModal from '../../components/Common/DeleteUserModal'; // 회원 탈퇴
+import CheckUserToModiInfo from "../../components/Common/CheckUserToModiInfo"; // 정보 수정
 import LoginMypageHeader from "../../components/Home/BlackHeader";
 import MainContent from "../../components/My/My_MainContent"; // MainContent 컴포넌트를 import
 import UserInfo from "../../components/My/My_UserInfo"; // UserInfo 컴포넌트를 import
 import Button from "@mui/material/Button";
 import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 import LoginAlert from "../../components/Common/LoginAlert";
+import ConfirmationModal from '../../components/Common/ConfirmationModal'; // 새로 만든 모달 컴포넌트
 
-const Mypage = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+function Mypage() {
+  const [isModalOpen, setIsModalOpen] = useState(false); //정보수정
 
   const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
 
+  // 정보 수정
   const handleOpenSearchPasswordModal = () => {
     setIsModalOpen(true);
   };
-
   const handleCloseSearchPasswordModal = () => {
     setIsModalOpen(false);
+  };
+
+  // 회원 탈퇴
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+
+  const handleOpenConfirmationModal = () => {
+    setIsConfirmationModalOpen(true);
+  };
+
+  const handleCloseConfirmationModal = () => {
+    setIsConfirmationModalOpen(false);
+  };
+
+  const handleConfirmDeleteUser = () => {
+    // 실제 회원 탈퇴 처리하는 로직을 여기에 구현
+
+
+    // 탈퇴 처리가 성공하면 모달 닫아브러
+    handleCloseConfirmationModal();
   };
 
   const navigate = useNavigate();
@@ -110,29 +131,44 @@ const Mypage = () => {
               backgroundColor: "#ffffff",
               color: "#000000",
               fontWeight: "bold",
+              fontFamily: 'Ramche',
             }}
           >
             정보 수정
           </Button>
-          <Button
+
+          {/* 회원 탈퇴 버튼 */}
+          {/* <Button
             variant="contained"
             color="error"
             className="delete-button"
-            style={{
+            onClick={handleOpenConfirmationModal}
+            sx={{
               backgroundColor: "#ffffff",
               color: "#000000",
               fontWeight: "bold",
             }}
           >
             회원 탈퇴
-          </Button>
+          </Button> */}
+
+
+
         </div>
       </div>
 
+      {/* 정보 수정 모달 */}
       <CheckUserToModiInfo
         isOpen={isModalOpen}
         handleClose={handleCloseSearchPasswordModal}
       />
+      {/* 회원탈퇴 모달 컴포넌트 */}
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        onClose={handleCloseConfirmationModal}
+        onConfirm={handleConfirmDeleteUser}
+      />
+      {/* 로그인 알람 */}
       <LoginAlert isOpen={isLoginAlertOpen} onClose={handleCloseLoginAlert} />
     </div>
   );
