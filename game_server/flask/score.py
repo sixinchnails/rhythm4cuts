@@ -1,6 +1,7 @@
 import openai
 from pydub import AudioSegment
 import math
+import logging
 from difflib import SequenceMatcher
 from correlation import correlate
 import pymysql
@@ -65,7 +66,7 @@ class SplitWavAudioMubin():
 # 곡명, 파트로 매개변수 변경 필요
 def getLyricsScore(song_seq, song_order, file):
     try:
-        OPENAI_API_KEY = "#"
+        OPENAI_API_KEY = "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"
         openai.api_key = OPENAI_API_KEY
 
         global conn
@@ -103,6 +104,7 @@ def getMelodyScore(filename):
     answerFile = ".//0_naul.wav"
     
     print("[getMelodyScore] 시작")
+    logging.info("Linux")
     score = correlate(filename, answerFile)
 
     return {

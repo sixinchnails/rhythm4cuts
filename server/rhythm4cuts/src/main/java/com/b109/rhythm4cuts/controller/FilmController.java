@@ -67,4 +67,32 @@ public class FilmController {
 
         return ResponseEntity.status(200).body(filmResponseDtoList);
     }
+
+    @GetMapping("/photo/private/game/{gameSeq}/user/{userSeq}")
+    public ResponseEntity<FilmResponseDto> getPrivatePhotos(@PathVariable int gameSeq, @PathVariable int userSeq) {
+        FilmResponseDto filmResponseDto = filmService.getPrivateFilm(userSeq, gameSeq);
+        return ResponseEntity.status(200).body(filmResponseDto);
+    }
+
+    @GetMapping("/photo/common/game/{gameSeq}/user/{userSeq}")
+    public ResponseEntity<FilmResponseDto> getCommonPhotos(@PathVariable int gameSeq, @PathVariable int userSeq) {
+        FilmResponseDto filmResponseDto = filmService.getCommonFilm(userSeq, gameSeq);
+        return ResponseEntity.status(200).body(filmResponseDto);
+    }
+
+    @PostMapping(value = "/private/film", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> setPrivateFilm(@ModelAttribute FilmDto filmInfo) throws IOException {
+        // 넘어온 사진 정보를 DB에 저장할 예정
+        filmService.savePrivateFilm(filmInfo);
+
+        return ResponseEntity.ok("File uploaded success");
+    }
+
+    @PostMapping(value = "/common/film", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> setCommonFilm(@ModelAttribute FilmDto filmInfo) throws Exception {
+        // 넘어온 사진 정보를 DB에 저장할 예정
+        filmService.saveCommonFilm(filmInfo);
+
+        return ResponseEntity.ok("File uploaded success");
+    }
 }
