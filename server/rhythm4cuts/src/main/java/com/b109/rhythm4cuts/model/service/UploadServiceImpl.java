@@ -32,7 +32,6 @@ public class UploadServiceImpl implements UploadService {
     private final FilmServiceImpl filmServiceImpl;
     private final UploadRepository uploadRepository;
     private final GameLogCustomRepository gameLogCustomRepository;
-    private final RestTemplate restTemplate;
 
     @Override
     public void saveUserAudio(MultipartFile multipartFile, int gameSeq, int userSeq) throws IOException {
@@ -64,6 +63,7 @@ public class UploadServiceImpl implements UploadService {
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         String pythonUrl = "https://i9b109.p.ssafy.io/score"; // Python Flask 서버의 URL
+        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.postForEntity(pythonUrl, requestEntity, String.class);
 
         // Python Flaks 서버로 multipartFile 전송 End
