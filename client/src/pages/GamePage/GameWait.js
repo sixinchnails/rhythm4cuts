@@ -55,7 +55,7 @@ function InviteFriendsModal({
       >
         <h3>친구 초대하기</h3>
         <List>
-          {friends.map((friend) => (
+          {friends.map(friend => (
             <ListItem key={friend.email}>
               <ListItemText
                 primary={friend.nickname}
@@ -91,7 +91,7 @@ function GameWait() {
         {},
         function () {
           console.log("게임 페이지 안 웹소켓 연결.");
-          stompClient.subscribe(`/subscribe/song/${gameSeq}`, (message) => {
+          stompClient.subscribe(`/subscribe/song/${gameSeq}`, message => {
             const receivedMessage = JSON.parse(message.body);
             // 서버로부터 받은 메시지에 'START_GAME' 신호가 포함되어 있으면
             if (receivedMessage.action === "START_GAME") {
@@ -104,11 +104,11 @@ function GameWait() {
           if (userSeq) {
             stompClient.subscribe(
               `/subscribe/friend/invite/${userSeq}`,
-              () => { }
+              () => {}
             );
           }
         },
-        (error) => {
+        error => {
           console.log("STOMP 연결 실패:", error);
         }
       );
@@ -129,7 +129,7 @@ function GameWait() {
 
   dispatch(setGameseq(gameSeq));
 
-  const session = useSelector((state) => state.roomState.session);
+  const session = useSelector(state => state.roomState.session);
 
   const [connectSession, setConnectSession] = useState(undefined);
   const [mainStreamManager, setMainStreamManager] = useState(undefined); // 방장
@@ -137,10 +137,13 @@ function GameWait() {
   const [subscribers, setSubscribers] = useState([]); // 구독자
   const [players, setPlayers] = useState([]); // 통합
   // 녹음 관련 상태
-  const [isRecording, setIsRecording] = useState(false);
+  const [isRecording, setIsRecording] = useState(false); //녹음이 진행 중인지 확인
   const [audioChunks, setAudioChunks] = useState([]);
+  // audioChunks : 녹음된 오디오 데이터를 담는 배열 녹음이 진행되면서 이 배열에 오디오 데이터의 조각들이 계속 추가됨
   const [audioBlob, setAudioBlob] = useState(null);
+  //audioBlob은 녹음이 완료된 후, audioChunks를 하나의 Blob 객체로 합쳐 저장하는 상태
   const mediaRecorderRef = useRef(null);
+  //MediaRecorder 객체의 참조를 저장하는데 사용됨->오디오와 비디오를 녹음할 수 있게 해주는 api
   const [gameReadyed, setGameReadyed] = useState(false); // 게임 준비 여부 상태
   const [gameStarted, setGameStarted] = useState(false); // 게임 시작 여부 상태
   const [stream, setStream] = useState(null);
@@ -157,30 +160,34 @@ function GameWait() {
     }
   }, [gameStarted]);
 
+  //녹음 시작하는 역할 함수
   const startRecording = () => {
     setIsRecording(true);
+    //사용자의 오디오 입력 장치에 접근
     navigator.mediaDevices
       .getUserMedia({
         audio: true,
       })
-      .then((stream) => {
+      .then(stream => {
         if (stream && stream instanceof MediaStream) {
           setStream(stream);
           setIsRecording(true);
           setAudioChunks([]);
+          //MediaRecorder 객체를 생성하고, mediaRecorderRef.current에 저장
           const mediaRecorder = new MediaRecorder(stream);
 
           mediaRecorderRef.current = mediaRecorder;
 
           // 녹음 데이터가 생성될 때마다 chunks 배열에 추가
-          mediaRecorderRef.current.ondataavailable = (e) => {
+          mediaRecorderRef.current.ondataavailable = e => {
             if (e.data.size > 0) {
-              setAudioChunks((chunks) => [...chunks, e.data]);
+              setAudioChunks(chunks => [...chunks, e.data]);
             }
           };
 
           // 녹음이 종료되면 호출되는 이벤트 핸들러
           mediaRecorderRef.current.onstop = async () => {
+            //audioChunks를 하나의 Blob 객체로 만들고, 이를 'audiaBlob' 상태에 저장한 후 서버에 전송
             const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
             setAudioBlob(audioBlob);
 
@@ -212,7 +219,7 @@ function GameWait() {
           console.error("Stream is not valid");
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("Error starting recording:", error);
       });
   };
@@ -256,7 +263,7 @@ function GameWait() {
   };
 
   //친구 목록 가져오는 함수
-  const fetchFriendList = async (userSeq) => {
+  const fetchFriendList = async userSeq => {
     const headers = {
       Authorization: "Bearer " + getCookie("access"),
     };
@@ -316,7 +323,7 @@ function GameWait() {
           Authorization: `Bearer ${getCookie("access")}`,
         },
       })
-      .then((res) => {
+      .then(res => {
         const param = {
           userSeq: String(res.data.user_seq),
           gameSeq: String(gameSeq),
@@ -331,11 +338,11 @@ function GameWait() {
           },
         });
       })
-      .then((postRes) => {
+      .then(postRes => {
         // 이곳에서 post 요청에 대한 응답 처리
         console.log("POST 요청 응답:", postRes);
       })
-      .catch((error) => {
+      .catch(error => {
         // 에러 처리
         console.error("에러 발생:", error);
       });
@@ -344,7 +351,7 @@ function GameWait() {
   // 로그인 상태관리
   useEffect(() => {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status === 200) {
           setUserSeq(res.data.user_seq);
         } else {
@@ -352,7 +359,7 @@ function GameWait() {
           handleOpenLoginAlert();
         }
       })
-      .catch((error) => {
+      .catch(error => {
         // 오류가 발생하면 로그인 알림.
         handleOpenLoginAlert();
       });
@@ -360,25 +367,27 @@ function GameWait() {
 
   useEffect(() => {
     userInfo()
-      .then((res) => {
+      .then(res => {
         if (res.status !== 200) {
           window.alert("로그인을 해주세요!");
           navigate("/");
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("유저 정보 불러오기 실패:", error);
         window.alert("로그인을 해주세요!");
         navigate("/");
       });
   }, [gameSeq]);
 
+  //녹음을 중지하고, 녹음된 오디오 데이터를 서버에 전송하는 역할.
   const stopRecording = () => {
     setIsRecording(false);
     if (
       mediaRecorderRef.current &&
       mediaRecorderRef.current.state !== "inactive"
     ) {
+      //녹음 중지
       mediaRecorderRef.current.stop();
 
       const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
@@ -394,11 +403,11 @@ function GameWait() {
             "Content-Type": "multipart/form-data",
           },
         })
-        .then((response) => {
+        .then(response => {
           console.log("Audio URL:", response.data);
           // 응답으로 받은 오디오 URL 활용 가능
         })
-        .catch((error) => {
+        .catch(error => {
           console.error("Error saving audio:", error);
         });
     }
@@ -492,11 +501,11 @@ function GameWait() {
       const newSession = ov.initSession();
       setConnectSession(newSession);
 
-      newSession.on("streamCreated", (event) => {
+      newSession.on("streamCreated", event => {
         const subscriber = newSession.subscribe(event.stream, undefined);
-        setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+        setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
 
-        setPlayers((prevPlayers) => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
+        setPlayers(prevPlayers => [...prevPlayers, subscriber]); // 플레이어 스트림 추가
 
         if (!mainStreamManager) {
           setMainStreamManager(subscriber);
@@ -504,7 +513,7 @@ function GameWait() {
       });
 
       // 방 폭파 시키기
-      newSession.on("streamDestroyed", (event) => {
+      newSession.on("streamDestroyed", event => {
         // deleteSubscriber(event.stream.streamManager);
         // 방 인원수 줄이는 요청 보내기
         axios
@@ -520,7 +529,7 @@ function GameWait() {
           );
       });
 
-      newSession.on("exception", (exception) => {
+      newSession.on("exception", exception => {
         console.warn(exception);
       });
 
@@ -545,11 +554,11 @@ function GameWait() {
 
           setPublisher(newPublisher);
           setMainStreamManager(newPublisher);
-          setPlayers((prevPlayers) => [...prevPlayers, newPublisher]);
+          setPlayers(prevPlayers => [...prevPlayers, newPublisher]);
 
           //--------------------------
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(
             "There was an error connecting to the session:",
             error.code,
@@ -580,14 +589,14 @@ function GameWait() {
     }
   }
 
-  // "게임 시작" 버튼을 눌렀을 때 동작 ---------------------------------------------------------------------------------
+  // "게임 시작" 버튼을 눌렀을 때 동작
   function handleGamePlay() {
-    // console.log("게임 시작 버튼 누름");
-    // console.log(stomp);
+    console.log("게임 시작 버튼 누름");
+    console.log(stomp);
     // 게임 시작 메시지를 서버에 전송
     if (stomp && stomp.connected) {
       setGameStarted(true);
-      // console.log("연결 후 자동 재생 요청");
+      console.log("연결 후 자동 재생 요청");
       const message = {
         gameSeq: gameSeq,
         action: "START_GAME", // 게임 시작 신호를 표시하는 필드 추가
@@ -614,11 +623,11 @@ function GameWait() {
     console.log("--------------------leave session");
 
     // 나가는 플레이어를 배열에서 제거하고 상태 업데이트
-    const updatedPlayers = players.filter((player) => player !== publisher);
+    const updatedPlayers = players.filter(player => player !== publisher);
     setPlayers(updatedPlayers);
 
     // 구독 중인 스트림 해제
-    subscribers.forEach((subscriber) => {
+    subscribers.forEach(subscriber => {
       if (typeof subscriber.unsubscribe === "function") {
         subscriber.unsubscribe(); // 구독자 해제
         if (subscriber.streamManager) {
@@ -639,8 +648,8 @@ function GameWait() {
           Authorization: "Bearer " + access,
         },
       })
-      .then((response) => { })
-      .catch((error) => {
+      .then(response => {})
+      .catch(error => {
         console.error("Error:", error);
       });
 
@@ -711,7 +720,7 @@ function GameWait() {
 
       if (response.status === 200) {
         const data = response.data.data;
-        const newTimeRanges = data.map((item) => [
+        const newTimeRanges = data.map(item => [
           item.startTime + 3,
           item.endTime + 3,
         ]);
@@ -918,52 +927,50 @@ function GameWait() {
                 ) : null}
 
                 {/* "게임 준비" 버튼 : 플레이어 4명 & 게임 준비완료 전 */}
-                {players.length === 4 && !gameReadyed
-                  ? (
-                    <Grid item xs={10} style={{ margin: "1px" }}>
-                      <StyledIconButton
-                        onClick={handleGameReady}
-                        style={{ width: "30vw" }}
+                {players.length === 4 && !gameReadyed ? (
+                  <Grid item xs={10} style={{ margin: "1px" }}>
+                    <StyledIconButton
+                      onClick={handleGameReady}
+                      style={{ width: "30vw" }}
+                    >
+                      <CheckIcon />
+                      <Typography
+                        style={{
+                          fontFamily: "Pretendard-Regular",
+                          fontSize: "20px",
+                          padding: "15px",
+                        }}
                       >
-                        <CheckIcon />
-                        <Typography
-                          style={{
-                            fontFamily: "Pretendard-Regular",
-                            fontSize: "20px",
-                            padding: "15px",
-                          }}
-                        >
-                          게임 준비
-                        </Typography>
-                      </StyledIconButton>
-                    </Grid>
-                  ) : null}
+                        게임 준비
+                      </Typography>
+                    </StyledIconButton>
+                  </Grid>
+                ) : null}
 
                 {/* "게임 시작" 버튼 : 플레이어 4명 & 게임 준비완료 후 */}
-                {players.length === 4 && gameReadyed
-                  ? (
-                    <Grid item xs={10} style={{ margin: "1px" }}>
-                      <StyledIconButton
-                        // onClick={handleGamePlay && handlePlayButtonClick}
-                        onClick={() => {
-                          handleGamePlay();
-                          // handlePlayButtonClick();
+                {players.length === 4 && gameReadyed ? (
+                  <Grid item xs={10} style={{ margin: "1px" }}>
+                    <StyledIconButton
+                      // onClick={handleGamePlay && handlePlayButtonClick}
+                      onClick={() => {
+                        handleGamePlay();
+                        // handlePlayButtonClick();
+                      }}
+                      style={{ width: "30vw" }}
+                    >
+                      <CheckIcon />
+                      <Typography
+                        style={{
+                          fontFamily: "Pretendard-Regular",
+                          fontSize: "20px",
+                          padding: "15px",
                         }}
-                        style={{ width: "30vw" }}
                       >
-                        <CheckIcon />
-                        <Typography
-                          style={{
-                            fontFamily: "Pretendard-Regular",
-                            fontSize: "20px",
-                            padding: "15px",
-                          }}
-                        >
-                          게임 시작
-                        </Typography>
-                      </StyledIconButton>
-                    </Grid>
-                  ) : null}
+                        게임 시작
+                      </Typography>
+                    </StyledIconButton>
+                  </Grid>
+                ) : null}
               </Grid>
             </Grid>
           </Grid>
@@ -984,7 +991,7 @@ function GameWait() {
                 margin: "50px",
               }}
             >
-              {[0, 1, 2, 3].map((index) => (
+              {[0, 1, 2, 3].map(index => (
                 <Grid
                   key={index}
                   item
@@ -1037,7 +1044,7 @@ function GameWait() {
               }}
             >
               {/* 각 플레이어별로 Grid 아이템 생성 */}
-              {[0, 1, 2, 3].map((index) => (
+              {[0, 1, 2, 3].map(index => (
                 <Grid
                   key={index}
                   item
