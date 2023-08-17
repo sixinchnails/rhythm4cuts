@@ -50,14 +50,14 @@ function FriendInfo() {
       });
   }, [userSeq]);
 
-  function getProfilePic(point) {
-    if (point <= 2000) {
+  function getProfilePic(point_sum) {
+    if (point_sum <= 2000) {
       return "/images/브론즈.png";
-    } else if (point <= 4000) {
+    } else if (point_sum <= 4000) {
       return "/images/실버.png";
-    } else if (point <= 6000) {
+    } else if (point_sum <= 6000) {
       return "/images/골드.png";
-    } else if (point <= 8000) {
+    } else if (point_sum <= 8000) {
       return "/images/플레.png";
     } else {
       return "/images/다이아.png";
@@ -116,7 +116,7 @@ function FriendInfo() {
                     }}
                   >
                     <Avatar
-                      src={getProfilePic(item.point)}
+                      src={getProfilePic(item.point_sum)}
                       style={{ width: "3vw", height: "10vh", flexShrink: 0, fontFamily: 'Ramche', }}
                     />
                     <div style={{ flex: 1 }}>

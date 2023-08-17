@@ -18,7 +18,6 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
   const [gender, setgender] = useState("");
 
   useEffect(() => {
-    //이게진짜임
     const passwordRegex = new RegExp(
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).{8,}$/
     );
@@ -362,7 +361,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
             value={passwordConfirm}
             onChange={(e) => setPasswordConfirm(e.target.value)}
             variant="outlined"
-            style={{ flexBasis: "45%", height: "40px", fontFamily: 'Ramche', }}
+            style={{ flexBasis: "47%", height: "40px", fontFamily: 'Ramche', }}
             InputProps={{
               style: {
                 height: "40px",

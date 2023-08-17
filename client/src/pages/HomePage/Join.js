@@ -7,9 +7,21 @@ import Button from "@mui/material/Button";
 import Header from "../../components/Home/Header";
 import axios from "axios";
 import "./Join.css";
+import { Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
-const Join = () => {
+function Join() {
   const [profileImgSeq, setProfileImgSeq] = useState(1); // profile_img_seq를 상태로 관리
+
+  // 모달
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const handleOpenDialog = (message) => {
+    setDialogMessage(message);
+    setOpenDialog(true);
+  };
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
 
   const handleImageSelect = useCallback((index) => {
     console.log("Selected Image Index:", index);
@@ -28,18 +40,21 @@ const Join = () => {
   //회원가입
   const handleJoinComplete = async () => {
     if (joinInfo.nickNameStatus === false) {
-      window.confirm("닉네임 중복확인하세요.");
+      handleOpenDialog("닉네임 중복확인하세요.");
+      // window.confirm("닉네임 중복확인하세요.");
     } else if (joinInfo.emailCodeStatus === false) {
-      window.confirm("이메일 인증확인하세요.");
+      handleOpenDialog("이메일 인증확인하세요.")
+      // window.confirm("이메일 인증확인하세요.");
     } else if (
       joinInfo.isPasswordValid === false ||
       joinInfo.password !== joinInfo.passwordConfirm
     ) {
-      window.confirm("비밀번호 확인하세요.");
+      handleOpenDialog("비밀번호 확인하세요.")
+      // window.confirm("비밀번호 확인하세요.");
     } else {
       try {
         // eslint-disable-next-line
-        const response = await axios.post(
+        await axios.post(
           "https://i9b109.p.ssafy.io:8443/member/register",
           joinInfo
         );
@@ -48,7 +63,7 @@ const Join = () => {
           navigate("/Login");
         }
       } catch (error) {
-        console.error(error);
+        console.error("회원가입하는데 에러 발생 : " + error);
       }
     }
   };
@@ -62,7 +77,8 @@ const Join = () => {
       }}
     >
       <Header></Header>
-      <div style={{ display: "flex", width: "30%" }}>
+
+      <Grid style={{ display: "flex", width: "30%" }}>
         <JoinImage
           initialImages={[
             "/images/1.png",
@@ -73,20 +89,36 @@ const Join = () => {
           onImageSelect={handleImageSelect}
         />
         <JoinInfo onJoinInfo={handleJoinInfo} profileImgSeq={profileImgSeq} />
-      </div>
+      </Grid>
+
       <Button
         color="primary"
         style={{
           color: "black",
           fontSize: "large",
           float: "right",
-          marginRight: "300px",
-          marginTop: "-50px",
+          marginRight: "200px",
+          marginTop: "-100px",
         }}
         onClick={handleJoinComplete}
       >
         가입 완료
       </Button>
+
+      {/* 모달 다이얼로그 */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>{"알림"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {dialogMessage}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            확인
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
