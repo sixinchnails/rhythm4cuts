@@ -13,6 +13,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { userInfo } from "../../apis/userInfo";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
+import Webcam from "react-webcam";
+import SockJS from "sockjs-client";
+import { Stomp } from "@stomp/stompjs";
 
 //close test
 import { closeSession } from "../../store";
@@ -20,7 +23,120 @@ import UserVideoShot from "../../components/Game/UserVideoShot";
 // import UserVideoComponent from "../../components/Game/UserVideoComponent";
 
 const GameShot = () => {
+  const [playerCaptured1, setPlayerCaptured1] = useState(true);
+  const [playerCaptured2, setPlayerCaptured2] = useState(true);
+  const [playerCaptured3, setPlayerCaptured3] = useState(true);
+  const [playerCaptured4, setPlayerCaptured4] = useState(true);
+  const [playerURL1, setPlayerURL1] = useState("/images/ShotEmpty.jfif");
+  const [playerURL2, setPlayerURL2] = useState("/images/ShotEmpty.jfif");
+  const [playerURL3, setPlayerURL3] = useState("/images/ShotEmpty.jfif");
+  const [playerURL4, setPlayerURL4] = useState("/images/ShotEmpty.jfif");
+  var { gameSeq } = useParams(); // url에서 추출
   const [doState, setDoState] = useState(false);
+  const [stomp, setStomp] = useState(null); // stomp 객체 상태 추가
+
+  useEffect(() => {
+    if (!stomp) {
+      // stomp 객체가 없을 때만 초기화
+      const sock = new SockJS("https://i9b109.p.ssafy.io:8443/stomp/chat");
+      const stompClient = Stomp.over(sock);
+
+      stompClient.connect(
+        {},
+        function () {
+          console.log("게임 페이지 안 웹소켓 연결.");
+          stompClient.subscribe(
+            `/subscribe/film/gameSeq/${gameSeq}/playerRank/1`,
+            async (message) => {
+              console.log("1메시지 받음");
+              setPlayerCaptured1(true);
+              const headers = {
+                Authorization: "Bearer " + getCookie("access"),
+              };
+              const response = await axios
+                .get(
+                  `https://i9b109.p.ssafy.io:8443/film/photo/private/game/${gameSeq}/rank/1`,
+                  { headers }
+                )
+                .then((res) => {
+                  console.log(res.data.privateUrl);
+                  setPlayerURL1(res.data.privateUrl);
+                });
+              // console.log(response.privateUrl);
+            }
+          );
+
+          stompClient.subscribe(
+            `/subscribe/film/gameSeq/${gameSeq}/playerRank/2`,
+            async (message) => {
+              console.log("2메시지 받음");
+              setPlayerCaptured2(true);
+              const headers = {
+                Authorization: "Bearer " + getCookie("access"),
+              };
+              const response = await axios
+                .get(
+                  `https://i9b109.p.ssafy.io:8443/film/photo/private/game/${gameSeq}/rank/2`,
+                  { headers }
+                )
+                .then((res) => {
+                  console.log(res.data.privateUrl);
+                  setPlayerURL2(res.data.privateUrl);
+                });
+              // console.log(response.privateUrl);
+            }
+          );
+
+          stompClient.subscribe(
+            `/subscribe/film/gameSeq/${gameSeq}/playerRank/3`,
+            async (message) => {
+              console.log("3메시지 받음");
+              setPlayerCaptured3(true);
+              const headers = {
+                Authorization: "Bearer " + getCookie("access"),
+              };
+              const response = await axios
+                .get(
+                  `https://i9b109.p.ssafy.io:8443/film/photo/private/game/${gameSeq}/rank/3`,
+                  { headers }
+                )
+                .then((res) => {
+                  console.log(res.data.privateUrl);
+                  setPlayerURL3(res.data.privateUrl);
+                });
+              // console.log(response.privateUrl);
+            }
+          );
+
+          stompClient.subscribe(
+            `/subscribe/film/gameSeq/${gameSeq}/playerRank/4`,
+            async (message) => {
+              console.log("4메시지 받음");
+              setPlayerCaptured4(true);
+              const headers = {
+                Authorization: "Bearer " + getCookie("access"),
+              };
+              const response = await axios
+                .get(
+                  `https://i9b109.p.ssafy.io:8443/film/photo/private/game/${gameSeq}/rank/4`,
+                  { headers }
+                )
+                .then((res) => {
+                  console.log(res.data.privateUrl);
+                  setPlayerURL4(res.data.privateUrl);
+                });
+              // console.log(response.privateUrl);
+            }
+          );
+        },
+        (error) => {
+          console.log("STOMP 연결 실패:", error);
+        }
+      );
+
+      setStomp(stompClient); // stomp 객체를 상태에 저장
+    }
+  }, [stomp]);
 
   const dispatch = useDispatch();
 
@@ -114,53 +230,53 @@ const GameShot = () => {
   const copyRef = useRef(null);
 
   // 웹캠으로부터 스크린샷을 찍어 이미지를 캡처하는 함수
-  const handleCapture = useCallback(() => {
-    if (webcamRef.current && !captured) {
-      const screenshot = webcamRef.current.getScreenshot();
-      if (screenshot) {
-        // 이미지를 캡처하고 URL을 상태에 저장
-        setCapturedImage(screenshot);
+  // const handleCapture = useCallback(() => {
+  //   if (webcamRef.current && !captured) {
+  //     const screenshot = webcamRef.current.getScreenshot();
+  //     if (screenshot) {
+  //       // 이미지를 캡처하고 URL을 상태에 저장
+  //       setCapturedImage(screenshot);
 
-        // 캡처된 이미지를 user1Ref에 추가하여 표시
-        const img = document.createElement("img");
-        img.src = screenshot;
-        img.style.objectFit = "cover";
-        img.style.width = "100%";
-        img.style.height = "100%";
-        img.style.borderRadius = "5%";
+  //       // 캡처된 이미지를 user1Ref에 추가하여 표시
+  //       const img = document.createElement("img");
+  //       img.src = screenshot;
+  //       img.style.objectFit = "cover";
+  //       img.style.width = "100%";
+  //       img.style.height = "100%";
+  //       img.style.borderRadius = "5%";
 
-        if (user1Ref.current) {
-          // 캡처된 이미지를 user1Ref에 추가하여 표시합니다.
-          while (user1Ref.current.firstChild) {
-            user1Ref.current.firstChild.remove();
-          }
-          user1Ref.current.appendChild(img);
-        }
-        setCaptured(true);
-        // copyCapture(copyRef.current); // 이건 4개 묶음 사진
+  //       if (user1Ref.current) {
+  //         // 캡처된 이미지를 user1Ref에 추가하여 표시합니다.
+  //         while (user1Ref.current.firstChild) {
+  //           user1Ref.current.firstChild.remove();
+  //         }
+  //         user1Ref.current.appendChild(img);
+  //       }
+  //       setCaptured(true);
+  //       // copyCapture(copyRef.current); // 이건 4개 묶음 사진
 
-        if (shotSeconds === 0) {
-          // captureRef.current 요소를 이미지로 저장
-          copyCapture(captureRef.current);
-        }
+  //       if (shotSeconds === 0) {
+  //         // captureRef.current 요소를 이미지로 저장
+  //         copyCapture(captureRef.current);
+  //       }
 
-        // 이미지 데이터를 파일로 다운로드
-        const blob = dataURLtoBlob(screenshot);
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "captured_image.png";
-        link.click();
-      }
-    }
-  }, [webcamRef, captured, shotSeconds]);
-  useEffect(() => {
-    if (shotSeconds === 0) {
-      console.log(shotSeconds);
-      // captureRef.current 요소를 이미지로 저장
-      copyCapture(captureRef.current);
-    }
-  }, [shotSeconds]);
+  //       // 이미지 데이터를 파일로 다운로드
+  //       const blob = dataURLtoBlob(screenshot);
+  //       const url = URL.createObjectURL(blob);
+  //       const link = document.createElement("a");
+  //       link.href = url;
+  //       link.download = "captured_image.png";
+  //       link.click();
+  //     }
+  //   }
+  // }, [webcamRef, captured, shotSeconds]);
+  // useEffect(() => {
+  //   if (shotSeconds === 0) {
+  //     console.log(shotSeconds);
+  //     // captureRef.current 요소를 이미지로 저장
+  //     copyCapture(captureRef.current);
+  //   }
+  // }, [shotSeconds]);
   // "captured" 상태가 변경될 때 메시지를 업데이트하는 useEffect 훅 추가
   // useEffect(() => {
   //   if (captured) {
@@ -173,7 +289,7 @@ const GameShot = () => {
     const timerId = setInterval(() => {
       setShotSeconds((prevSeconds) => {
         if (prevSeconds === 0) {
-          handleCapture();
+          // handleCapture();
           clearInterval(timerId); // 타이머를 종료합니다.
           setDoState(true);
 
@@ -190,14 +306,14 @@ const GameShot = () => {
     return () => {
       clearInterval(timerId);
     };
-  }, [handleCapture, captured]);
+  }, [captured]);
 
   //frame timer
   useEffect(() => {
     const timerId = setInterval(() => {
       setFrameSeconds((prevSeconds) => {
         if (prevSeconds === 0) {
-          handleCapture();
+          // handleCapture();
           clearInterval(timerId); // 타이머를 종료합니다.
           setDoState(true);
 
@@ -214,7 +330,7 @@ const GameShot = () => {
     return () => {
       clearInterval(timerId);
     };
-  }, [handleCapture, captured]);
+  }, [captured]);
 
   // Frame 이미지 이전 버튼 핸들러
   const handlePrev = () => {
@@ -231,19 +347,19 @@ const GameShot = () => {
   };
 
   const [gameResults, setGameResults] = useState([]);
-  var { gameSeq } = useParams(); // url에서 추출
 
   // 로그인 상태 확인
   useEffect(() => {
     userInfo()
       .then((res) => {
         if (res.status === 200) {
+          const headers = {
+            Authorization: "Bearer " + getCookie("access"),
+          };
           // 로그인 상태일 때 axios로 데이터를 가져옴
           axios
             .get(`https://i9b109.p.ssafy.io:8443/wait/order/${gameSeq}`, {
-              headers: {
-                Authorization: "Bearer " + getCookie("access"),
-              },
+              headers,
             })
             .then((response) => {
               // 가져온 데이터를 score 순서로 정렬하여 저장
@@ -261,9 +377,52 @@ const GameShot = () => {
         console.log(error);
         handleOpenLoginAlert();
       });
-  }, []);
+  }, [userSeq]);
 
   const [userRank, setUserRank] = useState(-1);
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  const [image, setImage] = useState("");
+
+  const capture = React.useCallback(() => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    setImage(imageSrc);
+
+    console.log(image);
+    console.log(typeof image);
+  }, [webcamRef]);
+
+  const uploadImage = async () => {
+    if (image) {
+      const formData = new FormData();
+      formData.append("gameSeq", gameSeq);
+      formData.append("userSeq", userSeq);
+      formData.append("playerRank", userRank);
+      formData.append("privateFilm", dataURLtoFile(image, "temp.jpg"));
+
+      const headers = {
+        Authorization: "Bearer " + getCookie("access"),
+      };
+
+      try {
+        const response = await axios.post(
+          "https://i9b109.p.ssafy.io:8443/film/private/film",
+          formData,
+          { headers }
+        );
+        console.log("Image uploaded successfully:", response.data);
+        var request = {
+          gameSeq: gameSeq,
+          playerRank: userRank,
+        };
+        if (stomp.connected) {
+          stomp.send("/public/film", {}, JSON.stringify(request));
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
+    }
+  };
 
   useEffect(() => {
     gameResults.forEach((data, index) => {
@@ -273,8 +432,15 @@ const GameShot = () => {
       }
     });
     console.log(gameResults);
-  }, [userSeq]);
+  }, [uploadImage, userSeq, gameSeq, userRank]);
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+  useEffect(() => {
+    console.log(gameSeq);
+    console.log(userSeq);
+    console.log(userRank);
+  }, [uploadImage]);
   return (
     <Box
       sx={{
@@ -316,7 +482,7 @@ const GameShot = () => {
                 display: "flex",
                 flexDirection: "column",
                 height: "90%",
-                width: "100%",
+                width: "89.8%",
               }}
             >
               <Box
@@ -342,12 +508,26 @@ const GameShot = () => {
                     right: 0,
                     bottom: 0,
                     left: 0,
+
                     backgroundColor: "white",
                   }}
                   ref={captureRef}
                 >
                   {/* 비디오 나오게! */}
-                  <UserVideoShot time={shotSeconds} />
+                  {/* <UserVideoShot time={shotSeconds} /> */}
+                  <Webcam
+                    style={{ height: "100%", width: "120%" }}
+                    audio={false}
+                    ref={webcamRef}
+                    screenshotFormat="image/jpeg"
+                  />
+                  {/* <button onClick={capture}>Capture Photo</button> */}
+                  {image && (
+                    <>
+                      {/* <img src={image} alt="Captured" /> */}
+                      {/* <button onClick={uploadImage}>Upload</button> */}
+                    </>
+                  )}
                 </Box>
               </Box>
               <Box
@@ -357,29 +537,22 @@ const GameShot = () => {
                 p={2}
               >
                 {/* 촬영 버튼 */}
-                {doState === true ? (
-                  <div
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      justifyContent: "space-around",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Typography variant="h6">
-                      {shotSeconds === 0
-                        ? "촬영이 완료되었습니다."
-                        : `${shotSeconds}초 뒤에 촬영됩니다~ `}
-                    </Typography>
-                    <Button onClick={() => setShotSeconds(0)}>촬영</Button>
-                  </div>
-                ) : (
-                  <Typography variant="h6">
-                    {frameSeconds === 0
-                      ? "프레임 선택이 완료되었습니다."
-                      : `${frameSeconds}초 뒤에 프레임이 선택됩니다.`}
-                  </Typography>
-                )}
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                  }}
+                >
+                  {image ? (
+                    <>
+                      <Button onClick={uploadImage}>Upload</Button>
+                    </>
+                  ) : (
+                    <Button onClick={capture}>촬영</Button>
+                  )}
+                </div>
               </Box>
             </Box>
           </Grid>
@@ -405,43 +578,123 @@ const GameShot = () => {
                 }}
               >
                 {/* 유저 이미지를 표시하는 Card */}
-                <Card
-                  ref={user1Ref}
-                  sx={{
-                    backgroundImage: `url("/images/ShotEmpty.jfif")`,
-                    height: "15vh",
-                    margin: "5%",
-                  }}
-                >
-                  User 1
-                </Card>
-                <Card
-                  sx={{
-                    backgroundImage: `url("/images/ShotEmpty.jfif")`,
-                    height: "15vh",
-                    margin: "5%",
-                  }}
-                >
-                  User 2
-                </Card>
-                <Card
-                  sx={{
-                    backgroundImage: `url("/images/ShotEmpty.jfif")`,
-                    height: "15vh",
-                    margin: "5%",
-                  }}
-                >
-                  User 3
-                </Card>
-                <Card
-                  sx={{
-                    backgroundImage: `url("/images/ShotEmpty.jfif")`,
-                    height: "15vh",
-                    margin: "5%",
-                  }}
-                >
-                  User 4
-                </Card>
+                {playerCaptured1 ? (
+                  <Card
+                    style={{
+                      backgroundPosition: "center",
+                      backgroundSize: "cover",
+                    }}
+                    sx={{
+                      backgroundImage: `url(${playerURL1})`,
+                      height: "15vh",
+                      margin: "5%",
+                    }}
+                  >
+                    User 1
+                  </Card>
+                ) : (
+                  <Card
+                    style={{
+                      backgroundPosition: "center",
+                      backgroundSize: "cover",
+                    }}
+                    sx={{
+                      backgroundImage: `url("/images/ShotEmpty.jfif")`,
+                      height: "15vh",
+                      margin: "5%",
+                    }}
+                  >
+                    User 1
+                  </Card>
+                )}
+
+                {playerCaptured2 ? (
+                  <Card
+                    style={{
+                      backgroundPosition: "center",
+                      backgroundSize: "cover",
+                    }}
+                    sx={{
+                      backgroundImage: `url(${playerURL2})`,
+                      height: "15vh",
+                      margin: "5%",
+                    }}
+                  >
+                    User 2
+                  </Card>
+                ) : (
+                  <Card
+                    style={{
+                      backgroundPosition: "center",
+                      backgroundSize: "cover",
+                    }}
+                    sx={{
+                      backgroundImage: `url("/images/ShotEmpty.jfif")`,
+                      height: "15vh",
+                      margin: "5%",
+                    }}
+                  >
+                    User 2
+                  </Card>
+                )}
+                {playerCaptured3 ? (
+                  <Card
+                    style={{
+                      backgroundPosition: "center",
+                      backgroundSize: "cover",
+                    }}
+                    sx={{
+                      backgroundImage: `url(${playerURL3})`,
+                      height: "15vh",
+                      margin: "5%",
+                    }}
+                  >
+                    User 3
+                  </Card>
+                ) : (
+                  <Card
+                    style={{
+                      backgroundPosition: "center",
+                      backgroundSize: "cover",
+                    }}
+                    sx={{
+                      backgroundImage: `url("/images/ShotEmpty.jfif")`,
+                      height: "15vh",
+                      margin: "5%",
+                    }}
+                  >
+                    User 3
+                  </Card>
+                )}
+                {playerCaptured4 ? (
+                  <Card
+                    style={{
+                      backgroundPosition: "center",
+                      backgroundSize: "cover",
+                    }}
+                    sx={{
+                      backgroundImage: `url("/images/ShotEmpty.jfif")`,
+                      height: "15vh",
+                      margin: "5%",
+                    }}
+                  >
+                    User 4
+                  </Card>
+                ) : (
+                  <Card
+                    style={{
+                      backgroundPosition: "center",
+                      backgroundSize: "cover",
+                    }}
+                    sx={{
+                      backgroundImage: `url(${playerURL4})`,
+                      height: "15vh",
+                      margin: "5%",
+                    }}
+                  >
+                    User 4
+                  </Card>
+                )}
               </Box>
               {/* 이미지 전환 버튼 */}
               <Box
@@ -522,6 +775,20 @@ function sendCapture(element) {
       } catch (error) {}
     });
   }
+}
+
+function dataURLtoFile(dataURL, filename) {
+  const arr = dataURL.split(",");
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+
+  return new File([u8arr], filename, { type: mime });
 }
 
 export default GameShot;

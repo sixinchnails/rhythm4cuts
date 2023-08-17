@@ -23,7 +23,7 @@
 
 body {
   margin: 0;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
 }
 
 .outer {
@@ -142,7 +142,6 @@ body {
 .Home3 > .content > .rank2 > h1 {
   text-align: center;
   color: white;
-  
 }
 
 .Home3 > .content {
