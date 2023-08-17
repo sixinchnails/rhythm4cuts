@@ -1,11 +1,11 @@
 // Login.js
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useWebSocket } from "../../utils/WebSocket/WebSocket";
+// import { useWebSocket } from "../../utils/WebSocket/WebSocket";
 import { setCookie } from "../../utils/cookie";
 import { login } from "../../apis/login";
 import SearchPassword from "../../components/Common/SearchPassword";
-
+import LoginCheck from '../../components/Common/LoginCheck';
 import "./Login.css";
 
 const Login = () => {
@@ -22,10 +22,13 @@ const Login = () => {
   const handleOpenSearchPasswordModal = () => {
     setIsModalOpen(true);
   };
-
   const handleCloseSearchPasswordModal = () => {
     setIsModalOpen(false);
   };
+
+  // 알람
+  const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
+  const [isFailureAlertOpen, setIsFailureAlertOpen] = useState(false);
 
   // id 파트
   const [id, setId] = useState("");
@@ -45,29 +48,31 @@ const Login = () => {
     }
   };
 
-  const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
+  // const { connectWebSocket } = useWebSocket(); // 웹소켓 연결 함수 가져오기
+
   // 로그인
   const Login = async () => {
     try {
       const result = await login(id, pw);
       if (result.status === 200) {
-        window.alert("로그인을 성공하였습니다!");
         setCookie("access", result.data.accessToken);
         setCookie("refresh", result.data.refreshToken);
         setCookie("email", result.data.email);
+        setIsSuccessAlertOpen(true);
         // connectWebSocket(); // 로그인 성공 후 웹소켓 연결 시작
-        navigate("/");
       } else {
-        window.alert("로그인에 실패하였습니다!");
+        setIsFailureAlertOpen(true);
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {
-        window.alert("잘못된 이메일 또는 비밀번호입니다!");
+        setIsFailureAlertOpen(true);
       } else {
         window.alert("서버와의 통신 중 에러가 발생했습니다!");
       }
     }
   };
+
+
 
   return (
     <div className="bg" >
@@ -126,7 +131,26 @@ const Login = () => {
         isOpen={isModalOpen}
         handleClose={handleCloseSearchPasswordModal}
       />
+
+      {/* 로그인 성공 알림 */}
+      <LoginCheck
+        isOpen={isSuccessAlertOpen}
+        onConfirm={true}
+        onClose={() => {
+          setIsSuccessAlertOpen(false);
+          navigate("/"); // 메인 페이지로 이동
+        }}
+      />
+
+      {/* 로그인 실패 알림 */}
+      <LoginCheck
+        isOpen={isFailureAlertOpen}
+        onConfirm={false}
+        onClose={() => setIsFailureAlertOpen(false)}
+      />
+
     </div>
+
   );
 };
 
