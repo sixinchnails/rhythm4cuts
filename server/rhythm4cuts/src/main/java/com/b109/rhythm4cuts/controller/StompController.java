@@ -47,7 +47,7 @@ public class StompController {
     @MessageMapping(value = "/film")
     public void startMR(FilmDto film) {
         System.out.println("game seq : " + film.getGameSeq() + "user seq : " + film.getUserSeq() + "rank : " + film.getPlayerRank());
-        messagingTemplate.convertAndSend("/subscribe/film/gameSeq/" + film.getGameSeq() + "/playerLank" + film.getPlayerRank(), film);
+        messagingTemplate.convertAndSend("/subscribe/film/gameSeq/" + film.getGameSeq() + "/playerRank/" + film.getPlayerRank(), film);
     }
 
     @MessageMapping(value = "/ready")
