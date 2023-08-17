@@ -68,7 +68,7 @@ const HeaderWait = () => {
       } else {
         window.confirm("로그아웃 실패.");
       }
-    } catch (error) { 
+    } catch (error) {
       console.log(error);
       window.confirm("로그아웃 통신 오류발생.");
     }
@@ -91,6 +91,7 @@ const HeaderWait = () => {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    cursor: "pointer",
   };
 
   const imgStyle = {
@@ -126,7 +127,7 @@ const HeaderWait = () => {
           color="error"
           variant={hasNotification || gameInvite ? "dot" : "standard"} // 게임 초대 알림 상태에 따라 dot 표시
           onClick={onNotificationClick}
-          style={{ marginRight: "30px" }}
+          style={{ marginRight: "30px", cursor: "pointer" }}
         >
           <NotificationsIcon />
         </Badge>

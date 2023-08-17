@@ -18,6 +18,7 @@ import {
   ListItem,
   ListItemText,
   Button,
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from "@mui/material";
 import { createConnection } from "../../openvidu/connectionInitialization";
 import UserVideoComponent from "../../components/Game/UserVideoComponent";
@@ -81,6 +82,18 @@ function InviteFriendsModal({
 function GameWait() {
   const [stomp, setStomp] = useState(null); // stomp 객체 상태 추가
 
+  // 모달
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  
+  const handleOpenDialog = (message) => {
+    setDialogMessage(message);
+    setOpenDialog(true);
+  };
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
   useEffect(() => {
     if (!stomp) {
       // stomp 객체가 없을 때만 초기화
@@ -104,7 +117,7 @@ function GameWait() {
           if (userSeq) {
             stompClient.subscribe(
               `/subscribe/friend/invite/${userSeq}`,
-              () => {}
+              () => { }
             );
           }
         },
@@ -369,13 +382,15 @@ function GameWait() {
     userInfo()
       .then(res => {
         if (res.status !== 200) {
-          window.alert("로그인을 해주세요!");
+          // window.alert("로그인을 해주세요!");
+          handleOpenDialog("로그인 해주세요.")
           navigate("/");
         }
       })
       .catch(error => {
         console.error("유저 정보 불러오기 실패:", error);
-        window.alert("로그인을 해주세요!");
+        // window.alert("로그인을 해주세요!");
+        handleOpenDialog("로그인 해주세요.")
         navigate("/");
       });
   }, [gameSeq]);
@@ -457,9 +472,10 @@ function GameWait() {
           }
         );
       } catch (error) {
-        window.alert(
-          "방인원수가 초과되었습니다. 게임 리스트 페이지로 이동합니다. "
-        );
+        // window.alert(
+        //   "방인원수가 초과되었습니다. 게임 리스트 페이지로 이동합니다. "
+        // );
+        handleOpenDialog("방인원수가 초과되었습니다. 게임 리스트 페이지로 이동합니다. ")
         navigate(`/GameList`);
       }
 
@@ -648,7 +664,7 @@ function GameWait() {
           Authorization: "Bearer " + access,
         },
       })
-      .then(response => {})
+      .then(response => { })
       .catch(error => {
         console.error("Error:", error);
       });
@@ -1095,6 +1111,22 @@ function GameWait() {
         setToUser={setToUser}
         InviteGame={InviteGame}
       />
+
+      {/* 모달 다이얼로그 */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>{"알림"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {dialogMessage}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            확인
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </div>
   );
 }
