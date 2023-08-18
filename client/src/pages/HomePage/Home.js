@@ -262,7 +262,7 @@ function Home() {
           </div>
           <div className="content">
             <div className="intro">
-              <iframe
+              {/* <iframe
                 width="672"
                 height="378"
                 src="https://www.youtube.com/embed/ZZlMB-qRQv0"
@@ -270,7 +270,17 @@ function Home() {
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
-              ></iframe>
+              ></iframe> */}
+              <div style={{ width: "672px", height: "378px" }}>
+                <video
+                  controls={true}
+                  loop
+                  // muted
+                  style={{ width: "672px", height: "378px" }}
+                >
+                  <source src="/videos/제출예비.mp4" type="video/mp4" />
+                </video>
+              </div>
             </div>
             <div className="rules">
               <img
