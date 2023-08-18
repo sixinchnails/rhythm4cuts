@@ -749,10 +749,9 @@ const GameShot = () => {
                       fontFamily: "Ramche",
                     }}
                     sx={{
-                      backgroundImage: `url("/images/ShotEmpty.jfif")`,
+                      backgroundImage: `url(${playerURL4})`,
                       height: "15vh",
                       margin: "5%",
-                      fontFamily: "Ramche",
                     }}
                   >
                     User 4
@@ -766,9 +765,10 @@ const GameShot = () => {
                       fontFamily: "Ramche",
                     }}
                     sx={{
-                      backgroundImage: `url(${playerURL4})`,
+                      backgroundImage: `url("/images/ShotEmpty.jfif")`,
                       height: "15vh",
                       margin: "5%",
+                      fontFamily: "Ramche",
                     }}
                   >
                     User 4

@@ -3,19 +3,30 @@ import "./My_JoinInfo.css";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import TextField from "@mui/material/TextField";
-import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
+import { Radio, RadioGroup, FormControlLabel, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
   const [name, setName] = useState("");
+  const [gender, setgender] = useState("");
+  const [nickname, setnickname] = useState("");
   const [email, setEmail] = useState("");
   const [emailCode, setEmailCode] = useState("");
   const [emailCodeStatus, setEmailCodeStatus] = useState(false);
   const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState(""); // 비밀번호 확인을 위한 상태 추가
-  const [isPasswordValid, setIsPasswordValid] = useState(false); // 비밀번호 유효성 상태
-  const [nickname, setnickname] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [nickNameStatus, setNickNameStatus] = useState(false);
-  const [gender, setgender] = useState("");
+
+  // 모달
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const handleOpenDialog = (message) => {
+    setDialogMessage(message);
+    setOpenDialog(true);
+  };
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
 
   useEffect(() => {
     const passwordRegex = new RegExp(
@@ -65,11 +76,11 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
       );
       if (response.status === 200) {
         setEmailCodeStatus(false);
-        window.confirm("인증번호가 발송되었습니다.");
+        handleOpenDialog("인증번호가 발송되었습니다.")
       }
     } catch (error) {
       console.log(error);
-      window.confirm("인증번호 발송을 실패하였습니다.");
+      handleOpenDialog("인증번호 발송을 실패하였습니다.")
     }
   };
   //이메일 코드 인증
@@ -86,14 +97,14 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
       );
       if (response.data.checked === true) {
         setEmailCodeStatus(true);
-        window.confirm("인증되었습니다.");
+        handleOpenDialog("인증되었습니다.");
       } else {
         setEmailCodeStatus(false);
-        window.confirm("인증을 실패하였습니다.");
+        handleOpenDialog("인증을 실패하였습니다.");
       }
     } catch (error) {
       console.log(error);
-      window.confirm("인증을 실패하였습니다.");
+      handleOpenDialog("인증을 실패하였습니다.");
     }
   };
 
@@ -107,7 +118,6 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
           style={{
             width: "40px",
             height: "40px",
-            marginTop: "35px",
           }}
         />
       );
@@ -125,7 +135,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
       );
       if (response.data.duplicate === false) {
         setNickNameStatus(true);
-        window.confirm("사용 가능한 닉네임입니다.");
+        handleOpenDialog("사용 가능한 닉네임입니다.");
       } else {
         setNickNameStatus(false);
         throw new Error();
@@ -133,7 +143,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
     } catch (error) {
       console.log(error);
       setNickNameStatus(false);
-      window.confirm("사용중인 닉네임입니다.");
+      handleOpenDialog("사용중인 닉네임입니다.");
     }
   };
 
@@ -147,7 +157,6 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
           style={{
             width: "40px",
             height: "40px",
-            marginTop: "35px",
           }}
         />
       );
@@ -159,6 +168,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
   return (
     <div className="Join-info-container">
       <div className="Join-info" style={{ width: "60vw" }}>
+        {/* 이름 입력 필드 */}
         <div className="Join-item">
           <span className="Join-name Join-name-topline" style={{ fontFamily: 'Ramche', }}>이름</span>
           <TextField
@@ -184,6 +194,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
             }}
           />
         </div>
+        {/* 성별 입력 필드 */}
         <div className="Join-item">
           <span className="Join-name" style={{ fontFamily: 'Ramche', }}>성별</span>
           <RadioGroup
@@ -206,6 +217,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
             />
           </RadioGroup>
         </div>
+        {/* 닉네임 입력 필드 */}
         <div className="Join-item">
           <span className="Join-name" style={{ fontFamily: 'Ramche', }}>닉네임</span>
           <TextField
@@ -236,13 +248,14 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
           <Button
             variant="contained"
             color="primary"
-            onClick={nickNameCheck}
-            style={{ width: "45%", fontFamily: 'Ramche', }}
+            onClick={nickNameCheck} // 닉네임 중복 확인 함수
+            style={{ width: "45%", fontFamily: 'Ramche', marginLeft: "10px", marginRight: "10px"}}
           >
             중복 확인
           </Button>
-          {showNickNameImage()}
+          {showNickNameImage()} {/* 닉네임 중복 확인 이미지 */}
         </div>
+        {/* 이메일 입력 필드 */}
         <div className="Join-item">
           <span className="Join-name" style={{ fontFamily: 'Ramche', }}>이메일</span>
           <TextField
@@ -267,10 +280,11 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               },
             }}
           />
-          <Button variant="contained" color="primary" onClick={emailCheck} style={{ fontFamily: 'Ramche', }}>
+          <Button variant="contained" color="primary" onClick={emailCheck} style={{ fontFamily: 'Ramche',marginLeft: "10px", marginRight: "10px" }}>
             인증
           </Button>
         </div>
+        {/* 이메일 인증 입력 필드 */}
         <div className="Join-item">
           <span className="Join-name" style={{ fontFamily: 'Ramche', }}>이메일 인증</span>
           <TextField
@@ -301,13 +315,14 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
           <Button
             variant="contained"
             color="primary"
-            onClick={emailCodeCheck}
-            style={{ width: "45%", fontFamily: 'Ramche', }}
+            onClick={emailCodeCheck} // 이메일 인증 확인 함수
+            style={{ width: "45%", fontFamily: 'Ramche', marginLeft: "10px", marginRight: "10px"}}
           >
             인증 확인
           </Button>
-          {showEmailImage()}
+          {showEmailImage()} {/* 이메일 인증 이미지 */}
         </div>
+        {/* 비밀번호 입력 필드 */}
         <div className="Join-item">
           <span className="Join-name" style={{ fontFamily: 'Ramche', }}>비밀 번호</span>
           <TextField
@@ -339,7 +354,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
               src={"/images/체크.png"}
               alt="Check"
               className="Join-check"
-              style={{ width: "40px", height: "40px", fontFamily: 'Ramche', }}
+              style={{ width: "40px", height: "40px", marginRight: "-15px", fontFamily: 'Ramche', }}
             />
           )}
           {!isPasswordValid && password && (
@@ -353,6 +368,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
             </span>
           )}
         </div>
+        {/* 비밀번호 확인 입력 필드 */}
         <div className="Join-item">
           <span className="Join-name" style={{ fontFamily: 'Ramche', }}>비밀 번호 확인</span>
           <TextField
@@ -361,12 +377,11 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
             value={passwordConfirm}
             onChange={(e) => setPasswordConfirm(e.target.value)}
             variant="outlined"
-            style={{ flexBasis: "47%", height: "40px", fontFamily: 'Ramche', }}
+            style={{ marginLeft: "40%", height: "40px", fontFamily: 'Ramche', }}
             InputProps={{
               style: {
                 height: "40px",
                 padding: "10px 14px",
-                marginLeft: "368px",
                 fontFamily: 'Ramche',
               },
             }}
@@ -385,7 +400,7 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
                 src={"/images/체크.png"}
                 alt="Check"
                 className="Join-check"
-                style={{ width: "40px", height: "40px", marginLeft: "370px" }}
+                style={{ width: "40px", height: "40px", marginRight: "-15px", fontFamily: 'Ramche', }}
               />
             </span>
           )}
@@ -395,13 +410,26 @@ const JoinInfo = ({ onJoinInfo, profileImgSeq }) => {
                 src={"/images/오답.png"}
                 alt="Check"
                 className="Join-check"
-                style={{ width: "40px", height: "40px", marginLeft: "370px" }}
+                style={{ width: "40px", height: "40px", marginRight: "-15px", fontFamily: 'Ramche', }}
               />
             </span>
           )}
         </div>
-
       </div>
+      {/* 모달 다이얼로그 */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>{"알림"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {dialogMessage}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            확인
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

@@ -39,29 +39,24 @@ function Join() {
 
   //회원가입
   const handleJoinComplete = async () => {
+
     if (joinInfo.nickNameStatus === false) {
       handleOpenDialog("닉네임 중복확인하세요.");
       // window.confirm("닉네임 중복확인하세요.");
     } else if (joinInfo.emailCodeStatus === false) {
       handleOpenDialog("이메일 인증확인하세요.")
-      // window.confirm("이메일 인증확인하세요.");
     } else if (
       joinInfo.isPasswordValid === false ||
       joinInfo.password !== joinInfo.passwordConfirm
     ) {
       handleOpenDialog("비밀번호 확인하세요.")
-      // window.confirm("비밀번호 확인하세요.");
     } else {
       try {
-        // eslint-disable-next-line
         await axios.post(
           "https://i9b109.p.ssafy.io:8443/member/register",
           joinInfo
         );
-        const confirmed = window.confirm("회원가입이 완료! 로그인 해주세요");
-        if (confirmed) {
-          navigate("/Login");
-        }
+        navigate("/Login");
       } catch (error) {
         console.error("회원가입하는데 에러 발생 : " + error);
       }
@@ -76,8 +71,10 @@ function Join() {
         background: "#c1b3ff",
       }}
     >
+      {/* 헤더 */}
       <Header></Header>
 
+      {/* 캐릭터 고르기 */}
       <Grid style={{ display: "flex", width: "30%" }}>
         <JoinImage
           initialImages={[
@@ -91,6 +88,7 @@ function Join() {
         <JoinInfo onJoinInfo={handleJoinInfo} profileImgSeq={profileImgSeq} />
       </Grid>
 
+      {/* 바닥 */}
       <Button
         color="primary"
         style={{
