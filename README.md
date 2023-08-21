@@ -1,7 +1,10 @@
 # 💡 집에서 즐기는 쟁반 노래방 게임 🎶 과 게임방 구성원과 함께 인생네컷 한 장 📸
 
 ![title](https://github.com/SeongLI/SeongLI/assets/110223414/8e2f3464-1367-42ea-b984-057c92548330)
+
 </br>
+
+# 🎥 [UCC](https://github.com/SeongLI/SeongLI/assets/110223414/bc31e00a-9be6-4df2-a8d0-abd02ba9c157)
 
 # 👥 팀 구성
 
@@ -90,9 +93,17 @@ WebRtc를 활용해 온라인으로 서로 "노래"를 부르면서 즐거운 �
 # 💬 데이터 모델링 (ERD)
 
 ![erd](https://github.com/SeongLI/SeongLI/assets/110223414/89815772-f1c8-4e28-b6b7-89de1476078c)
-</br>
-</br>
 
+# 💬 요구사항 정의서
+
+# 💬 API 명세서
+
+
+# 💬 마일스톤 차트
+![마일스톤](https://github.com/SeongLI/SeongLI/assets/110223414/a3065136-2eb9-42bc-bc38-e96da8714f6f)
+
+# 💬 Jira 번다운 차트
+![Jira](https://github.com/SeongLI/SeongLI/assets/110223414/70e9bb46-e4b8-4492-af8e-9e57be3471ba)
 
 <!-- # 💬 서비스 화면
 
