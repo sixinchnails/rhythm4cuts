@@ -1,70 +1,140 @@
-# Getting Started with Create React App
+# 💡 집에서 즐기는 쟁반 노래방 게임 🎶 과 게임방 구성원과 함께 인생네컷 한 장 📸
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![title](https://github.com/SeongLI/SeongLI/assets/110223414/8e2f3464-1367-42ea-b984-057c92548330)
+</br>
 
-## Available Scripts
+# 👥 팀 구성
 
-In the project directory, you can run:
+<table align="center">
+  <tr>
+    <td align="center"><a href="https://github.com/SeongLI"><img src="https://avatars.githubusercontent.com/u/110223414?v=4" width="100px;" height="120px;" alt=""/><br /><sub><b>이은성<br>Front-end<br/></b></sub></a></td>
+    <td align="center"><a href="https://github.com/hyunnn12"><img src="https://avatars.githubusercontent.com/u/119777617?v=4" width="100px;" height="120px;" alt=""/><br /><sub><b>강현<br> Front-end<br/></b></sub></a></td>
+    <td align="center"><a href="https://github.com/acd4548"><img src="https://avatars.githubusercontent.com/u/122504425?v=4" width="100px;" height="120px;" alt=""/><br /><sub><b>유민국<br> Front-end<br/></b></sub></a></td>
+    <td align="center"><a href="https://github.com/chlgksdbs"><img src="https://avatars.githubusercontent.com/u/96401350?v=4" width="100px;" height="120px;" alt=""/><br /><sub><b>최한윤<br> Back-end<br/></b></sub></a></td>
+    <td align="center"><a href="https://github.com/sixinchnails"><img src="https://avatars.githubusercontent.com/u/36617233?v=4" width="100px;" height="120px;" alt=""/><br /><sub><b>최재용<br> Back-end<br/></b></sub></a></td>
+    <td align="center"><a href="https://github.com/HongYouBin"><img src="https://avatars.githubusercontent.com/u/80053293?v=4" width="100px;" height="120px;" alt=""/><br /><sub><b>홍유빈<br> Back-end<br/></b></sub></a></td>
+</table>
 
-### `npm start`
+</br>
+</br>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# 💬 프로젝트 배경
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+WebRtc를 활용해 온라인으로 서로 "노래"를 부르면서 즐거운 시간을 보내고, 그 즐거운 순간의 기록을 "네컷사진"으로 저장하여 추억을 남기는것을 어떨까?
+ 
+</br>
+</br>
 
-### `npm test`
+# 💬 프로젝트 기간 : 2023. 07. 10 ~ 2023. 08. 13.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 2023. 07. 10 ~ 07. 16. ( 1주차 )
+- 개발 아이디어 회의
+- 개인 역할 지정
+- 프로젝트 이름 결정
+- 개발 환경 셋팅
+- 그라운들 룰 설정
 
-### `npm run build`
+### 2023. 07. 17 ~ 07. 23. ( 2주차 )
+- 요구사항 명세 작성
+- ERD 설계
+- 목업 작성
+- Git Branch 전략 확립
+- 개발 Convention 정의
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 2023. 07. 24 ~ 07. 30 ( 3주차 )
+- 목업 화면 개발
+- API 개발
+- Docker / Jenkins 
+- 인프라 설정
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 2023. 07. 31 ~ 08. 06. ( 4주차 )
+- WebRTC 개발 시작
+- WebSocket 개발 시작
+- 유저 관리 개발 시작
+- 채점 서버 개발 시작
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 2023. 08. 07 ~ 08. 13. ( 5주차 )
+- JWT 상태관리 개발
+- 서버 자동 배포
+- Code Refactoring
+- UCC 제작
+- 최종 발표
 
-### `npm run eject`
+</br>
+</br>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# 💬 주요 기능
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- ### **WebRtc**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+  - 실시간으로 함께 노래를 부를 수 있습니다.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- ### **인생네컷**
 
-## Learn More
+  - 비대면으로 사진을 촬영하여 추억을 저장할 수 있습니다.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# 💬 개발 환경
+![개발환경](https://github.com/SeongLI/SeongLI/assets/110223414/1af732c8-74b5-41a9-84e6-a02528caf358)
 
-### Code Splitting
+## - 협업 tool
+<p align="center">
+<img src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white">
+<img src="https://img.shields.io/badge/jira-0052CC?style=for-the-badge&logo=jira&logoColor=white">
+<img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white">
+<img src="https://img.shields.io/badge/gitlab-FC6D26?style=for-the-badge&logo=gitlab&logoColor=white">
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## - 핵심 기술
+![핵심기술](https://github.com/SeongLI/SeongLI/assets/110223414/f15aa243-2f8e-4302-9b1a-5afc257a0291)
 
-### Analyzing the Bundle Size
+# 💬 데이터 모델링 (ERD)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+![erd](https://github.com/SeongLI/SeongLI/assets/110223414/89815772-f1c8-4e28-b6b7-89de1476078c)
+</br>
+</br>
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+<!-- # 💬 서비스 화면
 
-### Advanced Configuration
+</br>
+</br>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## **인트로**
 
-### Deployment
+![intro]()
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## **회원가입 및 로그인**
 
-### `npm run build` fails to minify
+![signupsignin]()
+</br>
+</br>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## **마이페이지**
+
+![mypage]()
+</br>
+</br>
+
+## **게임페이지**
+
+![gamepage]()
+</br>
+</br>
+
+## **친구추가**
+
+![addfriend]()
+</br>
+</br>
+
+## **친구초대**
+
+![invitefriend]()
+</br>
+</br>
+
+## **사진촬영**
+
+![shot]()
+</br>
+</br> -->
