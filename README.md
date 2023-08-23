@@ -97,7 +97,7 @@ WebRtc를 활용해 온라인으로 서로 "노래"를 부르면서 즐거운 �
 # 💬 요구사항 정의서
 
 # 💬 API 명세서
-
+https://www.notion.so/API-77089a01b1f6442c9e5c094cbab1fcfe?pvs=4
 
 # 💬 마일스톤 차트
 ![마일스톤](https://github.com/SeongLI/SeongLI/assets/110223414/a3065136-2eb9-42bc-bc38-e96da8714f6f)
