@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-import os
+import os, configparser
 from pydub import AudioSegment
 from score import getLyricsScore, getMelodyScore, splitter, portion_splitter
 from flask import send_file
@@ -7,19 +7,15 @@ import pymysql
 
 app = Flask(__name__)
 
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 # MySQL database properties
-host = 'i9b109.p.ssafy.io'
-user = '9ithubB109_simons'
-password = 'zlwhsalsrnrWid7991'
-db = 'rhythm'
-charset = 'utf8'
-
-# host = 'localhost'
-# user = 'root'
-# password = '0000'
-# db = 'rhythm'
-# charset = 'utf8'
+host = config['DEFAULT']['host']
+user = config['DEFAULT']['user']
+password = config['DEFAULT']['password']
+db = config['DEFAULT']['db']
+charset = config['DEFAULT']['charset']
 
 # Establishing a connection
 conn = pymysql.connect(
@@ -33,26 +29,6 @@ conn = pymysql.connect(
 @app.route('/')
 def index():
     return "Hello, World!!!!"
-
-# @app.route('/split', methods=['POST'])
-# def splitVoice():
-#     file = request.files['file']
-#
-#     file.save('./' + file.filename)
-#     audio_file = open('./' + file.filename, 'rb')
-#
-#     os.system("spleeter separate -p spleeter:2stems -o output " + file.filename)
-#
-#     # Get the paths to the separated stems
-#     vocals_path = "./output/blueming_iu/vocals.wav"
-#     accompaniment_path = "./output/blueming_iu/accompaniment.wav"
-#
-#     # Return both stems as separate audio files
-#     return {
-#         "vocals": send_file(vocals_path, mimetype="audio/wav", download_name="vocals.wav", as_attachment=True),
-#         "accompaniment": send_file(accompaniment_path, mimetype="audio/wav", download_name="accompaniment.wav",
-#                                    as_attachment=True)
-#     }
 
 @app.route('/split', methods=['POST'])
 def splitVoice():
