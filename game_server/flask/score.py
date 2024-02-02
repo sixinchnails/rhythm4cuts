@@ -1,4 +1,4 @@
-import openai
+import openai, configparser
 from pydub import AudioSegment
 import math
 from difflib import SequenceMatcher
@@ -6,18 +6,22 @@ from correlation import correlate
 from splitter import portion_splitter
 import pymysql
 
-# MySQL database properties
-host = 'i9b109.p.ssafy.io'
-user = '9ithubB109_simons'
-password = 'zlwhsalsrnrWid7991'
-db = 'rhythm'
-charset = 'utf8'
+config = configparser.ConfigParser()
+config.read('config.ini')
 
-# host = 'localhost'
-# user = 'root'
-# password = '0000'
-# db = 'rhythm'
-# charset = 'utf8'
+# MySQL database properties
+host = config['DEFAULT']['host']
+user = config['DEFAULT']['user']
+password = config['DEFAULT']['password']
+db = config['DEFAULT']['db']
+charset = config['DEFAULT']['charset']
+
+# MySQL database properties
+host = host
+user = user
+password = password
+db = db
+charset = charset
 
 # Establishing a connection
 conn = pymysql.connect(
@@ -112,11 +116,3 @@ def test():
     for lyric in lyricsPart:
         #lyrics_seq는 1부터 시작
         lyrics_seq, end_time, lyric, song_order, start_time, song_seq = lyric
-
-
-
-# folder = 'C://Users//SSAFY//Downloads'
-# file = 'naul'
-# ext = '.wav'
-# split_wav = SplitWavAudioMubin(folder, file, ext)
-# split_wav.multiple_split(min_per_split=1)
