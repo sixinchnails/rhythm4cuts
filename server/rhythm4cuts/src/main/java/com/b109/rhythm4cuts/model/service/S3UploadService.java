@@ -43,7 +43,6 @@ public class S3UploadService {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
         metadata.setContentType("audio/wav");
-        System.out.println("우리의 Content Type은: " + multipartFile.getContentType() + ", 하지만 아니쥬?: " + metadata.getContentType());
 
         amazonS3.putObject(voiceBucket, fileName, multipartFile.getInputStream(), metadata);
 
